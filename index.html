@@ -1,4 +1,4 @@
- <!doctype html>
+　<!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
@@ -204,6 +204,7 @@
       <h3>购买扩容 / AI 次数</h3>
       <p class="hint">购买前请先登录邮箱账号。付款成功后，Stripe 会通过 Webhook 自动把对应权益写入当前账号。买完回到本页刷新或重新登录即可看到变化。</p>
       <p class="purchase-status" id="purchaseStatus"></p>
+      <div class="row" style="margin-bottom:10px"><button class="ghost" id="refreshEntitlementsBtn">刷新购买权益</button></div>
       <div class="purchase-grid">
         <div class="purchase-card"><b>10词上限包</b><div class="price">JP¥50</div><div class="desc">适合先测试付款流程，成功后单词上限增加 10。</div><button class="primary" data-checkout="price_1TWUHEJwEImJY61ci4uFqSpj">购买</button></div>
         <div class="purchase-card"><b>50词上限包</b><div class="price">JP¥120</div><div class="desc">单词上限增加 50，适合小规模扩容。</div><button class="primary" data-checkout="price_1TWZQpJwEImJY61cHRzXR3t">购买</button></div>
@@ -401,7 +402,8 @@ function tokenizeWithKuromojiWorker(text,timeoutMs=12000){
 const REDEEM_CODES={};
 const REDEEM_SYSTEM_ONLINE=false;
 const LOCAL_DICT={'動物':[{word:'動物',definition:'发音：どうぶつ；释义：[名] 动物。'}],'动物':[{word:'動物',definition:'发音：どうぶつ；释义：[名] 动物。'}],'どうぶつ':[{word:'動物',definition:'发音：どうぶつ；释义：[名] 动物。'}],'勉強':[{word:'勉強',definition:'发音：べんきょう；释义：[名・他サ] 学习；用功；读书。'}],'べんきょう':[{word:'勉強',definition:'发音：べんきょう；释义：[名・他サ] 学习；用功；读书。'}],'さまざま':[{word:'様々',definition:'发音：さまざま；释义：[形动] 各种各样；形形色色。'}],'様々':[{word:'様々',definition:'发音：さまざま；释义：[形动] 各种各样；形形色色。'}],'えもの':[{word:'獲物',definition:'发音：えもの；释义：[名] 猎物；捕获物；战利品。'}],'獲物':[{word:'獲物',definition:'发音：えもの；释义：[名] 猎物；捕获物；战利品。'}],'人':[{word:'人',definition:'发音：ひと；释义：[名] 人；别人；他人。'}],'ひと':[{word:'人',definition:'发音：ひと；释义：[名] 人；别人；他人。'}],'検討':[{word:'検討',definition:'发音：けんとう；释义：[名・他サ] 讨论；研究；仔细考虑。'}],'一期一会':[{word:'一期一会',definition:'发音：いちごいちえ；释义：[名] 一生一次的相遇。'}],'反対派':[{word:'反対派',definition:'发音：はんたいは；释义：[名] 反对派；持反对意见的一派。'}],'賛成派':[{word:'賛成派',definition:'发音：さんせいは；释义：[名] 赞成派；支持某意见的一派。'}],'共同調査':[{word:'共同調査',definition:'发音：きょうどうちょうさ；释义：[名] 共同调查；多个机构一起进行的调查。'}],'夫婦別姓':[{word:'夫婦別姓',definition:'发音：ふうふべっせい；释义：[名] 夫妻别姓；夫妻婚后使用不同姓氏。'}],'夫婦':[{word:'夫婦',definition:'发音：ふうふ；释义：[名] 夫妻。'}],'別姓':[{word:'別姓',definition:'发音：べっせい；释义：[名] 不同姓氏；别姓。'}],'選択的':[{word:'選択的',definition:'发音：せんたくてき；释义：[形动] 选择性的；可供选择的。'}],'選択':[{word:'選択',definition:'发音：せんたく；释义：[名・他サ] 选择。'}],'戸籍':[{word:'戸籍',definition:'发音：こせき；释义：[名] 户籍；记录个人身份和亲属关系的制度。'}],'姓':[{word:'姓',definition:'发音：せい；释义：[名] 姓；姓氏。'}],'名字':[{word:'名字',definition:'发音：みょうじ；释义：[名] 姓；姓氏。'}],'自民支持層':[{word:'自民支持層',definition:'发音：じみんしじそう；释义：[名] 自民党支持群体；支持自民党的人群。'}],'支持層':[{word:'支持層',definition:'发音：しじそう；释义：[名] 支持层；支持某政党、政策或人物的人群。'}],'有権者':[{word:'有権者',definition:'发音：ゆうけんしゃ；释义：[名] 有选举权的人；选民。'}],'認める':[{word:'認める',definition:'发音：みとめる；释义：[他动・一段] 承认；认可；允许。'}],'結婚':[{word:'結婚',definition:'发音：けっこん；释义：[名・自サ] 结婚。'}],'法律':[{word:'法律',definition:'发音：ほうりつ；释义：[名] 法律。'}],'意見':[{word:'意見',definition:'发音：いけん；释义：[名] 意见；看法。'}],'賛否':[{word:'賛否',definition:'发音：さんぴ；释义：[名] 赞成与反对；赞否。'}],'半数':[{word:'半数',definition:'发音：はんすう；释义：[名] 半数；一半的数量。'}],'水準':[{word:'水準',definition:'发音：すいじゅん；释义：[名] 水平；水准。'}],'増':[{word:'増',definition:'发音：ぞう；释义：[接尾] 增加；增长。'}],'減':[{word:'減',definition:'发音：げん；释义：[接尾] 减少；降低。'}]};
-let state=loadState();let queue=[];let current=null;let sessionMode='review';let showingDefinition=false;let introGuideShown=false;let authPromptShown=false;let calendarMonth=localTodayISO().slice(0,7);let lastExport={name:'',text:'',type:''};let lookupCache=[];let clearArmed=false;let deleteAccountArmed=false;let articleReadingCache={};let speechVoices=[];
+let state=loadState();let queue=[];let current=null;let sessionMode='review';
+let cloudEntitlements={word_limit_bonus:0,ai_quota:0,premium_until:null,unlimited_until:null};let showingDefinition=false;let introGuideShown=false;let authPromptShown=false;let calendarMonth=localTodayISO().slice(0,7);let lastExport={name:'',text:'',type:''};let lookupCache=[];let clearArmed=false;let deleteAccountArmed=false;let articleReadingCache={};let speechVoices=[];
 function localTodayISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function defaultState(){return{folders:[{id:'folder-1',name:'默认文件夹',createdAt:localTodayISO()}],words:[],nextId:1,nextFolderId:2,maxWords:500,unlimited:false,redeemedCodes:[],checkins:{},firstCheckinDate:'',profile:{displayName:'',avatarUrl:'',avatarPath:''},speech:{voiceURI:'',rate:0.9,volume:1,pitch:1,autoSpeak:true}};}
 function loadState(){try{let raw=localStorage.getItem(STORAGE_KEY);if(!raw){for(const k of OLD_KEYS){raw=localStorage.getItem(k);if(raw)break;}}if(!raw)return defaultState();return migrateState(JSON.parse(raw));}catch(e){return defaultState();}}
@@ -482,6 +484,7 @@ async function signUpEmail(){
     cloudUser=data.user||null;
     renderCloudStatus();
     const d=$('authDetails');if(d)d.open=false;
+    await refreshEntitlements(true);
     toast('注册并登录成功');
   }else{
     cloudUser=null;
@@ -498,6 +501,7 @@ async function signInEmail(){
   cloudUser=data&&data.user?data.user:null;
   renderCloudStatus();
   const d=$('authDetails');if(d)d.open=false;
+  await refreshEntitlements(true);
   toast('登录成功');
 }
 async function signOutEmail(){
@@ -536,8 +540,29 @@ async function loadCloudState(){
   if(!confirm('将用云端词库覆盖当前本地数据。建议先导出 JSON 备份。确定继续吗？'))return;
   state=migrateState(data.state);
   localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+  await refreshEntitlements(true);
   renderAll();
   toast('已从云端恢复数据');
+}
+async function refreshEntitlements(silent){
+  const sb=initSupabase();if(!sb)return null;
+  const user=await requireCloudUser();
+  const status=$('purchaseStatus');
+  if(!user){if(!silent&&status)status.textContent='请先登录邮箱账号，再刷新购买权益。';return null;}
+  const {data,error}=await sb.from('user_entitlements').select('*').eq('user_id',user.id).maybeSingle();
+  if(error){
+    const msg='读取购买权益失败：'+error.message;
+    if(status)status.textContent=msg;
+    if(!silent)toast(msg);
+    return null;
+  }
+  cloudEntitlements=Object.assign({word_limit_bonus:0,ai_quota:0,premium_until:null,unlimited_until:null},data||{});
+  renderAll();
+  const unlimitedText=isCloudUnlimitedActive()?'｜无限词库有效到 '+String(cloudEntitlements.unlimited_until||cloudEntitlements.premium_until).slice(0,10):'';
+  const msg='已刷新购买权益：永久扩容 +'+getCloudWordBonus()+'，AI 剩余 '+Number(cloudEntitlements.ai_quota||0)+' 次'+unlimitedText;
+  if(status)status.textContent=msg;
+  if(!silent)toast('购买权益已刷新');
+  return cloudEntitlements;
 }
 function renderAvatar(){
   const img=$('avatarPreview'),ph=$('avatarPlaceholder');
@@ -594,7 +619,14 @@ function folderName(id){const f=state.folders.find(x=>x.id===id);return f?f.name
 function ensureFolder(name){const clean=norm(name)||'未命名文件夹';const found=state.folders.find(f=>f.name===clean);if(found)return found.id;const id='folder-'+state.nextFolderId++;state.folders.push({id:id,name:clean,createdAt:todayISO()});saveState();return id;}
 function selectedImportFolder(def){const v=norm($('newFolderName').value);return v?ensureFolder(v):($('importFolderSelect').value||ensureFolder(def||'新导入文件夹'));}
 function selectedLookupFolder(){const v=norm($('lookupNewFolderName').value);return v?ensureFolder(v):($('lookupFolderSelect').value||ensureFolder('查词收藏'));}
-function getLimit(){return state.unlimited?Infinity:Number(state.maxWords||500);}
+function isCloudUnlimitedActive(){
+  const until=cloudEntitlements.unlimited_until||cloudEntitlements.premium_until||'';
+  if(!until)return false;
+  const t=new Date(until).getTime();
+  return Number.isFinite(t)&&t>Date.now();
+}
+function getCloudWordBonus(){return Number(cloudEntitlements.word_limit_bonus||0);}
+function getLimit(){return (state.unlimited||isCloudUnlimitedActive())?Infinity:Number(state.maxWords||500)+getCloudWordBonus();}
 function hasCapacity(){return getLimit()===Infinity||state.words.length<getLimit();}
 function isNewWord(w){return !w.reviewCount;}
 function isDue(w,today=todayISO()){return w.reviewCount>0&&(!w.nextReview||w.nextReview<=today);}
@@ -996,6 +1028,21 @@ function shiftMonth(n){const d=new Date(calendarMonth+'-01T00:00:00');d.setMonth
 function redeemCode(){
   toast('兑换码云端验证功能尚未接入');
 }
+async function handleCheckoutReturn(){
+  const params=new URLSearchParams(location.search);
+  const result=params.get('checkout');
+  if(!result)return;
+  switchView('profile');
+  const status=$('purchaseStatus');
+  if(result==='success'){
+    if(status)status.textContent='付款完成，正在刷新购买权益。如果 10 秒内没变化，请检查 Stripe Webhook 是否成功。';
+    setTimeout(()=>refreshEntitlements(false),1200);
+    setTimeout(()=>refreshEntitlements(true),6000);
+  }else if(result==='cancel'){
+    if(status)status.textContent='付款已取消，没有发放权益。';
+  }
+  history.replaceState(null,'',location.origin+location.pathname);
+}
 async function startCheckout(priceId){
   const sb=initSupabase();if(!sb)return;
   const user=await requireCloudUser();
@@ -1098,6 +1145,7 @@ $('backProfileBtn').onclick=()=>switchView('profile');
 $('todayInput').value=localTodayISO();$('todayInput').onchange=renderAll;$('restoreTodayBtn').onclick=()=>{$('todayInput').value=localTodayISO();renderAll();};$('goReviewBtn').onclick=()=>switchView('review');$('checkinBtn').onclick=doCheckin;$('prevMonthBtn').onclick=()=>shiftMonth(-1);$('nextMonthBtn').onclick=()=>shiftMonth(1);$('statFolderCard').onclick=()=>switchView('library');$('statTotalCard').onclick=()=>switchView('library');$('statReviewCard').onclick=()=>switchView('review');$('statNewCard').onclick=()=>switchView('learn');$('startReviewBtn').onclick=buildReviewQueue;$('startLearnBtn').onclick=buildLearnQueue;$('learnFolderSelect').onchange=updateLearnFolderInfo;
 $('lookupBtn').onclick=lookupWord;$('lookupQuery').onkeydown=e=>{if(e.key==='Enter')lookupWord();};$('lookupResults').onclick=e=>{const i=e.target.dataset.collect;if(i!==undefined)addWords([lookupCache[Number(i)]],selectedLookupFolder(),'lookup');};
 $('redeemBtn').onclick=redeemCode;
+$('refreshEntitlementsBtn').onclick=()=>refreshEntitlements(false);
 document.addEventListener('click',e=>{const btn=e.target.closest&&e.target.closest('[data-checkout]');if(btn)startCheckout(btn.dataset.checkout);});
 $('importManualBtn').onclick=()=>{addWords(parseLines($('manualInput').value),selectedImportFolder('手动导入'),'manual');$('manualInput').value='';};$('loadSampleBtn').onclick=()=>{$('manualInput').value='一期一会'+TAB+'发音：いちごいちえ；释义：一生一次的机会'+NL+'検討,讨论；研究';};$('importFileBtn').onclick=async()=>{const f=$('fileInput').files[0];if(!f){toast('请选择文件');return;}addWords(parseLines(await f.text()),selectedImportFolder(f.name),'file');};$('extractPdfBtn').onclick=async()=>{try{const text=await readPdfText($('pdfInput').files[0]);const items=extractVocabularyFromPdfText(text);$('previewBox').value=items.map(x=>x.word+TAB+x.definition).join(NL);toast('PDF 预览完成');}catch(e){toast('PDF 识别失败：'+e.message);}};$('importPdfBtn').onclick=async()=>{try{const text=await readPdfText($('pdfInput').files[0]);const items=extractVocabularyFromPdfText(text);$('previewBox').value=items.map(x=>x.word+TAB+x.definition).join(NL);addWords(items,selectedImportFolder('PDF导入'),'pdf');}catch(e){toast('PDF 导入失败：'+e.message);}};$('extractArticleBtn').onclick=()=>handleArticleExtract(false);$('importArticleBtn').onclick=()=>handleArticleExtract(true);
 $('libraryFolderFilter').onchange=renderAll;$('searchInput').oninput=renderAll;$('clearSearchBtn').onclick=()=>{$('searchInput').value='';$('libraryFolderFilter').value='';renderAll();};$('wordTable').onclick=e=>{const edit=e.target.dataset.edit;const del=e.target.dataset.del;if(edit){const w=state.words.find(x=>x.id===Number(edit));if(w){const nw=prompt('修改单词',w.word);if(nw!==null){const nd=prompt('修改释义',w.definition||'');if(nd!==null){w.word=norm(nw);w.definition=nd;saveState();}}}}if(del){state.words=state.words.filter(x=>x.id!==Number(del));saveState();}};
@@ -1119,6 +1167,7 @@ bindSpeechSettings();
 if(window.speechSynthesis){refreshSpeechVoices();window.speechSynthesis.onvoiceschanged=refreshSpeechVoices;}
 updateNotifyBadge();
 refreshCloudUser();
+handleCheckoutReturn();
 function isEditableTarget(el){
   if(!el)return false;
   const tag=String(el.tagName||'').toLowerCase();
