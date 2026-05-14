@@ -1,197 +1,249 @@
-const Stripe = require("stripe");
+ const Stripe = require("stripe");
 const { createClient } = require("@supabase/supabase-js");
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-const supabase = createClient(
+const supabaseAdmin = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY
 );
 
-function parseIntSafe(value) {
-  const n = parseInt(String(value || "0"), 10);
-  return Number.isFinite(n) ? n : 0;
+// 你的 7 个商品价格 ID 对应的权益
+const PRICE_MAP = {
+  "price_1TWUHEJwEImJY61ci4uFqSpj": {
+    product_code: "WORD_LIMIT_10",
+    word_limit_bonus: 10,
+    ai_quota: 0,
+    unlimited_days: 0
+  },
+
+  "price_1TWZQpJwEImJY61cHRzXR3t": {
+    product_code: "WORD_LIMIT_50",
+    word_limit_bonus: 50,
+    ai_quota: 0,
+    unlimited_days: 0
+  },
+
+  "price_1TWZReJwEImJY61cdrztMzYB": {
+    product_code: "WORD_LIMIT_100",
+    word_limit_bonus: 100,
+    ai_quota: 0,
+    unlimited_days: 0
+  },
+
+  "price_1TWZT9JwEImJY61cZ2TBDgu3": {
+    product_code: "WORD_LIMIT_500",
+    word_limit_bonus: 500,
+    ai_quota: 0,
+    unlimited_days: 0
+  },
+
+  "price_1TWZWcJwEImJY61cVOZemJg7": {
+    product_code: "WORD_LIMIT_UNLIMITED_30D",
+    word_limit_bonus: 0,
+    ai_quota: 0,
+    unlimited_days: 30
+  },
+
+  "price_1TWZZbJwEImJY61ctCRgERaL": {
+    product_code: "AI_QUOTA_5",
+    word_limit_bonus: 0,
+    ai_quota: 5,
+    unlimited_days: 0
+  },
+
+  "price_1TWZbwJwEImJY61cDxj5VKpm": {
+    product_code: "AI_QUOTA_100",
+    word_limit_bonus: 0,
+    ai_quota: 100,
+    unlimited_days: 0
+  }
+};
+
+function json(statusCode, body) {
+  return {
+    statusCode,
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(body)
+  };
 }
 
-function addDaysToDate(baseDate, days) {
-  const d = new Date(baseDate);
-  d.setDate(d.getDate() + days);
+function addDays(date, days) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + Number(days || 0));
   return d.toISOString();
 }
 
 exports.handler = async function (event) {
   if (event.httpMethod !== "POST") {
-    return {
-      statusCode: 405,
-      body: "Method not allowed"
-    };
+    return json(405, { error: "Method not allowed" });
   }
 
   const signature =
-    event.headers["stripe-signature"] ||
-    event.headers["Stripe-Signature"];
-
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-  if (!webhookSecret) {
-    return {
-      statusCode: 500,
-      body: "Missing STRIPE_WEBHOOK_SECRET"
-    };
-  }
-
-  let rawBody = event.body || "";
-
-  if (event.isBase64Encoded) {
-    rawBody = Buffer.from(rawBody, "base64");
-  }
+    event.headers["stripe-signature"] || event.headers["Stripe-Signature"];
 
   let stripeEvent;
 
   try {
+    const rawBody = event.isBase64Encoded
+      ? Buffer.from(event.body, "base64").toString("utf8")
+      : event.body;
+
     stripeEvent = stripe.webhooks.constructEvent(
       rawBody,
       signature,
-      webhookSecret
+      process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
-    return {
-      statusCode: 400,
-      body: `Webhook signature verification failed: ${err.message}`
-    };
+    console.error("Webhook signature verification failed:", err.message);
+    return json(400, { error: "Webhook signature verification failed" });
   }
 
-  if (stripeEvent.type !== "checkout.session.completed") {
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ received: true, ignored: stripeEvent.type })
-    };
-  }
-
-  const session = stripeEvent.data.object;
-
-  if (session.payment_status !== "paid") {
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ received: true, unpaid: true })
-    };
-  }
-
-  const metadata = session.metadata || {};
-
-  const userId = metadata.user_id;
-  const productCode = metadata.product_code || "";
-  const priceId = metadata.price_id || "";
-  const wordLimitBonus = parseIntSafe(metadata.word_limit_bonus);
-  const aiQuota = parseIntSafe(metadata.ai_quota);
-  const unlimitedDays = parseIntSafe(metadata.unlimited_days);
-
-  if (!userId) {
-    return {
-      statusCode: 400,
-      body: "Missing user_id in metadata"
-    };
-  }
-
-  // 先记录支付事件，防止 Stripe 重复通知导致重复发货
-  const { error: eventInsertError } = await supabase
-    .from("payment_events")
-    .insert({
-      stripe_event_id: stripeEvent.id,
-      stripe_checkout_session_id: session.id,
-      user_id: userId,
-      price_id: priceId,
-      product_code: productCode,
-      word_limit_bonus: wordLimitBonus,
-      ai_quota: aiQuota,
-      unlimited_days: unlimitedDays,
-      amount_total: session.amount_total || 0,
-      currency: session.currency || "jpy",
-      status: "processed",
-      raw_event: stripeEvent,
-      created_at: new Date().toISOString()
-    });
-
-  if (eventInsertError) {
-    // 23505 = unique 冲突，说明这笔付款已经处理过
-    if (eventInsertError.code === "23505") {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ received: true, duplicate: true })
-      };
+  try {
+    if (stripeEvent.type !== "checkout.session.completed") {
+      return json(200, { received: true, ignored: stripeEvent.type });
     }
 
-    return {
-      statusCode: 500,
-      body: `Failed to insert payment event: ${eventInsertError.message}`
-    };
-  }
+    const session = stripeEvent.data.object;
 
-  const { data: current, error: readError } = await supabase
-    .from("user_entitlements")
-    .select("*")
-    .eq("user_id", userId)
-    .maybeSingle();
+    const userId =
+      session.metadata?.user_id ||
+      session.metadata?.userId ||
+      session.client_reference_id;
 
-  if (readError) {
-    return {
-      statusCode: 500,
-      body: `Failed to read entitlements: ${readError.message}`
-    };
-  }
+    let priceId = session.metadata?.price_id || session.metadata?.priceId;
 
-  const now = new Date();
-  let unlimitedUntil = current && current.unlimited_until
-    ? current.unlimited_until
-    : null;
+    // 如果 metadata 里没有 price_id，就从 Stripe Session 里重新取 line_items
+    if (!priceId) {
+      const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
+        expand: ["line_items.data.price"]
+      });
 
-  if (unlimitedDays > 0) {
-    const currentUnlimitedDate = unlimitedUntil ? new Date(unlimitedUntil) : null;
-    const baseDate =
-      currentUnlimitedDate && currentUnlimitedDate > now
-        ? currentUnlimitedDate
-        : now;
+      priceId =
+        fullSession.line_items &&
+        fullSession.line_items.data &&
+        fullSession.line_items.data[0] &&
+        fullSession.line_items.data[0].price
+          ? fullSession.line_items.data[0].price.id
+          : "";
+    }
 
-    unlimitedUntil = addDaysToDate(baseDate, unlimitedDays);
-  }
+    if (!userId) {
+      console.error("Missing userId in checkout session metadata:", session.id);
+      return json(400, { error: "Missing userId" });
+    }
 
-  const nextWordLimitBonus =
-    parseIntSafe(current && current.word_limit_bonus) + wordLimitBonus;
+    if (!priceId) {
+      console.error("Missing priceId in checkout session:", session.id);
+      return json(400, { error: "Missing priceId" });
+    }
 
-  const nextAiQuota =
-    parseIntSafe(current && current.ai_quota) + aiQuota;
+    const product = PRICE_MAP[priceId];
 
-  const { error: upsertError } = await supabase
-    .from("user_entitlements")
-    .upsert(
-      {
-        user_id: userId,
-        word_limit_bonus: nextWordLimitBonus,
-        ai_quota: nextAiQuota,
-        unlimited_until: unlimitedUntil,
-        updated_at: now.toISOString()
-      },
-      {
-        onConflict: "user_id"
-      }
-    );
+    if (!product) {
+      console.error("Unknown priceId:", priceId);
+      return json(400, { error: "Unknown priceId: " + priceId });
+    }
 
-  if (upsertError) {
-    return {
-      statusCode: 500,
-      body: `Failed to update entitlements: ${upsertError.message}`
-    };
-  }
+    const amountTotal = Number(session.amount_total || 0);
+    const currency = String(session.currency || "jpy").toLowerCase();
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
+    // 1. 先读取当前权益
+    const { data: oldEntitlement, error: readError } = await supabaseAdmin
+      .from("user_entitlements")
+      .select("*")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (readError) {
+      console.error("Read entitlement error:", readError);
+      return json(500, { error: "Read entitlement failed" });
+    }
+
+    const oldWordBonus = Number(oldEntitlement?.word_limit_bonus || 0);
+    const oldAiQuota = Number(oldEntitlement?.ai_quota || 0);
+
+    let newUnlimitedUntil =
+      oldEntitlement?.unlimited_until ||
+      oldEntitlement?.premium_until ||
+      null;
+
+    // 无限词库 30 天：如果原来还没过期，就从原到期日继续加；如果已经过期，就从现在开始加
+    if (product.unlimited_days > 0) {
+      const now = new Date();
+      const oldTime = newUnlimitedUntil
+        ? new Date(newUnlimitedUntil).getTime()
+        : 0;
+
+      const baseDate = oldTime > now.getTime() ? new Date(oldTime) : now;
+      newUnlimitedUntil = addDays(baseDate, product.unlimited_days);
+    }
+
+    // 2. 更新用户权益
+    const { error: entitlementError } = await supabaseAdmin
+      .from("user_entitlements")
+      .upsert(
+        {
+          user_id: userId,
+          word_limit_bonus: oldWordBonus + Number(product.word_limit_bonus || 0),
+          ai_quota: oldAiQuota + Number(product.ai_quota || 0),
+          unlimited_until: newUnlimitedUntil,
+          premium_until: newUnlimitedUntil,
+          updated_at: new Date().toISOString()
+        },
+        {
+          onConflict: "user_id"
+        }
+      );
+
+    if (entitlementError) {
+      console.error("Update entitlement error:", entitlementError);
+      return json(500, { error: "Update entitlement failed" });
+    }
+
+    // 3. 写入购买记录
+    const { error: orderError } = await supabaseAdmin
+      .from("payment_orders")
+      .upsert(
+        {
+          user_id: userId,
+          stripe_session_id: session.id,
+          stripe_payment_intent: session.payment_intent || null,
+          product_code: product.product_code,
+          price_id: priceId,
+          amount_jpy: currency === "jpy" ? amountTotal : 0,
+          amount_cny: currency === "cny" ? Math.round(amountTotal / 100) : 0,
+          currency: currency,
+          status: "paid",
+          paid_at: new Date().toISOString()
+        },
+        {
+          onConflict: "stripe_session_id"
+        }
+      );
+
+    if (orderError) {
+      console.error("Insert payment order error:", orderError);
+      return json(500, { error: "Insert payment order failed" });
+    }
+
+    console.log("Payment processed:", {
+      userId,
+      priceId,
+      productCode: product.product_code,
+      sessionId: session.id
+    });
+
+    return json(200, {
       received: true,
       userId,
-      productCode,
-      wordLimitBonus,
-      aiQuota,
-      unlimitedDays
-    })
-  };
+      priceId,
+      productCode: product.product_code
+    });
+  } catch (err) {
+    console.error("Webhook handler error:", err);
+    return json(500, { error: err.message || "Webhook handler failed" });
+  }
 };
