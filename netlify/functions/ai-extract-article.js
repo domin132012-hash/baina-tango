@@ -1,12 +1,20 @@
-const { createClient } = require("@supabase/supabase-js");
+ const { createClient } = require("@supabase/supabase-js");
+
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_ROLE_KEY =
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY;
+
+const AI_DEFAULT_PROVIDER = process.env.AI_DEFAULT_PROVIDER || "doubao";
+
+const DOUBAO_API_KEY = process.env.DOUBAO_API_KEY;
+const DOUBAO_MODEL = process.env.DOUBAO_MODEL || "doubao-1-5-lite-32k-250115";
+const DOUBAO_BASE_URL =
+  process.env.DOUBAO_BASE_URL || "https://ark.cn-beijing.volces.com/api/v3";
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash-lite";
 
-const supabaseAdmin = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY
-);
+const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 function json(statusCode, body) {
   return {
@@ -21,18 +29,255 @@ function json(statusCode, body) {
   };
 }
 
+function clampText(text, maxChars) {
+  text = String(text || "").trim();
+  return text.length > maxChars ? text.slice(0, maxChars) : text;
+}
+
 function cleanJsonText(text) {
-  return String(text || "")
+  let s = String(text || "").trim();
+
+  s = s
     .replace(/^```json\s*/i, "")
     .replace(/^```\s*/i, "")
     .replace(/```$/i, "")
     .trim();
+
+  const first = s.indexOf("{");
+  const last = s.lastIndexOf("}");
+
+  if (first >= 0 && last > first) {
+    s = s.slice(first, last + 1);
+  }
+
+  return s;
 }
 
-function clampText(text, maxChars) {
-  text = String(text || "").trim();
-  if (text.length <= maxChars) return text;
-  return text.slice(0, maxChars);
+function parseAiJson(text) {
+  try {
+    return JSON.parse(cleanJsonText(text));
+  } catch (e) {
+    console.error("AI JSON parse failed:", text);
+    throw new Error("AI 返回格式解析失败");
+  }
+}
+
+function normalizeItems(items, maxWords) {
+  return (Array.isArray(items) ? items : [])
+    .map((item) => ({
+      word: String(item.word || item.surface || "").trim(),
+      reading: String(item.reading || item.kana || "").trim(),
+      definition: String(item.definition || item.meaning || "").trim(),
+      importance: Math.max(1, Math.min(Number(item.importance || 3), 5)),
+      reason: String(item.reason || "").trim()
+    }))
+    .filter((item) => item.word && item.definition)
+    .slice(0, maxWords);
+}
+
+function buildPrompt(article, maxWords) {
+  return `
+你是面向中文日语学习者的日语词汇老师。
+请从下面的日语文章中提取最值得学习的重点词汇。
+
+要求：
+1. 返回 ${maxWords} 个以内。
+2. 优先选择 EJU、JLPT、新闻、说明文、大学入试文章中常见的重要词。
+3. 不要提取太基础的助词、助动词、普通代词。
+4. 不要提取乱码、半截词、纯数字。
+5. 尽量给出日语原形。
+6. reading 必须使用平假名。
+7. definition 使用简体中文，简洁准确。
+8. importance 为 1 到 5，5 表示最重要。
+9. reason 用简体中文说明为什么这个词值得背。
+10. 只返回 JSON，不要返回 Markdown，不要返回解释性文章。
+
+返回格式必须是：
+{
+  "items": [
+    {
+      "word": "検討",
+      "reading": "けんとう",
+      "definition": "讨论；研究；仔细考虑",
+      "importance": 5,
+      "reason": "文章中用于表达研究方案或讨论政策，考试和新闻中常见。"
+    }
+  ]
+}
+
+文章：
+${article}
+`;
+}
+
+function chatEndpoint(baseUrl) {
+  const base = String(baseUrl || "").replace(/\/+$/, "");
+  if (base.endsWith("/chat/completions")) return base;
+  return base + "/chat/completions";
+}
+
+async function callDoubao(prompt) {
+  if (!DOUBAO_API_KEY) {
+    throw new Error("豆包 API Key 未设置");
+  }
+
+  const res = await fetch(chatEndpoint(DOUBAO_BASE_URL), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + DOUBAO_API_KEY
+    },
+    body: JSON.stringify({
+      model: DOUBAO_MODEL,
+      messages: [
+        {
+          role: "system",
+          content: "你是日语词汇提取助手。必须只返回合法 JSON，不要返回 Markdown。"
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      temperature: 0.2,
+      max_tokens: 4096
+    })
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    console.error("Doubao API error:", data);
+    const message =
+      data.error && data.error.message
+        ? data.error.message
+        : data.message || JSON.stringify(data).slice(0, 300);
+    throw new Error("豆包调用失败：" + message);
+  }
+
+  let content =
+    data &&
+    data.choices &&
+    data.choices[0] &&
+    data.choices[0].message &&
+    data.choices[0].message.content;
+
+  if (Array.isArray(content)) {
+    content = content.map((x) => x.text || x.content || "").join("");
+  }
+
+  if (!content) {
+    throw new Error("豆包没有返回内容");
+  }
+
+  const parsed = parseAiJson(content);
+
+  return {
+    provider: "doubao",
+    model: DOUBAO_MODEL,
+    items: parsed.items || []
+  };
+}
+
+async function callGemini(prompt) {
+  if (!GEMINI_API_KEY) {
+    throw new Error("Gemini API Key 未设置");
+  }
+
+  const responseSchema = {
+    type: "OBJECT",
+    properties: {
+      items: {
+        type: "ARRAY",
+        items: {
+          type: "OBJECT",
+          properties: {
+            word: { type: "STRING" },
+            reading: { type: "STRING" },
+            definition: { type: "STRING" },
+            importance: { type: "INTEGER" },
+            reason: { type: "STRING" }
+          },
+          required: ["word", "reading", "definition", "importance", "reason"]
+        }
+      }
+    },
+    required: ["items"]
+  };
+
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            role: "user",
+            parts: [{ text: prompt }]
+          }
+        ],
+        generationConfig: {
+          temperature: 0.2,
+          topP: 0.8,
+          maxOutputTokens: 4096,
+          responseMimeType: "application/json",
+          responseSchema
+        }
+      })
+    }
+  );
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    console.error("Gemini API error:", data);
+    const message =
+      data.error && data.error.message
+        ? data.error.message
+        : JSON.stringify(data).slice(0, 300);
+    throw new Error("Gemini 调用失败：" + message);
+  }
+
+  const text =
+    data &&
+    data.candidates &&
+    data.candidates[0] &&
+    data.candidates[0].content &&
+    data.candidates[0].content.parts &&
+    data.candidates[0].content.parts[0]
+      ? data.candidates[0].content.parts[0].text
+      : "";
+
+  if (!text) {
+    throw new Error("Gemini 没有返回内容");
+  }
+
+  const parsed = parseAiJson(text);
+
+  return {
+    provider: "gemini",
+    model: GEMINI_MODEL,
+    items: parsed.items || []
+  };
+}
+
+function getProviderOrder(requestedProvider) {
+  if (requestedProvider === "doubao") return ["doubao"];
+  if (requestedProvider === "gemini") return ["gemini"];
+
+  const first = AI_DEFAULT_PROVIDER === "gemini" ? "gemini" : "doubao";
+  const second = first === "doubao" ? "gemini" : "doubao";
+
+  return [first, second];
+}
+
+async function callProvider(provider, prompt) {
+  if (provider === "doubao") return await callDoubao(prompt);
+  if (provider === "gemini") return await callGemini(prompt);
+  throw new Error("未知 AI provider：" + provider);
 }
 
 exports.handler = async function (event) {
@@ -45,8 +290,10 @@ exports.handler = async function (event) {
   }
 
   try {
-    if (!GEMINI_API_KEY) {
-      return json(500, { error: "GEMINI_API_KEY 未设置" });
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+      return json(500, {
+        error: "Supabase 后端环境变量未设置：SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY"
+      });
     }
 
     const auth = event.headers.authorization || event.headers.Authorization || "";
@@ -56,7 +303,8 @@ exports.handler = async function (event) {
       return json(401, { error: "请先登录账号" });
     }
 
-    const { data: userData, error: userError } = await supabaseAdmin.auth.getUser(token);
+    const { data: userData, error: userError } =
+      await supabaseAdmin.auth.getUser(token);
 
     if (userError || !userData || !userData.user) {
       return json(401, { error: "登录状态无效，请重新登录" });
@@ -67,6 +315,7 @@ exports.handler = async function (event) {
     const body = JSON.parse(event.body || "{}");
     const article = clampText(body.article || "", 12000);
     const maxWords = Math.max(5, Math.min(Number(body.maxWords || 30), 80));
+    const requestedProvider = String(body.provider || "auto").toLowerCase();
 
     if (!article) {
       return json(400, { error: "文章内容为空" });
@@ -83,146 +332,63 @@ exports.handler = async function (event) {
       return json(500, { error: "读取 AI 次数失败" });
     }
 
-    const currentQuota = Number(entitlement && entitlement.ai_quota ? entitlement.ai_quota : 0);
+    const currentQuota = Number(
+      entitlement && entitlement.ai_quota ? entitlement.ai_quota : 0
+    );
 
     if (currentQuota <= 0) {
       return json(402, { error: "AI 次数不足，请先购买 AI 次数包" });
     }
 
-    const prompt = `
-你是面向中文日语学习者的日语词汇老师。
-请从下面的日语文章中提取最值得学习的重点词汇。
+    const prompt = buildPrompt(article, maxWords);
+    const providerOrder = getProviderOrder(requestedProvider);
 
-要求：
-1. 返回 ${maxWords} 个以内。
-2. 优先选择 EJU、JLPT、新闻、说明文里常见的重要词。
-3. 不要提取太基础的助词、助动词、普通代词。
-4. 不要提取乱码、半截词、纯数字。
-5. 尽量给出日语原形。
-6. reading 使用平假名。
-7. definition 使用简体中文，简洁准确。
-8. importance 为 1 到 5，5 表示最重要。
-9. reason 用简体中文说明为什么这个词值得背。
-10. 只返回 JSON，不要写解释性文章。
+    let lastError = null;
+    let aiResult = null;
 
-文章：
-${article}
-`;
-
-    const responseSchema = {
-      type: "OBJECT",
-      properties: {
-        items: {
-          type: "ARRAY",
-          items: {
-            type: "OBJECT",
-            properties: {
-              word: { type: "STRING" },
-              reading: { type: "STRING" },
-              definition: { type: "STRING" },
-              importance: { type: "INTEGER" },
-              reason: { type: "STRING" }
-            },
-            required: ["word", "reading", "definition", "importance", "reason"]
-          }
-        }
-      },
-      required: ["items"]
-    };
-
-    const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              role: "user",
-              parts: [{ text: prompt }]
-            }
-          ],
-          generationConfig: {
-            temperature: 0.2,
-            topP: 0.8,
-            maxOutputTokens: 4096,
-            responseMimeType: "application/json",
-            responseSchema
-          }
-        })
+    for (const provider of providerOrder) {
+      try {
+        aiResult = await callProvider(provider, prompt);
+        break;
+      } catch (e) {
+        lastError = e;
+        console.error("Provider failed:", provider, e);
       }
-    );
-
-    const geminiData = await geminiRes.json();
-
-    if (!geminiRes.ok) {
-      console.error("Gemini API error:", geminiData);
-      return json(500, {
-        error: "Gemini 识别失败：" + (geminiData.error && geminiData.error.message ? geminiData.error.message : "unknown error")
-      });
     }
 
-    const text =
-      geminiData &&
-      geminiData.candidates &&
-      geminiData.candidates[0] &&
-      geminiData.candidates[0].content &&
-      geminiData.candidates[0].content.parts &&
-      geminiData.candidates[0].content.parts[0]
-        ? geminiData.candidates[0].content.parts[0].text
-        : "";
-
-    let parsed;
-
-    try {
-      parsed = JSON.parse(cleanJsonText(text));
-    } catch (e) {
-      console.error("AI JSON parse failed:", text);
-      return json(500, { error: "AI 返回格式解析失败" });
+    if (!aiResult) {
+      throw lastError || new Error("所有 AI 模型调用失败");
     }
 
-    const items = Array.isArray(parsed.items) ? parsed.items : [];
-
-    const cleanedItems = items
-      .map((item) => ({
-        word: String(item.word || "").trim(),
-        reading: String(item.reading || "").trim(),
-        definition: String(item.definition || "").trim(),
-        importance: Math.max(1, Math.min(Number(item.importance || 3), 5)),
-        reason: String(item.reason || "").trim()
-      }))
-      .filter((item) => item.word && item.definition)
-      .slice(0, maxWords);
+    const cleanedItems = normalizeItems(aiResult.items, maxWords);
 
     if (!cleanedItems.length) {
-      return json(500, { error: "AI 没有提取到有效词条" });
+      return json(500, {
+        error: aiResult.provider + " 没有提取到有效词条"
+      });
     }
 
     const { error: updateError } = await supabaseAdmin
       .from("user_entitlements")
-      .upsert(
-        {
-          user_id: user.id,
-          ai_quota: currentQuota - 1,
-          updated_at: new Date().toISOString()
-        },
-        {
-          onConflict: "user_id"
-        }
-      );
+      .update({
+        ai_quota: currentQuota - 1,
+        updated_at: new Date().toISOString()
+      })
+      .eq("user_id", user.id);
 
     if (updateError) {
       console.error("Deduct AI quota error:", updateError);
-      return json(500, { error: "AI 已识别，但扣除次数失败，请联系管理员" });
+      return json(500, {
+        error: "AI 已识别，但扣除次数失败，请联系管理员"
+      });
     }
 
     return json(200, {
       items: cleanedItems,
       used: 1,
       remaining_ai_quota: currentQuota - 1,
-      model: GEMINI_MODEL
+      provider: aiResult.provider,
+      model: aiResult.model
     });
   } catch (err) {
     console.error("AI extract error:", err);
