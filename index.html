@@ -728,7 +728,7 @@ function speak(text){
   if(_speakAudio){_speakAudio.pause();_speakAudio=null;}
   const cfg=state.speech||{};
   const lang=hasKana(text)?'ja':'zh-CN';
-  const url='https://translate.googleapis.com/translate_tts?ie=UTF-8&q='+encodeURIComponent(text)+'&tl='+lang+'&client=tw-ob&ttsspeed='+(cfg.rate||0.9);
+  const url='/.netlify/functions/tts?text='+encodeURIComponent(text);
   const audio=new Audio(url);
   _speakAudio=audio;
   audio.volume=cfg.volume!=null?Number(cfg.volume):1;
