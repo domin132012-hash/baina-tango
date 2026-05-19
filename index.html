@@ -722,18 +722,28 @@ function nextCard(){const id=queue.shift();current=id?state.words.find(w=>w.id==
 function renderCard(){if(!$('reviewWord'))return;if(!current){$('reviewMeta').textContent='本轮结束';$('reviewWord').textContent=state.words.length?'这轮背完了':'请先导入单词';$('reviewDef').classList.add('hidden');$('queueInfo').textContent='';return;}$('reviewMeta').textContent='#'+current.id+' ｜文件夹：'+folderName(current.folderId)+' ｜已复习 '+(current.reviewCount||0)+' 次｜下次：'+(current.nextReview||'未安排');$('reviewWord').textContent=localStorage.getItem('word-hidden')==='1'?'':current.word;$('wordVisibilityBtn').textContent=localStorage.getItem('word-hidden')==='1'?'显示单词':'隐藏单词';$('reviewDef').textContent=current.definition||'这个词还没有释义。';$('reviewDef').classList.toggle('hidden',!showingDefinition);$('showDefBtn').textContent=showingDefinition?'隐藏释义':'显示释义';$('queueInfo').textContent='本轮剩余：'+queue.length+' 个';}
 function answerWord(ans){if(!current)return;const today=todayISO();let interval=1;if(ans==='known'){interval=current.reviewCount?Math.max(2,Number(current.intervalDays||2)+3):5;}current.reviewCount=(current.reviewCount||0)+1;current.lastAnswer=ans;current.lastReview=today;current.intervalDays=interval;current.nextReview=addDays(today,interval);current.history=current.history||[];current.history.push({date:today,answer:ans,nextReview:current.nextReview});if(ans==='unknown')queue.splice(Math.min(10,queue.length),0,current.id);if(ans==='fuzzy')queue.splice(Math.min(20,queue.length),0,current.id);saveState();nextCard();}
 function pronunciation(w){const d=String(w.definition||'');const m='发音：';const i=d.indexOf(m);if(i>=0){let r=d.slice(i+m.length);const j=r.indexOf('；');if(j>=0)r=r.slice(0,j);return r.trim();}return w.word;}
+let _speakAudio=null;
 function speak(text){
-  if(!window.speechSynthesis||!text)return;
-  window.speechSynthesis.cancel();
+  if(!text)return;
+  if(_speakAudio){_speakAudio.pause();_speakAudio=null;}
   const cfg=state.speech||{};
-  const u=new SpeechSynthesisUtterance(text);
-  const voice=speechVoices.find(v=>v.voiceURI===cfg.voiceURI)||null;
-  if(voice){u.voice=voice;u.lang=voice.lang||u.lang;}
-  else u.lang=hasKana(text)?'ja-JP':'zh-CN';
-  u.rate=Number(cfg.rate||0.9);
-  u.volume=cfg.volume!=null?Number(cfg.volume):1;
-  u.pitch=cfg.pitch!=null?Number(cfg.pitch):1;
-  window.speechSynthesis.speak(u);
+  const lang=hasKana(text)?'ja':'zh-CN';
+  const url='https://translate.googleapis.com/translate_tts?ie=UTF-8&q='+encodeURIComponent(text)+'&tl='+lang+'&client=tw-ob&ttsspeed='+(cfg.rate||0.9);
+  const audio=new Audio(url);
+  _speakAudio=audio;
+  audio.volume=cfg.volume!=null?Number(cfg.volume):1;
+  audio.play().catch(()=>{
+    if(!window.speechSynthesis)return;
+    window.speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    const voice=speechVoices.find(v=>v.voiceURI===cfg.voiceURI)||null;
+    if(voice){u.voice=voice;u.lang=voice.lang||u.lang;}
+    else u.lang=hasKana(text)?'ja-JP':'zh-CN';
+    u.rate=Number(cfg.rate||0.9);
+    u.volume=cfg.volume!=null?Number(cfg.volume):1;
+    u.pitch=cfg.pitch!=null?Number(cfg.pitch):1;
+    window.speechSynthesis.speak(u);
+  });
 }
 function refreshSpeechVoices(){
   if(!window.speechSynthesis)return;
