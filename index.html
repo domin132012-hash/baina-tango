@@ -732,18 +732,7 @@ function speak(text){
   const audio=new Audio(url);
   _speakAudio=audio;
   audio.volume=cfg.volume!=null?Number(cfg.volume):1;
-  audio.play().catch(()=>{
-    if(!window.speechSynthesis)return;
-    window.speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(text);
-    const voice=speechVoices.find(v=>v.voiceURI===cfg.voiceURI)||null;
-    if(voice){u.voice=voice;u.lang=voice.lang||u.lang;}
-    else u.lang=hasKana(text)?'ja-JP':'zh-CN';
-    u.rate=Number(cfg.rate||0.9);
-    u.volume=cfg.volume!=null?Number(cfg.volume):1;
-    u.pitch=cfg.pitch!=null?Number(cfg.pitch):1;
-    window.speechSynthesis.speak(u);
-  });
+  audio.play().catch(()=>{});
 }
 function refreshSpeechVoices(){
   if(!window.speechSynthesis)return;
