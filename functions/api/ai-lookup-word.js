@@ -1,0 +1,268 @@
+import { createClient } from "@supabase/supabase-js";
+
+function json(status, body) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "POST, OPTIONS"
+    }
+  });
+}
+
+function normalizeWord(s) {
+  return String(s || "").trim().replace(/\s+/g, "").replace(/[　]/g, "");
+}
+
+function isPureKana(s) {
+  return /^[ぁ-んァ-ンー]+$/.test(String(s || ""));
+}
+
+function hasJapanese(s) {
+  return /[ぁ-んァ-ン一-龥々ヶー]/.test(String(s || ""));
+}
+
+function kanaLength(s) {
+  let n = 0;
+  for (const ch of String(s || "")) {
+    const c = ch.charCodeAt(0);
+    if ((c >= 0x3040 && c <= 0x30ff) || c === 0x30fc) n++;
+  }
+  return n;
+}
+
+function toHiragana(s) {
+  return String(s || "").replace(/[ァ-ン]/g, (ch) =>
+    String.fromCharCode(ch.charCodeAt(0) - 0x60)
+  );
+}
+
+function cleanDefinition(s) {
+  let x = String(s || "").trim();
+  x = x
+    .replace(/[。,.，、]/g, "；")
+    .replace(/\s+/g, "")
+    .replace(/；+/g, "；")
+    .replace(/^；|；$/g, "");
+  let out = "";
+  let count = 0;
+  for (const ch of x) {
+    if (ch === "；" || ch === "/" || ch === "、") {
+      if (!out.endsWith("；")) out += "；";
+      continue;
+    }
+    out += ch;
+    count++;
+    if (count >= 15) break;
+  }
+  return out.replace(/；$/g, "") || "未明";
+}
+
+function cleanPos(s) {
+  const x = String(s || "").trim();
+  if (!x) return "词语";
+  return x.slice(0, 8);
+}
+
+function cleanJsonText(text) {
+  let s = String(text || "").trim();
+  s = s.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```$/i, "").trim();
+  const first = s.indexOf("{");
+  const last = s.lastIndexOf("}");
+  if (first >= 0 && last > first) s = s.slice(first, last + 1);
+  return s;
+}
+
+function parseAiJson(text) {
+  try {
+    return JSON.parse(cleanJsonText(text));
+  } catch (e) {
+    console.error("AI lookup JSON parse failed:", text);
+    throw new Error("豆包返回格式解析失败");
+  }
+}
+
+function chatEndpoint(baseUrl) {
+  const base = String(baseUrl || "").replace(/\/+$/, "");
+  if (base.endsWith("/chat/completions")) return base;
+  return base + "/chat/completions";
+}
+
+async function fetchJisho(word) {
+  try {
+    const res = await fetch(
+      "https://jisho.org/api/v1/search/words?keyword=" + encodeURIComponent(word),
+      { headers: { "User-Agent": "Mozilla/5.0" }, signal: AbortSignal.timeout(5000) }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const items = data && data.data;
+    if (!items || !items.length) return null;
+    const item = items[0];
+    const jp = item.japanese && item.japanese[0];
+    if (!jp) return null;
+    const reading = jp.reading || "";
+    const senses = (item.senses || []).slice(0, 3);
+    const enDefs = senses.map(s => (s.english_definitions || []).join("、")).filter(Boolean);
+    const pos = senses[0] && senses[0].parts_of_speech && senses[0].parts_of_speech[0] || "";
+    if (!reading || !enDefs.length) return null;
+    return { reading, enDefs, pos };
+  } catch (e) {
+    return null;
+  }
+}
+
+function buildPrompt(word, jisho) {
+  if (jisho) {
+    return `
+你是日语词典翻译助手。
+下面是从 JMdict 词典查到的「${word}」的英文释义，请将它翻译为中文。
+
+词典数据：
+- 读音：${jisho.reading}
+- 词性：${jisho.pos || "未知"}
+- 英文释义：${jisho.enDefs.join(" / ")}
+
+严格要求：
+1. 只返回 JSON，不要 Markdown，不要解释。
+2. word 返回原词。
+3. reading 返回平假名读音（直接用上面提供的）。
+4. pos 用中文，最多 8 个字。
+5. definition 根据上面英文释义翻译成中文，最多 15 个汉字，保留 1～3 个核心义项，用中文分号隔开，不要例句。
+6. 只翻译，不要自己添加或修改词义。
+
+返回格式：
+{
+  "word": "検討",
+  "reading": "けんとう",
+  "pos": "名词・サ变动词",
+  "definition": "讨论；研究；考虑"
+}
+`;
+  }
+  return `
+你是日语学习词典助手。
+请解释下面这个日语词。
+
+严格要求：
+1. 只返回 JSON，不要 Markdown，不要解释。
+2. word 返回原词。
+3. reading 必须是平假名。
+4. 如果 reading 超过 10 个假名，仍然返回真实 reading，系统会拒绝。
+5. pos 用中文，最多 8 个字。
+6. definition 只返回最核心中文释义，最多 15 个汉字，不要例句，不要长解释。
+7. 不要输出英文释义。
+8. 如果有多个意思，只保留最常用、最重要的 1～3 个，用中文分号隔开。
+9. 不确定时也要给最常见释义，不要胡编专有名词。
+
+返回格式：
+{
+  "word": "検討",
+  "reading": "けんとう",
+  "pos": "名词・サ变动词",
+  "definition": "讨论；研究；考虑"
+}
+
+要查询的词：
+${word}
+`;
+}
+
+async function callDoubao(word, jisho, env) {
+  const DOUBAO_API_KEY = env.DOUBAO_API_KEY;
+  const DOUBAO_MODEL = env.DOUBAO_MODEL || "doubao-1-5-lite-32k-250115";
+  const DOUBAO_BASE_URL = env.DOUBAO_BASE_URL || "https://ark.cn-beijing.volces.com/api/v3";
+
+  if (!DOUBAO_API_KEY) throw new Error("豆包 API Key 未设置");
+
+  const res = await fetch(chatEndpoint(DOUBAO_BASE_URL), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + DOUBAO_API_KEY
+    },
+    body: JSON.stringify({
+      model: DOUBAO_MODEL,
+      messages: [
+        { role: "system", content: "你是日语词典助手。必须只返回合法 JSON，不要 Markdown，不要多余解释。" },
+        { role: "user", content: buildPrompt(word, jisho) }
+      ],
+      temperature: 0.1,
+      max_tokens: 300
+    })
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    const message = data.error?.message || data.message || JSON.stringify(data).slice(0, 300);
+    throw new Error("豆包调用失败：" + message);
+  }
+
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) throw new Error("豆包没有返回内容");
+
+  return parseAiJson(content);
+}
+
+export async function onRequest(context) {
+  const { request, env } = context;
+
+  if (request.method === "OPTIONS") return json(200, { ok: true });
+  if (request.method !== "POST") return json(405, { error: "Method not allowed" });
+
+  try {
+    if (!env.SUPABASE_URL || !(env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_SERVICE_KEY)) {
+      return json(500, { error: "Supabase 后端环境变量未设置" });
+    }
+
+    const supabaseAdmin = createClient(
+      env.SUPABASE_URL,
+      env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_SERVICE_KEY
+    );
+
+    const auth = request.headers.get("authorization") || "";
+    const token = auth.replace(/^Bearer\s+/i, "").trim();
+    if (!token) return json(401, { error: "请先登录账号" });
+
+    const { data: userData, error: userError } = await supabaseAdmin.auth.getUser(token);
+    if (userError || !userData?.user) return json(401, { error: "登录状态无效，请重新登录" });
+
+    const body = await request.json().catch(() => ({}));
+    const inputWord = normalizeWord(body.word);
+
+    if (!inputWord) return json(400, { error: "请输入要查询的词" });
+    if (!hasJapanese(inputWord)) return json(400, { error: "目前只支持日语单词查词" });
+    if (inputWord.length > 24) return json(400, { error: "输入过长，请输入单个词语" });
+    if (isPureKana(inputWord) && kanaLength(inputWord) > 10) {
+      return json(400, { error: "输入过长：假名不能超过 10 个" });
+    }
+
+    const jisho = await fetchJisho(inputWord);
+    const ai = await callDoubao(inputWord, jisho, env);
+
+    const word = normalizeWord(ai.word || inputWord);
+    const reading = toHiragana(normalizeWord(ai.reading || ""));
+    const pos = cleanPos(ai.pos || "词语");
+    const definition = cleanDefinition(ai.definition || ai.meaning || ai.zh || "");
+
+    if (!reading) return json(500, { error: "豆包没有返回假名，请重试" });
+    if (kanaLength(reading) > 10) return json(400, { error: "这个词的假名超过 10 个，暂不支持短查词模式" });
+    if (!definition || definition === "未明") return json(500, { error: "豆包没有返回有效释义" });
+
+    return json(200, {
+      ok: true,
+      source: "doubao",
+      model: env.DOUBAO_MODEL || "doubao-1-5-lite-32k-250115",
+      word,
+      reading,
+      pos,
+      definition
+    });
+  } catch (err) {
+    console.error("AI lookup word error:", err);
+    return json(500, { error: err?.message || "查词失败" });
+  }
+}

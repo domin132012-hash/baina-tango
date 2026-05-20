@@ -740,7 +740,7 @@ function speak(text){
   if(_speakAudio){_speakAudio.pause();_speakAudio=null;}
   const cfg=state.speech||{};
   const lang=hasKana(text)?'ja':'zh-CN';
-  const url='/.netlify/functions/tts?text='+encodeURIComponent(text);
+  const url='/api/tts?text='+encodeURIComponent(text);
   const audio=new Audio(url);
   _speakAudio=audio;
   audio.volume=cfg.volume!=null?Number(cfg.volume):1;
@@ -955,7 +955,7 @@ async function lookupOnline(q){
   const {data:sessionData}=await sb.auth.getSession();
   const token=sessionData&&sessionData.session?sessionData.session.access_token:'';
   if(!token){goAuthPage();throw new Error('登录状态已失效');}
-  const res=await fetch('/.netlify/functions/ai-lookup-word',{
+  const res=await fetch('/api/ai-lookup-word',{
     method:'POST',
     headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
     body:JSON.stringify({word:q})
@@ -1195,7 +1195,7 @@ async function handleImageExtract(importNow){
     const {data:sessionData}=await sb.auth.getSession();
     const token=sessionData&&sessionData.session?sessionData.session.access_token:'';
     if(!token){toast('登录状态已失效，请重新登录');goAuthPage();return;}
-    const res=await fetch('/.netlify/functions/ai-extract-image',{
+    const res=await fetch('/api/ai-extract-image',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
       body:JSON.stringify({image:imageDataUrl,maxWords:max})
@@ -1244,7 +1244,7 @@ async function handleAiArticleExtract(importNow){
     const provider=$('aiProviderSelect')?$('aiProviderSelect').value:'auto';
     const providerName=provider==='doubao'?'豆包省钱模式':(provider==='gemini'?'Gemini 稳定模式':'自动选择：豆包优先');
     setArticleProgress(0,3,'正在连接 AI：'+providerName);
-    const res=await fetch('/.netlify/functions/ai-extract-article',{
+    const res=await fetch('/api/ai-extract-article',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
       body:JSON.stringify({article:text,maxWords:max,provider:provider})
@@ -1285,7 +1285,7 @@ async function redeemCode(){
   const token=sessionData&&sessionData.session?sessionData.session.access_token:'';
   if(!token){toast('登录状态已失效，请重新登录');goAuthPage();return;}
   try{
-    const res=await fetch('/.netlify/functions/redeem-code',{
+    const res=await fetch('/api/redeem-code',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
       body:JSON.stringify({code:code})
@@ -1338,7 +1338,7 @@ async function startCheckout(priceId){
   const status=$('purchaseStatus');
   if(status){status.textContent='正在创建付款页面，请稍等...';status.scrollIntoView({behavior:'smooth',block:'center'});}
   try{
-    const res=await fetch('/.netlify/functions/create-checkout-session',{
+    const res=await fetch('/api/create-checkout-session',{
       method:'POST',
       headers:{
         'Content-Type':'application/json',
