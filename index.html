@@ -592,6 +592,16 @@ async function refreshEntitlements(silent){
     return null;
   }
   cloudEntitlements=Object.assign({word_limit_bonus:0,ai_quota:0,premium_until:null,unlimited_until:null},data||{});
+  const hasCloudBonus=(cloudEntitlements.word_limit_bonus>0||Number(cloudEntitlements.ai_quota||0)>0);
+  if(hasCloudBonus&&(!state.redeemedCodes||!state.redeemedCodes.length)){
+    try{
+      const {data:cs}=await sb.from('user_vocab_states').select('state').eq('user_id',user.id).maybeSingle();
+      if(cs&&cs.state&&Array.isArray(cs.state.redeemedCodes)&&cs.state.redeemedCodes.length){
+        state.redeemedCodes=cs.state.redeemedCodes;
+        saveState();
+      }
+    }catch(e){}
+  }
   renderAll();
   const unlimitedText=isCloudUnlimitedActive()?'｜无限词库有效到 '+String(cloudEntitlements.unlimited_until||cloudEntitlements.premium_until).slice(0,10):'';
   const msg='已刷新购买权益：永久扩容 +'+getCloudWordBonus()+'，AI 剩余 '+Number(cloudEntitlements.ai_quota||0)+' 次'+unlimitedText;
