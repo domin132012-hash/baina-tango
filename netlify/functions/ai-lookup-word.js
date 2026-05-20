@@ -123,7 +123,58 @@ function chatEndpoint(baseUrl) {
   return base + "/chat/completions";
 }
 
-function buildPrompt(word) {
+async function fetchJisho(word) {
+  try {
+    const res = await fetch(
+      "https://jisho.org/api/v1/search/words?keyword=" + encodeURIComponent(word),
+      { headers: { "User-Agent": "Mozilla/5.0" }, signal: AbortSignal.timeout(5000) }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const items = data && data.data;
+    if (!items || !items.length) return null;
+    const item = items[0];
+    const jp = item.japanese && item.japanese[0];
+    if (!jp) return null;
+    const reading = jp.reading || "";
+    const senses = (item.senses || []).slice(0, 3);
+    const enDefs = senses.map(s => (s.english_definitions || []).join("、")).filter(Boolean);
+    const pos = senses[0] && senses[0].parts_of_speech && senses[0].parts_of_speech[0] || "";
+    if (!reading || !enDefs.length) return null;
+    return { reading, enDefs, pos };
+  } catch (e) {
+    return null;
+  }
+}
+
+function buildPrompt(word, jisho) {
+  if (jisho) {
+    return `
+你是日语词典翻译助手。
+下面是从 JMdict 词典查到的「${word}」的英文释义，请将它翻译为中文。
+
+词典数据：
+- 读音：${jisho.reading}
+- 词性：${jisho.pos || "未知"}
+- 英文释义：${jisho.enDefs.join(" / ")}
+
+严格要求：
+1. 只返回 JSON，不要 Markdown，不要解释。
+2. word 返回原词。
+3. reading 返回平假名读音（直接用上面提供的）。
+4. pos 用中文，最多 8 个字。
+5. definition 根据上面英文释义翻译成中文，最多 15 个汉字，保留 1～3 个核心义项，用中文分号隔开，不要例句。
+6. 只翻译，不要自己添加或修改词义。
+
+返回格式：
+{
+  "word": "検討",
+  "reading": "けんとう",
+  "pos": "名词・サ变动词",
+  "definition": "讨论；研究；考虑"
+}
+`;
+  }
   return `
 你是日语学习词典助手。
 请解释下面这个日语词。
@@ -152,7 +203,7 @@ ${word}
 `;
 }
 
-async function callDoubao(word) {
+async function callDoubao(word, jisho) {
   if (!DOUBAO_API_KEY) {
     throw new Error("豆包 API Key 未设置");
   }
@@ -173,7 +224,7 @@ async function callDoubao(word) {
         },
         {
           role: "user",
-          content: buildPrompt(word)
+          content: buildPrompt(word, jisho)
         }
       ],
       temperature: 0.1,
@@ -261,7 +312,8 @@ exports.handler = async function (event) {
       });
     }
 
-    const ai = await callDoubao(inputWord);
+    const jisho = await fetchJisho(inputWord);
+    const ai = await callDoubao(inputWord, jisho);
 
     const word = normalizeWord(ai.word || inputWord);
     const reading = toHiragana(normalizeWord(ai.reading || ""));
