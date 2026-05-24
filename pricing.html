@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing / 料金プラン — 百納単語</title>
+  <style>
+    :root{--primary:#7c5cff;--primary2:#b46bff;--text:#25213f;--muted:#8b86a3;--bg:#f8f6ff;--card:#fff;--radius:20px;--shadow:0 12px 36px rgba(105,80,200,.12)}
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif;color:var(--text);background:linear-gradient(160deg,#f4f0ff 0%,#fff 50%,#eef2ff 100%)}
+    a{color:var(--primary);text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    /* ── Header ── */
+    .site-header{padding:32px 24px 24px;max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .logo{display:flex;align-items:center;gap:12px;text-decoration:none}
+    .logo-icon{width:48px;height:48px;border-radius:16px;background:linear-gradient(135deg,#6f55ff,#b46bff);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;font-weight:950;box-shadow:0 12px 28px rgba(124,92,255,.30)}
+    .logo-name{font-size:22px;font-weight:900;letter-spacing:-.03em;color:var(--text)}
+    .logo-sub{font-size:12px;color:var(--muted);font-weight:700;margin-top:2px}
+    .header-cta{padding:10px 20px;border-radius:14px;background:linear-gradient(135deg,#6f55ff,#b46bff);color:#fff;font-weight:800;font-size:14px;box-shadow:0 8px 20px rgba(124,92,255,.28);transition:.15s ease;border:0;cursor:pointer;text-decoration:none}
+    .header-cta:hover{transform:translateY(-1px);box-shadow:0 14px 28px rgba(124,92,255,.38);text-decoration:none}
+
+    /* ── Hero ── */
+    .hero{text-align:center;padding:48px 24px 40px;max-width:800px;margin:0 auto}
+    .lang-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:999px;background:rgba(124,92,255,.10);border:1px solid rgba(124,92,255,.20);color:#7c5cff;font-size:13px;font-weight:800;margin-bottom:20px}
+    .hero h1{font-size:clamp(28px,5vw,44px);font-weight:950;letter-spacing:-.055em;background:linear-gradient(90deg,#34275f 0%,#7c5cff 48%,#b46bff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.1;margin-bottom:10px}
+    .hero-sub{color:var(--muted);font-size:15px;line-height:1.8;margin-bottom:6px}
+    .hero-en{color:#a09abd;font-size:13px;line-height:1.7}
+
+    /* ── Service Description ── */
+    .service-block{max-width:1100px;margin:0 auto 40px;padding:0 24px}
+    .service-card{background:rgba(255,255,255,.85);border:1px solid rgba(124,92,255,.14);border-radius:24px;padding:28px 32px;box-shadow:var(--shadow);display:grid;grid-template-columns:1fr 1fr;gap:28px}
+    .service-lang{font-size:11px;font-weight:900;color:#b46bff;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+    .service-title{font-size:19px;font-weight:900;color:#30294d;margin-bottom:8px;line-height:1.3}
+    .service-desc{font-size:14px;color:#756c9d;line-height:1.85}
+    .service-divider{border:0;border-left:1px solid rgba(124,92,255,.14);display:none}
+
+    /* ── Pricing ── */
+    .pricing-wrap{max-width:1100px;margin:0 auto;padding:0 24px 60px}
+    .group{margin-bottom:32px}
+    .group-header{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(124,92,255,.12)}
+    .group-title-ja{font-size:18px;font-weight:900;color:#4d4770}
+    .group-title-en{font-size:13px;font-weight:700;color:var(--muted)}
+    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+    .cards.ai-cards{grid-template-columns:repeat(2,minmax(200px,1fr));max-width:580px}
+    .card{background:linear-gradient(180deg,#fff 0%,rgba(248,246,255,.95) 100%);border:1px solid rgba(124,92,255,.15);border-radius:var(--radius);padding:22px 18px 18px;box-shadow:0 8px 24px rgba(105,80,200,.09);display:flex;flex-direction:column;gap:4px;transition:.16s ease}
+    .card:hover{transform:translateY(-4px);box-shadow:0 20px 48px rgba(105,80,200,.18);border-color:rgba(124,92,255,.30)}
+    .card-label{font-size:10px;font-weight:900;color:#9089bc;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
+    .card-name-ja{font-size:15px;font-weight:800;color:#30294d;line-height:1.3}
+    .card-name-en{font-size:12px;color:var(--muted);line-height:1.3;margin-bottom:4px}
+    .card-price{font-size:28px;font-weight:950;background:linear-gradient(135deg,#6f55ff,#b46bff);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-.04em;line-height:1.1;margin:8px 0 6px}
+    .card-currency{font-size:14px;font-weight:800}
+    .card-desc-ja{font-size:12px;color:#756c9d;line-height:1.6;flex:1}
+    .card-desc-en{font-size:11px;color:#a09abd;line-height:1.55;margin-top:4px}
+    .card-type{display:inline-flex;align-items:center;gap:4px;margin-top:10px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:800;background:rgba(124,92,255,.08);color:#8b6bff}
+    .card-type.limited{background:rgba(240,163,49,.10);color:#c07c00}
+
+    /* ── Payment Info ── */
+    .info-block{max-width:1100px;margin:0 auto 48px;padding:0 24px}
+    .info-card{background:rgba(255,255,255,.80);border:1px solid rgba(124,92,255,.12);border-radius:24px;padding:28px 32px;box-shadow:0 6px 20px rgba(105,80,200,.07)}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+    .info-section-label{font-size:11px;font-weight:900;color:#b46bff;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+    .info-section h3{font-size:15px;font-weight:800;color:#30294d;margin-bottom:6px}
+    .info-section p{font-size:13px;color:#756c9d;line-height:1.8}
+    .stripe-badge{display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:8px 14px;border-radius:12px;background:rgba(99,91,255,.08);border:1px solid rgba(99,91,255,.18);font-size:12px;font-weight:800;color:#5851db}
+
+    /* ── Footer ── */
+    footer{text-align:center;padding:24px;color:var(--muted);font-size:13px;line-height:1.8;border-top:1px solid rgba(124,92,255,.10)}
+    footer a{color:var(--primary)}
+
+    @media(max-width:700px){
+      .service-card{grid-template-columns:1fr}
+      .service-divider{display:none}
+      .cards{grid-template-columns:repeat(2,1fr)}
+      .cards.ai-cards{grid-template-columns:1fr}
+      .info-grid{grid-template-columns:1fr}
+      .site-header{padding:20px 16px 16px}
+      .hero{padding:32px 16px 28px}
+      .pricing-wrap,.service-block,.info-block{padding-left:16px;padding-right:16px}
+      .service-card,.info-card{padding:20px 18px}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header class="site-header">
+  <a href="/" class="logo">
+    <div class="logo-icon">百</div>
+    <div>
+      <div class="logo-name">百納単語</div>
+      <div class="logo-sub">Japanese Vocabulary App</div>
+    </div>
+  </a>
+  <a href="/" class="header-cta">アプリを開く / Open App</a>
+</header>
+
+<!-- ── Hero ── -->
+<div class="hero">
+  <div class="lang-badge">🇯🇵 日本語 &nbsp;·&nbsp; 🇺🇸 English</div>
+  <h1>料金プラン / Pricing</h1>
+  <p class="hero-sub">すべての料金は日本円（JPY）表示です。一度かぎりのお支払い（※30日間無制限プランを除く）。</p>
+  <p class="hero-en">All prices are in Japanese Yen (JPY). One-time payments unless noted. Payment processed securely by Stripe.</p>
+</div>
+
+<!-- ── Service Description ── -->
+<div class="service-block">
+  <div class="service-card">
+    <div>
+      <div class="service-lang">🇯🇵 日本語</div>
+      <div class="service-title">百納単語とは</div>
+      <p class="service-desc">日本語の単語帳アプリです。単語をフォルダ別に整理し、AI による読み仮名・意味検索、間隔反復による復習、PDF・テキストからの一括インポートが可能です。デフォルトで最大500語まで保存でき、拡張パックで上限を増やせます。AI機能は豆包（Doubao）とGemini APIを使用しています。</p>
+    </div>
+    <div>
+      <div class="service-lang">🇺🇸 English</div>
+      <div class="service-title">What is 百納単語?</div>
+      <p class="service-desc">A Japanese vocabulary flashcard app. Organize words by folder, look up readings and meanings via AI (Doubao / Gemini), review with spaced repetition, and bulk-import from PDF or text files. The default plan stores up to 500 words. Expansion packs permanently increase your word limit. AI features use Doubao and Gemini APIs.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── Pricing ── -->
+<div class="pricing-wrap">
+
+  <!-- Word Limit Packs -->
+  <div class="group">
+    <div class="group-header">
+      <span class="group-title-ja">📦 単語上限拡張パック</span>
+      <span class="group-title-en">Word Limit Expansion Packs</span>
+    </div>
+    <div class="cards">
+
+      <div class="card">
+        <div class="card-label">Starter</div>
+        <div class="card-name-ja">単語 +10 パック</div>
+        <div class="card-name-en">+10 Word Limit Pack</div>
+        <div class="card-price">¥50</div>
+        <div class="card-desc-ja">単語保存上限を永久に +10 増加。まず決済テストをしたい方向け。</div>
+        <div class="card-desc-en">Permanently adds 10 to your word storage limit. Great for testing the payment flow.</div>
+        <span class="card-type">一回払い / One-time</span>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Small</div>
+        <div class="card-name-ja">単語 +50 パック</div>
+        <div class="card-name-en">+50 Word Limit Pack</div>
+        <div class="card-price">¥120</div>
+        <div class="card-desc-ja">単語保存上限を永久に +50 増加。小規模な拡張に最適。</div>
+        <div class="card-desc-en">Permanently adds 50 to your word limit. Good for a small expansion.</div>
+        <span class="card-type">一回払い / One-time</span>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Standard</div>
+        <div class="card-name-ja">単語 +100 パック</div>
+        <div class="card-name-en">+100 Word Limit Pack</div>
+        <div class="card-price">¥199</div>
+        <div class="card-desc-ja">単語保存上限を永久に +100 増加。日常的な学習拡張に。</div>
+        <div class="card-desc-en">Permanently adds 100 to your word limit. Ideal for everyday study expansion.</div>
+        <span class="card-type">一回払い / One-time</span>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Large</div>
+        <div class="card-name-ja">単語 +500 パック</div>
+        <div class="card-name-en">+500 Word Limit Pack</div>
+        <div class="card-price">¥299</div>
+        <div class="card-desc-ja">単語保存上限を永久に +500 増加。大量インポート向け。</div>
+        <div class="card-desc-en">Permanently adds 500 to your word limit. For users importing large vocabulary sets.</div>
+        <span class="card-type">一回払い / One-time</span>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Unlimited</div>
+        <div class="card-name-ja">無制限ワード 30日間</div>
+        <div class="card-name-en">Unlimited Words — 30 Days</div>
+        <div class="card-price">¥399</div>
+        <div class="card-desc-ja">30日間、単語数の上限なしで利用可能。期限付き権限。</div>
+        <div class="card-desc-en">No word limit for 30 days. Time-limited access — expires after 30 days.</div>
+        <span class="card-type limited">30日間限定 / 30-Day Access</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- AI Packs -->
+  <div class="group">
+    <div class="group-header">
+      <span class="group-title-ja">🤖 AI クエリパック</span>
+      <span class="group-title-en">AI Query Packs</span>
+    </div>
+    <div class="cards ai-cards">
+
+      <div class="card">
+        <div class="card-label">Starter</div>
+        <div class="card-name-ja">AI 5回体験パック</div>
+        <div class="card-name-en">AI 5 Queries — Starter Pack</div>
+        <div class="card-price">¥50</div>
+        <div class="card-desc-ja">文章からの単語抽出・読み仮名生成・中国語訳生成に使用。AI機能1回につき1クエリ消費。</div>
+        <div class="card-desc-en">Used for article word extraction, reading generation, and meaning lookup. Each AI action consumes 1 query.</div>
+        <span class="card-type">一回払い / One-time</span>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Pro</div>
+        <div class="card-name-ja">AI 100回使用パック</div>
+        <div class="card-name-en">AI 100 Queries — Pro Pack</div>
+        <div class="card-price">¥299</div>
+        <div class="card-desc-ja">大量の文章インポートに最適。豆包（Doubao）/ Gemini API を使用、1操作につき1クエリ消費。</div>
+        <div class="card-desc-en">Best for bulk article imports. Uses Doubao / Gemini API. Each AI operation consumes 1 query.</div>
+        <span class="card-type">一回払い / One-time</span>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Payment & Policy Info ── -->
+<div class="info-block">
+  <div class="info-card">
+    <div class="info-grid">
+      <div class="info-section">
+        <div class="info-section-label">🇯🇵 お支払いについて</div>
+        <h3>決済・返金ポリシー</h3>
+        <p>お支払いは Stripe によって安全に処理されます。決済成功後、権限は自動的にアカウントへ付与されます。デジタルコンテンツの性質上、原則として返金はお受けできません。技術的な問題が発生した場合はアプリ内の「連絡 / フィードバック」よりお問い合わせください。</p>
+        <div class="stripe-badge">🔒 Powered by Stripe — 安全決済</div>
+      </div>
+      <div class="info-section">
+        <div class="info-section-label">🇺🇸 Payment Information</div>
+        <h3>Payment &amp; Refund Policy</h3>
+        <p>All payments are processed securely by Stripe. Upon successful payment, entitlements are automatically credited to your account via Stripe Webhook. Due to the nature of digital goods, all sales are final and non-refundable unless a technical issue prevents delivery. For support, use the in-app feedback feature.</p>
+        <div class="stripe-badge">🔒 Powered by Stripe — Secure Payments</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <p>百納単語 &nbsp;·&nbsp; Japanese Vocabulary Flashcard App</p>
+  <p style="margin-top:6px">
+    <a href="/">アプリを開く / Open App</a>
+    &nbsp;·&nbsp;
+    お問い合わせ / Contact: アプリ内フィードバック機能をご利用ください / Use in-app feedback
+  </p>
+  <p style="margin-top:8px;font-size:12px;color:#b0a9cc">© 2025 百納単語. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
