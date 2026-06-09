@@ -53,12 +53,23 @@
 
     <section class="panel hidden" id="view-study">
       <h2>学习</h2>
-      <p class="hint">这里把"新学词汇"和"今日复习"合在一起。先新学，再复习，逻辑更像一个学习入口。</p>
+      <p class="hint">选择一个学习文件夹进入。</p>
+      <div class="hub-grid">
+        <button class="hub-card" id="openWordFolderBtn"><div class="hub-icon">📚</div><strong>单词</strong><span>新学词汇和今日复习都收在这里。</span></button>
+        <button class="hub-card" id="openExamTrialBtn"><div class="hub-icon">📝</div><strong>真题试炼</strong><span>历年真题练习入口。</span></button>
+      </div>
+    </section>
+
+    <section class="panel hidden" id="view-word-folder">
+      <h2>单词</h2>
+      <p class="hint">先新学，再复习。这里集中管理单词学习任务。</p>
       <div class="hub-grid">
         <button class="hub-card" id="openLearnHubBtn"><div class="hub-icon">🌱</div><strong>新学词汇</strong><span>选择文件夹后学习还没背过的新词。</span></button>
         <button class="hub-card" id="openReviewHubBtn"><div class="hub-icon">🔁</div><strong>今日复习</strong><span>自动显示今天到期或已经过期的复习词。</span></button>
       </div>
     </section>
+
+    <section class="panel hidden" id="view-exam-trial"><h2>真题试炼</h2><div class="empty-message"><b>建设中</b></div></section>
 
     <section class="panel hidden" id="view-review"><h2>今日复习词汇</h2><p class="hint">这里是系统按日期自动生成的复习任务，不按文件夹手动挑。</p><div class="row"><div><label>每轮最多数量</label><input type="number" id="reviewLimit" value="40" min="1" max="500" /></div><div class="fit"><label>&nbsp;</label><button class="primary" id="startReviewBtn">刷新并开始复习</button></div></div><div id="reviewMount"></div></section>
 
@@ -436,6 +447,13 @@ function tokenizeWithKuromojiWorker(text,timeoutMs=12000){
 const REDEEM_CODES={};
 const REDEEM_SYSTEM_ONLINE=false;
 const LOCAL_DICT={};
+const API_PREFIX=location.hostname.endsWith('.netlify.app')?'/.netlify/functions':'/api';
+function apiUrl(name,params){
+  const url=API_PREFIX+'/'+name;
+  if(!params)return url;
+  const query=new URLSearchParams(params);
+  return url+'?'+query.toString();
+}
 let state=loadState();let queue=[];let current=null;let sessionMode='review';
 let cloudEntitlements={word_limit_bonus:0,ai_quota:0,premium_until:null,unlimited_until:null};let showingDefinition=false;let introGuideShown=false;let authPromptShown=false;let calendarMonth=localTodayISO().slice(0,7);let lastExport={name:'',text:'',type:''};let lookupCache=[];let clearArmed=false;let deleteAccountArmed=false;let articleReadingCache={};let speechVoices=[];
 function localTodayISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
@@ -734,16 +752,36 @@ function answerWord(ans){if(!current)return;const today=todayISO();cardHistory.p
 function undoCard(){if(!cardHistory.length)return;const snap=cardHistory.pop();const word=state.words.find(w=>w.id===snap.id);if(word){word.reviewCount=snap.reviewCount;word.lastAnswer=snap.lastAnswer;word.lastReview=snap.lastReview;word.intervalDays=snap.intervalDays;word.nextReview=snap.nextReview;word.history=snap.history;}queue=snap.queue;current=word||null;showingDefinition=false;saveState();renderCard();if(current&&state.speech.autoSpeak!==false)speak(pronunciation(current));}
 function pronunciation(w){const d=String(w.definition||'');const m='发音：';const i=d.indexOf(m);if(i>=0){let r=d.slice(i+m.length);const j=r.indexOf('；');if(j>=0)r=r.slice(0,j);return r.trim();}return w.word;}
 let _speakAudio=null;
+function speakWithBrowserVoice(text,cfg){
+  if(!window.speechSynthesis){toast('当前浏览器不支持发音');return;}
+  window.speechSynthesis.cancel();
+  const utter=new SpeechSynthesisUtterance(text);
+  const lang='ja-JP';
+  utter.lang=lang;
+  if(cfg.voiceURI){
+    const voice=speechVoices.find(v=>v.voiceURI===cfg.voiceURI);
+    if(voice)utter.voice=voice;
+  }else{
+    const voice=speechVoices.find(v=>v.lang&&v.lang.startsWith(lang.slice(0,2)));
+    if(voice)utter.voice=voice;
+  }
+  utter.rate=Number(cfg.rate||0.9);
+  utter.volume=cfg.volume!=null?Number(cfg.volume):1;
+  utter.pitch=cfg.pitch!=null?Number(cfg.pitch):1;
+  window.speechSynthesis.speak(utter);
+}
 function speak(text){
   if(!text)return;
   if(_speakAudio){_speakAudio.pause();_speakAudio=null;}
   const cfg=state.speech||{};
-  const lang=hasKana(text)?'ja':'zh-CN';
-  const url='/api/tts?text='+encodeURIComponent(text);
+  const url=apiUrl('tts',{text:text});
   const audio=new Audio(url);
   _speakAudio=audio;
   audio.volume=cfg.volume!=null?Number(cfg.volume):1;
-  audio.play().catch(()=>{});
+  let fallbackUsed=false;
+  const fallback=()=>{if(fallbackUsed)return;fallbackUsed=true;speakWithBrowserVoice(text,cfg);};
+  audio.onerror=fallback;
+  audio.play().catch(fallback);
 }
 function refreshSpeechVoices(){
   if(!window.speechSynthesis)return;
@@ -954,7 +992,7 @@ async function lookupOnline(q){
   const {data:sessionData}=await sb.auth.getSession();
   const token=sessionData&&sessionData.session?sessionData.session.access_token:'';
   if(!token){goAuthPage();throw new Error('登录状态已失效');}
-  const res=await fetch('/api/ai-lookup-word',{
+  const res=await fetch(apiUrl('ai-lookup-word'),{
     method:'POST',
     headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
     body:JSON.stringify({word:q})
@@ -1194,7 +1232,7 @@ async function handleImageExtract(importNow){
     const {data:sessionData}=await sb.auth.getSession();
     const token=sessionData&&sessionData.session?sessionData.session.access_token:'';
     if(!token){toast('登录状态已失效，请重新登录');goAuthPage();return;}
-    const res=await fetch('/api/ai-extract-image',{
+    const res=await fetch(apiUrl('ai-extract-image'),{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
       body:JSON.stringify({image:imageDataUrl,maxWords:max})
@@ -1243,7 +1281,7 @@ async function handleAiArticleExtract(importNow){
     const provider=$('aiProviderSelect')?$('aiProviderSelect').value:'auto';
     const providerName=provider==='doubao'?'豆包省钱模式':(provider==='gemini'?'Gemini 稳定模式':'自动选择：豆包优先');
     setArticleProgress(0,3,'正在连接 AI：'+providerName);
-    const res=await fetch('/api/ai-extract-article',{
+    const res=await fetch(apiUrl('ai-extract-article'),{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
       body:JSON.stringify({article:text,maxWords:max,provider:provider})
@@ -1284,7 +1322,7 @@ async function redeemCode(){
   const token=sessionData&&sessionData.session?sessionData.session.access_token:'';
   if(!token){toast('登录状态已失效，请重新登录');goAuthPage();return;}
   try{
-    const res=await fetch('/api/redeem-code',{
+    const res=await fetch(apiUrl('redeem-code'),{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
       body:JSON.stringify({code:code})
@@ -1337,7 +1375,7 @@ async function startCheckout(priceId){
   const status=$('purchaseStatus');
   if(status){status.textContent='正在创建付款页面，请稍等...';status.scrollIntoView({behavior:'smooth',block:'center'});}
   try{
-    const res=await fetch('/api/create-checkout-session',{
+    const res=await fetch(apiUrl('create-checkout-session'),{
       method:'POST',
       headers:{
         'Content-Type':'application/json',
@@ -1371,7 +1409,7 @@ function esc(s){return String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt
 function toCsv(){const lines=[['id','folder','word','definition','nextReview','lastAnswer'].join(',')];for(const w of state.words)lines.push([w.id,folderName(w.folderId),w.word,w.definition,w.nextReview,w.lastAnswer].map(csvCell).join(','));return lines.join(NL);}
 function csvCell(v){let s=String(v||'').replaceAll('"','""');return s.includes(',')||s.includes(NL)?'"'+s+'"':s;}
 async function download(name,text,type){lastExport={name:name,text:text,type:type};$('exportBox').value=text;try{const blob=new Blob([text],{type:type});if(window.showSaveFilePicker){const handle=await window.showSaveFilePicker({suggestedName:name});const w=await handle.createWritable();await w.write(blob);await w.close();toast('已保存到电脑');return;}const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{a.remove();URL.revokeObjectURL(url);},1000);toast('已尝试下载，请看下载文件夹');}catch(e){if(e&&e.name==='AbortError')return;const btn=$('manualDownloadBtn');if(btn)btn.style.display='';toast('未能自动下载，内容已在文本框中');}}
-function parentNavView(view){if(view==='review'||view==='learn')return 'study';if(view==='lookup'||view==='import')return 'add';if(view==='guide')return 'profile';return view;}
+function parentNavView(view){if(view==='word-folder'||view==='exam-trial'||view==='review'||view==='learn')return 'study';if(view==='lookup'||view==='import')return 'add';if(view==='guide')return 'profile';return view;}
 function switchView(view){
   const parent=parentNavView(view);
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.view===parent));
@@ -1391,6 +1429,8 @@ function openNotify(){localStorage.setItem(noticeReadKey(),'1');updateNotifyBadg
 function closeNotify(){$('notifyModal').classList.add('hidden');}
 function runTests(){console.assert(typeof REDEEM_CODES==='object','兑换码配置错误');console.assert(defaultState().folders.length===1,'默认状态错误');}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>switchView(b.dataset.view));
+$('openWordFolderBtn').onclick=()=>switchView('word-folder');
+$('openExamTrialBtn').onclick=()=>switchView('exam-trial');
 $('openLearnHubBtn').onclick=()=>switchView('learn');
 $('openReviewHubBtn').onclick=()=>switchView('review');
 $('openLookupHubBtn').onclick=()=>switchView('lookup');

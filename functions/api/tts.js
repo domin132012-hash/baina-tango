@@ -27,7 +27,7 @@ export async function onRequest(context) {
   const text = new URL(request.url).searchParams.get("text");
   if (!text) return new Response("Missing text", { status: 400 });
 
-  const lang = /[぀-ヿ]/.test(text) ? "ja" : "zh-CN";
+  const lang = "ja";
 
   try {
     const audio = await googleTTS(text, lang);
