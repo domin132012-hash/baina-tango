@@ -66,20 +66,14 @@
       <div class="hub-grid">
         <button class="hub-card" id="openLearnHubBtn"><div class="hub-icon">🌱</div><strong>新学词汇</strong><span>选择文件夹后学习还没背过的新词。</span></button>
         <button class="hub-card" id="openReviewHubBtn"><div class="hub-icon">🔁</div><strong>今日复习</strong><span>自动显示今天到期或已经过期的复习词。</span></button>
-        <button class="hub-card" id="openListenModeBtn"><div class="hub-icon">🎧</div><strong>听声辨词</strong><span>先听发音，判断认识与否。模糊或不认识会展开单词和释义，再确认一次。</span></button>
-        <button class="hub-card" id="openReadModeBtn"><div class="hub-icon">👁</div><strong>看词识义</strong><span>看到单词，猜意思。不认识会展开释义，再确认一次。</span></button>
       </div>
     </section>
 
     <section class="panel hidden" id="view-exam-trial"><h2>真题试炼</h2><div class="empty-message"><b>建设中</b></div></section>
 
-    <section class="panel hidden" id="view-listen-mode"><h2>听声辨词</h2><p class="hint">先听发音，判断是否认识。模糊或不认识时单词和释义会自动展开，再选一次。</p><div class="row"><div><label>选择文件夹</label><select id="listenFolderSelect"></select></div><div><label>本轮数量</label><input type="number" id="listenLimit" value="30" min="1" max="500" /></div><div class="fit"><label>&nbsp;</label><button class="primary" id="startListenBtn">开始练习</button></div></div><div id="listenMount"></div></section>
+    <section class="panel hidden" id="view-review"><h2>今日复习词汇</h2><p class="hint">这里是系统按日期自动生成的复习任务，不按文件夹手动挑。</p><div class="row"><div><label>每轮最多数量</label><input type="number" id="reviewLimit" value="40" min="1" max="500" /></div><div><label>练习模式</label><select id="reviewModeSelect"><option value="default">默认模式</option><option value="listen">🎧 听声辨词</option><option value="read">👁 看词识义</option></select></div><div class="fit"><label>&nbsp;</label><button class="primary" id="startReviewBtn">刷新并开始复习</button></div></div><div id="reviewMount"></div></section>
 
-    <section class="panel hidden" id="view-read-mode"><h2>看词识义</h2><p class="hint">看到单词，判断是否认识意思。不认识时释义会自动展开，再选一次。</p><div class="row"><div><label>选择文件夹</label><select id="readFolderSelect"></select></div><div><label>本轮数量</label><input type="number" id="readLimit" value="30" min="1" max="500" /></div><div class="fit"><label>&nbsp;</label><button class="primary" id="startReadBtn">开始练习</button></div></div><div id="readMount"></div></section>
-
-    <section class="panel hidden" id="view-review"><h2>今日复习词汇</h2><p class="hint">这里是系统按日期自动生成的复习任务，不按文件夹手动挑。</p><div class="row"><div><label>每轮最多数量</label><input type="number" id="reviewLimit" value="40" min="1" max="500" /></div><div class="fit"><label>&nbsp;</label><button class="primary" id="startReviewBtn">刷新并开始复习</button></div></div><div id="reviewMount"></div></section>
-
-    <section class="panel hidden" id="view-learn"><h2>新学词汇</h2><div class="row"><div><label>选择要新学的文件夹</label><select id="learnFolderSelect"></select></div><div><label>本轮新学数量</label><input type="number" id="learnLimit" value="30" min="1" max="500" /></div><div class="fit"><label>&nbsp;</label><button class="primary" id="startLearnBtn">开始新学</button></div></div><div id="learnFolderInfo" class="hint" style="margin-top:8px"></div><div id="learnMount"></div></section>
+    <section class="panel hidden" id="view-learn"><h2>新学词汇</h2><div class="row"><div><label>选择要新学的文件夹</label><select id="learnFolderSelect"></select></div><div><label>本轮新学数量</label><input type="number" id="learnLimit" value="30" min="1" max="500" /></div><div><label>练习模式</label><select id="learnModeSelect"><option value="default">默认模式</option><option value="listen">🎧 听声辨词</option><option value="read">👁 看词识义</option></select></div><div class="fit"><label>&nbsp;</label><button class="primary" id="startLearnBtn">开始新学</button></div></div><div id="learnFolderInfo" class="hint" style="margin-top:8px"></div><div id="learnMount"></div></section>
 
     <section class="panel hidden" id="view-lookup"><h2>查词收藏</h2><p class="hint">输入日语单词后，系统会用豆包生成最精简的中文释义。限制：假名长度最多 10 个；如果输入汉字词，会按 AI 返回的假名长度判断，超过 10 个会拒绝保存。</p><div class="row"><div><label>查询单词</label><input id="lookupQuery" placeholder="例如：二つ / テキスト / 検討" maxlength="24" /></div><div class="fit"><label>&nbsp;</label><button class="primary" id="lookupBtn">查询</button></div></div><div class="row" style="margin-top:10px"><div><label>收藏到文件夹</label><select id="lookupFolderSelect"></select></div><div><label>或者新建文件夹名</label><input id="lookupNewFolderName" placeholder="例如：查词收藏 / 今日生词" /></div></div><p class="hint" id="lookupStatus"></p><div id="lookupResults" class="grid" style="margin-top:12px"></div></section>
 
@@ -761,15 +755,6 @@ function listenCardHtml(){
     +'<div class="actions"><button class="red" id="listenBtnUnknown">不认识</button><button class="orange" id="listenBtnFuzzy">模糊</button><button class="green" id="listenBtnKnown">认识</button></div>'
     +'</div><p class="hint" id="listenQueueInfo"></p>';
 }
-function buildListenQueue(){
-  const f=$('listenFolderSelect').value;
-  const limit=Number($('listenLimit').value||30);
-  listenQueue=state.words.filter(w=>!f||w.folderId===f).sort((a,b)=>a.id-b.id).slice(0,limit).map(w=>w.id);
-  if(!listenQueue.length){toast('当前文件夹没有单词');return;}
-  $('listenMount').innerHTML=listenCardHtml();
-  bindListenCard();
-  nextListenCard();
-}
 function bindListenCard(){
   $('listenAgainBtn').onclick=function(){if(listenCurrent)speak(pronunciation(listenCurrent));};
   $('listenShowWordBtn').onclick=function(){
@@ -832,15 +817,6 @@ function readCardHtml(){
     +'<div class="actions"><button class="red" id="readBtnUnknown">不认识</button><button class="green" id="readBtnKnown">认识</button></div>'
     +'</div><p class="hint" id="readQueueInfo"></p>';
 }
-function buildReadQueue(){
-  const f=$('readFolderSelect').value;
-  const limit=Number($('readLimit').value||30);
-  readQueue=state.words.filter(w=>!f||w.folderId===f).sort((a,b)=>a.id-b.id).slice(0,limit).map(w=>w.id);
-  if(!readQueue.length){toast('当前文件夹没有单词');return;}
-  $('readMount').innerHTML=readCardHtml();
-  bindReadCard();
-  nextReadCard();
-}
 function bindReadCard(){
   $('readShowDefBtn').onclick=function(){
     const el=$('readDefArea');
@@ -884,8 +860,23 @@ function answerRead(ans){
 }
 function cardHtml(){return '<div class="card review-card" style="margin-top:14px"><div><div class="word-id" id="reviewMeta">暂无单词</div><div class="word-main" id="reviewWord">请先导入单词</div></div><div><button class="ghost" id="wordVisibilityBtn">隐藏单词</button><button class="ghost" id="showDefBtn" style="margin-left:8px">显示释义</button><button class="ghost" id="speakBtn" style="margin-left:8px">再读一遍</button><button class="ghost" id="btnPrev" style="margin-left:8px" disabled>上一个</button><div class="definition-box hidden" id="reviewDef"></div></div><div class="actions"><button class="red" id="btnUnknown">不认识</button><button class="orange" id="btnFuzzy">模糊</button><button class="green" id="btnKnown">认识</button></div></div><p class="hint" id="queueInfo"></p>';}
 function mountCard(id){cardHistory=[];$('reviewMount').innerHTML='';$('learnMount').innerHTML='';$(id).innerHTML=cardHtml();bindCard();nextCard();}
-function buildReviewQueue(){sessionMode='review';queue=dueWords().sort((a,b)=>a.id-b.id).slice(0,Number($('reviewLimit').value||40)).map(w=>w.id);mountCard('reviewMount');}
-function buildLearnQueue(){sessionMode='learn';const f=$('learnFolderSelect').value;queue=state.words.filter(w=>w.folderId===f&&isNewWord(w)).sort((a,b)=>a.id-b.id).slice(0,Number($('learnLimit').value||30)).map(w=>w.id);mountCard('learnMount');}
+function buildReviewQueue(){
+  sessionMode='review';
+  const mode=($('reviewModeSelect')&&$('reviewModeSelect').value)||'default';
+  queue=dueWords().sort((a,b)=>a.id-b.id).slice(0,Number($('reviewLimit').value||40)).map(w=>w.id);
+  if(mode==='listen'){listenQueue=[...queue];$('reviewMount').innerHTML=listenCardHtml();bindListenCard();nextListenCard();}
+  else if(mode==='read'){readQueue=[...queue];$('reviewMount').innerHTML=readCardHtml();bindReadCard();nextReadCard();}
+  else mountCard('reviewMount');
+}
+function buildLearnQueue(){
+  sessionMode='learn';
+  const f=$('learnFolderSelect').value;
+  const mode=($('learnModeSelect')&&$('learnModeSelect').value)||'default';
+  queue=state.words.filter(w=>w.folderId===f&&isNewWord(w)).sort((a,b)=>a.id-b.id).slice(0,Number($('learnLimit').value||30)).map(w=>w.id);
+  if(mode==='listen'){listenQueue=[...queue];$('learnMount').innerHTML=listenCardHtml();bindListenCard();nextListenCard();}
+  else if(mode==='read'){readQueue=[...queue];$('learnMount').innerHTML=readCardHtml();bindReadCard();nextReadCard();}
+  else mountCard('learnMount');
+}
 function bindCard(){$('showDefBtn').onclick=()=>{showingDefinition=!showingDefinition;renderCard();};$('speakBtn').onclick=()=>{if(current)speak(pronunciation(current));};$('wordVisibilityBtn').onclick=()=>{const key='word-hidden';localStorage.setItem(key,localStorage.getItem(key)==='1'?'0':'1');renderCard();};$('btnUnknown').onclick=()=>answerWord('unknown');$('btnFuzzy').onclick=()=>answerWord('fuzzy');$('btnKnown').onclick=()=>answerWord('known');$('btnPrev').onclick=()=>undoCard();}
 function nextCard(){const id=queue.shift();current=id?state.words.find(w=>w.id===id):null;showingDefinition=false;renderCard();if(current&&state.speech.autoSpeak!==false)speak(pronunciation(current));}
 function renderCard(){if(!$('reviewWord'))return;const prevBtn=$('btnPrev');if(prevBtn)prevBtn.disabled=cardHistory.length===0;if(!current){$('reviewMeta').textContent='本轮结束';$('reviewWord').textContent=state.words.length?'这轮背完了':'请先导入单词';$('reviewDef').classList.add('hidden');$('queueInfo').textContent='';return;}$('reviewMeta').textContent='#'+current.id+' ｜文件夹：'+folderName(current.folderId)+' ｜已复习 '+(current.reviewCount||0)+' 次｜下次：'+(current.nextReview||'未安排');$('reviewWord').textContent=localStorage.getItem('word-hidden')==='1'?'':current.word;$('wordVisibilityBtn').textContent=localStorage.getItem('word-hidden')==='1'?'显示单词':'隐藏单词';$('reviewDef').textContent=current.definition||'这个词还没有释义。';$('reviewDef').classList.toggle('hidden',!showingDefinition);$('showDefBtn').textContent=showingDefinition?'隐藏释义':'显示释义';$('queueInfo').textContent='本轮剩余：'+queue.length+' 个';}
@@ -1445,7 +1436,7 @@ async function handleAiArticleExtract(importNow){
   }
 }
 function renderAll(){const total=state.words.length;const due=dueWords().length;const fresh=state.words.filter(isNewWord).length;$('statFolders').textContent=state.folders.length;$('statTotal').textContent=total+'/'+(getLimit()===Infinity?'∞':getLimit());$('statReview').textContent=due;$('statNew').textContent=fresh;$('navDue').textContent=due;const ns=$('navStudy');if(ns)ns.textContent=due+fresh;$('navTotal').textContent=total;renderSelects();renderTables();renderProfile();renderCheckin();}
-function renderSelects(){const opts=state.folders.map(f=>'<option value="'+esc(f.id)+'">'+esc(f.name)+'</option>').join('');for(const id of ['importFolderSelect','learnFolderSelect','singleFolderSelect','lookupFolderSelect','listenFolderSelect','readFolderSelect']){const el=$(id);if(el){const old=el.value;el.innerHTML=opts;if(old)el.value=old;}}const lib=$('libraryFolderFilter');if(lib){const old=lib.value;lib.innerHTML='<option value="">全部文件夹</option>'+opts;if(old)lib.value=old;}updateLearnFolderInfo();}
+function renderSelects(){const opts=state.folders.map(f=>'<option value="'+esc(f.id)+'">'+esc(f.name)+'</option>').join('');for(const id of ['importFolderSelect','learnFolderSelect','singleFolderSelect','lookupFolderSelect']){const el=$(id);if(el){const old=el.value;el.innerHTML=opts;if(old)el.value=old;}}const lib=$('libraryFolderFilter');if(lib){const old=lib.value;lib.innerHTML='<option value="">全部文件夹</option>'+opts;if(old)lib.value=old;}updateLearnFolderInfo();}
 function updateLearnFolderInfo(){const info=$('learnFolderInfo');if(!info)return;const sel=$('learnFolderSelect');const fid=sel?sel.value:'';const cnt=fid?state.words.filter(w=>w.folderId===fid&&isNewWord(w)).length:0;info.textContent=fid?'当前文件夹未新学：'+cnt+' 个':'选择文件夹后开始新学。';}
 function renderTables(){if($('folderTable')){$('folderTable').innerHTML=state.folders.map(f=>{const ws=state.words.filter(w=>w.folderId===f.id);return '<tr><td><b>'+esc(f.name)+'</b></td><td>'+ws.length+'</td><td>'+ws.filter(isNewWord).length+'</td><td>'+ws.filter(w=>isDue(w)).length+'</td></tr>';}).join('');}if($('wordTable')){const q=norm($('searchInput')?$('searchInput').value:'').toLowerCase();const ff=$('libraryFolderFilter')?$('libraryFolderFilter').value:'';const rows=state.words.filter(w=>(!ff||w.folderId===ff)&&(!q||String(w.word).toLowerCase().includes(q)||String(w.definition).toLowerCase().includes(q)||String(w.id).includes(q)));$('wordTable').innerHTML=rows.map(w=>'<tr><td>#'+w.id+'</td><td>'+esc(folderName(w.folderId))+'</td><td><b>'+esc(w.word)+'</b></td><td class="truncate">'+esc(w.definition||'未填写')+'</td><td><span class="pill '+(isDue(w)?'due':'new')+'">'+esc(w.nextReview||'未安排')+'</span></td><td>'+(w.reviewCount||0)+'</td><td><span class="pill">'+esc(w.lastAnswer||'新词')+'</span></td><td><button class="ghost small" data-edit="'+w.id+'">编辑</button><button class="red small" data-del="'+w.id+'">删</button></td></tr>').join('');}}
 function renderProfile(){renderCloudStatus();renderAvatar();const nameInput=$('profileNameInput');if(nameInput&&document.activeElement!==nameInput)nameInput.value=currentDisplayName();if(!$('profileUsed'))return;$('profileUsed').textContent=state.words.length;$('profileLimit').textContent=getLimit()===Infinity?'∞':getLimit();$('profileRemain').textContent=getLimit()===Infinity?'∞':Math.max(0,getLimit()-state.words.length);$('profileCodes').textContent=state.redeemedCodes.length;$('redeemCodeTable').innerHTML=Object.entries(REDEEM_CODES).map(([c,i])=>'<tr><td>'+i.label+'</td><td>'+c+'</td><td>'+i.label+'</td></tr>').join('');$('redeemedList').innerHTML=state.redeemedCodes.length?state.redeemedCodes.map(r=>'<span class="pill">'+esc(r.code)+' ｜ '+esc(r.label)+' ｜ '+esc(r.date)+'</span>').join(' '):'暂无兑换记录。';renderSpeechSettings();}
@@ -1550,7 +1541,7 @@ function esc(s){return String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt
 function toCsv(){const lines=[['id','folder','word','definition','nextReview','lastAnswer'].join(',')];for(const w of state.words)lines.push([w.id,folderName(w.folderId),w.word,w.definition,w.nextReview,w.lastAnswer].map(csvCell).join(','));return lines.join(NL);}
 function csvCell(v){let s=String(v||'').replaceAll('"','""');return s.includes(',')||s.includes(NL)?'"'+s+'"':s;}
 async function download(name,text,type){lastExport={name:name,text:text,type:type};$('exportBox').value=text;try{const blob=new Blob([text],{type:type});if(window.showSaveFilePicker){const handle=await window.showSaveFilePicker({suggestedName:name});const w=await handle.createWritable();await w.write(blob);await w.close();toast('已保存到电脑');return;}const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{a.remove();URL.revokeObjectURL(url);},1000);toast('已尝试下载，请看下载文件夹');}catch(e){if(e&&e.name==='AbortError')return;const btn=$('manualDownloadBtn');if(btn)btn.style.display='';toast('未能自动下载，内容已在文本框中');}}
-function parentNavView(view){if(view==='word-folder'||view==='exam-trial'||view==='review'||view==='learn'||view==='listen-mode'||view==='read-mode')return 'study';if(view==='lookup'||view==='import')return 'add';if(view==='guide')return 'profile';return view;}
+function parentNavView(view){if(view==='word-folder'||view==='exam-trial'||view==='review'||view==='learn')return 'study';if(view==='lookup'||view==='import')return 'add';if(view==='guide')return 'profile';return view;}
 function switchView(view){
   const parent=parentNavView(view);
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.view===parent));
@@ -1560,8 +1551,6 @@ function switchView(view){
   window.scrollTo({top:0,left:0,behavior:'auto'});
   if(view==='review')buildReviewQueue();
   if(view==='learn')$('learnMount').innerHTML='';
-  if(view==='listen-mode')$('listenMount').innerHTML='';
-  if(view==='read-mode')$('readMount').innerHTML='';
   renderAll();
 }
 function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),2500);}
@@ -1576,10 +1565,7 @@ $('openWordFolderBtn').onclick=()=>switchView('word-folder');
 $('openExamTrialBtn').onclick=()=>switchView('exam-trial');
 $('openLearnHubBtn').onclick=()=>switchView('learn');
 $('openReviewHubBtn').onclick=()=>switchView('review');
-$('openListenModeBtn').onclick=()=>switchView('listen-mode');
-$('openReadModeBtn').onclick=()=>switchView('read-mode');
-$('startListenBtn').onclick=buildListenQueue;
-$('startReadBtn').onclick=buildReadQueue;
+
 $('openLookupHubBtn').onclick=()=>switchView('lookup');
 $('openImportHubBtn').onclick=()=>switchView('import');
 $('notifyBtn').onclick=openNotify;
