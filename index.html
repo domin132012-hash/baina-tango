@@ -748,7 +748,7 @@ function listenCardHtml(){
   return '<div class="card review-card" style="margin-top:14px">'
     +'<div id="listenPhaseBar" style="margin-bottom:8px;font-size:13px;color:#8b86a3;font-weight:700"></div>'
     +'<div style="margin-bottom:12px"><button class="ghost" id="listenAgainBtn">🔊 再听一遍</button></div>'
-    +'<div class="word-main" id="listenWordEl" style="min-height:48px;margin-bottom:8px;visibility:hidden">&nbsp;</div>'
+    +'<div class="word-main" id="listenWordEl" style="margin-bottom:8px;display:none"></div>'
     +'<div id="listenDefArea" class="definition-box" style="visibility:hidden;margin-bottom:12px"></div>'
     +'<div style="margin-bottom:12px"><button class="ghost" id="listenShowWordBtn">显示单词</button>'
     +'<button class="ghost" id="listenShowDefBtn" style="margin-left:8px">显示意思</button></div>'
@@ -759,7 +759,7 @@ function bindListenCard(){
   $('listenAgainBtn').onclick=function(){if(listenCurrent)speak(pronunciation(listenCurrent));};
   $('listenShowWordBtn').onclick=function(){
     const el=$('listenWordEl');
-    if(el&&listenCurrent){el.textContent=listenCurrent.word;el.style.visibility='visible';$('listenShowWordBtn').disabled=true;}
+    if(el&&listenCurrent){el.textContent=listenCurrent.word;el.style.display='block';$('listenShowWordBtn').disabled=true;}
   };
   $('listenShowDefBtn').onclick=function(){
     const el=$('listenDefArea');
@@ -788,8 +788,8 @@ function renderListenCard(){
   const rev=listenPhase==='review';
   $('listenPhaseBar').textContent=rev?'再次确认（已展开）— 再选一次后进入下一个':'初次判断';
   const wEl=$('listenWordEl');
-  if(rev){wEl.textContent=listenCurrent.word;wEl.style.visibility='visible';}
-  else{wEl.textContent='';wEl.style.visibility='hidden';}
+  if(rev){wEl.textContent=listenCurrent.word;wEl.style.display='block';}
+  else{wEl.style.display='none';wEl.textContent='';}
   const defEl=$('listenDefArea');
   if(rev){defEl.textContent=listenCurrent.definition||'暂无释义';defEl.style.visibility='visible';}
   else{defEl.style.visibility='hidden';defEl.textContent='';}
@@ -808,7 +808,7 @@ function answerListen(ans){
     var bar=$('listenPhaseBar');
     var swb=$('listenShowWordBtn');
     var sdb=$('listenShowDefBtn');
-    if(wEl){wEl.textContent=listenCurrent.word;wEl.style.visibility='visible';}
+    if(wEl){wEl.textContent=listenCurrent.word;wEl.style.display='block';}
     if(defEl){defEl.textContent=listenCurrent.definition||'暂无释义';defEl.style.visibility='visible';}
     if(bar)bar.textContent='再次确认（已展开）— 再选一次后进入下一个';
     if(swb)swb.disabled=true;
