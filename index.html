@@ -749,7 +749,7 @@ function listenCardHtml(){
     +'<div id="listenPhaseBar" style="margin-bottom:8px;font-size:13px;color:#8b86a3;font-weight:700"></div>'
     +'<div style="margin-bottom:12px"><button class="ghost" id="listenAgainBtn">🔊 再听一遍</button></div>'
     +'<div class="word-main" id="listenWordEl" style="min-height:48px;margin-bottom:8px;visibility:hidden">&nbsp;</div>'
-    +'<div id="listenDefArea" class="definition-box hidden" style="margin-bottom:12px"></div>'
+    +'<div id="listenDefArea" class="definition-box" style="display:none;margin-bottom:12px"></div>'
     +'<div style="margin-bottom:12px"><button class="ghost" id="listenShowWordBtn">显示单词</button>'
     +'<button class="ghost" id="listenShowDefBtn" style="margin-left:8px">显示意思</button></div>'
     +'<div class="actions"><button class="red" id="listenBtnUnknown">不认识</button><button class="orange" id="listenBtnFuzzy">模糊</button><button class="green" id="listenBtnKnown">认识</button></div>'
@@ -763,7 +763,7 @@ function bindListenCard(){
   };
   $('listenShowDefBtn').onclick=function(){
     const el=$('listenDefArea');
-    if(el&&listenCurrent){el.textContent=listenCurrent.definition||'暂无释义';el.classList.remove('hidden');$('listenShowDefBtn').disabled=true;}
+    if(el&&listenCurrent){el.textContent=listenCurrent.definition||'暂无释义';el.style.display='block';$('listenShowDefBtn').disabled=true;}
   };
   $('listenBtnUnknown').onclick=function(){answerListen('unknown');};
   $('listenBtnFuzzy').onclick=function(){answerListen('fuzzy');};
@@ -791,8 +791,8 @@ function renderListenCard(){
   if(rev){wEl.textContent=listenCurrent.word;wEl.style.visibility='visible';}
   else{wEl.textContent='';wEl.style.visibility='hidden';}
   const defEl=$('listenDefArea');
-  if(rev){defEl.textContent=listenCurrent.definition||'暂无释义';defEl.classList.remove('hidden');}
-  else{defEl.classList.add('hidden');defEl.textContent='';}
+  if(rev){defEl.textContent=listenCurrent.definition||'暂无释义';defEl.style.display='block';}
+  else{defEl.style.display='none';defEl.textContent='';}
   const swb=$('listenShowWordBtn'),sdb=$('listenShowDefBtn');
   if(swb)swb.disabled=rev;
   if(sdb)sdb.disabled=rev;
@@ -802,7 +802,17 @@ function answerListen(ans){
   if(!listenCurrent)return;
   if(listenPhase==='initial'&&(ans==='fuzzy'||ans==='unknown')){
     listenPhase='review';
-    renderListenCard();
+    // 直接展开，不走全量 render，避免 display:none 时序问题
+    var wEl=$('listenWordEl');
+    var defEl=$('listenDefArea');
+    var bar=$('listenPhaseBar');
+    var swb=$('listenShowWordBtn');
+    var sdb=$('listenShowDefBtn');
+    if(wEl){wEl.textContent=listenCurrent.word;wEl.style.visibility='visible';}
+    if(defEl){defEl.textContent=listenCurrent.definition||'暂无释义';defEl.style.display='block';}
+    if(bar)bar.textContent='再次确认（已展开）— 再选一次后进入下一个';
+    if(swb)swb.disabled=true;
+    if(sdb)sdb.disabled=true;
     return;
   }
   nextListenCard();
@@ -812,7 +822,7 @@ function readCardHtml(){
   return '<div class="card review-card" style="margin-top:14px">'
     +'<div id="readPhaseBar" style="margin-bottom:8px;font-size:13px;color:#8b86a3;font-weight:700"></div>'
     +'<div class="word-main" id="readWordEl" style="margin-bottom:8px"></div>'
-    +'<div id="readDefArea" class="definition-box hidden" style="margin-bottom:12px"></div>'
+    +'<div id="readDefArea" class="definition-box" style="display:none;margin-bottom:12px"></div>'
     +'<div style="margin-bottom:12px"><button class="ghost" id="readShowDefBtn">显示意思</button></div>'
     +'<div class="actions"><button class="red" id="readBtnUnknown">不认识</button><button class="green" id="readBtnKnown">认识</button></div>'
     +'</div><p class="hint" id="readQueueInfo"></p>';
@@ -820,7 +830,7 @@ function readCardHtml(){
 function bindReadCard(){
   $('readShowDefBtn').onclick=function(){
     const el=$('readDefArea');
-    if(el&&readCurrent){el.textContent=readCurrent.definition||'暂无释义';el.classList.remove('hidden');$('readShowDefBtn').disabled=true;}
+    if(el&&readCurrent){el.textContent=readCurrent.definition||'暂无释义';el.style.display='block';$('readShowDefBtn').disabled=true;}
   };
   $('readBtnUnknown').onclick=function(){answerRead('unknown');};
   $('readBtnKnown').onclick=function(){answerRead('known');};
@@ -843,8 +853,8 @@ function renderReadCard(){
   $('readPhaseBar').textContent=rev?'再次确认（已展开）— 再选一次后进入下一个':'初次判断';
   $('readWordEl').textContent=readCurrent.word;
   const defEl=$('readDefArea');
-  if(rev){defEl.textContent=readCurrent.definition||'暂无释义';defEl.classList.remove('hidden');}
-  else{defEl.classList.add('hidden');}
+  if(rev){defEl.textContent=readCurrent.definition||'暂无释义';defEl.style.display='block';}
+  else{defEl.style.display='none';}
   const sdb=$('readShowDefBtn');
   if(sdb)sdb.disabled=rev;
   $('readQueueInfo').textContent='本轮剩余：'+readQueue.length+' 个';
@@ -853,7 +863,12 @@ function answerRead(ans){
   if(!readCurrent)return;
   if(readPhase==='initial'&&ans==='unknown'){
     readPhase='review';
-    renderReadCard();
+    var defEl=$('readDefArea');
+    var bar=$('readPhaseBar');
+    var sdb=$('readShowDefBtn');
+    if(defEl){defEl.textContent=readCurrent.definition||'暂无释义';defEl.style.display='block';}
+    if(bar)bar.textContent='再次确认（已展开）— 再选一次后进入下一个';
+    if(sdb)sdb.disabled=true;
     return;
   }
   nextReadCard();
