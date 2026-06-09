@@ -748,9 +748,11 @@ function listenCardHtml(){
   return '<div class="card review-card" style="margin-top:14px">'
     +'<div id="listenPhaseBar" style="margin-bottom:8px;font-size:13px;color:#8b86a3;font-weight:700"></div>'
     +'<div style="margin-bottom:12px"><button class="ghost" id="listenAgainBtn">🔊 再听一遍</button></div>'
-    +'<div class="word-main" id="listenWordEl" style="margin-bottom:8px;display:none"></div>'
-    +'<div id="listenDefArea" class="definition-box" style="visibility:hidden;margin-bottom:12px"></div>'
-    +'<div style="margin-bottom:12px"><button class="ghost" id="listenShowWordBtn">显示单词</button>'
+    +'<div style="min-height:180px;display:flex;flex-direction:column;justify-content:flex-start;gap:8px">'
+    +'<div class="word-main" id="listenWordEl" style="display:none"></div>'
+    +'<div id="listenDefArea" class="definition-box" style="display:none"></div>'
+    +'</div>'
+    +'<div style="margin-top:4px;margin-bottom:12px"><button class="ghost" id="listenShowWordBtn">显示单词</button>'
     +'<button class="ghost" id="listenShowDefBtn" style="margin-left:8px">显示意思</button>'
     +'<button class="ghost" id="listenBtnPrev" style="margin-left:8px" disabled>上一个</button></div>'
     +'<div class="actions"><button class="red" id="listenBtnUnknown">不认识</button><button class="orange" id="listenBtnFuzzy">模糊</button><button class="green" id="listenBtnKnown">认识</button></div>'
@@ -764,7 +766,7 @@ function bindListenCard(){
   };
   $('listenShowDefBtn').onclick=function(){
     const el=$('listenDefArea');
-    if(el&&listenCurrent){el.textContent=listenCurrent.definition||'暂无释义';el.style.visibility='visible';$('listenShowDefBtn').disabled=true;}
+    if(el&&listenCurrent){el.textContent=listenCurrent.definition||'暂无释义';el.style.display='block';$('listenShowDefBtn').disabled=true;}
   };
   $('listenBtnUnknown').onclick=function(){answerListen('unknown');};
   $('listenBtnFuzzy').onclick=function(){answerListen('fuzzy');};
@@ -794,7 +796,7 @@ function renderListenCard(){
   if(!listenCurrent){
     $('listenPhaseBar').textContent='✅ 本轮结束';
     $('listenWordEl').textContent='所有单词已练完';
-    $('listenWordEl').style.visibility='visible';
+    $('listenWordEl').style.display='block';
     $('listenQueueInfo').textContent='';
     return;
   }
@@ -804,8 +806,8 @@ function renderListenCard(){
   if(rev){wEl.textContent=listenCurrent.word;wEl.style.display='block';}
   else{wEl.style.display='none';wEl.textContent='';}
   const defEl=$('listenDefArea');
-  if(rev){defEl.textContent=listenCurrent.definition||'暂无释义';defEl.style.visibility='visible';}
-  else{defEl.style.visibility='hidden';defEl.textContent='';}
+  if(rev){defEl.textContent=listenCurrent.definition||'暂无释义';defEl.style.display='block';}
+  else{defEl.style.display='none';defEl.textContent='';}
   const swb=$('listenShowWordBtn'),sdb=$('listenShowDefBtn');
   if(swb)swb.disabled=rev;
   if(sdb)sdb.disabled=rev;
@@ -823,7 +825,7 @@ function answerListen(ans){
     var swb=$('listenShowWordBtn');
     var sdb=$('listenShowDefBtn');
     if(wEl){wEl.textContent=listenCurrent.word;wEl.style.display='block';}
-    if(defEl){defEl.textContent=listenCurrent.definition||'暂无释义';defEl.style.visibility='visible';}
+    if(defEl){defEl.textContent=listenCurrent.definition||'暂无释义';defEl.style.display='block';}
     if(bar)bar.textContent='再次确认（已展开）— 再选一次后进入下一个';
     if(swb)swb.disabled=true;
     if(sdb)sdb.disabled=true;
@@ -835,8 +837,10 @@ function answerListen(ans){
 function readCardHtml(){
   return '<div class="card review-card" style="margin-top:14px">'
     +'<div id="readPhaseBar" style="margin-bottom:8px;font-size:13px;color:#8b86a3;font-weight:700"></div>'
-    +'<div class="word-main" id="readWordEl" style="margin-bottom:8px"></div>'
-    +'<div id="readDefArea" class="definition-box" style="visibility:hidden;margin-bottom:12px"></div>'
+    +'<div style="min-height:180px;display:flex;flex-direction:column;justify-content:flex-start;gap:8px">'
+    +'<div class="word-main" id="readWordEl"></div>'
+    +'<div id="readDefArea" class="definition-box" style="display:none"></div>'
+    +'</div>'
     +'<div style="margin-bottom:12px"><button class="ghost" id="readShowDefBtn">显示意思</button>'
     +'<button class="ghost" id="readBtnPrev" style="margin-left:8px" disabled>上一个</button></div>'
     +'<div class="actions"><button class="red" id="readBtnUnknown">不认识</button><button class="green" id="readBtnKnown">认识</button></div>'
@@ -845,7 +849,7 @@ function readCardHtml(){
 function bindReadCard(){
   $('readShowDefBtn').onclick=function(){
     const el=$('readDefArea');
-    if(el&&readCurrent){el.textContent=readCurrent.definition||'暂无释义';el.style.visibility='visible';$('readShowDefBtn').disabled=true;}
+    if(el&&readCurrent){el.textContent=readCurrent.definition||'暂无释义';el.style.display='block';$('readShowDefBtn').disabled=true;}
   };
   $('readBtnUnknown').onclick=function(){answerRead('unknown');};
   $('readBtnKnown').onclick=function(){answerRead('known');};
@@ -879,8 +883,8 @@ function renderReadCard(){
   $('readPhaseBar').textContent=rev?'再次确认（已展开）— 再选一次后进入下一个':'初次判断';
   $('readWordEl').textContent=readCurrent.word;
   const defEl=$('readDefArea');
-  if(rev){defEl.textContent=readCurrent.definition||'暂无释义';defEl.style.visibility='visible';}
-  else{defEl.style.visibility='hidden';}
+  if(rev){defEl.textContent=readCurrent.definition||'暂无释义';defEl.style.display='block';}
+  else{defEl.style.display='none';}
   const sdb=$('readShowDefBtn');
   if(sdb)sdb.disabled=rev;
   const rpb=$('readBtnPrev');if(rpb)rpb.disabled=readCardHistory.length===0;
@@ -893,7 +897,7 @@ function answerRead(ans){
     var defEl=$('readDefArea');
     var bar=$('readPhaseBar');
     var sdb=$('readShowDefBtn');
-    if(defEl){defEl.textContent=readCurrent.definition||'暂无释义';defEl.style.visibility='visible';}
+    if(defEl){defEl.textContent=readCurrent.definition||'暂无释义';defEl.style.display='block';}
     if(bar)bar.textContent='再次确认（已展开）— 再选一次后进入下一个';
     if(sdb)sdb.disabled=true;
     return;
