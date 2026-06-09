@@ -741,8 +741,8 @@ function stripNum(s){let i=0;while(i<s.length&&s[i]>='0'&&s[i]<='9')i++;if(i>0){
 function parseJapanesePattern(s){let open=s.indexOf('（');let close=s.indexOf('）',open+1);if(open<1){open=s.indexOf('(');close=s.indexOf(')',open+1);}if(open>0&&close>open){const word=norm(s.slice(0,open));const reading=norm(s.slice(open+1,close));const rest=norm(s.slice(close+1));if(word&&reading)return{word:word,definition:'发音：'+reading+'；释义：'+(rest||'未填写')};}return null;}
 function parseCsv(text){const out=[];for(const line of String(text||'').split(NL)){const item=parseLine(line);if(item)out.push(item);}return out;}
 let cardHistory=[];
-let listenCurrent=null,listenQueue=[],listenPhase='initial';
-let readCurrent=null,readQueue=[],readPhase='initial';
+let listenCurrent=null,listenQueue=[],listenPhase='initial',listenCardHistory=[];
+let readCurrent=null,readQueue=[],readPhase='initial',readCardHistory=[];
 // ── 听声辨词 ──
 function listenCardHtml(){
   return '<div class="card review-card" style="margin-top:14px">'
@@ -751,7 +751,8 @@ function listenCardHtml(){
     +'<div class="word-main" id="listenWordEl" style="margin-bottom:8px;display:none"></div>'
     +'<div id="listenDefArea" class="definition-box" style="visibility:hidden;margin-bottom:12px"></div>'
     +'<div style="margin-bottom:12px"><button class="ghost" id="listenShowWordBtn">显示单词</button>'
-    +'<button class="ghost" id="listenShowDefBtn" style="margin-left:8px">显示意思</button></div>'
+    +'<button class="ghost" id="listenShowDefBtn" style="margin-left:8px">显示意思</button>'
+    +'<button class="ghost" id="listenBtnPrev" style="margin-left:8px" disabled>上一个</button></div>'
     +'<div class="actions"><button class="red" id="listenBtnUnknown">不认识</button><button class="orange" id="listenBtnFuzzy">模糊</button><button class="green" id="listenBtnKnown">认识</button></div>'
     +'</div><p class="hint" id="listenQueueInfo"></p>';
 }
@@ -768,10 +769,22 @@ function bindListenCard(){
   $('listenBtnUnknown').onclick=function(){answerListen('unknown');};
   $('listenBtnFuzzy').onclick=function(){answerListen('fuzzy');};
   $('listenBtnKnown').onclick=function(){answerListen('known');};
+  $('listenBtnPrev').onclick=undoListenCard;
 }
 function nextListenCard(){
+  if(listenCurrent)listenCardHistory.push({id:listenCurrent.id,queue:[...listenQueue],phase:listenPhase});
   const id=listenQueue.shift();
   listenCurrent=id?state.words.find(w=>w.id===id):null;
+  listenPhase='initial';
+  renderListenCard();
+  if(listenCurrent)speak(pronunciation(listenCurrent));
+}
+function undoListenCard(){
+  if(!listenCardHistory.length)return;
+  const snap=listenCardHistory.pop();
+  if(listenCurrent)listenQueue.unshift(listenCurrent.id);
+  listenCurrent=state.words.find(w=>w.id===snap.id)||null;
+  listenQueue=[...snap.queue];
   listenPhase='initial';
   renderListenCard();
   if(listenCurrent)speak(pronunciation(listenCurrent));
@@ -796,6 +809,7 @@ function renderListenCard(){
   const swb=$('listenShowWordBtn'),sdb=$('listenShowDefBtn');
   if(swb)swb.disabled=rev;
   if(sdb)sdb.disabled=rev;
+  const pb=$('listenBtnPrev');if(pb)pb.disabled=listenCardHistory.length===0;
   $('listenQueueInfo').textContent='本轮剩余：'+listenQueue.length+' 个';
 }
 function answerListen(ans){
@@ -823,7 +837,8 @@ function readCardHtml(){
     +'<div id="readPhaseBar" style="margin-bottom:8px;font-size:13px;color:#8b86a3;font-weight:700"></div>'
     +'<div class="word-main" id="readWordEl" style="margin-bottom:8px"></div>'
     +'<div id="readDefArea" class="definition-box" style="visibility:hidden;margin-bottom:12px"></div>'
-    +'<div style="margin-bottom:12px"><button class="ghost" id="readShowDefBtn">显示意思</button></div>'
+    +'<div style="margin-bottom:12px"><button class="ghost" id="readShowDefBtn">显示意思</button>'
+    +'<button class="ghost" id="readBtnPrev" style="margin-left:8px" disabled>上一个</button></div>'
     +'<div class="actions"><button class="red" id="readBtnUnknown">不认识</button><button class="green" id="readBtnKnown">认识</button></div>'
     +'</div><p class="hint" id="readQueueInfo"></p>';
 }
@@ -834,10 +849,21 @@ function bindReadCard(){
   };
   $('readBtnUnknown').onclick=function(){answerRead('unknown');};
   $('readBtnKnown').onclick=function(){answerRead('known');};
+  $('readBtnPrev').onclick=undoReadCard;
 }
 function nextReadCard(){
+  if(readCurrent)readCardHistory.push({id:readCurrent.id,queue:[...readQueue],phase:readPhase});
   const id=readQueue.shift();
   readCurrent=id?state.words.find(w=>w.id===id):null;
+  readPhase='initial';
+  renderReadCard();
+}
+function undoReadCard(){
+  if(!readCardHistory.length)return;
+  const snap=readCardHistory.pop();
+  if(readCurrent)readQueue.unshift(readCurrent.id);
+  readCurrent=state.words.find(w=>w.id===snap.id)||null;
+  readQueue=[...snap.queue];
   readPhase='initial';
   renderReadCard();
 }
@@ -857,6 +883,7 @@ function renderReadCard(){
   else{defEl.style.visibility='hidden';}
   const sdb=$('readShowDefBtn');
   if(sdb)sdb.disabled=rev;
+  const rpb=$('readBtnPrev');if(rpb)rpb.disabled=readCardHistory.length===0;
   $('readQueueInfo').textContent='本轮剩余：'+readQueue.length+' 个';
 }
 function answerRead(ans){
@@ -879,8 +906,8 @@ function buildReviewQueue(){
   sessionMode='review';
   const mode=($('reviewModeSelect')&&$('reviewModeSelect').value)||'default';
   queue=dueWords().sort((a,b)=>a.id-b.id).slice(0,Number($('reviewLimit').value||40)).map(w=>w.id);
-  if(mode==='listen'){listenQueue=[...queue];$('reviewMount').innerHTML=listenCardHtml();bindListenCard();nextListenCard();}
-  else if(mode==='read'){readQueue=[...queue];$('reviewMount').innerHTML=readCardHtml();bindReadCard();nextReadCard();}
+  if(mode==='listen'){listenCardHistory=[];listenQueue=[...queue];$('reviewMount').innerHTML=listenCardHtml();bindListenCard();nextListenCard();}
+  else if(mode==='read'){readCardHistory=[];readQueue=[...queue];$('reviewMount').innerHTML=readCardHtml();bindReadCard();nextReadCard();}
   else mountCard('reviewMount');
 }
 function buildLearnQueue(){
@@ -888,8 +915,8 @@ function buildLearnQueue(){
   const f=$('learnFolderSelect').value;
   const mode=($('learnModeSelect')&&$('learnModeSelect').value)||'default';
   queue=state.words.filter(w=>w.folderId===f&&isNewWord(w)).sort((a,b)=>a.id-b.id).slice(0,Number($('learnLimit').value||30)).map(w=>w.id);
-  if(mode==='listen'){listenQueue=[...queue];$('learnMount').innerHTML=listenCardHtml();bindListenCard();nextListenCard();}
-  else if(mode==='read'){readQueue=[...queue];$('learnMount').innerHTML=readCardHtml();bindReadCard();nextReadCard();}
+  if(mode==='listen'){listenCardHistory=[];listenQueue=[...queue];$('learnMount').innerHTML=listenCardHtml();bindListenCard();nextListenCard();}
+  else if(mode==='read'){readCardHistory=[];readQueue=[...queue];$('learnMount').innerHTML=readCardHtml();bindReadCard();nextReadCard();}
   else mountCard('learnMount');
 }
 function bindCard(){$('showDefBtn').onclick=()=>{showingDefinition=!showingDefinition;renderCard();};$('speakBtn').onclick=()=>{if(current)speak(pronunciation(current));};$('wordVisibilityBtn').onclick=()=>{const key='word-hidden';localStorage.setItem(key,localStorage.getItem(key)==='1'?'0':'1');renderCard();};$('btnUnknown').onclick=()=>answerWord('unknown');$('btnFuzzy').onclick=()=>answerWord('fuzzy');$('btnKnown').onclick=()=>answerWord('known');$('btnPrev').onclick=()=>undoCard();}
