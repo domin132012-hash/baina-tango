@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>百納単語</title>
+  <title>百纳日语</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
     if(!window.supabase){
@@ -26,7 +26,7 @@
   </style>
 </head>
 <body>
-<header><div class="topbar"><div class="brand-area"><h1>百納単語</h1><p class="subtitle">导入、查词、收藏都按文件夹保存；默认总收藏上限 500 词，可用兑换码扩容；"今日复习"会根据电脑日期自动更新。</p></div><button class="notify-btn" id="notifyBtn" title="消息通知" aria-label="消息通知"><i class="notify-icon"><span></span></i></button></div></header>
+<header><div class="topbar"><div class="brand-area"><h1>百纳日语</h1><p class="subtitle">导入、查词、收藏都按文件夹保存；默认总收藏上限 500 词，可用兑换码扩容；"今日复习"会根据电脑日期自动更新。</p></div><button class="notify-btn" id="notifyBtn" title="消息通知" aria-label="消息通知"><i class="notify-icon"><span></span></i></button></div></header>
 <div class="app">
   <nav>
     <button class="tab" data-view="study"><span class="tab-icon">📚</span><span class="tab-label">学习</span><span class="badge" id="navStudy">0</span></button>
@@ -305,13 +305,13 @@
     <div class="notify-head"><h3>消息通知</h3><button class="ghost" id="closeNotifyBtn">关闭</button></div>
     <div class="notice-message">
       <div class="notice-title"><span class="notice-icon">💬</span><span>版本通知</span></div>
-      <div>尊敬的用户，欢迎使用百納単語。当前使用版本为 <b>1.0</b>。后续将会持续推进文本提取单词、AI 植入等功能，敬请期待。</div>
-      <div class="notice-time">百納単語团队</div>
+      <div>尊敬的用户，欢迎使用百纳日语。当前使用版本为 <b>1.0</b>。后续将会持续推进文本提取单词、AI 植入等功能，敬请期待。</div>
+      <div class="notice-time">百纳日语团队</div>
     </div>
     <div class="notice-message">
       <div class="notice-title"><span class="notice-icon">📌</span><span>导入建议</span></div>
       <div>当前版本仍处于持续开发与优化阶段。为确保导入结果的准确性与稳定性，建议用户优先将明确的单词、读音与释义整理为标准文本或表格格式后，再通过「导入/导出」中的手动导入功能进行录入。该方式更稳妥，也更便于后续复习数据管理。文本提取、自动释义补全与 AI 辅助识别等功能将持续迭代，敬请期待。</div>
-      <div class="notice-time">百納単語团队</div>
+      <div class="notice-time">百纳日语团队</div>
     </div>
   </div>
 </div>
@@ -319,7 +319,7 @@
   <div class="intro-card">
     <div class="intro-top">
       <div class="intro-icon">百</div>
-      <div><h2>新用户须知</h2><p>百納単語是帮你整理、背诵和复习日语单词的工具。按下面顺序用，最不容易乱。</p></div>
+      <div><h2>新用户须知</h2><p>百纳日语是帮你整理、背诵和复习日语单词的工具。按下面顺序用，最不容易乱。</p></div>
     </div>
     <div class="intro-steps">
       <div class="intro-step"><span class="intro-num">1</span><div><b>先去「新增」导入单词</b><br>可以手动粘贴、导入文件、识别 PDF，也可以用查词收藏单个单词。</div></div>
@@ -337,7 +337,7 @@
 <div class="auth-modal hidden" id="authPromptModal">
   <div class="auth-card">
     <div class="auth-icon">百</div>
-    <h2>欢迎使用百納単語</h2>
+    <h2>欢迎使用百纳日语</h2>
     <p>当前尚未登录账号。注册邮箱账号后，可以把词库保存到云端，之后换电脑、换手机也能恢复学习数据。</p>
     <div class="auth-points">
       <div>✓ 云端保存词库、复习记录和打卡记录</div>
