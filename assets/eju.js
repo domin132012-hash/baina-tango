@@ -74,6 +74,10 @@ function ejuEsc(str) {
   return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+function ejuJsString(str) {
+  return String(str || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/\r/g, '');
+}
+
 function ejuFormatSec(sec) {
   sec = Math.round(sec || 0);
   if (sec < 60) return sec + 's';
@@ -237,7 +241,7 @@ async function loadEjuReadingList(year, session) {
       html += '<div style="display:flex;gap:6px;flex-wrap:wrap">' + practiced + wrong + tags + '</div>';
       html += '</div>';
       html += '<p style="color:#756c9d;font-size:14px;line-height:1.6;margin:0 0 10px">' + ejuEsc(q.questionPreview) + (q.questionPreview && q.questionPreview.length >= 60 ? '…' : '') + '</p>';
-      html += '<button class="primary" style="width:100%;padding:10px" onclick="startEjuReadingTrain(' + JSON.stringify(ejuEsc(q.id)) + ')">开始训练</button>';
+      html += '<button class="primary" style="width:100%;padding:10px" onclick="startEjuReadingTrain(\'' + ejuJsString(q.id) + '\')">开始训练</button>';
       html += '</div>';
     });
     html += '</div>';
@@ -636,7 +640,7 @@ function renderEjuResult(isCorrect, correctAnswer, explanation, recordId) {
     + '<div id="ejuAiAnalysisMount" style="margin-top:16px"></div>'
     + '<div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">'
     + '<button class="ghost" style="flex:1" onclick="switchView(\'eju-reading-list\')">返回题目列表</button>'
-    + '<button class="primary" style="flex:1" onclick="startEjuReadingTrain(' + JSON.stringify(ejuEsc(q.id||'')) + ')">重新练习</button>'
+    + '<button class="primary" style="flex:1" onclick="startEjuReadingTrain(\'' + ejuJsString(q.id || '') + '\')">重新练习</button>'
     + '</div>';
 
   mount.innerHTML = html;
@@ -669,7 +673,7 @@ async function loadEjuHistory() {
         + '<div style="text-align:right">'
         + '<div style="font-size:20px">' + icon + '</div>'
         + '<div style="font-size:12px;color:#9086ac">' + ejuFormatSec(r.totalElapsed) + '</div>'
-        + '<button class="ghost" style="margin-top:6px;padding:6px 10px;font-size:12px" onclick="startEjuReadingTrain(' + JSON.stringify(ejuEsc(r.questionId)) + ')">重练</button>'
+        + '<button class="ghost" style="margin-top:6px;padding:6px 10px;font-size:12px" onclick="startEjuReadingTrain(\'' + ejuJsString(r.questionId) + '\')">重练</button>'
         + '</div>'
         + '</div>';
     });
