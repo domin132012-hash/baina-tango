@@ -116,6 +116,7 @@ function ejuCatIcon(id) {
 function ejuSelectCategory(catId) {
   if (catId === 'japanese') {
     switchView('eju-japanese');
+    renderEjuJapanese();
   } else {
     if (typeof toast === 'function') toast('该科目暂未开放，敬请期待');
   }
@@ -124,7 +125,35 @@ function ejuSelectCategory(catId) {
 function renderEjuJapanese() {
   var el = document.getElementById('view-eju-japanese');
   if (!el) return;
-  // 内容已在 HTML 里写好，此函数预留用于动态内容
+  var mount = el.querySelector('#ejuJapaneseMount');
+  if (!mount) return;
+  mount.innerHTML = ''
+    + '<div class="eju-skill-grid">'
+    + '<button class="eju-skill-card" onclick="loadEjuReadingSets()">'
+    + '<div class="eju-skill-icon">📖</div>'
+    + '<div class="eju-skill-info">'
+    + '<div class="eju-skill-title">読解</div>'
+    + '<div class="eju-skill-desc">日语阅读四阶段训练</div>'
+    + '</div>'
+    + '<span class="eju-cat-badge">开放中</span>'
+    + '</button>'
+    + '<button class="eju-skill-card disabled" disabled>'
+    + '<div class="eju-skill-icon">🎧</div>'
+    + '<div class="eju-skill-info">'
+    + '<div class="eju-skill-title">聴読解</div>'
+    + '<div class="eju-skill-desc">建设中</div>'
+    + '</div>'
+    + '<span class="eju-cat-badge soon">建设中</span>'
+    + '</button>'
+    + '<button class="eju-skill-card disabled" disabled>'
+    + '<div class="eju-skill-icon">✍️</div>'
+    + '<div class="eju-skill-info">'
+    + '<div class="eju-skill-title">記述</div>'
+    + '<div class="eju-skill-desc">建设中</div>'
+    + '</div>'
+    + '<span class="eju-cat-badge soon">建设中</span>'
+    + '</button>'
+    + '</div>';
 }
 
 // =====================================================================
@@ -176,7 +205,7 @@ async function loadEjuReadingList(year, session) {
   switchView('eju-reading-list');
   var el = document.getElementById('view-eju-reading-list');
   if (!el) return;
-  var title = el.querySelector('#ejuReadingListTitle');
+  var title = el.querySelector('#ejuReadingListTitle') || el.querySelector('#ejuListTitle');
   if (title) title.textContent = year + ' 年第 ' + session + ' 回 · 読解題一覧';
   var mount = el.querySelector('#ejuReadingListMount');
   if (!mount) return;
