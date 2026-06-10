@@ -129,7 +129,7 @@ function renderEjuJapanese() {
   if (!mount) return;
   mount.innerHTML = ''
     + '<div class="eju-skill-grid">'
-    + '<button class="eju-skill-card" onclick="loadEjuReadingSets()">'
+    + '<button class="eju-skill-card" id="ejuReadingSkillBtn" onclick="loadEjuReadingSets()">'
     + '<div class="eju-skill-icon">📖</div>'
     + '<div class="eju-skill-info">'
     + '<div class="eju-skill-title">読解</div>'
@@ -154,6 +154,8 @@ function renderEjuJapanese() {
     + '<span class="eju-cat-badge soon">建设中</span>'
     + '</button>'
     + '</div>';
+  var readingBtn = document.getElementById('ejuReadingSkillBtn');
+  if (readingBtn) readingBtn.onclick = loadEjuReadingSets;
 }
 
 // =====================================================================
