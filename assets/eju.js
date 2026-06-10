@@ -161,6 +161,7 @@ function renderEjuJapanese() {
 // =====================================================================
 
 async function loadEjuReadingSets() {
+  switchView('eju-reading-select');
   var el = document.getElementById('view-eju-reading-select');
   if (!el) return;
   var mount = el.querySelector('#ejuReadingSelectMount');
