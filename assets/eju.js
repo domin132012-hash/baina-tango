@@ -42,8 +42,12 @@ function ejuUUID() {
 
 async function ejuGetToken() {
   try {
-    if (!window.supabaseClient) return '';
-    var res = await supabaseClient.auth.getSession();
+    var sb = null;
+    if (typeof supabaseClient !== 'undefined' && supabaseClient) sb = supabaseClient;
+    else if (window.supabaseClient) sb = window.supabaseClient;
+    else if (typeof initSupabase === 'function') sb = initSupabase();
+    if (!sb) return '';
+    var res = await sb.auth.getSession();
     return (res.data && res.data.session && res.data.session.access_token) || '';
   } catch(e) { return ''; }
 }
