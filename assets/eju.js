@@ -424,7 +424,7 @@ function renderEjuTrain() {
     ['1','2','3','4'].forEach(function(k) {
       if (!opts[k]) return;
       var sel = ejuSelectedAnswer === k;
-      contentHtml += '<button class="eju-option' + (sel?' selected':'') + '" onclick="ejuSelectAnswer(' + JSON.stringify(k) + ')">'
+      contentHtml += '<button class="eju-option' + (sel?' selected':'') + '" onclick="ejuSelectAnswer(\'' + ejuJsString(k) + '\')">'
         + '<span style="font-weight:900;min-width:22px;display:inline-block">(' + k + ')</span> '
         + ejuEsc(opts[k])
         + '</button>';
@@ -498,6 +498,10 @@ function ejuTogglePause() {
 
 async function ejuHandleSubmit(timedOut) {
   if (ejuSubmitted) return;
+  if (!timedOut && !ejuSelectedAnswer) {
+    if (typeof toast === 'function') toast('请先选择一个答案');
+    return;
+  }
   ejuSubmitted = true;
   ejuStopTimer();
   ejuSavePhaseInput();
@@ -515,12 +519,12 @@ async function ejuHandleSubmit(timedOut) {
       method: 'POST',
       body: JSON.stringify({
         questionId: ejuCurrentQ.id,
-        selectedAnswer: ejuSelectedAnswer,
+        selectedAnswer: ejuSelectedAnswer || '0',
         phases: {
           structure: { elapsed: ejuElapsed.structure || 0, structureType: ejuStructureType, summary: ejuSummary },
           questionRead: { elapsed: ejuElapsed.questionRead || 0, questionType: ejuQuestionType },
           locate: { elapsed: ejuElapsed.locate || 0, evidence: ejuEvidence },
-          answer: { elapsed: ejuElapsed.answer || 0, selectedAnswer: ejuSelectedAnswer }
+          answer: { elapsed: ejuElapsed.answer || 0, selectedAnswer: ejuSelectedAnswer || '0' }
         },
         totalElapsed: totalElapsed
       })
