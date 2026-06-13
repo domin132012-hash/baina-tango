@@ -470,6 +470,14 @@ var EJU_RIKA_PROTOTYPES = {
           {no:13,page:35,opts:5,ans:1}, {no:14,page:35,opts:5,ans:3}, {no:15,page:36,opts:6,ans:6},
           {no:16,page:37,opts:5,ans:3}, {no:17,page:38,opts:6,ans:1}, {no:18,page:39,opts:6,ans:5},
           {no:19,page:40,opts:6,ans:3}, {no:20,page:41,opts:6,ans:4}
+        ],
+        problems: [
+          {page:24,answers:[1]}, {page:25,answers:[2]}, {page:26,answers:[3]}, {page:27,answers:[4]},
+          {page:28,answers:[5]}, {page:29,answers:[6]}, {page:30,answers:[7]}, {page:31,answers:[8]},
+          {page:32,answers:[9]}, {page:33,answers:[10]}, {page:34,image:'034-q11',answers:[11]},
+          {page:34,image:'034-q12',answers:[12]}, {page:35,image:'035-q13',answers:[13]},
+          {page:35,image:'035-q14',answers:[14]}, {page:36,answers:[15]}, {page:37,answers:[16]},
+          {page:38,answers:[17]}, {page:39,answers:[18]}, {page:40,answers:[19]}, {page:41,answers:[20]}
         ] },
       { id: 'biology', label: '生物',
         pages: [43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58],
@@ -480,6 +488,13 @@ var EJU_RIKA_PROTOTYPES = {
           {no:10,page:50,opts:6,ans:6}, {no:11,page:51,opts:8,ans:3}, {no:12,page:52,opts:8,ans:2},
           {no:13,page:53,opts:6,ans:4}, {no:14,page:54,opts:6,ans:6}, {no:15,page:55,opts:5,ans:4},
           {no:16,page:56,opts:6,ans:1}, {no:17,page:57,opts:5,ans:5}, {no:18,page:58,opts:4,ans:1}
+        ],
+        problems: [
+          {page:43,answers:[1]}, {page:44,answers:[2,3]}, {page:45,image:'045-q3',answers:[4]},
+          {page:45,image:'045-q4',answers:[5]}, {page:46,answers:[6]}, {page:47,answers:[7]},
+          {page:48,answers:[8]}, {page:49,answers:[9]}, {page:50,answers:[10]}, {page:51,answers:[11]},
+          {page:52,answers:[12]}, {page:53,answers:[13]}, {page:54,answers:[14]}, {page:55,answers:[15]},
+          {page:56,answers:[16]}, {page:57,answers:[17]}, {page:58,answers:[18]}
         ] }
     ]
   }
@@ -533,7 +548,7 @@ async function ejuLoadScannedData() {
   if (!ejuScannedDataPromise) {
     ejuScannedDataPromise = (async function() {
       try {
-        var res = await fetch('./assets/eju-scanned-data.json?v=20260613-rika-2023-1b', { cache: 'no-store' });
+        var res = await fetch('./assets/eju-scanned-data.json?v=20260614-rika-2023-1-v2', { cache: 'no-store' });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         ejuScannedData = await res.json();
         return ejuScannedData;
@@ -1069,8 +1084,31 @@ function ejuRikaPick(answerKey, value) {
   ejuRenderRikaView();
 }
 
-function ejuRikaImageSrc(proto, sourcePage) {
-  return proto.imageBase + String(sourcePage).padStart(3, '0') + '.png';
+function ejuRikaImageSrc(proto, pageRef) {
+  if (typeof pageRef === 'string') return proto.imageBase + pageRef + '.png';
+  return proto.imageBase + String(pageRef).padStart(3, '0') + '.png';
+}
+
+function ejuRikaProblemList(subj) {
+  if (subj.problems && subj.problems.length) return subj.problems;
+  return (subj.pages || []).map(function(page) {
+    var answers = subj.questions.filter(function(q) { return q.page === page; }).map(function(q) { return q.no; });
+    return { page: page, answers: answers };
+  });
+}
+
+function ejuRikaProblemQuestions(subj, problem) {
+  var answers = problem.answers || [];
+  if (!answers.length) return subj.questions.filter(function(q) { return q.page === problem.page; });
+  return answers.map(function(no) {
+    return subj.questions.find(function(q) { return q.no === no; });
+  }).filter(Boolean);
+}
+
+function ejuRikaProblemLabel(subj, problem) {
+  var qs = ejuRikaProblemQuestions(subj, problem);
+  if (qs.length) return qs.map(function(q) { return q.no; }).join('·');
+  return problem.label || '';
 }
 
 function renderEjuRikaPractice(subject, setId, item) {
@@ -1108,7 +1146,8 @@ function ejuRikaGo(delta) {
   var proto = EJU_RIKA_PROTOTYPES[ejuCurrentScanSubject + '/' + ejuCurrentScanSetId];
   var subj = ejuRikaGetSubject(proto, ejuRikaSubjectId);
   if (!subj) return;
-  ejuRikaPage = Math.max(1, Math.min(subj.pages.length, ejuRikaPage + delta));
+  var problems = ejuRikaProblemList(subj);
+  ejuRikaPage = Math.max(1, Math.min(problems.length, ejuRikaPage + delta));
   ejuRenderRikaView();
 }
 
@@ -1116,7 +1155,8 @@ function ejuRikaJump(page) {
   var proto = EJU_RIKA_PROTOTYPES[ejuCurrentScanSubject + '/' + ejuCurrentScanSetId];
   var subj = ejuRikaGetSubject(proto, ejuRikaSubjectId);
   if (!subj) return;
-  ejuRikaPage = Math.max(1, Math.min(subj.pages.length, Number(page) || 1));
+  var problems = ejuRikaProblemList(subj);
+  ejuRikaPage = Math.max(1, Math.min(problems.length, Number(page) || 1));
   ejuRenderRikaView();
 }
 
@@ -1146,9 +1186,13 @@ function ejuRenderRikaView() {
   var subj = ejuRikaGetSubject(proto, ejuRikaSubjectId);
   if (!subj) return;
 
-  var page = Math.max(1, Math.min(subj.pages.length, ejuRikaPage || 1));
+  var problems = ejuRikaProblemList(subj);
+  var page = Math.max(1, Math.min(problems.length, ejuRikaPage || 1));
   ejuRikaPage = page;
-  var sourcePage = subj.pages[page - 1];
+  var problem = problems[page - 1];
+  var sourcePage = problem.page;
+  var imageRef = problem.image || sourcePage;
+  var problemLabel = ejuRikaProblemLabel(subj, problem);
 
   // 科目切换条
   var subjectBar = proto.subjects.map(function(s) {
@@ -1169,16 +1213,17 @@ function ejuRenderRikaView() {
 
   // 页导航
   var prevDisabled = page <= 1 ? ' disabled' : '';
-  var nextDisabled = page >= subj.pages.length ? ' disabled' : '';
+  var nextDisabled = page >= problems.length ? ' disabled' : '';
   var pageButtons = '';
-  for (var i = 1; i <= subj.pages.length; i++) {
+  for (var i = 1; i <= problems.length; i++) {
+    var navLabel = ejuRikaProblemLabel(subj, problems[i - 1]) || i;
     pageButtons += '<button class="ghost" style="padding:7px 10px;border-radius:12px;min-width:38px'
       + (i === page ? ';background:rgba(124,92,255,.16);color:#5d43e8;font-weight:950' : '') + '" '
-      + 'onclick="ejuRikaJump(' + i + ')">' + i + '</button>';
+      + 'onclick="ejuRikaJump(' + i + ')">' + ejuEsc(navLabel) + '</button>';
   }
 
-  // 当前页的题目（按解答番号）
-  var qs = subj.questions.filter(function(q) { return q.page === sourcePage; });
+  // 当前 problem 的题目（按解答番号）
+  var qs = ejuRikaProblemQuestions(subj, problem);
   var qHtml = qs.map(function(q) {
     var answerKey = subj.id + ':' + q.no;
     var picked = ejuRikaAnswers[answerKey] || '';
@@ -1223,13 +1268,13 @@ function ejuRenderRikaView() {
     + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">' + subjectBar + '</div>'
     + refHtml
     + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">'
-    + '<button class="ghost" onclick="ejuRikaGo(-1)"' + prevDisabled + '>← 上一页</button>'
-    + '<div style="font-size:16px;font-weight:950;color:#30294d">' + subj.label + ' · 理科-' + sourcePage + '（' + page + '/' + subj.pages.length + '）</div>'
-    + '<button class="ghost" onclick="ejuRikaGo(1)"' + nextDisabled + '>下一页 →</button>'
+    + '<button class="ghost" onclick="ejuRikaGo(-1)"' + prevDisabled + '>← 上一题</button>'
+    + '<div style="font-size:16px;font-weight:950;color:#30294d">' + subj.label + ' · 解答 ' + ejuEsc(problemLabel) + ' · 理科-' + sourcePage + '（' + page + '/' + problems.length + '）</div>'
+    + '<button class="ghost" onclick="ejuRikaGo(1)"' + nextDisabled + '>下一题 →</button>'
     + '</div>'
     + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">' + pageButtons + '</div>'
     + '<div style="background:#fff;border:1px solid rgba(124,92,255,.16);border-radius:18px;overflow:hidden;box-shadow:0 10px 28px rgba(105,80,200,.10)">'
-    + '<img src="' + ejuEsc(ejuRikaImageSrc(proto, sourcePage)) + '" alt="' + ejuEsc(proto.title + ' ' + subj.label + ' 理科-' + sourcePage) + '" style="display:block;width:100%;height:auto" />'
+    + '<img src="' + ejuEsc(ejuRikaImageSrc(proto, imageRef)) + '" alt="' + ejuEsc(proto.title + ' ' + subj.label + ' 理科-' + sourcePage + ' 解答 ' + problemLabel) + '" style="display:block;width:100%;height:auto" />'
     + '</div>'
     + '<div class="eju-question-card" style="margin-top:14px">'
     + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">'
@@ -1802,7 +1847,18 @@ function runEjuTests() {
         console.assert(q.ans >= 1 && q.ans <= q.opts, 'EJU rika ' + s.id + ' no=' + q.no + ' ans must be within opts');
         console.assert(s.pages.indexOf(q.page) >= 0, 'EJU rika ' + s.id + ' no=' + q.no + ' page must be in pages[]');
       });
+      ejuRikaProblemList(s).forEach(function(problem) {
+        var qs = ejuRikaProblemQuestions(s, problem);
+        console.assert(qs.length > 0, 'EJU rika ' + s.id + ' problem should have answers');
+      });
     });
+    var chemistry = ejuRikaGetSubject(rika, 'chemistry');
+    var biology = ejuRikaGetSubject(rika, 'biology');
+    console.assert(ejuRikaProblemLabel(chemistry, chemistry.problems[10]) === '11', 'EJU chemistry page 34 first split should be answer 11');
+    console.assert(ejuRikaProblemLabel(chemistry, chemistry.problems[11]) === '12', 'EJU chemistry page 34 second split should be answer 12');
+    console.assert(ejuRikaProblemLabel(biology, biology.problems[1]) === '2·3', 'EJU biology question 2 should keep answers 2 and 3 together');
+    console.assert(ejuRikaProblemLabel(biology, biology.problems[2]) === '4', 'EJU biology page 45 first split should be answer 4');
+    console.assert(ejuRikaProblemLabel(biology, biology.problems[3]) === '5', 'EJU biology page 45 second split should be answer 5');
   }
 }
 
