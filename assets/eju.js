@@ -460,7 +460,8 @@ var EJU_RIKA_PROTOTYPES = {
           {no:19,page:20,opts:4,ans:1}
         ] },
       { id: 'chemistry', label: '化学',
-        pages: [23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41],
+        refPage: 23, refLabel: '常数表 · 周期表',
+        pages: [24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41],
         questions: [
           {no:1,page:24,opts:6,ans:5}, {no:2,page:25,opts:7,ans:4}, {no:3,page:26,opts:6,ans:6},
           {no:4,page:27,opts:6,ans:6}, {no:5,page:28,opts:6,ans:2}, {no:6,page:29,opts:4,ans:4},
@@ -532,7 +533,7 @@ async function ejuLoadScannedData() {
   if (!ejuScannedDataPromise) {
     ejuScannedDataPromise = (async function() {
       try {
-        var res = await fetch('./assets/eju-scanned-data.json?v=20260613-rika-2023-1', { cache: 'no-store' });
+        var res = await fetch('./assets/eju-scanned-data.json?v=20260613-rika-2023-1b', { cache: 'no-store' });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         ejuScannedData = await res.json();
         return ejuScannedData;
@@ -1157,6 +1158,15 @@ function ejuRenderRikaView() {
       + 'onclick="ejuRikaSelectSubject(\'' + ejuJsString(s.id) + '\')">' + ejuEsc(s.label) + '</button>';
   }).join('');
 
+  // 可折叠参考资料（如化学的常数表/周期表），不占题目页位
+  var refHtml = '';
+  if (subj.refPage) {
+    refHtml = '<details style="margin-bottom:12px;background:#fff;border:1px solid rgba(124,92,255,.16);border-radius:14px;overflow:hidden">'
+      + '<summary style="cursor:pointer;padding:10px 14px;font-weight:900;color:#5d43e8;list-style:none">📋 ' + ejuEsc(subj.refLabel || '参考资料') + '（点击展开）</summary>'
+      + '<div style="padding:0 12px 12px"><img src="' + ejuEsc(ejuRikaImageSrc(proto, subj.refPage)) + '" alt="' + ejuEsc((subj.refLabel || '参考资料')) + '" style="display:block;width:100%;height:auto;border-radius:10px" /></div>'
+      + '</details>';
+  }
+
   // 页导航
   var prevDisabled = page <= 1 ? ' disabled' : '';
   var nextDisabled = page >= subj.pages.length ? ' disabled' : '';
@@ -1211,6 +1221,7 @@ function ejuRenderRikaView() {
 
   mount.innerHTML = ''
     + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">' + subjectBar + '</div>'
+    + refHtml
     + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">'
     + '<button class="ghost" onclick="ejuRikaGo(-1)"' + prevDisabled + '>← 上一页</button>'
     + '<div style="font-size:16px;font-weight:950;color:#30294d">' + subj.label + ' · 理科-' + sourcePage + '（' + page + '/' + subj.pages.length + '）</div>'
