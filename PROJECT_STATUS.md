@@ -1,5 +1,43 @@
 # baina-tango 项目进度
 
+## 最近完成（math2/2021-1 第二样板）
+
+以 math2/2024-1 为模板，完成数学2 2021年第1回完整可练样板。**仅本地验证，未部署。**
+
+### 关键认知
+- 元PDF是官方清晰排版PDF（非扫描），答案框 A〜N 已印刷在页面上 → 渲染即可，答案框靠人工对照图片标定
+- 渲染方式：PyMuPDF @ **DPI 112** → `scripts/crop_math_paper_images.py`（threshold=245, padding=34），与 2024-1 一致
+- 元PDF：`~/Desktop/ eju高手/绿头EJU资料/EJU过去问/EJU理科数学（数学2）/2021令和3年第1回数学2.pdf`（16页）
+
+### 改动文件
+- `assets/eju.js` — `EJU_MATH_PAPER_PROTOTYPES` 新增 `math2/2021-1` proto；scanned-data 缓存号 → `20260613-math2-2021-1`
+- `index.html` — eju.js 缓存号 → `20260613-math2-2021-1`（Python 字节操作）
+- `assets/eju-media/math2/2021-1/` — 新增 16 张 PNG（page-001〜016）
+
+### 2021-1 问题页 & 答案框（人工标定，已逐页对图核对）
+- source page 4（问I-问1）：A BC DE F G H I JK
+- source page 6（问I-问2）：L M N O P QR ST UV WX
+- source page 8（问II-问1）：A B C D E F G H I J K L M
+- source page 10（问II-问2）：N O P Q R S T U V W X Y
+- source page 12（问III）：A B CD EF G H I J KL M NO P QR ST U V WX Y
+- source page 14（问IV）：A B C D E F G H I J K L M N O P Q R
+- 已排除灰色参照框（如 page6 第二个 UV、page10 i sin 的 O/P、page12 「H<I」与重复 J）
+- 答案 key 格式：`源页:答案框`（如 `4:A`、`6:L`），跨大题不冲突
+
+### 本地验收（Claude Preview + 真实浏览器，全部通过）
+- ✅ 真题试炼→数学→数学2→2021年第1回 可进入
+- ✅ 6 页答案框 DOM 渲染与 proto 完全一致，key=源页:答案框
+- ✅ 6 页图片真实加载（naturalWidth>0，无 404）
+- ✅ 输入答案保存到 localStorage（key `baina-eju-math-paper-math2/2021-1`），重渲染后保留
+- ✅ 进入试卷底部导航隐藏（nav display:none），返回套卷列表后恢复（display:grid）
+- ✅ node --check 通过，index.html 无弯引号
+
+### 待办
+- 是否 commit（未 commit，留待你审阅 diff）；**不要 push（=部署），用户已明确**
+- 其余 10 套（2018-1/-2、2019-1、2020-2、2021-2、2022-1/-2、2023-1/-2、2025-1）尚未做，按需逐套推进
+
+---
+
 ## 最近完成（2026-06-10）
 
 ### 本次完成 — EJU 真题试炼 Phase 1

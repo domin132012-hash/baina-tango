@@ -54,6 +54,21 @@ var EJU_MATH_PAPER_PROTOTYPES = {
       12: ['A','B','C','D','EF','G','H'],
       13: ['IJ','K','L','M','N','O','P','Q','R']
     }
+  },
+  'math2/2021-1': {
+    title: '数学2 · 2021年第1回',
+    pageCount: 6,
+    firstQuestionPage: 1,
+    pages: [4,6,8,10,12,14],
+    imageBase: './assets/eju-media/math2/2021-1/page-',
+    answerLabelsBySourcePage: {
+      4: ['A','BC','DE','F','G','H','I','JK'],
+      6: ['L','M','N','O','P','QR','ST','UV','WX'],
+      8: ['A','B','C','D','E','F','G','H','I','J','K','L','M'],
+      10: ['N','O','P','Q','R','S','T','U','V','W','X','Y'],
+      12: ['A','B','CD','EF','G','H','I','J','KL','M','NO','P','QR','ST','U','V','WX','Y'],
+      14: ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R']
+    }
   }
 };
 
@@ -105,7 +120,7 @@ async function ejuLoadScannedData() {
   if (!ejuScannedDataPromise) {
     ejuScannedDataPromise = (async function() {
       try {
-        var res = await fetch('./assets/eju-scanned-data.json?v=20260613-math-labels-1', { cache: 'no-store' });
+        var res = await fetch('./assets/eju-scanned-data.json?v=20260613-math2-2021-1', { cache: 'no-store' });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         ejuScannedData = await res.json();
         return ejuScannedData;
