@@ -30,6 +30,10 @@ var ejuReadingSelectRenderToken = 0;
 var ejuReadingListRenderToken = 0;
 var ejuMathPaperPage = 3;
 var ejuMathPaperAnswers = {};
+var ejuRikaSubjectId = '';   // 当前理科科目 physics/chemistry/biology
+var ejuRikaPage = 1;         // 当前科目内页索引（1-based）
+var ejuRikaAnswers = {};     // 本套理科作答：{ '科目id:解答番号': 选项号 }
+var ejuRikaGraded = false;   // 是否已採点
 
 var EJU_PHASE_DURATIONS = { structure: 20, questionRead: 5, locate: 20, answer: 30 };
 var EJU_STRUCTURE_TYPES = ['主张型', '说明型', '对比型', '事例型', '原因结果型', '其他'];
@@ -436,6 +440,51 @@ var EJU_MATH_PAPER_PROTOTYPES = {
 };
 
 // =====================================================================
+// 理科真题（マークシート单选）原型：每题 {no:解答番号, page:源页理科-N, opts:选项数, ans:官方正解}
+// 源图 page-NNN.png（NNN=理科-N）。答案取自官方正解表。
+// =====================================================================
+var EJU_RIKA_PROTOTYPES = {
+  'science/2023-1': {
+    title: '理科 · 2023年第1回',
+    imageBase: './assets/eju-media/science/2023-1/page-',
+    subjects: [
+      { id: 'physics', label: '物理',
+        pages: [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
+        questions: [
+          {no:1,page:2,opts:5,ans:2}, {no:2,page:3,opts:6,ans:5}, {no:3,page:4,opts:4,ans:3},
+          {no:4,page:5,opts:5,ans:4}, {no:5,page:6,opts:5,ans:4}, {no:6,page:7,opts:6,ans:4},
+          {no:7,page:8,opts:6,ans:1}, {no:8,page:9,opts:5,ans:3}, {no:9,page:10,opts:6,ans:2},
+          {no:10,page:11,opts:6,ans:4}, {no:11,page:12,opts:4,ans:2}, {no:12,page:13,opts:5,ans:5},
+          {no:13,page:14,opts:8,ans:1}, {no:14,page:15,opts:6,ans:6}, {no:15,page:16,opts:8,ans:6},
+          {no:16,page:17,opts:6,ans:1}, {no:17,page:18,opts:8,ans:4}, {no:18,page:19,opts:6,ans:1},
+          {no:19,page:20,opts:4,ans:1}
+        ] },
+      { id: 'chemistry', label: '化学',
+        pages: [23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41],
+        questions: [
+          {no:1,page:24,opts:6,ans:5}, {no:2,page:25,opts:7,ans:4}, {no:3,page:26,opts:6,ans:6},
+          {no:4,page:27,opts:6,ans:6}, {no:5,page:28,opts:6,ans:2}, {no:6,page:29,opts:4,ans:4},
+          {no:7,page:30,opts:6,ans:3}, {no:8,page:31,opts:6,ans:5}, {no:9,page:32,opts:6,ans:2},
+          {no:10,page:33,opts:6,ans:3}, {no:11,page:34,opts:6,ans:5}, {no:12,page:34,opts:6,ans:1},
+          {no:13,page:35,opts:5,ans:1}, {no:14,page:35,opts:5,ans:3}, {no:15,page:36,opts:6,ans:6},
+          {no:16,page:37,opts:5,ans:3}, {no:17,page:38,opts:6,ans:1}, {no:18,page:39,opts:6,ans:5},
+          {no:19,page:40,opts:6,ans:3}, {no:20,page:41,opts:6,ans:4}
+        ] },
+      { id: 'biology', label: '生物',
+        pages: [43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58],
+        questions: [
+          {no:1,page:43,opts:6,ans:3}, {no:2,page:44,opts:6,ans:3}, {no:3,page:44,opts:6,ans:3},
+          {no:4,page:45,opts:6,ans:5}, {no:5,page:45,opts:6,ans:5}, {no:6,page:46,opts:6,ans:5},
+          {no:7,page:47,opts:4,ans:3}, {no:8,page:48,opts:6,ans:4}, {no:9,page:49,opts:5,ans:4},
+          {no:10,page:50,opts:6,ans:6}, {no:11,page:51,opts:8,ans:3}, {no:12,page:52,opts:8,ans:2},
+          {no:13,page:53,opts:6,ans:4}, {no:14,page:54,opts:6,ans:6}, {no:15,page:55,opts:5,ans:4},
+          {no:16,page:56,opts:6,ans:1}, {no:17,page:57,opts:5,ans:5}, {no:18,page:58,opts:4,ans:1}
+        ] }
+    ]
+  }
+};
+
+// =====================================================================
 // G. 辅助函数
 // =====================================================================
 
@@ -483,7 +532,7 @@ async function ejuLoadScannedData() {
   if (!ejuScannedDataPromise) {
     ejuScannedDataPromise = (async function() {
       try {
-        var res = await fetch('./assets/eju-scanned-data.json?v=20260613-math1-all', { cache: 'no-store' });
+        var res = await fetch('./assets/eju-scanned-data.json?v=20260613-rika-2023-1', { cache: 'no-store' });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         ejuScannedData = await res.json();
         return ejuScannedData;
@@ -811,6 +860,10 @@ async function renderEjuScannedSet(subject, setId) {
     renderEjuMathPaperPractice(subject, setId, item);
     return;
   }
+  if (EJU_RIKA_PROTOTYPES[subject + '/' + setId]) {
+    renderEjuRikaPractice(subject, setId, item);
+    return;
+  }
   if (title) title.textContent = ejuScanSubjectLabel(subject) + ' · ' + item.year + ' 年第 ' + item.session + ' 回';
   var html = '<div class="eju-question-card" style="margin-bottom:12px">'
     + '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">'
@@ -980,6 +1033,197 @@ function ejuRenderMathPaperView() {
     + '<div class="eju-question-card" style="margin-top:14px">'
     + '<div style="font-weight:950;color:#30294d;margin-bottom:10px">答案</div>'
     + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px">' + answersHtml + '</div>'
+    + '</div>';
+}
+
+// =====================================================================
+// 理科练习（マークシート单选 + 对照官方正解判分）
+// =====================================================================
+var EJU_RIKA_CIRCLES = ['⓪','①','②','③','④','⑤','⑥','⑦','⑧','⑨'];
+function ejuRikaCircle(n) { return EJU_RIKA_CIRCLES[n] || ('(' + n + ')'); }
+
+function ejuRikaGetSubject(proto, id) {
+  if (!proto || !proto.subjects) return null;
+  for (var i = 0; i < proto.subjects.length; i++) {
+    if (proto.subjects[i].id === id) return proto.subjects[i];
+  }
+  return proto.subjects[0] || null;
+}
+
+function ejuLoadRikaAnswers(key) {
+  try {
+    return JSON.parse(localStorage.getItem(ejuMathPaperStorageKey(key)) || '{}') || {};
+  } catch(e) { return {}; }
+}
+
+function ejuRikaSaveAnswer(answerKey, value) {
+  var key = ejuCurrentScanSubject + '/' + ejuCurrentScanSetId;
+  ejuRikaAnswers[answerKey] = value;
+  try { localStorage.setItem(ejuMathPaperStorageKey(key), JSON.stringify(ejuRikaAnswers)); } catch(e) {}
+}
+
+function ejuRikaPick(answerKey, value) {
+  if (ejuRikaGraded) return;       // 採点后锁定
+  ejuRikaSaveAnswer(answerKey, String(value));
+  ejuRenderRikaView();
+}
+
+function ejuRikaImageSrc(proto, sourcePage) {
+  return proto.imageBase + String(sourcePage).padStart(3, '0') + '.png';
+}
+
+function renderEjuRikaPractice(subject, setId, item) {
+  var key = subject + '/' + setId;
+  var proto = EJU_RIKA_PROTOTYPES[key];
+  if (!proto) return;
+  document.body.classList.add('eju-paper-focus');
+  ejuCurrentScanSubject = subject;
+  ejuCurrentScanSetId = setId;
+  ejuRikaSubjectId = (proto.subjects[0] || {}).id || '';
+  ejuRikaPage = 1;
+  ejuRikaGraded = false;
+  ejuRikaAnswers = ejuLoadRikaAnswers(key);
+
+  var el = document.getElementById('view-eju-reading-list');
+  if (!el) return;
+  var title = el.querySelector('#ejuReadingListTitle') || el.querySelector('#ejuListTitle');
+  var back = el.querySelector('.eju-back-btn');
+  if (title) title.textContent = proto.title;
+  if (back) {
+    back.textContent = '← 套卷列表';
+    back.onclick = function() { renderEjuScannedSubject(subject); };
+  }
+  ejuRenderRikaView();
+}
+
+function ejuRikaSelectSubject(id) {
+  ejuRikaSubjectId = id;
+  ejuRikaPage = 1;
+  ejuRikaGraded = false;
+  ejuRenderRikaView();
+}
+
+function ejuRikaGo(delta) {
+  var proto = EJU_RIKA_PROTOTYPES[ejuCurrentScanSubject + '/' + ejuCurrentScanSetId];
+  var subj = ejuRikaGetSubject(proto, ejuRikaSubjectId);
+  if (!subj) return;
+  ejuRikaPage = Math.max(1, Math.min(subj.pages.length, ejuRikaPage + delta));
+  ejuRenderRikaView();
+}
+
+function ejuRikaJump(page) {
+  var proto = EJU_RIKA_PROTOTYPES[ejuCurrentScanSubject + '/' + ejuCurrentScanSetId];
+  var subj = ejuRikaGetSubject(proto, ejuRikaSubjectId);
+  if (!subj) return;
+  ejuRikaPage = Math.max(1, Math.min(subj.pages.length, Number(page) || 1));
+  ejuRenderRikaView();
+}
+
+function ejuRikaGrade() {
+  ejuRikaGraded = true;
+  ejuRenderRikaView();
+}
+
+function ejuRikaRetry() {
+  ejuRikaGraded = false;
+  ejuRenderRikaView();
+}
+
+function ejuRikaSubjectScore(subj) {
+  var done = 0, correct = 0;
+  subj.questions.forEach(function(q) {
+    var v = ejuRikaAnswers[subj.id + ':' + q.no];
+    if (v) { done++; if (String(v) === String(q.ans)) correct++; }
+  });
+  return { total: subj.questions.length, done: done, correct: correct };
+}
+
+function ejuRenderRikaView() {
+  var proto = EJU_RIKA_PROTOTYPES[ejuCurrentScanSubject + '/' + ejuCurrentScanSetId];
+  var mount = document.getElementById('ejuReadingListMount');
+  if (!proto || !mount) return;
+  var subj = ejuRikaGetSubject(proto, ejuRikaSubjectId);
+  if (!subj) return;
+
+  var page = Math.max(1, Math.min(subj.pages.length, ejuRikaPage || 1));
+  ejuRikaPage = page;
+  var sourcePage = subj.pages[page - 1];
+
+  // 科目切换条
+  var subjectBar = proto.subjects.map(function(s) {
+    var active = s.id === ejuRikaSubjectId;
+    return '<button class="ghost" style="padding:8px 16px;border-radius:14px;font-weight:950'
+      + (active ? ';background:rgba(124,92,255,.16);color:#5d43e8' : ';color:#756c9d') + '" '
+      + 'onclick="ejuRikaSelectSubject(\'' + ejuJsString(s.id) + '\')">' + ejuEsc(s.label) + '</button>';
+  }).join('');
+
+  // 页导航
+  var prevDisabled = page <= 1 ? ' disabled' : '';
+  var nextDisabled = page >= subj.pages.length ? ' disabled' : '';
+  var pageButtons = '';
+  for (var i = 1; i <= subj.pages.length; i++) {
+    pageButtons += '<button class="ghost" style="padding:7px 10px;border-radius:12px;min-width:38px'
+      + (i === page ? ';background:rgba(124,92,255,.16);color:#5d43e8;font-weight:950' : '') + '" '
+      + 'onclick="ejuRikaJump(' + i + ')">' + i + '</button>';
+  }
+
+  // 当前页的题目（按解答番号）
+  var qs = subj.questions.filter(function(q) { return q.page === sourcePage; });
+  var qHtml = qs.map(function(q) {
+    var answerKey = subj.id + ':' + q.no;
+    var picked = ejuRikaAnswers[answerKey] || '';
+    var opts = '';
+    for (var o = 1; o <= q.opts; o++) {
+      var isPicked = String(picked) === String(o);
+      var bg = 'rgba(255,255,255,.78)', col = '#5d43e8', bd = 'rgba(124,92,255,.18)';
+      if (ejuRikaGraded) {
+        if (o === q.ans) { bg = 'rgba(46,196,127,.16)'; col = '#1f9d63'; bd = 'rgba(46,196,127,.5)'; }
+        else if (isPicked) { bg = 'rgba(240,91,123,.14)'; col = '#e0436a'; bd = 'rgba(240,91,123,.5)'; }
+      } else if (isPicked) { bg = 'rgba(124,92,255,.18)'; col = '#5d43e8'; bd = 'rgba(124,92,255,.6)'; }
+      opts += '<button onclick="ejuRikaPick(\'' + ejuJsString(answerKey) + '\',' + o + ')" '
+        + 'style="width:42px;height:42px;border-radius:50%;border:2px solid ' + bd + ';background:' + bg
+        + ';color:' + col + ';font-weight:950;font-size:16px;cursor:' + (ejuRikaGraded ? 'default' : 'pointer') + '">'
+        + ejuRikaCircle(o) + '</button>';
+    }
+    var mark = '';
+    if (ejuRikaGraded && picked) {
+      mark = String(picked) === String(q.ans)
+        ? '<span style="color:#1f9d63;font-weight:950;margin-left:8px">✓ 正解</span>'
+        : '<span style="color:#e0436a;font-weight:950;margin-left:8px">✗ 正解 ' + ejuRikaCircle(q.ans) + '</span>';
+    } else if (ejuRikaGraded) {
+      mark = '<span style="color:#9086ac;font-weight:800;margin-left:8px">未答 · 正解 ' + ejuRikaCircle(q.ans) + '</span>';
+    }
+    return '<div style="background:#fff;border:1px solid rgba(124,92,255,.14);border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
+      + '<span style="font-weight:950;color:#30294d;min-width:54px">解答 ' + q.no + '</span>'
+      + '<div style="display:flex;gap:6px;flex-wrap:wrap">' + opts + '</div>' + mark
+      + '</div>';
+  }).join('');
+  if (!qs.length) {
+    qHtml = '<p style="color:#9086ac;font-size:13px;padding:6px 2px">本页为说明/资料页，无作答题。</p>';
+  }
+
+  var score = ejuRikaSubjectScore(subj);
+  var scoreBar = ejuRikaGraded
+    ? '<div style="font-weight:950;color:#30294d">得分 ' + score.correct + ' / ' + score.total
+        + '（已答 ' + score.done + '）<button class="ghost" style="margin-left:12px;padding:6px 14px;border-radius:12px" onclick="ejuRikaRetry()">重做</button></div>'
+    : '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="color:#756c9d;font-weight:800">已答 ' + score.done + ' / ' + score.total + '</span>'
+        + '<button class="ghost" style="padding:8px 18px;border-radius:12px;background:rgba(124,92,255,.14);color:#5d43e8;font-weight:950" onclick="ejuRikaGrade()">採点</button></div>';
+
+  mount.innerHTML = ''
+    + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">' + subjectBar + '</div>'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">'
+    + '<button class="ghost" onclick="ejuRikaGo(-1)"' + prevDisabled + '>← 上一页</button>'
+    + '<div style="font-size:16px;font-weight:950;color:#30294d">' + subj.label + ' · 理科-' + sourcePage + '（' + page + '/' + subj.pages.length + '）</div>'
+    + '<button class="ghost" onclick="ejuRikaGo(1)"' + nextDisabled + '>下一页 →</button>'
+    + '</div>'
+    + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">' + pageButtons + '</div>'
+    + '<div style="background:#fff;border:1px solid rgba(124,92,255,.16);border-radius:18px;overflow:hidden;box-shadow:0 10px 28px rgba(105,80,200,.10)">'
+    + '<img src="' + ejuEsc(ejuRikaImageSrc(proto, sourcePage)) + '" alt="' + ejuEsc(proto.title + ' ' + subj.label + ' 理科-' + sourcePage) + '" style="display:block;width:100%;height:auto" />'
+    + '</div>'
+    + '<div class="eju-question-card" style="margin-top:14px">'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">'
+    + '<div style="font-weight:950;color:#30294d">作答</div>' + scoreBar + '</div>'
+    + '<div style="display:flex;flex-direction:column;gap:8px">' + qHtml + '</div>'
     + '</div>';
 }
 
@@ -1535,6 +1779,20 @@ function runEjuTests() {
   console.assert(ejuIsReadingListRenderCurrent(listToken) === true, 'EJU list render token should start current');
   ejuNextReadingListRender();
   console.assert(ejuIsReadingListRenderCurrent(listToken) === false, 'EJU list render token should reject stale writes');
+
+  // 理科 proto 完整性：三科题数 19/20/18，每题 1<=ans<=opts，page 必须在 pages 内
+  var rika = EJU_RIKA_PROTOTYPES['science/2023-1'];
+  console.assert(!!rika, 'EJU rika sample science/2023-1 should exist');
+  if (rika) {
+    var expectCount = { physics: 19, chemistry: 20, biology: 18 };
+    rika.subjects.forEach(function(s) {
+      console.assert(s.questions.length === expectCount[s.id], 'EJU rika ' + s.id + ' should have ' + expectCount[s.id] + ' questions');
+      s.questions.forEach(function(q) {
+        console.assert(q.ans >= 1 && q.ans <= q.opts, 'EJU rika ' + s.id + ' no=' + q.no + ' ans must be within opts');
+        console.assert(s.pages.indexOf(q.page) >= 0, 'EJU rika ' + s.id + ' no=' + q.no + ' page must be in pages[]');
+      });
+    });
+  }
 }
 
 runEjuTests();
