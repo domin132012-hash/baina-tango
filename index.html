@@ -111,6 +111,8 @@
     .eju-back-btn:hover{background:rgba(124,92,255,.18)}
     .eju-empty{color:#9086ac;text-align:center;padding:32px 16px;font-size:14px}
     .eju-phase-hint{font-size:13px;color:#8b86a3;line-height:1.6;margin-bottom:12px;padding:10px 12px;border-radius:12px;background:rgba(124,92,255,.07)}
+    body.eju-paper-focus nav{display:none}
+    body.eju-paper-focus .app{padding-bottom:34px}
     /* ===== EJU 真题试炼 CSS END ===== */
   </style>
 </head>
@@ -158,7 +160,7 @@
       </div>
     </section>
 
-    <section class="panel hidden" id="view-exam-trial"><h2>真题试炼</h2><p class="hint">选择科目开始训练。题目由管理员统一维护，后端校验答案。</p><div id="ejuHubMount"><p class="hint">加载中…</p></div></section><section class="panel hidden" id="view-eju-japanese"><div class="eju-back-row"><button class="eju-back-btn" onclick="switchView('exam-trial')">← 返回</button><h2 style="margin:0">日本語</h2></div><div id="ejuJapaneseMount"><p class="hint">加载中…</p></div></section><section class="panel hidden" id="view-eju-reading-select"><div class="eju-back-row"><button class="eju-back-btn" onclick="switchView('eju-japanese')">← 返回</button><h2 style="margin:0">読解 — 选择年份/回数</h2></div><div id="ejuReadingSelectMount"><p class="hint">加载中…</p></div></section><section class="panel hidden" id="view-eju-reading-list"><div class="eju-back-row"><button class="eju-back-btn" id="ejuListBackBtn" onclick="switchView('eju-reading-select')">← 返回</button><h2 style="margin:0" id="ejuListTitle">题目列表</h2></div><div id="ejuReadingListMount"><p class="hint">加载中…</p></div></section><section class="panel hidden" id="view-eju-reading-train"><div class="eju-back-row"><button class="eju-back-btn" onclick="ejuStopTimer();switchView('eju-reading-list')">← 放弃</button><span id="ejuTrainTitle" style="font-size:14px;color:#8b86a3;font-weight:700"></span></div><div id="ejuTrainMount"></div></section><section class="panel hidden" id="view-eju-reading-result"><div class="eju-back-row"><button class="eju-back-btn" onclick="switchView('eju-reading-list')">← 题目列表</button><h2 style="margin:0">训练结果</h2></div><div id="ejuResultMount"></div></section><section class="panel hidden" id="view-eju-reading-history"><div class="eju-back-row"><button class="eju-back-btn" onclick="switchView('eju-reading-select')">← 返回</button><h2 style="margin:0">训练历史</h2></div><div id="ejuHistoryMount"><p class="hint">加载中…</p></div></section>
+    <section class="panel hidden" id="view-exam-trial"><h2>真题试炼</h2><p class="hint">选择科目开始训练。题目由管理员统一维护，后端校验答案。</p><div id="ejuHubMount"><p class="hint">加载中…</p></div></section><section class="panel hidden" id="view-eju-japanese"><div class="eju-back-row"><button class="eju-back-btn" onclick="switchView('exam-trial')">← 返回</button><h2 style="margin:0" id="ejuSubjectTitle">日本語</h2></div><div id="ejuJapaneseMount"><p class="hint">加载中…</p></div></section><section class="panel hidden" id="view-eju-reading-select"><div class="eju-back-row"><button class="eju-back-btn" onclick="switchView('eju-japanese')">← 返回</button><h2 style="margin:0">読解 — 选择年份/回数</h2></div><div id="ejuReadingSelectMount"><p class="hint">加载中…</p></div></section><section class="panel hidden" id="view-eju-reading-list"><div class="eju-back-row"><button class="eju-back-btn" id="ejuListBackBtn" onclick="switchView('eju-reading-select')">← 返回</button><h2 style="margin:0" id="ejuListTitle">题目列表</h2></div><div id="ejuReadingListMount"><p class="hint">加载中…</p></div></section><section class="panel hidden" id="view-eju-reading-train"><div class="eju-back-row"><button class="eju-back-btn" onclick="ejuStopTimer();switchView('eju-reading-list')">← 放弃</button><span id="ejuTrainTitle" style="font-size:14px;color:#8b86a3;font-weight:700"></span></div><div id="ejuTrainMount"></div></section><section class="panel hidden" id="view-eju-reading-result"><div class="eju-back-row"><button class="eju-back-btn" onclick="switchView('eju-reading-list')">← 题目列表</button><h2 style="margin:0">训练结果</h2></div><div id="ejuResultMount"></div></section><section class="panel hidden" id="view-eju-reading-history"><div class="eju-back-row"><button class="eju-back-btn" onclick="switchView('eju-reading-select')">← 返回</button><h2 style="margin:0">训练历史</h2></div><div id="ejuHistoryMount"><p class="hint">加载中…</p></div></section>
 
     <section class="panel hidden" id="view-review"><h2>今日复习词汇</h2><p class="hint">这里是系统按日期自动生成的复习任务，不按文件夹手动挑。</p><div class="row"><div><label>每轮最多数量</label><input type="number" id="reviewLimit" value="40" min="1" max="500" /></div><div><label>练习模式</label><select id="reviewModeSelect"><option value="default">默认模式</option><option value="listen">🎧 听声辨词</option><option value="read">👁 看词识义</option></select></div><div class="fit"><label>&nbsp;</label><button class="primary" id="startReviewBtn">刷新并开始复习</button></div></div><div id="reviewMount"></div></section>
 
@@ -1678,6 +1680,7 @@ function csvCell(v){let s=String(v||'').replaceAll('"','""');return s.includes('
 async function download(name,text,type){lastExport={name:name,text:text,type:type};$('exportBox').value=text;try{const blob=new Blob([text],{type:type});if(window.showSaveFilePicker){const handle=await window.showSaveFilePicker({suggestedName:name});const w=await handle.createWritable();await w.write(blob);await w.close();toast('已保存到电脑');return;}const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{a.remove();URL.revokeObjectURL(url);},1000);toast('已尝试下载，请看下载文件夹');}catch(e){if(e&&e.name==='AbortError')return;const btn=$('manualDownloadBtn');if(btn)btn.style.display='';toast('未能自动下载，内容已在文本框中');}}
 function parentNavView(view){if(view==='word-folder'||view==='exam-trial'||view==='review'||view==='learn'||view==='eju-japanese'||view==='eju-reading-select'||view==='eju-reading-list'||view==='eju-reading-train'||view==='eju-reading-result'||view==='eju-reading-history')return 'study';if(view==='lookup'||view==='import')return 'add';if(view==='guide')return 'profile';return view;}
 function switchView(view){if(typeof ejuStopTimer==='function')ejuStopTimer();
+  document.body.classList.remove('eju-paper-focus');
   const parent=parentNavView(view);
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.view===parent));
   document.querySelectorAll('main>section').forEach(s=>{s.classList.add('hidden');s.classList.remove('view-active');});
@@ -1766,6 +1769,6 @@ document.addEventListener('touchend',function(e){
 document.addEventListener('gesturestart',function(e){e.preventDefault();},{passive:false});
 runTests();renderAll();
 </script>
-<script src="./assets/eju.js"></script>
+<script src="./assets/eju.js?v=20260613-math-labels-1"></script>
 </body>
 </html>
