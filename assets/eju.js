@@ -69,6 +69,179 @@ var EJU_MATH_PAPER_PROTOTYPES = {
       12: ['A','B','CD','EF','G','H','I','J','KL','M','NO','P','QR','ST','U','V','WX','Y'],
       14: ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R']
     }
+  },
+  'math2/2018-1': {
+    title: '数学2 · 2018年第1回',
+    pageCount: 8,
+    firstQuestionPage: 1,
+    pages: [3,4,5,6,7,8,9,10],
+    imageBase: './assets/eju-media/math2/2018-1/page-',
+    answerLabelsBySourcePage: {
+      3: ['A','B','C','D','E','F','G','H','I','JK','LM'],
+      4: ['NOP','QR','ST','UVW','XY'],
+      5: ['A','B','C','D','E','F','G','HI','JK','L'],
+      6: ['M','N','O','P','Q','R','S','T','U','V','W','X'],
+      7: [],
+      8: ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','QR','ST','U','V','W','XY'],
+      9: ['A','B','C','D','E','F','G','H','I','J','K','L','MN'],
+      10: ['O','P','Q','R','S','T','U']
+    }
+  },
+  'math2/2018-2': {
+    title: '数学2 · 2018年第2回',
+    pageCount: 8,
+    firstQuestionPage: 1,
+    pages: [3,4,5,6,7,8,9,10],
+    imageBase: './assets/eju-media/math2/2018-2/page-',
+    answerLabelsBySourcePage: {
+      3: ['A','B','C','D','E','F','G','H','I','J','K','LM'],
+      4: ['N','OPQ','R','S','TU','VW','X','Y'],
+      5: ['A','B','C','D','E','F','G','HI','J','K','L','M','N','O'],
+      6: ['PQ','R','S','T','U','V','W','X','Y'],
+      7: ['A','B','C','D','EF','G','H','I','J','K'],
+      8: ['L','MN','OP','QR','S','T','U','V','W','X','Y'],
+      9: ['A','B','C','D','E','F','G','H'],
+      10: ['I','J','K','L']
+    }
+  },
+  'math2/2019-1': {
+    title: '数学2 · 2019年第1回',
+    pageCount: 9,
+    firstQuestionPage: 1,
+    pages: [3,5,6,7,9,11,12,13,14],
+    imageBase: './assets/eju-media/math2/2019-1/page-',
+    answerLabelsBySourcePage: {
+      3: ['A','B','C','D','E','F','G','H','I','J','K'],
+      5: ['L','M','N','O','PQ','RS','TU','VW','X'],
+      6: ['Y'],
+      7: ['A','B','C','D','E','F','G','H','I','J','K','L'],
+      9: ['M','N','O','P','Q','R','S','T','U','V','W','X','Y'],
+      11: ['A','B','C','D','E','F','G','H','I','J','K','L','M'],
+      12: ['N','O','P','Q','R','S'],
+      13: ['A','B','C','D','E','F','G','H','I','J','K'],
+      14: ['L','M','N','O','P','Q','R','S','T','U','V','W']
+    }
+  },
+  'math2/2021-2': {
+    title: '数学2 · 2021年第2回',
+    pageCount: 8,
+    firstQuestionPage: 1,
+    pages: [4,6,8,9,10,12,13,14],
+    imageBase: './assets/eju-media/math2/2021-2/page-',
+    answerLabelsBySourcePage: {
+      4: ['A','B','C','D','E','F','G','H','IJ','KLM'],
+      6: ['NOP','QRS','TU','V','WXY'],
+      8: ['A','B','C','D','E'],
+      9: ['F','G','H','I','J','K','L','M'],
+      10: ['N','O','P','Q','R','S','T','U','V','W','X','Y','Z'],
+      12: ['A','B','C','D','E','F'],
+      13: ['G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W'],
+      14: ['A','B','C','DE','F','G','H','I','J','KL','M','N','O','P','Q','R','S','T','U']
+    }
+  },
+  'math2/2022-1': {
+    title: '数学2 · 2022年第1回',
+    pageCount: 8,
+    firstQuestionPage: 1,
+    pages: [2,4,6,8,9,10,11,12],
+    imageBase: './assets/eju-media/math2/2022-1/page-',
+    answerLabelsBySourcePage: {
+      2: ['A','B','C','D','E','F','GH','IJ','K','LM'],
+      4: ['N','OP','QR','STU','V','WX','Y','Z'],
+      6: ['A','BC','D','EF','G','H','I','J','K','L','M'],
+      8: ['N','O','P'],
+      9: ['Q','R','S','T','U','V','W','X','Y'],
+      10: ['A','B','C','D','E','F','G','H','I','J','K','L','M','N'],
+      11: ['O','P','Q','R','S','T','U','V','W','X'],
+      12: ['A','B','C','D','E','F','G','HI','J','K','L','M','N','OP','QR','S','TU','V','W','X']
+    }
+  },
+  'math2/2022-2': {
+    title: '数学2 · 2022年第2回',
+    pageCount: 8,
+    firstQuestionPage: 1,
+    pages: [2,3,4,5,6,7,8,9],
+    imageBase: './assets/eju-media/math2/2022-2/page-',
+    answerLabelsBySourcePage: {
+      2: ['A','B','C','D','E','F','G','H','I','J','K','L','M'],
+      3: ['N','O','P','Q','R','S','T'],
+      4: ['A','B','C','D','E'],
+      5: ['F','G','H','I','J','K','L','M'],
+      6: ['N','O','P','Q','R','S','T','U','V','W','X','YZ'],
+      7: ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','RS','T','U','V','W'],
+      8: ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O'],
+      9: ['P','Q','R','S','T','U','VW','XYZ']
+    }
+  },
+  'math2/2023-1': {
+    title: '数学2 · 2023年第1回',
+    pageCount: 10,
+    firstQuestionPage: 1,
+    pages: [3,5,7,8,9,10,11,12,13,14],
+    imageBase: './assets/eju-media/math2/2023-1/page-',
+    answerLabelsBySourcePage: {
+      3: ['A','B','C','D','E','F','G','HI','J','K','L'],
+      5: ['M','N','O','P','Q','R','S'],
+      7: ['A','B','C','D','E','F','G','H','I','J','K'],
+      8: ['L'],
+      9: ['M','N','O','P','Q','RS'],
+      10: ['T','U','V','W','X','Y'],
+      11: ['A','BC','D','E','F','GH','I','J','K','LM','N','O','P','Q','R'],
+      12: ['S','T','U','V','W','X'],
+      13: ['A','B','CD','E','F','G','H','I','J','K','L','M','N','O','P','Q'],
+      14: ['R','S','T','U','V','W']
+    }
+  },
+  'math2/2023-2': {
+    title: '数学2 · 2023年第2回',
+    pageCount: 7,
+    firstQuestionPage: 1,
+    pages: [3,5,7,9,11,13,14],
+    imageBase: './assets/eju-media/math2/2023-2/page-',
+    answerLabelsBySourcePage: {
+      3: ['A','B','C','D','E','F','G','H','I','J'],
+      5: ['KL','M','NO','PQ','RS'],
+      7: ['A','B','C','D','E','F','G','H','I','J','K','L','M'],
+      9: ['N','O','P','Q','R','S','T','U','V','W','X'],
+      11: ['AB','C','D','E','F','G','HI','J','K','LM','NO','PQ','RS','T','U','V','W','XY'],
+      13: ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q'],
+      14: ['R','S','T','U','V','W']
+    }
+  },
+  'math2/2025-1': {
+    title: '数学2 · 2025年第1回',
+    pageCount: 9,
+    firstQuestionPage: 1,
+    pages: [2,3,4,5,6,7,8,9,10],
+    imageBase: './assets/eju-media/math2/2025-1/page-',
+    answerLabelsBySourcePage: {
+      2: ['A','B','C','D','E'],
+      3: ['F','G','H','I','JKL'],
+      4: ['M','NO','P','Q','RS','T','UV','W','XY'],
+      5: ['A','B','C','D','E','F','G','H','I','J','K','L','M'],
+      6: ['N','O','P','Q','R','S','T','U','V','W','X'],
+      7: ['A','B','C','D','E','F','G','H','I','J','K'],
+      8: ['L','M','N','O','P','Q','R','S','T','U','VW','X'],
+      9: ['A','B','C','D','E','F','G','H','I','J'],
+      10: ['K','L','MN','O','PQ','R','S','T','U','V','W']
+    }
+  },
+  'math2/2020-2': {
+    title: '数学2 · 2020年第2回',
+    pageCount: 8,
+    firstQuestionPage: 1,
+    pages: [3,5,7,8,9,11,13,14],
+    imageBase: './assets/eju-media/math2/2020-2/page-',
+    answerLabelsBySourcePage: {
+      3: ['A','B','C','D','E','FG','H','I','J','K','LM','N','O'],
+      5: ['P','QR','ST','U','VW','XY'],
+      7: ['A','B','C'],
+      8: ['D','EF','G','H','I','J','K','L'],
+      9: ['MN','O','P','Q','R','S','T','U','V','W','XY'],
+      11: ['A','B','C','DE','F','G','H','I','J','K','L','M','N','OP','Q','R','ST','U','V','W'],
+      13: ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T'],
+      14: ['UV','W']
+    }
   }
 };
 
@@ -120,7 +293,7 @@ async function ejuLoadScannedData() {
   if (!ejuScannedDataPromise) {
     ejuScannedDataPromise = (async function() {
       try {
-        var res = await fetch('./assets/eju-scanned-data.json?v=20260613-math2-2021-1', { cache: 'no-store' });
+        var res = await fetch('./assets/eju-scanned-data.json?v=20260613-math2-all', { cache: 'no-store' });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         ejuScannedData = await res.json();
         return ejuScannedData;
