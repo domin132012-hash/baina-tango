@@ -757,6 +757,40 @@ var EJU_RIKA_PROTOTYPES = {
   }
 };
 
+// 综合科目（総合科目）练习原型 — 复用理科引擎渲染（ejuRikaProtoFor 共用）。
+// 单科目 + マークシート单选 + 官方正解判分。key 用 humanities/<setId>，不与理科/数学混用。
+var EJU_SOGO_PROTOTYPES = {
+  'humanities/2024-1': {
+    title: '総合科目 · 2024年',
+    pageLabel: '総合-',
+    imageBase: './assets/eju-media/humanities/2024-1/page-',
+    subjects: [
+      { id: 'sogo', label: '総合科目',
+        pages: [4,5,6,8,10,11,12,13,14,15,16,17,18,19,20,21,22,24,25,26,27,28,29,30,31],
+        questions: [
+          {no:1,page:4,opts:4,ans:4}, {no:2,page:4,opts:4,ans:4}, {no:3,page:5,opts:4,ans:3},
+          {no:4,page:6,opts:4,ans:2}, {no:5,page:8,opts:4,ans:3}, {no:6,page:10,opts:4,ans:2},
+          {no:7,page:11,opts:4,ans:4}, {no:8,page:11,opts:4,ans:4}, {no:9,page:12,opts:4,ans:1},
+          {no:10,page:13,opts:4,ans:3}, {no:11,page:14,opts:4,ans:1}, {no:12,page:14,opts:4,ans:1},
+          {no:13,page:15,opts:4,ans:2}, {no:14,page:16,opts:4,ans:4}, {no:15,page:16,opts:4,ans:1},
+          {no:16,page:17,opts:4,ans:3}, {no:17,page:17,opts:4,ans:1}, {no:18,page:18,opts:4,ans:2},
+          {no:19,page:19,opts:4,ans:2}, {no:20,page:20,opts:4,ans:2}, {no:21,page:21,opts:4,ans:3},
+          {no:22,page:21,opts:4,ans:3}, {no:23,page:22,opts:4,ans:1}, {no:24,page:24,opts:4,ans:4},
+          {no:25,page:24,opts:4,ans:3}, {no:26,page:25,opts:4,ans:2}, {no:27,page:25,opts:4,ans:4},
+          {no:28,page:25,opts:4,ans:1}, {no:29,page:26,opts:4,ans:1}, {no:30,page:26,opts:4,ans:2},
+          {no:31,page:27,opts:4,ans:3}, {no:32,page:27,opts:4,ans:4}, {no:33,page:28,opts:4,ans:1},
+          {no:34,page:28,opts:4,ans:2}, {no:35,page:29,opts:4,ans:3}, {no:36,page:30,opts:4,ans:1},
+          {no:37,page:30,opts:4,ans:3}, {no:38,page:31,opts:4,ans:4}
+        ] }
+    ]
+  }
+};
+
+// 理科 + 综合科目共用一套渲染引擎，按 key 取对应原型。
+function ejuRikaProtoFor(key) {
+  return EJU_RIKA_PROTOTYPES[key] || EJU_SOGO_PROTOTYPES[key];
+}
+
 // =====================================================================
 // G. 辅助函数
 // =====================================================================
@@ -805,7 +839,7 @@ async function ejuLoadScannedData() {
   if (!ejuScannedDataPromise) {
     ejuScannedDataPromise = (async function() {
       try {
-        var res = await fetch('./assets/eju-scanned-data.json?v=20260614-rika-2021-2', { cache: 'no-store' });
+        var res = await fetch('./assets/eju-scanned-data.json?v=20260614-sogo-2024-1', { cache: 'no-store' });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         ejuScannedData = await res.json();
         return ejuScannedData;
@@ -1133,7 +1167,7 @@ async function renderEjuScannedSet(subject, setId) {
     renderEjuMathPaperPractice(subject, setId, item);
     return;
   }
-  if (EJU_RIKA_PROTOTYPES[subject + '/' + setId]) {
+  if (ejuRikaProtoFor(subject + '/' + setId)) {
     renderEjuRikaPractice(subject, setId, item);
     return;
   }
@@ -1370,7 +1404,7 @@ function ejuRikaProblemLabel(subj, problem) {
 
 function renderEjuRikaPractice(subject, setId, item) {
   var key = subject + '/' + setId;
-  var proto = EJU_RIKA_PROTOTYPES[key];
+  var proto = ejuRikaProtoFor(key);
   if (!proto) return;
   document.body.classList.add('eju-paper-focus');
   ejuCurrentScanSubject = subject;
@@ -1400,7 +1434,7 @@ function ejuRikaSelectSubject(id) {
 }
 
 function ejuRikaGo(delta) {
-  var proto = EJU_RIKA_PROTOTYPES[ejuCurrentScanSubject + '/' + ejuCurrentScanSetId];
+  var proto = ejuRikaProtoFor(ejuCurrentScanSubject + '/' + ejuCurrentScanSetId);
   var subj = ejuRikaGetSubject(proto, ejuRikaSubjectId);
   if (!subj) return;
   var problems = ejuRikaProblemList(subj);
@@ -1409,7 +1443,7 @@ function ejuRikaGo(delta) {
 }
 
 function ejuRikaJump(page) {
-  var proto = EJU_RIKA_PROTOTYPES[ejuCurrentScanSubject + '/' + ejuCurrentScanSetId];
+  var proto = ejuRikaProtoFor(ejuCurrentScanSubject + '/' + ejuCurrentScanSetId);
   var subj = ejuRikaGetSubject(proto, ejuRikaSubjectId);
   if (!subj) return;
   var problems = ejuRikaProblemList(subj);
@@ -1437,7 +1471,7 @@ function ejuRikaSubjectScore(subj) {
 }
 
 function ejuRenderRikaView() {
-  var proto = EJU_RIKA_PROTOTYPES[ejuCurrentScanSubject + '/' + ejuCurrentScanSetId];
+  var proto = ejuRikaProtoFor(ejuCurrentScanSubject + '/' + ejuCurrentScanSetId);
   var mount = document.getElementById('ejuReadingListMount');
   if (!proto || !mount) return;
   var subj = ejuRikaGetSubject(proto, ejuRikaSubjectId);
@@ -1451,8 +1485,11 @@ function ejuRenderRikaView() {
   var imageRef = problem.image || sourcePage;
   var problemLabel = ejuRikaProblemLabel(subj, problem);
 
-  // 科目切换条
-  var subjectBar = proto.subjects.map(function(s) {
+  // 页眉标签：理科='理科-'，综合科目='総合-'
+  var pageLabel = proto.pageLabel || '理科-';
+
+  // 科目切换条（单科目如综合科目则隐藏）
+  var subjectBar = proto.subjects.length <= 1 ? '' : proto.subjects.map(function(s) {
     var active = s.id === ejuRikaSubjectId;
     return '<button class="ghost" style="padding:8px 16px;border-radius:14px;font-weight:950'
       + (active ? ';background:rgba(124,92,255,.16);color:#5d43e8' : ';color:#756c9d') + '" '
@@ -1522,16 +1559,16 @@ function ejuRenderRikaView() {
         + '<button class="ghost" style="padding:8px 18px;border-radius:12px;background:rgba(124,92,255,.14);color:#5d43e8;font-weight:950" onclick="ejuRikaGrade()">採点</button></div>';
 
   mount.innerHTML = ''
-    + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">' + subjectBar + '</div>'
+    + (subjectBar ? '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">' + subjectBar + '</div>' : '')
     + refHtml
     + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">'
     + '<button class="ghost" onclick="ejuRikaGo(-1)"' + prevDisabled + '>← 上一题</button>'
-    + '<div style="font-size:16px;font-weight:950;color:#30294d">' + subj.label + ' · 解答 ' + ejuEsc(problemLabel) + ' · 理科-' + sourcePage + '（' + page + '/' + problems.length + '）</div>'
+    + '<div style="font-size:16px;font-weight:950;color:#30294d">' + subj.label + ' · 解答 ' + ejuEsc(problemLabel) + ' · ' + ejuEsc(pageLabel) + sourcePage + '（' + page + '/' + problems.length + '）</div>'
     + '<button class="ghost" onclick="ejuRikaGo(1)"' + nextDisabled + '>下一题 →</button>'
     + '</div>'
     + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">' + pageButtons + '</div>'
     + '<div style="background:#fff;border:1px solid rgba(124,92,255,.16);border-radius:18px;overflow:hidden;box-shadow:0 10px 28px rgba(105,80,200,.10)">'
-    + '<img src="' + ejuEsc(ejuRikaImageSrc(proto, imageRef)) + '" alt="' + ejuEsc(proto.title + ' ' + subj.label + ' 理科-' + sourcePage + ' 解答 ' + problemLabel) + '" style="display:block;width:100%;height:auto" />'
+    + '<img src="' + ejuEsc(ejuRikaImageSrc(proto, imageRef)) + '" alt="' + ejuEsc(proto.title + ' ' + subj.label + ' ' + pageLabel + sourcePage + ' 解答 ' + problemLabel) + '" style="display:block;width:100%;height:auto" />'
     + '</div>'
     + '<div class="eju-question-card" style="margin-top:14px">'
     + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">'
@@ -2116,6 +2153,21 @@ function runEjuTests() {
     console.assert(ejuRikaProblemLabel(biology, biology.problems[1]) === '2·3', 'EJU biology question 2 should keep answers 2 and 3 together');
     console.assert(ejuRikaProblemLabel(biology, biology.problems[2]) === '4', 'EJU biology page 45 first split should be answer 4');
     console.assert(ejuRikaProblemLabel(biology, biology.problems[3]) === '5', 'EJU biology page 45 second split should be answer 5');
+  }
+
+  // 综合科目 proto 完整性：38 题全 4 択，番号 1-38 连续，每题 page 必须在 pages 内
+  var sogo = ejuRikaProtoFor('humanities/2024-1');
+  console.assert(!!sogo && sogo.pageLabel === '総合-', 'EJU sogo humanities/2024-1 should exist with 総合- label');
+  if (sogo) {
+    var sogoSubj = sogo.subjects[0];
+    console.assert(sogo.subjects.length === 1, 'EJU sogo should be single-subject');
+    console.assert(sogoSubj.questions.length === 38, 'EJU sogo should have 38 answer numbers');
+    sogoSubj.questions.forEach(function(q, i) {
+      console.assert(q.no === i + 1, 'EJU sogo answer numbers must be 1..38 contiguous');
+      console.assert(q.opts === 4 && q.ans >= 1 && q.ans <= 4, 'EJU sogo no=' + q.no + ' must be 4択 with ans 1-4');
+      console.assert(sogoSubj.pages.indexOf(q.page) >= 0, 'EJU sogo no=' + q.no + ' page must be in pages[]');
+    });
+    console.assert(ejuRikaProblemList(sogoSubj).length === 25, 'EJU sogo should split into 25 problem screens');
   }
 }
 

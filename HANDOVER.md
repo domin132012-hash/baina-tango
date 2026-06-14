@@ -1,7 +1,7 @@
 # 交接文档 — EJU 真题试炼（数学 + 理科 + 综合科目）
 
 > 本文件面向**完全没有上下文的接手人/代理**。读完即可接手。
-> 最后更新：2026-06-14。配套阅读：`AGENTS.md`（开工规则）、`PROJECT_STATUS.md`（当前进度）、`AGENT_WORKLOG.md`（最近动作流水）。
+> 最后更新：2026-06-14。配套阅读：`AGENTS.md`（开工规则）、`PROJECT_STATUS.md`（当前进度）、`SOGO_PLAN.md`（综合科目）、`AGENT_WORKLOG.md`（最近动作流水）。
 
 ---
 
@@ -14,7 +14,14 @@
 - 数学1 / 数学2：已完成并上线。
 - 理科：2023-1 样板与 bug 修复已上线；2023-2、2022-1、2022-2、2021-1、2021-2 已上线。
 - 理科剩余 6 套暂缓：2018-1、2018-2、2019-1、2020-2、2024-1、2025-1。
-- 当前新方向：综合科目 2024 MVP，用户已交给 Claude，尚未在 main 验收。
+- 综合科目：2024 一套 MVP 已完成并上线（见下）。
+
+### 综合科目（総合科目）现状（2026-06-14）
+- 已上线：`humanities/2024-1`（38 题全 4 択）。原型在 `assets/eju.js` 的 `EJU_SOGO_PROTOTYPES`，与理科共用 `ejuRikaProtoFor` + 同一套渲染/判分引擎。
+- 渲染脚本独立：`scripts/sogo_render_set.py`（**勿套用理科页码**，综合科目页码自己一套）。图片在 `assets/eju-media/humanities/<set>/`。
+- localStorage key 与理科/数学同前缀但带 `humanities/` 不冲突：`baina-eju-math-paper-humanities/2024-1`。
+- 缓存号当前 `20260614-sogo-2024-1`（两处：index.html 的 `eju.js?v=` 与 eju.js 内 `eju-scanned-data.json?v=`）。
+- 复刻新套流程见 `SOGO_PLAN.md` 末「后续年份」；**必须用户明确指示才开做**。
 
 ---
 

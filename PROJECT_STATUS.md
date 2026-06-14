@@ -1,8 +1,20 @@
 # baina-tango 项目进度
 
 > 📋 接手人必须先读：[`AGENTS.md`](AGENTS.md) → [`HANDOVER.md`](HANDOVER.md) → [`AGENT_WORKLOG.md`](AGENT_WORKLOG.md)。
-> 当前真实版本：`20260614-rika-2021-2`。
-> 当前方向：**暂停理科剩余套，启动综合科目 2024 MVP**（用户已交给 Claude，尚未在 main 验收）。
+> 当前真实版本：`20260614-sogo-2024-1`。
+> ✅ 综合科目（総合科目）2024 一套 MVP 已完成并 push main（复用理科引擎，38 题全 4 択，採点满分/错题扣分验证通过）。
+
+## 最近完成（综合科目 総合科目 2024 MVP）— 本轮
+
+把综合科目 2024 令和6年一套做成可作答/可保存/可採点的 MVP，复用理科练习引擎。详见 `AGENT_WORKLOG.md`、`SOGO_PLAN.md`。
+
+- 原型 `EJU_SOGO_PROTOTYPES['humanities/2024-1']`：单科目 sogo，38 题全 4 択，title「総合科目 · 2024年」，pageLabel「総合-」。
+- 共用引擎：新增 `ejuRikaProtoFor(key)`，理科+综合共用 renderEjuRikaPractice/ejuRenderRikaView；renderEjuScannedSet 加 SOGO 路由。
+- 渲染：`scripts/sogo_render_set.py` → `assets/eju-media/humanities/2024-1/page-NNN.png`（25 张）；跨页竖接 page-008=[8,9]、page-022=[22,23]。
+- 答案 8x 分段读 p32 正解表（非猜测）：`4,4,3,2,3,2,4,4,1,3,1,1,2,4,1,3,1,2,2,2,3,3,1,4,3,2,4,1,1,2,3,4,1,2,3,1,3,4`。
+- 缓存号 `20260614-sogo-2024-1`（index.html 用 Python 字节替换）。
+- 验证：node --check + runEjuTests 0 失败；preview 进入综合练习（非OCR浏览）、25/25 题图 200、保存/採点正常、满分 38/38、错一题 37/38、控制台无报错。
+- **下一步建议**：等用户确认是否继续做其它综合年份（2025、2008~2023）；理科剩余 6 套仍暂停。注意勿与 Codex 同时改 `assets/eju.js`。
 
 ---
 
@@ -31,7 +43,7 @@
 
 | 模块 | 状态 | 备注 |
 |---|---|---|
-| 综合科目 2024 MVP | 🚧 进行中 | 用户已交给 Claude；先跑 1 套最新卷，不批量铺开 |
+| 综合科目 2024 MVP | ✅ 已上线 | commit `eb1a26e`（rebase 后哈希以实际 push 为准），缓存号 `20260614-sogo-2024-1` |
 | 未部署年份灰色建设中 UI | 📝 待做 | 可后续让 Codex 做，但避免与 Claude 同时改 `assets/eju.js` 撞车 |
 
 ---

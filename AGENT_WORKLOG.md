@@ -27,6 +27,36 @@ Entry template:
 
 ---
 
+## 2026-06-14 / Claude (Opus 4.8) / 综合科目 2024 MVP
+
+### Task
+- 完成「综合科目（総合科目）2024 一套 MVP」：能作答 / 保存 / 採点 / 上线。仅此一套，不碰理科剩余套、不做旧年份综合。
+
+### Files changed
+- `assets/eju.js` — 新增 `EJU_SOGO_PROTOTYPES['humanities/2024-1']`（单科目 sogo，38 题全 `opts:4`，title「総合科目 · 2024年」，pageLabel「総合-」）；新增 `ejuRikaProtoFor(key)=EJU_RIKA_PROTOTYPES[key]||EJU_SOGO_PROTOTYPES[key]` 并替换 4 处直接查表（renderEjuRikaPractice / ejuRikaGo / ejuRikaJump / ejuRenderRikaView）+ renderEjuScannedSet 路由；ejuRenderRikaView 用 `proto.pageLabel` 去 '理科-' 硬编码 + 单科目隐藏切换条；runEjuTests 增综合断言；JSON 缓存号 → `20260614-sogo-2024-1`。
+- `index.html` — `eju.js?v=` → `20260614-sogo-2024-1`（Python 字节替换，未手改）。
+- `scripts/sogo_render_set.py`（新增）— 仿 rika_render_set.py，用综合科目自己的页码（**未套理科**）；跨页竖接 page-008=[8,9]、page-022=[22,23]。
+- `assets/eju-media/humanities/2024-1/page-NNN.png`（新增 25 张，DPI150 裁白边/去页脚）。
+- `SOGO_PLAN.md` 标注已实现；`PROJECT_STATUS.md` / `HANDOVER.md` / `TASK_PLAN.md` 更新。
+
+### 答案核验（非猜测）
+- PDF 32 页纯图。8x 渲染 p32 正解表，分左右两列分段读图；p31 末页确认「39～60 はマークしないでください」→ 实际作答番号 1-38，全部 4 択（正解值全 ≤4）。
+- 答案序列：`4,4,3,2,3,2,4,4,1,3,1,1,2,4,1,3,1,2,2,2,3,3,1,4,3,2,4,1,1,2,3,4,1,2,3,1,3,4`
+
+### Validation
+- `node --check assets/eju.js` ✅；vm 跑 `runEjuTests` 自检 0 失败 ✅。
+- preview（python http.server 8731）：进入「総合科目 · 2024年」练习页（非 OCR 浏览）✅；25 屏导航（1·2 … 38）✅；25/25 题图 HTTP 200 ✅；单选保存到 localStorage `baina-eju-math-paper-humanities/2024-1` ✅；官方答案採点 38/38 满分 ✅；故意错第 10 题 → 37/38 扣分 ✅；控制台无 error ✅。
+
+### Risks / next steps
+- 仅 `humanities/2024-1` 一套。其余综合年份（2008~2023、2025）未做，需用户明确指示。
+- 大問引导文章页 p3(問1)/p7(問2) 未渲染（MVP 决策，子题面自含）；后续如需上下文可补引导页。
+- 理科剩余 6 套仍暂停。与 Codex 不要同时改 `assets/eju.js`。
+
+### Commit
+- `feat(eju): add humanities 2024 practice MVP`（rebase 到 origin/main 后 push，哈希以实际为准）
+
+---
+
 ## 2026-06-14 / ChatGPT / Handoff制度を追加
 
 ### Task

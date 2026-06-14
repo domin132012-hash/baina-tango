@@ -1,120 +1,33 @@
-# TASK_PLAN.md — 当前任务计划
+# TASK_PLAN.md — 综合科目 2024 MVP ✅ 已完成
 
-> 目的：让任何接手人/代理先读本文件，明确当前主线、任务边界与禁止事项。  
-> 最后更新：2026-06-14。事实源以 GitHub `main` 分支的 `PROJECT_STATUS.md`、`HANDOVER.md` 为准。
+> 主线变更（2026-06-14）：暂停理科剩余 6 套，转做「综合科目/総合科目」真题试炼，先跑通 2024 一套 MVP。
+> 计划详见 `SOGO_PLAN.md`。完成情况见 `AGENT_WORKLOG.md`。
 
----
+## 阶段一：暂停理科 + 文档
+- [x] SOGO_PLAN.md 已存在并记录 2024-1 完整采集数据
+- [x] 更新 PROJECT_STATUS.md / HANDOVER.md / AGENT_WORKLOG.md（本轮）
 
-## 0. 当前状态快照
+## 阶段四：渲染 PDF
+- [x] dump PDF 结构（32页；题目页3-31；封面p1/空白p2；正解表p32；跨页 p8-9、p22-23）
+- [x] 新建 scripts/sogo_render_set.py
+- [x] 渲染 assets/eju-media/humanities/2024-1/page-NNN.png（25 张）
 
-- 项目仓库：`domin132012-hash/baina-tango`
-- 线上地址：`https://baina-tango.pages.dev`
-- 部署规则：push 到 `main` 会触发 Cloudflare Pages 自动部署
-- 当前缓存号：`20260614-rika-2023-1-v2`
-- 当前事实源：
-  - `PROJECT_STATUS.md`
-  - `HANDOVER.md`
-  - `TASK_PLAN.md`
-  - `ACCEPTANCE.md`
-  - `DECISION_LOG.md`
+## 阶段五：读答案（8x 分段，已核验非猜测）
+- [x] 8x 渲染 p32 正解表，分段读左右两列 + p31 末页确认作答番号 1-38
+- [x] 答案序列(38) 全 1-4（全 4択）：4,4,3,2,3,2,4,4,1,3,1,1,2,4,1,3,1,2,2,2,3,3,1,4,3,2,4,1,1,2,3,4,1,2,3,1,3,4
 
----
+## 阶段六：写 proto + 接线
+- [x] eju.js 新增 EJU_SOGO_PROTOTYPES['humanities/2024-1']（38 题，全 opts:4）
+- [x] 新增 ejuRikaProtoFor 并替换 4 处直接查表 + renderEjuRikaPractice
+- [x] renderEjuScannedSet 加 SOGO 路由（ejuRikaProtoFor 命中）
+- [x] ejuRenderRikaView：pageLabel='総合-' 去理科硬编码 + 单科目隐藏切换条
+- [x] runEjuTests 加综合科目断言（38题/4択/番号连续/25屏）
 
-## 1. 已完成，不要重复做
+## 阶段七：缓存号 + 验证
+- [x] bump 缓存号两处 → 20260614-sogo-2024-1（index.html 用 Python 字节替换）
+- [x] node --check assets/eju.js + runEjuTests 自检 0 失败
+- [x] preview 验证：进入综合科目练习（非OCR浏览）/题图/单选保存/採点/满分38-38/错一题37-38
+- [x] 题图全 25/25 200，控制台无报错
 
-### 数学
-
-- 数学1：12 套完整可练，已上线。
-- 数学2：12 套完整可练，已上线。
-- 数学卷当前为“填空答案框”模式。
-- 数学答案 key 格式：`源页:答案框`。
-
-### 理科
-
-- 理科 `science/2023-1` 已做成样板并上线。
-- 当前样板包含物理、化学、生物三科。
-- 作答方式为マークシート单选：①②③④等。
-- 已完成 v2 修订：题目导航按实际解答番号、一页两题拆屏、图片重裁去底部空白。
-
----
-
-## 2. 当前主线
-
-当前主线不是继续做数学，而是：
-
-**把理科真题试炼从 `science/2023-1` 样板扩展到其他年份/回数。**
-
-优先顺序：
-
-1. `science/2023-2`
-2. `science/2022-1`
-3. `science/2022-2`
-4. `science/2021-1`
-5. `science/2021-2`
-6. 之后再考虑没有独立正解表的年份，例如 2018–2020、2024 等。
-
-优先理由：2021/2022/2023 有独立理科正解表，答案来源最稳。
-
----
-
-## 3. 下一个建议任务
-
-### 任务：完整迁移 `science/2023-2`
-
-目标：以 `science/2023-1` 为样板，做出第二套完整可练理科样板。
-
-范围：
-
-- 只处理 `science/2023-2`。
-- 不碰数学1、数学2。
-- 不批量铺开多个年份。
-- 不部署，除非用户明确同意。
-
-必须完成：
-
-1. 读取对应源 PDF。
-2. 读取/确认对应官方正解表。
-3. 先确认三科页码范围，不能套用 2023-1。
-4. 渲染并裁剪题面图片。
-5. 人工标定每道题：科目、题号、源页、选项数、正确答案。
-6. 在 `EJU_RIKA_PROTOTYPES` 中新增 `science/2023-2`。
-7. 本地验证三科可切换、单选可点、採点正确、图片无 404。
-8. 更新 `PROJECT_STATUS.md` 与 `HANDOVER.md`。
-
----
-
-## 4. 禁止事项
-
-任何代理/接手人不得擅自执行以下行为：
-
-- 不要把数学任务当成当前主线继续重复做。
-- 不要把 `science/2023-1` 的页码范围直接套到其他年份。
-- 不要用 OCR 或正则自动猜理科答案。
-- 不要在没有官方正解表或试卷末尾正解页确认的情况下写答案。
-- 不要在未本地验证的情况下 push 到 `main`。
-- 不要自动部署生产环境；push 到 `main` 前必须得到用户确认。
-- 不要用普通 Edit 工具改 `index.html`；只能用 Python 字节替换缓存号。
-- 不要忘记同步 bump 两处缓存号：`index.html` 的 `eju.js?v=` 与 `assets/eju.js` 里的 `eju-scanned-data.json?v=`。
-
----
-
-## 5. 每次任务结束必须输出
-
-接手人完成任务后必须输出：
-
-1. 本次目标是否完成。
-2. 改了哪些文件。
-3. 新增了哪些图片/数据。
-4. 是否运行 `node --check assets/eju.js`。
-5. 本地浏览器验收结果。
-6. 是否部署。
-7. 当前风险。
-8. 下一步建议。
-9. `git status --short`。
-
-并且必须更新：
-
-- `PROJECT_STATUS.md`
-- `HANDOVER.md`
-- 必要时更新 `TASK_PLAN.md`
-- 必要时更新 `DECISION_LOG.md`
+## 阶段八：提交
+- [x] commit + push: feat(eju): add humanities 2024 practice MVP
