@@ -90,3 +90,51 @@ Entry template:
 - `6c3fd01` — docs: sync project status with latest EJU progress
 - `f325a3f` — docs: refresh handover for agent workflow and latest EJU status
 - `this update` — finalize worklog commit list
+
+---
+
+## 2026-06-14 / ChatGPT / Selected mattpocock skills install
+
+### Task
+
+- Installed selected `mattpocock/skills` project-level skills for Claude Code and Codex.
+- Did not modify business code, EJU assets, PDF rendering scripts, or scanned-practice implementation files.
+
+### Installed skills
+
+- `setup-matt-pocock-skills`
+- `handoff`
+- `diagnose`
+- `tdd`
+- `grill-with-docs`
+- `to-prd`
+- `to-issues`
+
+### Files changed
+
+- Codex universal skills: `.agents/skills/<skill>/`
+- Claude Code project skill symlinks: `.claude/skills/<skill>`
+- Lockfile: `skills-lock.json`
+- Agent policy and setup docs: `AGENTS.md`, `docs/agents/`, `docs/adr/.gitkeep`
+- Worklog: `AGENT_WORKLOG.md`
+
+### Validation
+
+- Listed available `mattpocock/skills` before install and confirmed all 7 requested skills existed.
+- Installed with `npx skills@latest add mattpocock/skills -a claude-code -a codex` and explicit `--skill` entries only. No global install, no `-g`, and no `--all`.
+- Applied `setup-matt-pocock-skills` configuration by reading and following `.agents/skills/setup-matt-pocock-skills/SKILL.md` because the newly installed slash command was not available inside the already-running Codex session.
+- Setup choices:
+  - issue tracker: GitHub Issues for `domin132012-hash/baina-tango`
+  - agent docs directory: `docs/agents/`
+  - ADR directory: `docs/adr/`
+  - labels: `bug`, `feature`, `docs`, `refactor`, `priority-high`, `blocked`
+
+### Risks / next steps
+
+- Installed skills run with full agent permissions when invoked.
+- Installer reported medium security risk for `setup-matt-pocock-skills` and `to-issues`; review skill contents before first use.
+- GitHub labels are documented in repo config but were not created or changed on GitHub.
+
+### Commit
+
+- `c03108f` before rebase; final rebased hash reported in task completion.
