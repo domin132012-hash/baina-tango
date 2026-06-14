@@ -56,4 +56,7 @@ Entry template:
 
 ### Commits
 - `0cdcfe0` — docs: add agent start checklist
-- `TBD` — create this worklog and sync project docs
+- `6f1e331` — docs: add agent worklog
+- `6c3fd01` — docs: sync project status with latest EJU progress
+- `f325a3f` — docs: refresh handover for agent workflow and latest EJU status
+- `this update` — finalize worklog commit list
