@@ -1,21 +1,19 @@
 # baina-tango 项目进度
 
 > 📋 接手人必须先读：[`AGENTS.md`](AGENTS.md) → [`HANDOVER.md`](HANDOVER.md) → [`AGENT_WORKLOG.md`](AGENT_WORKLOG.md)。
-> 当前真实版本：`20260614-sogo-2024-1-materials-fix`。
-> ✅ 综合科目（総合科目）2024 已上线，并已修复材料页缺失（問1/問2 引导文章页 p3/p7 现作为材料页显示，题屏 25→27）。
+> 当前真实版本：`20260614-notices-kv`（EJU 缓存号仍为 `20260614-sogo-2024-1-materials-fix`）。
+> ✅ 消息通知已改为 Cloudflare KV 远程配置，新增 `/admin/notices.html` 可视化后台。
 
-## 最近完成（综合科目 2024 材料页修复）— 本轮
+## 最近完成（远程可配置消息通知）— 本轮
 
-修复线上发现的「第一屏直接显示下線部设问、缺材料页」问题，并校正页眉印刷页号。详见 `AGENT_WORKLOG.md`、`SOGO_PLAN.md`。
+把首页右上角「消息通知」从固定 HTML 通知，改成 Cloudflare KV 远程配置。详见 `NOTICES_ADMIN.md`。
 
-- 根因：旧 proto pages 从 4 起，漏掉 p3(問1材料)/p7(問2材料)；「子题面自含」判断错误 —— 下線部1〜4 指代材料页内容，缺页无法作答。
-- 修复：`scripts/sogo_render_set.py` pages 加 3、7 → 渲染 page-003/007.png（保留 merge[8,9]/[22,23]，原图未变，共 27 张）。
-- proto：pages 加 3/7；显式 `problems`（27 屏），材料页 `{page:3,label:'問1 材料',answers:[]}`、`{page:7,label:'問2 材料',answers:[]}`；`pageLabel:'総合科目-'` + `pageNumberOffset:-2`。
-- UI：材料页显示「資料 · 総合科目-N（PDF pN）· 无作答题」；解答屏显示「解答 1·2 · 総合科目-2（PDF p4）」，不再误显「総合-4」。
-- 缓存号 `20260614-sogo-2024-1-materials-fix`（index.html 用 Python 字节替换）。
-- 验证：node --check + runEjuTests 0 失败；preview 第一屏=問1材料页、解答1·2 在第二屏、問2材料页在解答5前、27/27 题图 200、满分 38/38、错一题 37/38、控制台无报错。
-- **下一步建议**：等用户确认是否继续做其它综合年份；理科剩余 6 套仍暂停。
-- ⚠️ 本轮 push 同时带上 Codex 已完成并本地提交的 `8b09231 fix(eju): mark undeployed scanned sets as coming soon`（未部署年份灰色建设中 UI）。
+- 新增用户端前端模块：`assets/notices.js`，负责拉取 `/api/notices`、过滤 enabled/time/showOnce、渲染通知、红点和关闭状态。
+- 新增公开接口：`GET /api/notices`，从 KV `NOTICES_KV` 的 `notices:all` 读取通知；未绑定时返回空数组，不影响主应用。
+- 新增管理接口：`GET/POST/PUT/DELETE /api/admin/notices`，用 `ADMIN_NOTICE_TOKEN` 鉴权，支持增删改查。
+- 新增可视化后台：`/admin/notices.html`，可输入 Token 后新增、编辑、启用/禁用、删除通知。
+- 新增 Pages Middleware：`functions/_middleware.js` 在 HTML 响应末尾注入 `assets/notices.js?v=20260614-notices-kv`。
+- 注意：本轮没有直接改 `index.html`；旧硬编码通知块仍在源码里，但线上运行时会被 `assets/notices.js` 接管并替换显示。后续如有本地仓库，可再按规则用 Python 字节替换彻底清理。
 
 ---
 
@@ -25,6 +23,7 @@
 
 | 模块 | 状态 | 备注 |
 |---|---|---|
+| 消息通知远程配置 | ✅ 已推送 main | Cloudflare KV + `/api/notices` + `/api/admin/notices` + `/admin/notices.html` |
 | 数学2 | ✅ 已上线 | 早期完成，已作为数学卷基础样板 |
 | 数学1 | ✅ 已上线 | 12 套全部完成，commit `b3f37b3`，缓存号 `20260613-math1-all` |
 | 理科 2023-1 | ✅ 已上线 | 样板 + 后续 bug 修复，缓存号曾到 `20260614-rika-2023-1-v2` |
@@ -33,6 +32,7 @@
 | 理科 2022-2 | ✅ 已上线 | commit `3b9bb65`，缓存号 `20260614-rika-2022-2` |
 | 理科 2021-1 | ✅ 已上线 | commit `d57a747`，缓存号 `20260614-rika-2021-1` |
 | 理科 2021-2 | ✅ 已上线 | commit `ef7c68b`，缓存号 `20260614-rika-2021-2` |
+| 综合科目 2024 MVP | ✅ 已上线 | 缓存号 `20260614-sogo-2024-1-materials-fix`；27 屏含 p3/p7 材料页 |
 
 ### 暂缓
 
@@ -44,7 +44,7 @@
 
 | 模块 | 状态 | 备注 |
 |---|---|---|
-| 综合科目 2024 MVP | ✅ 已上线 | commit `eb1a26e`（rebase 后哈希以实际 push 为准），缓存号 `20260614-sogo-2024-1` |
+| Cloudflare 通知配置 | ⚠️ 待线上配置 | 需要在 Pages 设置里绑定 `NOTICES_KV` 并配置 `ADMIN_NOTICE_TOKEN` |
 | 未部署年份灰色建设中 UI | 📝 待做 | 可后续让 Codex 做，但避免与 Claude 同时改 `assets/eju.js` 撞车 |
 
 ---
@@ -63,58 +63,3 @@
 ```text
 开工前必读：先读 AGENTS.md、PROJECT_STATUS.md、HANDOVER.md、AGENT_WORKLOG.md，再读本任务相关计划文件。做完后必须更新 PROJECT_STATUS/HANDOVER/AGENT_WORKLOG，commit + push，并汇报 commit hash、验证结果、剩余风险。
 ```
-
----
-
-## 最近完成：理科 5 套有独立正解表全部上线
-
-本轮已完成：
-
-| 套 | commit | 关键说明 |
-|---|---|---|
-| 2023-2 | `feccfcc` | 新增通用渲染裁图脚本；修复 2023-1 物理 no16/17/18 答案录入错位 |
-| 2022-1 | `e90b3f2` | 物理 no9 题干+选项续页拼接；化学双题页；生物問10双答 |
-| 2022-2 | `3b9bb65` | 化学双题6页；生物問4/問15双答；采点验证通过 |
-| 2021-1 | `d57a747` | 2个前置说明页造成页码偏移；生物問12双答；采点满分 |
-| 2021-2 | `ef7c68b` | 化学双题6页；生物問10双答；化学采点满分 |
-
-注意：这些年份的答案均按官方正解表 8x 分段读取确认。做后续理科时继续保持这个标准。
-
----
-
-## 最近完成：数学1 全 12 套真题试炼
-
-数学1全部 12 套已做成与数学2一致的完整可练样板，已部署上线。
-
-- 套数：math1/2018-1、2018-2、2019-1、2020-2、2021-1、2021-2、2022-1、2022-2、2023-1、2023-2、2024-1、2025-1
-- 共 885 个答案框，172 张 PNG（30MB）
-- 2024-1 特殊：31 页双课程卷（コース1+コース2），math1 仅取 コース1 页 `[4,6,8,10,12,14,15]`
-- 缓存号：`20260613-math1-all`
-- commit `b3f37b3`
-
----
-
-## 理科答案来源规则
-
-- 有独立 `XXXX理科答案.pdf` 的年份（2021/2022/2023 第1/2回 + 2002-04）→ 用独立正解表。
-- 无独立答案文件的年份（2018-2020、2024 等）→ 答案在**试卷 PDF 最后一页**，但做之前必须先翻卷尾确认。
-- 答案必须 8x 分段读取；不允许一次性读完整列。
-- 可疑数字（2/3/5/6/8 等）必须局部放大复核。
-
----
-
-## 关键坑
-
-1. `index.html` 只能用 Python 字节操作改，禁止直接 Edit。改它通常只用于 bump `eju.js?v=`。
-2. 缓存号要同步改两处：`index.html` 里的 `eju.js?v=` 和 `assets/eju.js` 里的 `eju-scanned-data.json?v=`。
-3. 理科 PDF 是纯图像无文本层，选项数和题页必须人工读图确认。
-4. 每套 PDF 页码体系不同，不要套用别的年份页码。
-5. Claude/Codex 多代理并行时，任何涉及 `assets/eju.js` 的任务都可能撞车。先同步 main，再开工。
-
----
-
-## 下一步建议
-
-1. 先等待/验收 Claude 的「综合科目 2024 MVP」。
-2. Claude 完成后，让 Codex 做「未部署年份灰色建设中」UI。
-3. UI 稳定后，再决定是否继续理科剩余 6 套或批量铺开综合科目旧年份。
