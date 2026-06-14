@@ -22,7 +22,7 @@ const CATEGORIES = [
     skills: [
       { id: "reading", label: "読解", labelZh: "阅读", available: true },
       { id: "listening", label: "聴読解", labelZh: "听力", available: false },
-      { id: "writing", label: "記述", labelZh: "写作", available: false }
+      { id: "writing", label: "記述", labelZh: "写作", available: true }
     ]
   },
   { id: "sogo", label: "総合科目", labelZh: "综合科目", available: false, skills: [] },
