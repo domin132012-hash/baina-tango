@@ -762,11 +762,27 @@ var EJU_RIKA_PROTOTYPES = {
 var EJU_SOGO_PROTOTYPES = {
   'humanities/2024-1': {
     title: '総合科目 · 2024年',
-    pageLabel: '総合-',
+    // 页眉印刷页号 = PDF 物理页号 + pageNumberOffset（综合科目卷内 p3=総合科目-1 起算，故 -2）。
+    pageLabel: '総合科目-',
+    pageNumberOffset: -2,
     imageBase: './assets/eju-media/humanities/2024-1/page-',
     subjects: [
       { id: 'sogo', label: '総合科目',
-        pages: [4,5,6,8,10,11,12,13,14,15,16,17,18,19,20,21,22,24,25,26,27,28,29,30,31],
+        pages: [3,4,5,6,7,8,10,11,12,13,14,15,16,17,18,19,20,21,22,24,25,26,27,28,29,30,31],
+        // 显式题屏：p3=問1 材料页、p7=問2 材料页（answers:[]，无作答，仅展示下線部所依据的会話/文章）。
+        problems: [
+          {page:3,label:'問1 材料',answers:[]},
+          {page:4,answers:[1,2]}, {page:5,answers:[3]}, {page:6,answers:[4]},
+          {page:7,label:'問2 材料',answers:[]},
+          {page:8,answers:[5]}, {page:10,answers:[6]}, {page:11,answers:[7,8]},
+          {page:12,answers:[9]}, {page:13,answers:[10]}, {page:14,answers:[11,12]},
+          {page:15,answers:[13]}, {page:16,answers:[14,15]}, {page:17,answers:[16,17]},
+          {page:18,answers:[18]}, {page:19,answers:[19]}, {page:20,answers:[20]},
+          {page:21,answers:[21,22]}, {page:22,answers:[23]}, {page:24,answers:[24,25]},
+          {page:25,answers:[26,27,28]}, {page:26,answers:[29,30]}, {page:27,answers:[31,32]},
+          {page:28,answers:[33,34]}, {page:29,answers:[35]}, {page:30,answers:[36,37]},
+          {page:31,answers:[38]}
+        ],
         questions: [
           {no:1,page:4,opts:4,ans:4}, {no:2,page:4,opts:4,ans:4}, {no:3,page:5,opts:4,ans:3},
           {no:4,page:6,opts:4,ans:2}, {no:5,page:8,opts:4,ans:3}, {no:6,page:10,opts:4,ans:2},
@@ -868,7 +884,7 @@ async function ejuLoadScannedData() {
   if (!ejuScannedDataPromise) {
     ejuScannedDataPromise = (async function() {
       try {
-        var res = await fetch('./assets/eju-scanned-data.json?v=20260614-coming-soon-years', { cache: 'no-store' });
+        var res = await fetch('./assets/eju-scanned-data.json?v=20260614-sogo-2024-1-materials-fix', { cache: 'no-store' });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         ejuScannedData = await res.json();
         return ejuScannedData;
@@ -1483,9 +1499,15 @@ function ejuRenderRikaView() {
   var sourcePage = problem.page;
   var imageRef = problem.image || sourcePage;
   var problemLabel = ejuRikaProblemLabel(subj, problem);
+  // 本屏是否为无作答材料/资料页（如综合科目 問1/問2 引导文章页）
+  var isMaterialPage = ejuRikaProblemQuestions(subj, problem).length === 0;
 
-  // 页眉标签：理科='理科-'，综合科目='総合-'
+  // 页眉标签：理科='理科-'，综合科目='総合科目-'。
+  // 印刷页号 = PDF 物理页号 + pageNumberOffset（理科 offset=0；综合科目 -2）。
   var pageLabel = proto.pageLabel || '理科-';
+  var printedPage = sourcePage + (proto.pageNumberOffset || 0);
+  // 印刷页号与 PDF 页号不一致时（如综合科目）标注 PDF 页，避免误导。
+  var pdfNote = proto.pageNumberOffset ? ('PDF p' + sourcePage + ' · ') : '';
 
   // 科目切换条（单科目如综合科目则隐藏）
   var subjectBar = proto.subjects.length <= 1 ? '' : proto.subjects.map(function(s) {
@@ -1562,12 +1584,12 @@ function ejuRenderRikaView() {
     + refHtml
     + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">'
     + '<button class="ghost" onclick="ejuRikaGo(-1)"' + prevDisabled + '>← 上一题</button>'
-    + '<div style="font-size:16px;font-weight:950;color:#30294d">' + subj.label + ' · 解答 ' + ejuEsc(problemLabel) + ' · ' + ejuEsc(pageLabel) + sourcePage + '（' + page + '/' + problems.length + '）</div>'
+    + '<div style="font-size:16px;font-weight:950;color:#30294d">' + subj.label + ' · ' + (isMaterialPage ? '資料' : '解答 ' + ejuEsc(problemLabel)) + ' · ' + ejuEsc(pageLabel) + printedPage + '（' + pdfNote + page + '/' + problems.length + '）</div>'
     + '<button class="ghost" onclick="ejuRikaGo(1)"' + nextDisabled + '>下一题 →</button>'
     + '</div>'
     + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">' + pageButtons + '</div>'
     + '<div style="background:#fff;border:1px solid rgba(124,92,255,.16);border-radius:18px;overflow:hidden;box-shadow:0 10px 28px rgba(105,80,200,.10)">'
-    + '<img src="' + ejuEsc(ejuRikaImageSrc(proto, imageRef)) + '" alt="' + ejuEsc(proto.title + ' ' + subj.label + ' ' + pageLabel + sourcePage + ' 解答 ' + problemLabel) + '" style="display:block;width:100%;height:auto" />'
+    + '<img src="' + ejuEsc(ejuRikaImageSrc(proto, imageRef)) + '" alt="' + ejuEsc(proto.title + ' ' + subj.label + ' ' + pageLabel + printedPage + (isMaterialPage ? ' 資料' : ' 解答 ' + problemLabel)) + '" style="display:block;width:100%;height:auto" />'
     + '</div>'
     + '<div class="eju-question-card" style="margin-top:14px">'
     + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">'
@@ -2154,9 +2176,9 @@ function runEjuTests() {
     console.assert(ejuRikaProblemLabel(biology, biology.problems[3]) === '5', 'EJU biology page 45 second split should be answer 5');
   }
 
-  // 综合科目 proto 完整性：38 题全 4 択，番号 1-38 连续，每题 page 必须在 pages 内
+  // 综合科目 proto 完整性：38 题全 4 択，番号 1-38 连续，每题 page 必须在 pages 内，含 2 张材料页
   var sogo = ejuRikaProtoFor('humanities/2024-1');
-  console.assert(!!sogo && sogo.pageLabel === '総合-', 'EJU sogo humanities/2024-1 should exist with 総合- label');
+  console.assert(!!sogo && sogo.pageLabel === '総合科目-', 'EJU sogo humanities/2024-1 should exist with 総合科目- label');
   if (sogo) {
     var sogoSubj = sogo.subjects[0];
     console.assert(sogo.subjects.length === 1, 'EJU sogo should be single-subject');
@@ -2166,7 +2188,13 @@ function runEjuTests() {
       console.assert(q.opts === 4 && q.ans >= 1 && q.ans <= 4, 'EJU sogo no=' + q.no + ' must be 4択 with ans 1-4');
       console.assert(sogoSubj.pages.indexOf(q.page) >= 0, 'EJU sogo no=' + q.no + ' page must be in pages[]');
     });
-    console.assert(ejuRikaProblemList(sogoSubj).length === 25, 'EJU sogo should split into 25 problem screens');
+    // 含 p3/p7 材料页后题屏从 25 → 27；p3/p7 为无作答材料页
+    var sogoProblems = ejuRikaProblemList(sogoSubj);
+    console.assert(sogoProblems.length === 27, 'EJU sogo should split into 27 problem screens (incl. 2 material pages)');
+    var materialPages = sogoProblems.filter(function(p) { return ejuRikaProblemQuestions(sogoSubj, p).length === 0; });
+    console.assert(materialPages.length === 2, 'EJU sogo should have exactly 2 material screens (p3 問1, p7 問2)');
+    console.assert(sogoSubj.pages.indexOf(3) >= 0 && sogoSubj.pages.indexOf(7) >= 0, 'EJU sogo pages must include material pages 3 and 7');
+    console.assert(sogoProblems[0].page === 3 && sogoProblems[4].page === 7, 'EJU sogo material pages must sit before their sub-questions (p3 first, p7 5th)');
   }
 }
 

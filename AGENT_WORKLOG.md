@@ -27,6 +27,39 @@ Entry template:
 
 ---
 
+## 2026-06-14 / Claude (Opus 4.8) / 综合科目 2024 材料页修复 (materials-fix)
+
+### Task
+- 修复线上反馈：综合科目 2024 第一屏直接显示「下線部1/2」设问，缺前面的材料/文章页，题目不完整。仅修 `humanities/2024-1`。
+
+### 复现 / 根因（/diagnose）
+- 复现：proto pages 从 `4` 起，第一屏即 p4（解答1·2），下線部1〜4 无所指。
+- 根因：p3=問1 会話材料、p7=問2 文章材料（各含下線部1〜4 → 解答 1-4 / 5-8）。旧版「子题面自含、不渲染引导页」判断错误，材料页必须显示否则无法作答。8x 读图确认 p3 页眉「総合科目-1」、p7「総合科目-5」。
+
+### Files changed
+- `scripts/sogo_render_set.py` — pages 加入 `3`、`7`（保留 merge[8,9]/[22,23]）；重渲染新增 `page-003.png`、`page-007.png`，原图 md5 未变。
+- `assets/eju.js` —
+  - `EJU_SOGO_PROTOTYPES['humanities/2024-1']`：pages 加 3/7；新增显式 `problems`（27 屏），材料屏 `{page:3,label:'問1 材料',answers:[]}`、`{page:7,label:'問2 材料',answers:[]}`；`pageLabel` 改 `総合科目-`，加 `pageNumberOffset:-2`。
+  - `ejuRenderRikaView`：计算印刷页号 `printedPage = sourcePage + pageNumberOffset`；材料屏显示「資料」而非「解答」；offset≠0 时标注「PDF pN」。
+  - `runEjuTests`：综合断言更新（27 屏 / 2 材料屏 / pageLabel `総合科目-` / 仍 38 题）。
+  - JSON 缓存号 → `20260614-sogo-2024-1-materials-fix`。
+- `index.html` — `eju.js?v=` → `20260614-sogo-2024-1-materials-fix`（Python 字节替换）。
+- `SOGO_PLAN.md` / `PROJECT_STATUS.md` 更新。
+
+### Validation
+- `node --check assets/eju.js` ✅；vm 跑 `runEjuTests` 0 失败 ✅。
+- preview：第一屏=問1 材料页「総合科目 · 資料 · 総合科目-1（PDF p3 · 1/27）」，会話文可见 ✅；解答 1·2 在第 2 屏「総合科目-2（PDF p4）」✅；問2 材料页（p7）在解答 5 之前 ✅；27 屏导航（問1材料/1·2/3/4/問2材料/5…38）✅；27/27 题图 HTTP 200 ✅；满分 38/38 ✅；故意错第 10 题 37/38 ✅；控制台无 error ✅。
+
+### Risks / next steps
+- 仅 `humanities/2024-1`。其它综合年份未做，需用户明确指示。
+- 答案序列与解答番号数量未变（仍 38）。
+- 本轮 push 同时带上 Codex 已完成并本地提交的 `8b09231`（未部署年份灰色建设中 UI，HEAD 上、origin 未有），两者在 `assets/eju.js` 上层叠，已确认 Codex 任务结束后再动手。
+
+### Commit
+- `fix(eju): include humanities 2024 material pages`（哈希以实际 push 为准）
+
+---
+
 ## 2026-06-14 / Claude (Opus 4.8) / 综合科目 2024 MVP
 
 ### Task

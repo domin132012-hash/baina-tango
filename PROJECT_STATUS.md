@@ -1,20 +1,21 @@
 # baina-tango 项目进度
 
 > 📋 接手人必须先读：[`AGENTS.md`](AGENTS.md) → [`HANDOVER.md`](HANDOVER.md) → [`AGENT_WORKLOG.md`](AGENT_WORKLOG.md)。
-> 当前真实版本：`20260614-sogo-2024-1`。
-> ✅ 综合科目（総合科目）2024 一套 MVP 已完成并 push main（复用理科引擎，38 题全 4 択，採点满分/错题扣分验证通过）。
+> 当前真实版本：`20260614-sogo-2024-1-materials-fix`。
+> ✅ 综合科目（総合科目）2024 已上线，并已修复材料页缺失（問1/問2 引导文章页 p3/p7 现作为材料页显示，题屏 25→27）。
 
-## 最近完成（综合科目 総合科目 2024 MVP）— 本轮
+## 最近完成（综合科目 2024 材料页修复）— 本轮
 
-把综合科目 2024 令和6年一套做成可作答/可保存/可採点的 MVP，复用理科练习引擎。详见 `AGENT_WORKLOG.md`、`SOGO_PLAN.md`。
+修复线上发现的「第一屏直接显示下線部设问、缺材料页」问题，并校正页眉印刷页号。详见 `AGENT_WORKLOG.md`、`SOGO_PLAN.md`。
 
-- 原型 `EJU_SOGO_PROTOTYPES['humanities/2024-1']`：单科目 sogo，38 题全 4 択，title「総合科目 · 2024年」，pageLabel「総合-」。
-- 共用引擎：新增 `ejuRikaProtoFor(key)`，理科+综合共用 renderEjuRikaPractice/ejuRenderRikaView；renderEjuScannedSet 加 SOGO 路由。
-- 渲染：`scripts/sogo_render_set.py` → `assets/eju-media/humanities/2024-1/page-NNN.png`（25 张）；跨页竖接 page-008=[8,9]、page-022=[22,23]。
-- 答案 8x 分段读 p32 正解表（非猜测）：`4,4,3,2,3,2,4,4,1,3,1,1,2,4,1,3,1,2,2,2,3,3,1,4,3,2,4,1,1,2,3,4,1,2,3,1,3,4`。
-- 缓存号 `20260614-sogo-2024-1`（index.html 用 Python 字节替换）。
-- 验证：node --check + runEjuTests 0 失败；preview 进入综合练习（非OCR浏览）、25/25 题图 200、保存/採点正常、满分 38/38、错一题 37/38、控制台无报错。
-- **下一步建议**：等用户确认是否继续做其它综合年份（2025、2008~2023）；理科剩余 6 套仍暂停。注意勿与 Codex 同时改 `assets/eju.js`。
+- 根因：旧 proto pages 从 4 起，漏掉 p3(問1材料)/p7(問2材料)；「子题面自含」判断错误 —— 下線部1〜4 指代材料页内容，缺页无法作答。
+- 修复：`scripts/sogo_render_set.py` pages 加 3、7 → 渲染 page-003/007.png（保留 merge[8,9]/[22,23]，原图未变，共 27 张）。
+- proto：pages 加 3/7；显式 `problems`（27 屏），材料页 `{page:3,label:'問1 材料',answers:[]}`、`{page:7,label:'問2 材料',answers:[]}`；`pageLabel:'総合科目-'` + `pageNumberOffset:-2`。
+- UI：材料页显示「資料 · 総合科目-N（PDF pN）· 无作答题」；解答屏显示「解答 1·2 · 総合科目-2（PDF p4）」，不再误显「総合-4」。
+- 缓存号 `20260614-sogo-2024-1-materials-fix`（index.html 用 Python 字节替换）。
+- 验证：node --check + runEjuTests 0 失败；preview 第一屏=問1材料页、解答1·2 在第二屏、問2材料页在解答5前、27/27 题图 200、满分 38/38、错一题 37/38、控制台无报错。
+- **下一步建议**：等用户确认是否继续做其它综合年份；理科剩余 6 套仍暂停。
+- ⚠️ 本轮 push 同时带上 Codex 已完成并本地提交的 `8b09231 fix(eju): mark undeployed scanned sets as coming soon`（未部署年份灰色建设中 UI）。
 
 ---
 
