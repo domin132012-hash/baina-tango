@@ -35,3 +35,28 @@ Use `deepseek-bridge` for long logs, documents, or diffs. Use `visual-bridge` fo
 Before editing based on bridge output, verify original evidence.
 Project root check: run codex-preflight from the project root; if it prints a project-root WARNING, cd to the real root first.
 Bridge threshold: use deepseek-bridge only for logs >500 lines, docs >3000 tokens, or diffs >200 changed lines. Small inputs: direct read is cheaper (the tool refuses <1500-token inputs unless --force).
+
+## Agent skills
+
+Project docs take priority over general skill instructions. Before applying a skill, read the relevant project docs first, especially `PROJECT_STATUS.md`, `HANDOVER.md`, `AGENT_WORKLOG.md`, and the active plan file.
+
+### Issue tracker
+
+Issues and PRDs are tracked in GitHub Issues for `domin132012-hash/baina-tango`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Use the project label set `bug`, `feature`, `docs`, `refactor`, `priority-high`, and `blocked`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+This is a single-context repo. Agent configuration lives in `docs/agents/`; ADRs live in `docs/adr/`. See `docs/agents/domain.md`.
+
+### Skill usage strategy
+
+- Use `/grill-with-docs` when requirements, terminology, or implementation direction are unclear.
+- Use `/diagnose` for bug investigation and root-cause analysis.
+- Use `/tdd` when a change can be developed test-first.
+- Use `/handoff` when preparing a compact handover for another agent.
+- Use `/to-prd` for turning a larger request into a product requirements document.
+- Use `/to-issues` for splitting an approved plan or PRD into implementation issues.
