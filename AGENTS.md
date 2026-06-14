@@ -1,3 +1,26 @@
+## Agent Start Checklist
+
+For every non-trivial task in this repository, start by reading the project handoff files before editing code:
+
+1. `PROJECT_STATUS.md` — current real progress and active direction
+2. `HANDOVER.md` — architecture, pitfalls, and handoff context
+3. `AGENT_WORKLOG.md` — latest agent actions, commits, validation, and remaining risks
+4. Relevant plan files, such as `RIKA_PLAN.md`, `SOGO_PLAN.md`, or task-specific notes if present
+
+Before finishing a task, every agent must leave a GitHub trace:
+
+- Update `PROJECT_STATUS.md` when the visible project state changes.
+- Update `HANDOVER.md` when the change affects how the next agent should work.
+- Append a dated entry to `AGENT_WORKLOG.md` with task, files, validation, risks, and commit hash.
+- Update the relevant plan file if the task advances or pauses a workstream.
+- Commit and push. A task is not complete until GitHub documents reflect the final state.
+
+Recommended prompt header for future agent instructions:
+
+```text
+开工前必读：先读 AGENTS.md、PROJECT_STATUS.md、HANDOVER.md、AGENT_WORKLOG.md，再读本任务相关计划文件。做完后必须更新 PROJECT_STATUS/HANDOVER/AGENT_WORKLOG，commit + push，并汇报 commit hash、验证结果、剩余风险。
+```
+
 ## Local Token Saving Rule
 
 For non-trivial engineering tasks in this project, start with:
