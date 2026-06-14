@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>百纳日语</title>
+  <link rel="icon" href="./app-icon.png" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
     if(!window.supabase){
@@ -47,6 +48,8 @@
     .eju-sets-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
     .eju-set-btn{padding:10px 18px;border-radius:14px;border:1px solid rgba(124,92,255,.20);background:rgba(255,255,255,.82);color:#5d43e8;font-size:14px;font-weight:800;cursor:pointer;transition:.14s ease}
     .eju-set-btn:hover{background:rgba(124,92,255,.10);border-color:rgba(124,92,255,.40);transform:translateY(-1px)}
+    .eju-year-card.coming-soon{opacity:.45;filter:grayscale(1);cursor:not-allowed}
+    .eju-year-card.coming-soon:hover{transform:none;box-shadow:none}
     .eju-list-grid{display:flex;flex-direction:column;gap:10px;margin-top:14px}
     .eju-q-card{background:linear-gradient(180deg,rgba(255,255,255,.88),rgba(250,247,255,.78));border:1px solid rgba(124,92,255,.14);border-radius:18px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 6px 14px rgba(105,80,200,.07);transition:.14s ease}
     .eju-q-card:hover{transform:translateY(-1px);box-shadow:0 12px 26px rgba(105,80,200,.12)}
@@ -1769,6 +1772,6 @@ document.addEventListener('touchend',function(e){
 document.addEventListener('gesturestart',function(e){e.preventDefault();},{passive:false});
 runTests();renderAll();
 </script>
-<script src="./assets/eju.js?v=20260614-sogo-2024-1"></script>
+<script src="./assets/eju.js?v=20260614-coming-soon-years"></script>
 </body>
 </html>

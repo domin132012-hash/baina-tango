@@ -788,7 +788,36 @@ var EJU_SOGO_PROTOTYPES = {
 
 // 理科 + 综合科目共用一套渲染引擎，按 key 取对应原型。
 function ejuRikaProtoFor(key) {
-  return EJU_RIKA_PROTOTYPES[key] || EJU_SOGO_PROTOTYPES[key];
+  var rikaProto = (typeof EJU_RIKA_PROTOTYPES !== 'undefined') ? EJU_RIKA_PROTOTYPES[key] : null;
+  var sogoProto = (typeof EJU_SOGO_PROTOTYPES !== 'undefined') ? EJU_SOGO_PROTOTYPES[key] : null;
+  return rikaProto || sogoProto;
+}
+
+function ejuHasPracticePrototype(subject, setId) {
+  var key = subject + '/' + setId;
+  if (typeof EJU_MATH_PAPER_PROTOTYPES !== 'undefined' && EJU_MATH_PAPER_PROTOTYPES[key]) return true;
+  if (typeof EJU_RIKA_PROTOTYPES !== 'undefined' && EJU_RIKA_PROTOTYPES[key]) return true;
+  if (typeof EJU_SOGO_PROTOTYPES !== 'undefined' && EJU_SOGO_PROTOTYPES[key]) return true;
+  return false;
+}
+
+function ejuShowComingSoon() {
+  if (typeof toast === 'function') toast('建设中，暂未开放');
+  else alert('建设中，暂未开放');
+}
+
+function ejuIsLocalStaticHost() {
+  if (typeof location === 'undefined') return false;
+  return location.protocol === 'file:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname === '::1';
+}
+
+function ejuFallbackCategories() {
+  return [
+    { id: 'japanese', label: '日本語', labelZh: '日语', available: true },
+    { id: 'sogo', label: '総合科目', labelZh: '综合科目', available: false },
+    { id: 'science', label: '理科', labelZh: '理科', available: false },
+    { id: 'math', label: '数学', labelZh: '数学', available: false }
+  ];
 }
 
 // =====================================================================
@@ -839,7 +868,7 @@ async function ejuLoadScannedData() {
   if (!ejuScannedDataPromise) {
     ejuScannedDataPromise = (async function() {
       try {
-        var res = await fetch('./assets/eju-scanned-data.json?v=20260614-sogo-2024-1', { cache: 'no-store' });
+        var res = await fetch('./assets/eju-scanned-data.json?v=20260614-coming-soon-years', { cache: 'no-store' });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         ejuScannedData = await res.json();
         return ejuScannedData;
@@ -952,17 +981,16 @@ async function initEjuHub() {
   try {
     var scanned = await ejuLoadScannedData();
     var cats = [];
-    try {
-      var data = await ejuFetch('/api/eju-categories');
-      cats = data.categories || [];
-    } catch(apiError) {
-      if (!scanned) throw apiError;
-      cats = [
-        { id: 'japanese', label: '日本語', labelZh: '日语', available: true },
-        { id: 'sogo', label: '総合科目', labelZh: '综合科目', available: false },
-        { id: 'science', label: '理科', labelZh: '理科', available: false },
-        { id: 'math', label: '数学', labelZh: '数学', available: false }
-      ];
+    if (scanned && ejuIsLocalStaticHost()) {
+      cats = ejuFallbackCategories();
+    } else {
+      try {
+        var data = await ejuFetch('/api/eju-categories');
+        cats = data.categories || [];
+      } catch(apiError) {
+        if (!scanned) throw apiError;
+        cats = ejuFallbackCategories();
+      }
     }
     cats = ejuMergeScannedCategories(cats, scanned);
     var html = '<div class="eju-cat-grid">';
@@ -1126,10 +1154,15 @@ async function renderEjuScannedSubject(subject) {
     if (a.year !== b.year) return b.year - a.year;
     return b.session - a.session;
   }).forEach(function(s) {
-    html += '<button class="eju-year-card" onclick="renderEjuScannedSet(\'' + ejuJsString(subject) + '\',\'' + ejuJsString(s.setId) + '\')">';
+    var isReady = ejuHasPracticePrototype(subject, s.setId);
+    var cardClass = 'eju-year-card' + (isReady ? '' : ' disabled coming-soon');
+    var clickHandler = isReady
+      ? 'renderEjuScannedSet(\'' + ejuJsString(subject) + '\',\'' + ejuJsString(s.setId) + '\')'
+      : 'ejuShowComingSoon()';
+    html += '<button class="' + cardClass + '" onclick="' + clickHandler + '">';
     html += '<strong>' + ejuEsc(s.year) + ' 年</strong>';
-    html += '<span>第 ' + ejuEsc(s.session) + ' 回 · ' + ejuEsc(s.pageCount) + ' 页</span>';
-    html += '<span style="margin-top:8px">' + ejuScanStatusBadge(s.status) + '</span>';
+    html += '<span>第 ' + ejuEsc(s.session) + ' 回 · ' + (isReady ? ejuEsc(s.pageCount) + ' 页' : '建设中') + '</span>';
+    html += '<span class="eju-cat-badge' + (isReady ? '' : ' soon') + '">' + (isReady ? '开放中' : '建设中') + '</span>';
     html += '</button>';
   });
   html += '</div>';
@@ -1143,7 +1176,6 @@ async function renderEjuScannedSet(subject, setId) {
   switchView('eju-reading-list');
   var el = document.getElementById('view-eju-reading-list');
   if (!el) return;
-  var title = el.querySelector('#ejuReadingListTitle') || el.querySelector('#ejuListTitle');
   var back = el.querySelector('.eju-back-btn');
   if (back) {
     back.textContent = '← 套卷列表';
@@ -1151,7 +1183,7 @@ async function renderEjuScannedSet(subject, setId) {
   }
   var mount = el.querySelector('#ejuReadingListMount');
   if (!mount) return;
-  mount.innerHTML = '<p style="color:#8b86a3;padding:16px 0">加载扫描 OCR…</p>';
+  mount.innerHTML = '<p style="color:#8b86a3;padding:16px 0">加载套卷…</p>';
   var data = await ejuLoadScannedData();
   if (!ejuIsReadingListRenderCurrent(renderToken)) return;
   if (!data) {
@@ -1163,66 +1195,33 @@ async function renderEjuScannedSet(subject, setId) {
     mount.innerHTML = '<p style="color:#f05b7b">未找到该套扫描数据。</p>';
     return;
   }
-  if (EJU_MATH_PAPER_PROTOTYPES[subject + '/' + setId]) {
+  var key = subject + '/' + setId;
+  if (!ejuHasPracticePrototype(subject, setId)) {
+    ejuShowComingSoon();
+    renderEjuScannedSubject(subject);
+    return;
+  }
+  if (typeof EJU_MATH_PAPER_PROTOTYPES !== 'undefined' && EJU_MATH_PAPER_PROTOTYPES[key]) {
     renderEjuMathPaperPractice(subject, setId, item);
     return;
   }
-  if (ejuRikaProtoFor(subject + '/' + setId)) {
+  if (typeof EJU_RIKA_PROTOTYPES !== 'undefined' && EJU_RIKA_PROTOTYPES[key]) {
     renderEjuRikaPractice(subject, setId, item);
     return;
   }
-  if (title) title.textContent = ejuScanSubjectLabel(subject) + ' · ' + item.year + ' 年第 ' + item.session + ' 回';
-  var html = '<div class="eju-question-card" style="margin-bottom:12px">'
-    + '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">'
-    + '<strong style="color:#4d4770">扫描 OCR 状态</strong>'
-    + '<div style="display:flex;gap:6px;flex-wrap:wrap">'
-    + ejuScanStatusBadge(item.status)
-    + '<span class="pill" style="font-size:11px">题目页 ' + ejuEsc(item.pageCount) + '/' + ejuEsc(item.expectedPageCount) + '</span>'
-    + '<span class="pill" style="font-size:11px">可疑页 ' + ejuEsc(item.flaggedPageCount) + '</span>'
-    + '<span class="pill" style="font-size:11px">失败页 ' + ejuEsc(item.errorCount) + '</span>'
-    + '</div></div>'
-    + '<p style="color:#756c9d;font-size:13px;line-height:1.6;margin:10px 0 0">这是本地扫描 OCR 浏览数据，保留 QC 状态；需复核或失败页不会被当成正式训练题。</p>'
-    + '</div>';
-
-  html += '<div style="display:flex;flex-direction:column;gap:10px">';
-  (item.pages || []).forEach(function(page) {
-    var flags = (page.flags || []).map(function(flag) {
-      return '<span class="pill due" style="font-size:11px">' + ejuEsc(flag.code) + '</span>';
-    }).join(' ');
-    var pageLabel = '第 ' + page.page + ' 页';
-    var typeLabel = page.pageType ? ' · ' + page.pageType : '';
-    html += '<details class="eju-question-card"' + (page.needsReview || page.error ? ' open' : '') + '>';
-    html += '<summary style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;list-style:none">';
-    html += '<span style="font-weight:900;color:#4d4770">' + ejuEsc(pageLabel + typeLabel) + '</span>';
-    html += '<span style="display:flex;gap:6px;flex-wrap:wrap">' + (page.needsReview ? ejuScanStatusBadge('needs_review') : '') + flags + '</span>';
-    html += '</summary>';
-    if (page.error) {
-      html += '<p style="color:#f05b7b;font-size:13px;line-height:1.6;margin:10px 0 0">' + ejuEsc(page.error) + '</p>';
+  if (typeof EJU_SOGO_PROTOTYPES !== 'undefined' && EJU_SOGO_PROTOTYPES[key]) {
+    if (typeof renderEjuSogoPractice === 'function') {
+      renderEjuSogoPractice(subject, setId, item);
+      return;
     }
-    if (page.printedHeader || page.printedPageNumber) {
-      html += '<p style="color:#9086ac;font-size:12px;margin:10px 0 0">' + ejuEsc(page.printedHeader || '') + (page.printedPageNumber ? ' · ' + ejuEsc(page.printedPageNumber) : '') + '</p>';
+    if (typeof renderEjuRikaPractice === 'function' && ejuRikaProtoFor(key)) {
+      renderEjuRikaPractice(subject, setId, item);
+      return;
     }
-    html += '<pre style="white-space:pre-wrap;background:rgba(255,255,255,.70);border:1px solid rgba(124,92,255,.12);border-radius:14px;padding:12px;line-height:1.65;color:#30294d;font-size:13px;overflow:auto;max-height:420px;margin:10px 0 0">' + ejuEsc(page.text || '(无 OCR 文本)') + '</pre>';
-    if (page.figuresText) {
-      html += '<div style="margin-top:8px;color:#756c9d;font-size:13px;line-height:1.6"><b>图表说明：</b>' + ejuEsc(page.figuresText) + '</div>';
-    }
-    html += '</details>';
-  });
-  html += '</div>';
-
-  if (item.answerPages && item.answerPages.length) {
-    html += '<h3 style="margin:18px 0 10px;color:#4d4770">答案页 OCR</h3>';
-    html += '<div style="display:flex;flex-direction:column;gap:10px">';
-    item.answerPages.forEach(function(page) {
-      html += '<details class="eju-question-card">';
-      html += '<summary style="cursor:pointer;font-weight:900;color:#4d4770;list-style:none">答案第 ' + ejuEsc(page.page) + ' 页</summary>';
-      html += '<pre style="white-space:pre-wrap;background:rgba(255,255,255,.70);border:1px solid rgba(124,92,255,.12);border-radius:14px;padding:12px;line-height:1.65;color:#30294d;font-size:13px;overflow:auto;max-height:360px;margin:10px 0 0">' + ejuEsc(page.text || '(无 OCR 文本)') + '</pre>';
-      html += '</details>';
-    });
-    html += '</div>';
   }
-
-  mount.innerHTML = html;
+  ejuShowComingSoon();
+  renderEjuScannedSubject(subject);
+  return;
 }
 
 function ejuMathPaperStorageKey(key) {
