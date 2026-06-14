@@ -1,333 +1,107 @@
 # baina-tango 项目进度
 
-> 📋 **接手人请先读 [`HANDOVER.md`](HANDOVER.md)** —— 完整交接文档（项目背景、已上线工作、坑、未来工作、答案数据）。
-> 当前版本：`20260614-rika-2023-1-v2`。
-> ✅ 理科 2023-1 样板 v2 已完成：导航按实际解答番号、题页重裁去底部空白、一页两题拆成一题一屏。
+> 📋 接手人必须先读：[`AGENTS.md`](AGENTS.md) → [`HANDOVER.md`](HANDOVER.md) → [`AGENT_WORKLOG.md`](AGENT_WORKLOG.md)。
+> 当前真实版本：`20260614-rika-2021-2`。
+> 当前方向：**暂停理科剩余套，启动综合科目 2024 MVP**（用户已交给 Claude，尚未在 main 验收）。
 
-## 最近完成（数学1 全12套真题试炼）— 已部署上线
+---
 
-把数学1全部 12 套做成与数学2一致的完整可练样板，**已 commit+push 部署，线上验证通过**。
+## 当前总览
+
+### 已完成并上线
+
+| 模块 | 状态 | 备注 |
+|---|---|---|
+| 数学2 | ✅ 已上线 | 早期完成，已作为数学卷基础样板 |
+| 数学1 | ✅ 已上线 | 12 套全部完成，commit `b3f37b3`，缓存号 `20260613-math1-all` |
+| 理科 2023-1 | ✅ 已上线 | 样板 + 后续 bug 修复，缓存号曾到 `20260614-rika-2023-1-v2` |
+| 理科 2023-2 | ✅ 已上线 | commit `feccfcc`，缓存号 `20260614-rika-2023-2` |
+| 理科 2022-1 | ✅ 已上线 | commit `e90b3f2`，缓存号 `20260614-rika-2022-1` |
+| 理科 2022-2 | ✅ 已上线 | commit `3b9bb65`，缓存号 `20260614-rika-2022-2` |
+| 理科 2021-1 | ✅ 已上线 | commit `d57a747`，缓存号 `20260614-rika-2021-1` |
+| 理科 2021-2 | ✅ 已上线 | commit `ef7c68b`，缓存号 `20260614-rika-2021-2` |
+
+### 暂缓
+
+| 模块 | 状态 | 备注 |
+|---|---|---|
+| 理科剩余 6 套 | ⏸️ 暂缓 | 2018-1、2018-2、2019-1、2020-2、2024-1、2025-1 |
+
+### 进行中 / 下一方向
+
+| 模块 | 状态 | 备注 |
+|---|---|---|
+| 综合科目 2024 MVP | 🚧 进行中 | 用户已交给 Claude；先跑 1 套最新卷，不批量铺开 |
+| 未部署年份灰色建设中 UI | 📝 待做 | 可后续让 Codex 做，但避免与 Claude 同时改 `assets/eju.js` 撞车 |
+
+---
+
+## 代理交接制度
+
+本仓库现在使用固定交接制度：
+
+1. 开工前读 `AGENTS.md`、`PROJECT_STATUS.md`、`HANDOVER.md`、`AGENT_WORKLOG.md`。
+2. 做完后必须更新 `PROJECT_STATUS.md`、必要时更新 `HANDOVER.md`、并追加 `AGENT_WORKLOG.md`。
+3. 任务没有写入 GitHub 文档，不算完成。
+4. 多代理并行时，先确认谁正在改 `assets/eju.js`，避免覆盖。
+
+推荐任务头部：
+
+```text
+开工前必读：先读 AGENTS.md、PROJECT_STATUS.md、HANDOVER.md、AGENT_WORKLOG.md，再读本任务相关计划文件。做完后必须更新 PROJECT_STATUS/HANDOVER/AGENT_WORKLOG，commit + push，并汇报 commit hash、验证结果、剩余风险。
+```
+
+---
+
+## 最近完成：理科 5 套有独立正解表全部上线
+
+本轮已完成：
+
+| 套 | commit | 关键说明 |
+|---|---|---|
+| 2023-2 | `feccfcc` | 新增通用渲染裁图脚本；修复 2023-1 物理 no16/17/18 答案录入错位 |
+| 2022-1 | `e90b3f2` | 物理 no9 题干+选项续页拼接；化学双题页；生物問10双答 |
+| 2022-2 | `3b9bb65` | 化学双题6页；生物問4/問15双答；采点验证通过 |
+| 2021-1 | `d57a747` | 2个前置说明页造成页码偏移；生物問12双答；采点满分 |
+| 2021-2 | `ef7c68b` | 化学双题6页；生物問10双答；化学采点满分 |
+
+注意：这些年份的答案均按官方正解表 8x 分段读取确认。做后续理科时继续保持这个标准。
+
+---
+
+## 最近完成：数学1 全 12 套真题试炼
+
+数学1全部 12 套已做成与数学2一致的完整可练样板，已部署上线。
 
 - 套数：math1/2018-1、2018-2、2019-1、2020-2、2021-1、2021-2、2022-1、2022-2、2023-1、2023-2、2024-1、2025-1
-- 方法同数学2：渲染 PDF @ DPI 112 → crop → 逐页人工对图标定答案框（排除灰色参照框、识别合框）
-- **2024-1 特殊**：31 页双课程卷（コース1+コース2），math1 仅取 コース1 页 [4,6,8,10,12,14,15]
 - 共 885 个答案框，172 张 PNG（30MB）
-- 缓存号：`20260613-math1-all`（index.html 用 Python 字节操作改）
-- 线上验证：`https://baina-tango.pages.dev` index.html 末尾 `eju.js?v=20260613-math1-all`，图片+proto 均 200
+- 2024-1 特殊：31 页双课程卷（コース1+コース2），math1 仅取 コース1 页 `[4,6,8,10,12,14,15]`
+- 缓存号：`20260613-math1-all`
 - commit `b3f37b3`
 
-## 最近完成（理科 真题试炼 2023第1回样板）— 已部署上线
+---
 
-### v2 修订（用户第二轮反馈）
-- 导航改为按「題/problem」走，按钮显示实际解答番号；生物問2显示 `2·3`，不是页序号
-- 化学理科-34/35、生物理科-45 拆成一题一屏：`page-034-q11/q12`、`page-035-q13/q14`、`page-045-q3/q4`
-- 全套 science/2023-1 图片重裁，移除底部页码/footer 和明显空白
-- 缓存号 → `20260614-rika-2023-1-v2`
-- 本地验证：Chrome DOM 检查通过；visual-bridge 检查生物拆题页无明显布局问题
+## 理科答案来源规则
 
-### 修订（用户第一轮反馈，commit a7f2925）
-- 化学题号错位修复：理科-23（常数表/周期表）从翻页移出，改 `refPage`（可折叠参考资料），化学页1=問1
-- 生物 page-043 重裁：裁掉顶部「解答科目記入方法」说明框，只留問1
-- 化学 page-023 重裁：折叠区只留常数表+周期表
-- 三科题号↔题面已逐一核对：物理/化学/生物 页1 均为問1
-- 缓存号 → `20260613-rika-2023-1b`，线上已确认
-
-### 答案来源规则（后续铺开用，用户确认）
-- 有 `XXXX理科答案.pdf`（2021/2022/2023 第1/2回 + 2002-04）→ 用独立正解表
-- 无独立答案文件的年份（2018-2020、2024等）→ 答案在**试卷 PDF 最后一页**
-
-### 初版（commit a8e5f9b）
-
-把理科 2023第1回做成单选练习样板，三科（物理/化学/生物）全做，答案取自官方正解表。本地 Claude_Preview 验证全部通过。
-
-- **数据来源**：`EJU理综/2023令和5年第1回理科.pdf`（60页，纯图像）+ 官方正解表 `2023令和5年第1回理科答案.pdf`
-- **三科页范围**（源页"理科-N"）：物理 2~20、化学 23~41（理科-23常数表）、生物 43~58
-- **57 题**：物理19 + 化学20 + 生物18，答案全部对照官方正解表（标定时只补"选项数+所在页"）
-- **新数据结构** `EJU_RIKA_PROTOTYPES['science/2023-1']`（eju.js）：subjects[].questions[]={no,page,opts,ans}
-- **新单选 UI**：`renderEjuRikaPractice` + `ejuRenderRikaView`（科目切换条+页导航+题面图+每解答番号一行①②③④圆钮+採点判分红绿标记+得分+重做）
-- **路由**：`renderEjuScannedSet` 加 `EJU_RIKA_PROTOTYPES` 分支（math 检查之后）
-- **存档**：localStorage key `science/2023-1`，answerKey=`科目id:解答番号`
-- **缓存号**：`20260613-rika-2023-1`
-- **测试**：`runEjuTests` 加理科断言（三科题数19/20/18，1≤ans≤opts，page∈pages）
-- **本地验证**：三科图片 54 张全 200，单选可点，採点物理19/19 化学20/20 生物18/18 错一个→18/19，红绿标记正确
-- **图片**：`assets/eju-media/science/2023-1/page-*.png`（55张，含物理结束页 page-021 未引用）
-
-### 下一步建议
-- 部署后线上确认（缓存号 + science 图片 200）
-- 跑通后铺开其他年份：有官方正解表的 2021/2022/2023（第1/2回）优先；其余年份需自解答案或找答案源
-- 可选：正解表含数学答案，后续给数学卷补判分
-
-## 已完成（理科调查）— 见下
-
-用户要求："理科科目也是这样再次提取加上部署"。已确认范围决策：
-- **科目**：物理+化学+生物 全做（最终）
-- **年份**：先做 1 套样板（2024 令和6年理科）
-- **作答方式**：做成单选选项（可点击 ①②③④，非数学的填空框）
-
-### 关键调查发现
-- 理科是**三科合卷**：1 个 PDF 含物理+化学+生物，考生选 2 科
-- 2024 理科 PDF = 59 页，**纯图像无文本层**（理科需逐页人工读图，无 containsQuestions 数据可用）
-- 源页标在右上角「理科-N」（类比数学「数学-N」）
-- 三科页范围（PDF 页）：物理 ≈ 4-23（理科-1 分隔页，理科-2 起为题）、化学 ≈ 25-41、生物 ≈ 43-58
-- 每题：解答番号方框「1」「2」… + N 个选项（多为 ①~④，部分 ①~⑥）
-- 源 PDF 目录：`~/Desktop/ eju高手/绿头EJU资料/EJU过去问/EJU理综/`（63 个 PDF，2002-2024）
-
-### 待实现（新 UI 子系统）
-1. 渲染 PDF 3-58 页 → crop → 拆成 物理/化学/生物 三个图片目录
-2. 逐页人工读图：每个解答番号 + 其选项数（约 100+ 题/套）
-3. 新 proto schema（`EJU_RIKA_PROTOTYPES`），key = `科目:解答番号`
-4. eju.js 新增单选渲染函数（radio 选项行）
-5. index.html 字节操作接入理科 hub（当前"建设中"）
-6. 本地验证 + 部署
+- 有独立 `XXXX理科答案.pdf` 的年份（2021/2022/2023 第1/2回 + 2002-04）→ 用独立正解表。
+- 无独立答案文件的年份（2018-2020、2024 等）→ 答案在**试卷 PDF 最后一页**，但做之前必须先翻卷尾确认。
+- 答案必须 8x 分段读取；不允许一次性读完整列。
+- 可疑数字（2/3/5/6/8 等）必须局部放大复核。
 
 ---
 
-## 已完成（数学2 全12套真题试炼）
+## 关键坑
 
-把数学2剩余10套全部做成与 2024-1/2021-1 一致的完整可练样板。现数学2 共 **12 套全部可练**（2018-1/-2、2019-1、2020-2、2021-1/-2、2022-1/-2、2023-1/-2、2024-1、2025-1）。
-
-### 方法
-- 渲染 PDF @ DPI 112 → crop 脚本（与 2024-1 一致）
-- 答案框逐页人工对图标定（排除灰色参照框、识别合框如 JK/NOP）
-- 答案 key = 源页:答案框
-
-### 改动
-- `assets/eju.js` — `EJU_MATH_PAPER_PROTOTYPES` 新增 10 套 proto（共 12 套）
-- `index.html` — 缓存号 → `20260613-math2-all`
-- `assets/eju-media/math2/{10套}/` — 新增约 110 张 PNG（math2 图片总计 30MB）
-
-### OCR 修正（重要）
-逐页核对时发现 OCR 的 containsQuestions 有遗漏，已靠图片人工补正：
-- **2020-2**（OCR fail）：问题页应为 [3,5,7,8,9,11,13,14]，OCR 只给了 [3,9,11,13,14]
-- **2023-2**：问题页补加 page 14（问IV 续页，OCR 漏标）
-- **2025-1**：问题页补加 page 3（问I 续页，OCR 漏标）
-
-### 本地验收（Claude Preview 真实浏览器，全部通过）
-- ✅ 12 套全部出现在 数学2 列表（2018-2025）
-- ✅ 每套每页答案框 DOM 与 proto 完全一致（labelsMatch: true）
-- ✅ 所有页图片真实加载（imgFail: 0）
-- ✅ 进入试卷底部导航隐藏，返回恢复
-- ✅ node --check 通过，index.html 无弯引号
-
-### 需人工复核（标定时偏严，建议抽查）
-- **2022-2 page 9**：底部「[V] はマークしない」注记与 VW/XYZ 答案框并存，已按数式中的白框采纳 VW/XYZ（判断该注记指解答用纸的「コース」栏，非答案框 V）
-
-### 待办
-- 是否部署（commit/push 触发 Cloudflare）
-- 其他科目（数学1/综合/理科）尚未做
+1. `index.html` 只能用 Python 字节操作改，禁止直接 Edit。改它通常只用于 bump `eju.js?v=`。
+2. 缓存号要同步改两处：`index.html` 里的 `eju.js?v=` 和 `assets/eju.js` 里的 `eju-scanned-data.json?v=`。
+3. 理科 PDF 是纯图像无文本层，选项数和题页必须人工读图确认。
+4. 每套 PDF 页码体系不同，不要套用别的年份页码。
+5. Claude/Codex 多代理并行时，任何涉及 `assets/eju.js` 的任务都可能撞车。先同步 main，再开工。
 
 ---
 
-## 最近完成（math2/2021-1 第二样板）
+## 下一步建议
 
-以 math2/2024-1 为模板，完成数学2 2021年第1回完整可练样板。**仅本地验证，未部署。**
-
-### 关键认知
-- 元PDF是官方清晰排版PDF（非扫描），答案框 A〜N 已印刷在页面上 → 渲染即可，答案框靠人工对照图片标定
-- 渲染方式：PyMuPDF @ **DPI 112** → `scripts/crop_math_paper_images.py`（threshold=245, padding=34），与 2024-1 一致
-- 元PDF：`~/Desktop/ eju高手/绿头EJU资料/EJU过去问/EJU理科数学（数学2）/2021令和3年第1回数学2.pdf`（16页）
-
-### 改动文件
-- `assets/eju.js` — `EJU_MATH_PAPER_PROTOTYPES` 新增 `math2/2021-1` proto；scanned-data 缓存号 → `20260613-math2-2021-1`
-- `index.html` — eju.js 缓存号 → `20260613-math2-2021-1`（Python 字节操作）
-- `assets/eju-media/math2/2021-1/` — 新增 16 张 PNG（page-001〜016）
-
-### 2021-1 问题页 & 答案框（人工标定，已逐页对图核对）
-- source page 4（问I-问1）：A BC DE F G H I JK
-- source page 6（问I-问2）：L M N O P QR ST UV WX
-- source page 8（问II-问1）：A B C D E F G H I J K L M
-- source page 10（问II-问2）：N O P Q R S T U V W X Y
-- source page 12（问III）：A B CD EF G H I J KL M NO P QR ST U V WX Y
-- source page 14（问IV）：A B C D E F G H I J K L M N O P Q R
-- 已排除灰色参照框（如 page6 第二个 UV、page10 i sin 的 O/P、page12 「H<I」与重复 J）
-- 答案 key 格式：`源页:答案框`（如 `4:A`、`6:L`），跨大题不冲突
-
-### 本地验收（Claude Preview + 真实浏览器，全部通过）
-- ✅ 真题试炼→数学→数学2→2021年第1回 可进入
-- ✅ 6 页答案框 DOM 渲染与 proto 完全一致，key=源页:答案框
-- ✅ 6 页图片真实加载（naturalWidth>0，无 404）
-- ✅ 输入答案保存到 localStorage（key `baina-eju-math-paper-math2/2021-1`），重渲染后保留
-- ✅ 进入试卷底部导航隐藏（nav display:none），返回套卷列表后恢复（display:grid）
-- ✅ node --check 通过，index.html 无弯引号
-
-### 待办
-- 是否 commit（未 commit，留待你审阅 diff）；**不要 push（=部署），用户已明确**
-- 其余 10 套（2018-1/-2、2019-1、2020-2、2021-2、2022-1/-2、2023-1/-2、2025-1）尚未做，按需逐套推进
-
----
-
-## 最近完成（2026-06-10）
-
-### 本次完成 — EJU 真题试炼 Phase 1
-
-所有文件均已创建并通过语法验证，**待用户手动在 Supabase 建表并插入题目数据后即可运行**。
-
-#### 新建文件
-1. ✅ `assets/eju.js` — 前端训练模块（约 900 行）
-   - Hub 渲染、年份/回数选择、题目列表
-   - 四阶段训练状态机（structure→questionRead→locate→answer）
-   - SVG 圆形计时器（warn/danger 颜色变化）
-   - 后端提交校验、结果页、历史记录
-2. ✅ `functions/api/eju-categories.js` — 科目列表（无需登录）
-3. ✅ `functions/api/eju-reading-sets.js` — 年份/回数列表（无需登录）
-4. ✅ `functions/api/eju-reading-list.js` — 题目列表（需登录，含 practiced/isWrong 状态）
-5. ✅ `functions/api/eju-reading-question.js` — 单题详情（需登录，不含答案）
-6. ✅ `functions/api/eju-reading-submit.js` — 提交校验（POST，后端读 eju_answers，不返回前端）
-7. ✅ `functions/api/eju-reading-history.js` — 训练历史（GET，最近50条）
-
-#### index.html 修改（Python 字节操作，8处，全部通过验证）
-- 3-1: `defaultState()` 追加 `ejuSession:{}`
-- 3-2: `migrateState()` 追加 ejuSession 迁移
-- 3-3: 追加 EJU CSS（约 90 行，含 cat-grid/phase-bar/timer/option/result 样式）
-- 3-4: 替换 view-exam-trial + 追加 6 个新 section（共 7 个视图）
-- 3-5: 在 `</body>` 前追加 `<script src="./assets/eju.js">`
-- 3-6: `parentNavView()` 追加所有 eju-* 视图 → 'study' tab
-- 3-7: `switchView()` 开头插入 `ejuStopTimer()` 防计时器泄漏
-- 3-8: `openExamTrialBtn` 追加 `initEjuHub()` 调用
-
-### 修改文件清单
-- `index.html` — 8处修改（Python 字节操作）
-- `assets/eju.js` — 新建
-- `functions/api/eju-categories.js` — 新建
-- `functions/api/eju-reading-sets.js` — 新建
-- `functions/api/eju-reading-list.js` — 新建
-- `functions/api/eju-reading-question.js` — 新建
-- `functions/api/eju-reading-submit.js` — 新建
-- `functions/api/eju-reading-history.js` — 新建
-
-### 用户需手动完成（Phase 1 生效前提）
-1. **Supabase SQL Editor 运行建表 SQL**：
-   ```sql
-   -- eju_questions（题目本体，普通用户只读）
-   CREATE TABLE eju_questions (
-     id TEXT PRIMARY KEY,
-     category TEXT NOT NULL,
-     skill TEXT NOT NULL,
-     year INTEGER NOT NULL,
-     session INTEGER NOT NULL,
-     question_no INTEGER,
-     passage TEXT NOT NULL,
-     question TEXT NOT NULL,
-     options_json TEXT NOT NULL,
-     source TEXT,
-     difficulty TEXT DEFAULT 'normal',
-     tags_json TEXT DEFAULT '[]',
-     version INTEGER DEFAULT 1,
-     active BOOLEAN DEFAULT true,
-     created_at TIMESTAMPTZ DEFAULT now(),
-     updated_at TIMESTAMPTZ DEFAULT now()
-   );
-   CREATE INDEX ON eju_questions(year, session, skill);
-
-   -- eju_answers（答案，仅 service role 可读）
-   CREATE TABLE eju_answers (
-     question_id TEXT PRIMARY KEY REFERENCES eju_questions(id),
-     answer TEXT NOT NULL,
-     explanation TEXT DEFAULT '',
-     updated_at TIMESTAMPTZ DEFAULT now()
-   );
-   ALTER TABLE eju_answers ENABLE ROW LEVEL SECURITY;
-   CREATE POLICY "service only" ON eju_answers USING (false);
-
-   -- eju_user_records（训练记录）
-   CREATE TABLE eju_user_records (
-     id TEXT PRIMARY KEY,
-     user_id UUID NOT NULL REFERENCES auth.users(id),
-     question_id TEXT NOT NULL,
-     category TEXT, skill TEXT,
-     year INTEGER, session INTEGER,
-     timestamp TIMESTAMPTZ DEFAULT now(),
-     phases_json TEXT,
-     selected_answer TEXT,
-     is_correct BOOLEAN,
-     total_elapsed INTEGER,
-     ai_analysis_json TEXT
-   );
-   CREATE INDEX ON eju_user_records(user_id, question_id);
-   ALTER TABLE eju_user_records ENABLE ROW LEVEL SECURITY;
-   CREATE POLICY "own records" ON eju_user_records
-     USING (user_id = auth.uid())
-     WITH CHECK (user_id = auth.uid());
-
-   -- eju_wrong_book（错题本）
-   CREATE TABLE eju_wrong_book (
-     id TEXT PRIMARY KEY,
-     user_id UUID NOT NULL REFERENCES auth.users(id),
-     question_id TEXT NOT NULL,
-     created_at TIMESTAMPTZ DEFAULT now(),
-     last_practiced_at TIMESTAMPTZ,
-     wrong_count INTEGER DEFAULT 1,
-     resolved BOOLEAN DEFAULT false,
-     UNIQUE(user_id, question_id)
-   );
-   ALTER TABLE eju_wrong_book ENABLE ROW LEVEL SECURITY;
-   CREATE POLICY "own wrong book" ON eju_wrong_book
-     USING (user_id = auth.uid())
-     WITH CHECK (user_id = auth.uid());
-   ```
-
-2. **向 eju_questions + eju_answers 插入初始题目数据**
-   - ID 格式示例：`2024-1-r-001`（year-session-r-序号）
-   - options_json 格式：`{"1":"选项1","2":"选项2","3":"选项3","4":"选项4"}`
-   - answer 为 "1"~"4" 之一
-
-3. **确认 Cloudflare Dashboard → Variables and Secrets 已有**：
-   - `SUPABASE_URL`（已有）
-   - `SUPABASE_SERVICE_ROLE_KEY`（已有）
-
-### Phase 1 验收标准
-1. 真题试炼 hub 显示 4 科目卡，只有日语可点
-2. 日语页显示阅读/听力/写作，只有阅读可点
-3. 阅读选择页显示年份/回数（从数据库加载）
-4. 点某年某回 → 题目列表（含练习状态）
-5. 开始训练 → 四阶段依次，计时器正常
-6. 超时自动进入下一阶段
-7. 提交 → 后端校验 → 结果页：正误 + 正确答案 + 各阶段耗时
-8. 训练记录写入 eju_user_records（Supabase 控制台验证）
-9. 历史记录页可查
-10. 未登录访问 → 提示登录，不报错
-11. 切 tab 再返回 → 计时器不重启
-
-## 理科全年份铺开进度（2026-06-14，进行中）
-
-详见 `task_plan.md`。本轮：
-- **修复 2023-1 物理答案 bug**：no16/17/18 录入错位 1/4/1 → 正确 2/1/4（官方正解表超清复核）。改 `assets/eju.js` + `HANDOVER.md`。
-- **完成 2023-2 整套**（首套铺开样板）：物理19/化学16屏/生物14屏，导航按解答番号、题图与答案均预览验证通过。新增 `assets/eju-media/science/2023-2/`（50图）+ `assets/eju.js` proto。
-- **方法论确立**：staging `eju_staging/pages/science/{set}/` 有全11套渲染图（OCR不可信，仅复用图）；`printed_header(理科-N)+page_type+question_markers` 给页码骨架；答案读官方正解表分栏（高清渲染答案PDF→裁三栏）；新增通用脚本 `scripts/rika_render_set.py`。
-- **质量基线（用户确认务实优先）**：答案100%读正解表（判分准）；选项数opts务实默认6+答案值修正，标注待核；页码逐套读图核实（坑4：每套偏移不同，2023-2 生物起始就比预期早1页）。
-- 缓存号 bump → `20260614-rika-2023-2`（index.html + eju.js 两处）。
-
-**已完成并上线（6/14）**：2023-1 bug修复 + 2023-2、2022-1、2022-2、2021-1、2021-2 五套整套铺开（皆有独立答案表，答案读官方正解表8x分段确认，导航番号+题图+采点均预览验证）。当前缓存号 `20260614-rika-2021-2`。详细每套映射见 `RIKA_PLAN.md`。
-
-**剩余 6 套**（答案在试卷最后一页，做前先翻最后一页确认正解表，坑5）：2018-1、2018-2、2019-1、2020-2、2024-1、2025-1。流程已固化：渲染答案页/卷尾→8x分段读答案→staging(printed_header+page_type+question_markers)给页码骨架→番号框拼图核实双题页/分科边界→`scripts/rika_render_set.py`渲染(续页用merge)→写proto→预览验证(导航番号+题图对应+采点)→bump缓存+部署。
-
-**已知待优化（全套）**：标题"理科-N"标签用PDF页号比真实理科号大1（仅标签，不影响判分/题图）；opts务实默认6+答案值修正，个别题实际选项数待精核。
-
-**已部署到 main（CF Pages 自动构建）。**
-
-## 待处理
-
-### Phase 2（后续）
-- 统计页：答题正确率、按年份回数统计
-- 错题本页面（目前后端已维护，前端未展示）
-
-### Phase 3（后续）
-- `functions/api/eju-analyze.js` — DeepSeek AI 复盘
-- 结果页追加 AI 分析面板
-
-### Phase 4（后续）
-- `admin.html` + `functions/api/eju-admin-upload.js` — 管理员批量上传题目
-
-### Stripe 合规（老任务，待跟进）
-- 更新 Stripe Dashboard 网站 URL → `https://baina-tango.pages.dev`
-- 回复 Larry 邮件（草稿见旧版 PROJECT_STATUS.md）
-
-## 已知问题 / 风险
-- index.html 中 Edit 工具写 HTML 属性会产生弯引号 bug → 后续修改必须用 Python 字节操作
-- eju.js 依赖全局变量 `supabaseClient`（index.html 已初始化）和 `apiUrl()`（index.html line 451）
-- eju-reading-sets.js 未做 auth，任何人可查年份列表（设计如此）
-
-## 下次继续
-1. 用户建表+插数据后，部署测试 Phase 1 验收标准
-2. 如有问题，先检查 Cloudflare Functions 日志（Dashboard → Functions → Logs）
-3. 问题修复后考虑 Phase 2（统计/错题本）
+1. 先等待/验收 Claude 的「综合科目 2024 MVP」。
+2. Claude 完成后，让 Codex 做「未部署年份灰色建设中」UI。
+3. UI 稳定后，再决定是否继续理科剩余 6 套或批量铺开综合科目旧年份。
