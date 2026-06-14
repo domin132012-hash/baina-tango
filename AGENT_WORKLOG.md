@@ -27,6 +27,42 @@ Entry template:
 
 ---
 
+## 2026-06-14 / ChatGPT / 远程可配置消息通知系统
+
+### Task
+- 将消息通知从硬编码展示升级为远程可配置：用户端读取 KV，管理员通过受保护接口和后台页面管理通知。
+- 由于本次通过 GitHub connector 直接改仓库，未直接做 `index.html` Python 字节替换；改用 Cloudflare Pages Middleware 在 HTML 响应末尾注入通知前端模块。
+
+### Files changed
+- `assets/notices.js` — 用户端通知模块：拉取 `/api/notices`，过滤 enabled/time/showOnce，排序，渲染通知，红点，关闭状态持久化。
+- `functions/api/notices.js` — 公开 GET 接口，从 `NOTICES_KV` 的 `notices:all` 读取通知；未绑定时返回空数组。
+- `functions/api/admin/notices.js` — 受 `ADMIN_NOTICE_TOKEN` 保护的 GET/POST/PUT/DELETE 管理接口。
+- `functions/_middleware.js` — 对 HTML 响应注入 `/assets/notices.js?v=20260614-notices-kv`。
+- `admin/notices.html` — 可视化通知后台。
+- `NOTICES_ADMIN.md` — 使用说明与 curl 示例。
+- `PROJECT_STATUS.md` / `HANDOVER.md` — 更新交接信息。
+
+### Validation
+- 本地语法检查：`node --check` 通过 `assets/notices.js`、`functions/api/notices.js`、`functions/api/admin/notices.js`、`functions/_middleware.js`。
+- 由于当前会话没有 Cloudflare 环境权限，未能实际创建 KV namespace / 设置 Pages 环境变量 / 线上点后台实测。
+
+### Risks / next steps
+- 必须在 Cloudflare Pages 里配置 `NOTICES_KV` 和 `ADMIN_NOTICE_TOKEN` 后，后台写入才可用。
+- `index.html` 源码里的旧静态通知块仍存在；线上运行时会被 `assets/notices.js` 接管并替换。后续有本地仓库时，可再用 Python 字节替换彻底删除旧 HTML 和旧 JS。
+- Middleware 是运行时注入，若 Cloudflare Pages Functions 未启用或部署失败，旧硬编码通知仍会显示。
+
+### Commits
+- `ff68c0b` `feat(notices): add remote notice frontend module`
+- `54d815e` `feat(notices): add public notices API`
+- `cc9ebba` `feat(notices): add protected notices CRUD API`
+- `2c19946` `feat(notices): inject notice module through Pages middleware`
+- `0234354` `feat(notices): add visual notices admin page`
+- `c8d3d04` `docs(notices): add admin usage guide`
+- `99a975f` `docs(notices): update project status`
+- `00505c0` `docs(notices): update handover`
+
+---
+
 ## 2026-06-14 / Claude (Opus 4.8) / 综合科目 2024 材料页修复 (materials-fix)
 
 ### Task
@@ -116,10 +152,3 @@ Entry template:
 ### Risks / next steps
 - Claude may be working locally on 综合科目 2024; later agents should pull/rebase before editing docs or `assets/eju.js`.
 - Future task prompts should include the standard "开工前必读" header from `AGENTS.md`.
-
-### Commits
-- `0cdcfe0` — docs: add agent start checklist
-- `6f1e331` — docs: add agent worklog
-- `6c3fd01` — docs: sync project status with latest EJU progress
-- `f325a3f` — docs: refresh handover for agent workflow and latest EJU status
-- `this update` — finalize worklog commit list
