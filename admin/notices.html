@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>百纳日语通知后台</title>
+  <style>
+    :root{--bg:#fbfaff;--card:#fff;--text:#25213f;--muted:#8178a4;--line:rgba(124,92,255,.16);--primary:#6f55ff;--red:#f05b7b;--green:#20b486}
+    *{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#fff,var(--bg));color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}main{max-width:980px;margin:0 auto;padding:28px 18px 80px}h1{margin:0 0 8px;font-size:28px}p{color:var(--muted);line-height:1.7}.card{background:rgba(255,255,255,.9);border:1px solid var(--line);border-radius:22px;box-shadow:0 14px 38px rgba(105,80,200,.10);padding:18px;margin-top:16px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.fit{flex:0 0 auto}label{display:block;font-size:13px;color:var(--muted);font-weight:800;margin:8px 0 6px}input,textarea,select{width:100%;border:1px solid var(--line);border-radius:16px;padding:12px 13px;font:inherit;background:#fff;color:var(--text)}textarea{min-height:130px;resize:vertical;line-height:1.65}button{border:0;border-radius:15px;padding:11px 14px;background:rgba(124,92,255,.10);color:#4d4770;font:inherit;font-weight:850;cursor:pointer}button.primary{background:linear-gradient(135deg,#6f55ff,#b46bff);color:#fff}button.red{background:rgba(240,91,123,.12);color:var(--red)}button.green{background:rgba(32,180,134,.12);color:var(--green)}button:disabled{opacity:.5;cursor:not-allowed}.notice{border:1px solid var(--line);border-radius:18px;padding:14px;background:linear-gradient(180deg,#fff,rgba(250,247,255,.72));margin-top:10px}.notice-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.notice-title{font-weight:950;color:#4d4770}.notice-body{white-space:pre-wrap;line-height:1.7;color:#4d4770;margin:8px 0}.meta{color:var(--muted);font-size:12px;font-weight:800}.pill{display:inline-block;border-radius:999px;padding:4px 8px;background:rgba(124,92,255,.10);color:#6f55ff;font-size:12px;font-weight:900}.pill.off{background:rgba(240,91,123,.10);color:var(--red)}.status{min-height:24px;font-weight:850}.small{font-size:13px}@media(max-width:720px){.grid{grid-template-columns:1fr}.notice-head{display:block}.notice-head .row{margin-top:10px}}
+  </style>
+</head>
+<body>
+<main>
+  <h1>百纳日语通知后台</h1>
+  <p>这里管理 Cloudflare KV 里的通知。保存后不用重新部署，用户刷新页面就能看到。</p>
+
+  <section class="card">
+    <label>管理员 Token（ADMIN_NOTICE_TOKEN）</label>
+    <div class="row"><input id="token" type="password" placeholder="输入 Cloudflare 环境变量 ADMIN_NOTICE_TOKEN" /><button class="primary fit" id="saveTokenBtn">保存到本机</button><button class="fit" id="loadBtn">刷新通知</button></div>
+    <p class="status" id="status"></p>
+  </section>
+
+  <section class="card">
+    <h2 id="formTitle">新增通知</h2>
+    <input id="noticeId" type="hidden" />
+    <div class="grid">
+      <div><label>标题 title</label><input id="title" placeholder="例如：版本更新通知" /></div>
+      <div><label>类型 type</label><select id="type"><option value="info">info 普通</option><option value="version">version 版本</option><option value="tip">tip 建议</option><option value="warning">warning 警告</option><option value="maintenance">maintenance 维护</option><option value="event">event 活动</option><option value="success">success 成功</option></select></div>
+    </div>
+    <label>内容 body</label><textarea id="body" placeholder="写给用户看的通知内容"></textarea>
+    <div class="grid">
+      <div><label>开始时间 startAt（可空）</label><input id="startAt" type="datetime-local" /></div>
+      <div><label>结束时间 endAt（可空）</label><input id="endAt" type="datetime-local" /></div>
+      <div><label>优先级 priority（越大越靠前）</label><input id="priority" type="number" value="5" /></div>
+      <div><label>是否启用 enabled</label><select id="enabled"><option value="true">启用</option><option value="false">禁用</option></select></div>
+      <div><label>用户能否关闭 dismissible</label><select id="dismissible"><option value="true">可以关闭</option><option value="false">不能关闭</option></select></div>
+      <div><label>关闭后是否不再显示 showOnce</label><select id="showOnce"><option value="true">关闭后不再显示</option><option value="false">每次都可再次显示</option></select></div>
+    </div>
+    <div class="row" style="margin-top:14px"><button class="primary" id="submitBtn">保存通知</button><button id="resetBtn">清空表单</button></div>
+  </section>
+
+  <section class="card">
+    <h2>当前通知</h2>
+    <p class="small">建议平时用“禁用”，不要直接删除。删除适合彻底不要的测试通知。</p>
+    <div id="list"></div>
+  </section>
+</main>
+<script>
+const API='/api/admin/notices';
+const $=id=>document.getElementById(id);
+let notices=[];
+function status(msg, bad){$('status').textContent=msg||'';$('status').style.color=bad?'#f05b7b':'#20b486';}
+function token(){return $('token').value.trim();}
+function headers(){return {'Content-Type':'application/json','Authorization':'Bearer '+token()};}
+function toIsoFromLocal(v){return v?new Date(v).toISOString():null;}
+function toLocalInput(v){if(!v)return '';const d=new Date(v);if(!Number.isFinite(d.getTime()))return '';const pad=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes());}
+async function api(method, body){const opt={method,headers:headers()};if(body)opt.body=JSON.stringify(body);const res=await fetch(API,opt);const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||'请求失败');return data;}
+function formData(){return{id:$('noticeId').value||undefined,title:$('title').value.trim(),type:$('type').value,body:$('body').value.trim(),enabled:$('enabled').value==='true',priority:Number($('priority').value||0),startAt:toIsoFromLocal($('startAt').value),endAt:toIsoFromLocal($('endAt').value),dismissible:$('dismissible').value==='true',showOnce:$('showOnce').value==='true'};}
+function resetForm(){$('formTitle').textContent='新增通知';$('noticeId').value='';$('title').value='';$('type').value='info';$('body').value='';$('startAt').value='';$('endAt').value='';$('priority').value='5';$('enabled').value='true';$('dismissible').value='true';$('showOnce').value='true';}
+function editNotice(n){$('formTitle').textContent='编辑通知：'+n.id;$('noticeId').value=n.id;$('title').value=n.title||'';$('type').value=n.type||'info';$('body').value=n.body||'';$('startAt').value=toLocalInput(n.startAt);$('endAt').value=toLocalInput(n.endAt);$('priority').value=n.priority??0;$('enabled').value=n.enabled===true?'true':'false';$('dismissible').value=n.dismissible!==false?'true':'false';$('showOnce').value=n.showOnce!==false?'true':'false';scrollTo({top:0,behavior:'smooth'});}
+function esc(s){return String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');}
+function render(){const box=$('list');if(!notices.length){box.innerHTML='<p class="small">暂无通知。</p>';return;}box.innerHTML=notices.map(n=>'<div class="notice"><div class="notice-head"><div><div class="notice-title">'+esc(n.title)+' <span class="pill '+(n.enabled?'':'off')+'">'+(n.enabled?'启用':'禁用')+'</span></div><div class="meta">id: '+esc(n.id)+'｜type: '+esc(n.type)+'｜priority: '+esc(n.priority)+'｜'+esc((n.startAt||'不限')+' → '+(n.endAt||'不限'))+'</div></div><div class="row fit"><button data-edit="'+esc(n.id)+'">编辑</button><button class="green" data-toggle="'+esc(n.id)+'">'+(n.enabled?'禁用':'启用')+'</button><button class="red" data-delete="'+esc(n.id)+'">删除</button></div></div><div class="notice-body">'+esc(n.body)+'</div><div class="meta">dismissible: '+esc(n.dismissible!==false)+'｜showOnce: '+esc(n.showOnce!==false)+'</div></div>').join('');}
+async function load(){try{if(!token()){status('先输入 Token',true);return;}const data=await api('GET');notices=data.notices||[];render();status('已刷新：'+notices.length+' 条');}catch(e){status(e.message,true);}}
+$('saveTokenBtn').onclick=()=>{localStorage.setItem('baina-admin-notice-token',$('token').value);status('Token 已保存到当前浏览器');};
+$('loadBtn').onclick=load;$('resetBtn').onclick=resetForm;
+$('submitBtn').onclick=async()=>{try{const data=formData();if(!data.title||!data.body){status('标题和内容不能为空',true);return;}const method=data.id?'PUT':'POST';const res=await api(method,data);notices=res.notices||[];render();resetForm();status(method==='POST'?'已新增通知':'已更新通知');}catch(e){status(e.message,true);}};
+$('list').onclick=async e=>{const id=e.target.dataset.edit||e.target.dataset.toggle||e.target.dataset.delete;if(!id)return;const n=notices.find(x=>String(x.id)===String(id));try{if(e.target.dataset.edit){editNotice(n);return;}if(e.target.dataset.toggle){const res=await api('PUT',{id,enabled:!(n&&n.enabled)});notices=res.notices||[];render();status('已切换启用状态');return;}if(e.target.dataset.delete){if(!confirm('确定删除这条通知？建议平时用禁用。'))return;const res=await fetch(API+'?id='+encodeURIComponent(id),{method:'DELETE',headers:headers()});const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||'删除失败');notices=data.notices||[];render();status('已删除通知');}}catch(err){status(err.message,true);}};
+$('token').value=localStorage.getItem('baina-admin-notice-token')||'';
+if($('token').value)load();
+</script>
+</body>
+</html>
