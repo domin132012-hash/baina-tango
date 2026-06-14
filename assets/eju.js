@@ -702,6 +702,58 @@ var EJU_RIKA_PROTOTYPES = {
           {page:51,answers:[15]}, {page:52,answers:[16]}, {page:53,answers:[17]}, {page:54,answers:[18]}
         ] }
     ]
+  },
+  'science/2021-2': {
+    title: '理科 · 2021年第2回',
+    imageBase: './assets/eju-media/science/2021-2/page-',
+    subjects: [
+      { id: 'physics', label: '物理',
+        pages: [4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],
+        questions: [
+          {no:1,page:4,opts:6,ans:6}, {no:2,page:5,opts:6,ans:2}, {no:3,page:6,opts:6,ans:4},
+          {no:4,page:7,opts:6,ans:6}, {no:5,page:8,opts:6,ans:3}, {no:6,page:9,opts:6,ans:2},
+          {no:7,page:10,opts:6,ans:5}, {no:8,page:11,opts:6,ans:3}, {no:9,page:12,opts:6,ans:6},
+          {no:10,page:13,opts:6,ans:4}, {no:11,page:14,opts:6,ans:3}, {no:12,page:15,opts:6,ans:2},
+          {no:13,page:16,opts:6,ans:1}, {no:14,page:17,opts:6,ans:1}, {no:15,page:18,opts:6,ans:2},
+          {no:16,page:19,opts:6,ans:5}, {no:17,page:20,opts:6,ans:4}, {no:18,page:21,opts:6,ans:6},
+          {no:19,page:22,opts:6,ans:4}
+        ] },
+      { id: 'chemistry', label: '化学',
+        refPage: 24, refLabel: '常数表 · 周期表',
+        pages: [25,26,27,28,29,30,31,32,33,34,35,36,37,38],
+        questions: [
+          {no:1,page:25,opts:6,ans:3}, {no:2,page:26,opts:6,ans:3}, {no:3,page:26,opts:6,ans:1},
+          {no:4,page:27,opts:6,ans:6}, {no:5,page:27,opts:6,ans:1}, {no:6,page:28,opts:6,ans:2},
+          {no:7,page:29,opts:6,ans:5}, {no:8,page:29,opts:6,ans:4}, {no:9,page:30,opts:6,ans:5},
+          {no:10,page:30,opts:6,ans:3}, {no:11,page:31,opts:6,ans:5}, {no:12,page:32,opts:6,ans:4},
+          {no:13,page:33,opts:6,ans:2}, {no:14,page:33,opts:6,ans:3}, {no:15,page:34,opts:6,ans:2},
+          {no:16,page:34,opts:6,ans:3}, {no:17,page:35,opts:6,ans:4}, {no:18,page:36,opts:6,ans:4},
+          {no:19,page:37,opts:6,ans:1}, {no:20,page:38,opts:6,ans:5}
+        ],
+        problems: [
+          {page:25,answers:[1]}, {page:26,answers:[2,3]}, {page:27,answers:[4,5]}, {page:28,answers:[6]},
+          {page:29,answers:[7,8]}, {page:30,answers:[9,10]}, {page:31,answers:[11]}, {page:32,answers:[12]},
+          {page:33,answers:[13,14]}, {page:34,answers:[15,16]}, {page:35,answers:[17]}, {page:36,answers:[18]},
+          {page:37,answers:[19]}, {page:38,answers:[20]}
+        ] },
+      { id: 'biology', label: '生物',
+        pages: [39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55],
+        questions: [
+          {no:1,page:39,opts:6,ans:1}, {no:2,page:40,opts:6,ans:4}, {no:3,page:41,opts:6,ans:2},
+          {no:4,page:42,opts:6,ans:4}, {no:5,page:43,opts:6,ans:4}, {no:6,page:44,opts:6,ans:5},
+          {no:7,page:45,opts:6,ans:3}, {no:8,page:46,opts:6,ans:6}, {no:9,page:47,opts:6,ans:2},
+          {no:10,page:48,opts:6,ans:1}, {no:11,page:48,opts:6,ans:1}, {no:12,page:49,opts:6,ans:1},
+          {no:13,page:50,opts:6,ans:3}, {no:14,page:51,opts:6,ans:2}, {no:15,page:52,opts:6,ans:1},
+          {no:16,page:53,opts:6,ans:6}, {no:17,page:54,opts:6,ans:3}, {no:18,page:55,opts:6,ans:4}
+        ],
+        problems: [
+          {page:39,answers:[1]}, {page:40,answers:[2]}, {page:41,answers:[3]}, {page:42,answers:[4]},
+          {page:43,answers:[5]}, {page:44,answers:[6]}, {page:45,answers:[7]}, {page:46,answers:[8]},
+          {page:47,answers:[9]}, {page:48,answers:[10,11]}, {page:49,answers:[12]}, {page:50,answers:[13]},
+          {page:51,answers:[14]}, {page:52,answers:[15]}, {page:53,answers:[16]}, {page:54,answers:[17]},
+          {page:55,answers:[18]}
+        ] }
+    ]
   }
 };
 
@@ -753,7 +805,7 @@ async function ejuLoadScannedData() {
   if (!ejuScannedDataPromise) {
     ejuScannedDataPromise = (async function() {
       try {
-        var res = await fetch('./assets/eju-scanned-data.json?v=20260614-rika-2021-1', { cache: 'no-store' });
+        var res = await fetch('./assets/eju-scanned-data.json?v=20260614-rika-2021-2', { cache: 'no-store' });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         ejuScannedData = await res.json();
         return ejuScannedData;
