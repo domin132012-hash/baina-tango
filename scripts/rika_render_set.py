@@ -23,6 +23,11 @@ SETS = {
         "pages": list(range(3, 12)) + list(range(13, 23)) + [24] + list(range(25, 41)) + list(range(42, 59)),
         "merge": {11: [11, 12]},  # page-011 = PDF11题干 + PDF12选项表 竖接
     },
+    "2022-2": {
+        "src": f"{EJU}/EJU理综/2022令和4年第2回理科.pdf",
+        # 物理3-21, 化学常数表23+题24-37, 生物39-51(含说明+問1)
+        "pages": list(range(3, 22)) + [23] + list(range(24, 38)) + list(range(39, 52)),
+    },
 }
 
 
