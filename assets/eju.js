@@ -1056,6 +1056,14 @@ function ejuSetSubjectTitle(text) {
   if (title) title.textContent = text;
 }
 
+function ejuOpenEssayEntry() {
+  if (typeof window.ejuEssayRenderHome === 'function') {
+    window.ejuEssayRenderHome();
+    return;
+  }
+  if (typeof toast === 'function') toast('作文批改模块加载中，请刷新后重试');
+}
+
 function renderEjuJapanese() {
   var el = document.getElementById('view-eju-japanese');
   if (!el) return;
@@ -1080,13 +1088,13 @@ function renderEjuJapanese() {
     + '</div>'
     + '<span class="eju-cat-badge soon">建设中</span>'
     + '</button>'
-    + '<button class="eju-skill-card disabled" disabled>'
+    + '<button class="eju-skill-card" id="ejuEssaySkillBtn" onclick="ejuOpenEssayEntry()">'
     + '<div class="eju-skill-icon">✍️</div>'
     + '<div class="eju-skill-info">'
     + '<div class="eju-skill-title">記述</div>'
-    + '<div class="eju-skill-desc">建设中</div>'
+    + '<div class="eju-skill-desc">EJU 記述作文 AI 批改</div>'
     + '</div>'
-    + '<span class="eju-cat-badge soon">建设中</span>'
+    + '<span class="eju-cat-badge">试验开放</span>'
     + '</button>'
     + '</div>';
   var readingBtn = document.getElementById('ejuReadingSkillBtn');
