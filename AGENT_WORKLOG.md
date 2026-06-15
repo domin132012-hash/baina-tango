@@ -152,3 +152,39 @@ Entry template:
 ### Risks / next steps
 - Claude may be working locally on 综合科目 2024; later agents should pull/rebase before editing docs or `assets/eju.js`.
 - Future task prompts should include the standard "开工前必读" header from `AGENTS.md`.
+
+### Commit
+- `784f2d7`
+
+---
+
+## 2026-06-15 / Codex / EJU 記述作文双知识库改造
+
+### Task
+- 将 EJU 記述作文批改从单一 prompt 改成双知识库结构：`rubric` 负责评分依据，`reference bank` 负责例子、范文方向、理由素材和表达建议。
+- 明确复用旧扫描结果，不重新 OCR 整本 PDF；`sample_essays.json` 已确认基本为空，因此没有作为依赖接入。
+
+### Files changed
+- `functions/api/eju-essay/_rubric.js` — 新增基礎編评分依据，固定整理 400〜500 字、30 分、50 点制、题目理解、主张、根拠、具体例、多角度、序論/本論/結論、段落、文体、書き言葉。
+- `functions/api/eju-essay/_reference-bank.js` — 新增実践編参考素材库，按题型/话题/关键词/题目摘要/可用理由/常用表达/范文结构整理轻量条目。
+- `functions/api/eju-essay/_select-reference.js` — 新增题目匹配与追问分类逻辑。
+- `functions/api/eju-essay/analyze.js` — 固定加载 `rubric`，按题目命中 1〜3 条参考素材，并把 `rubricSource` / `matchedReferences` 返回给前端。
+- `functions/api/eju-essay/follow-up.js` — 扣分解释优先按 `rubric`，只有问例子/范文/表达/改写时才启用 `reference bank`。
+- `assets/eju-essay.js` — 结果页新增 `评分依据` 与 `参考素材` 展示，并把新字段保存到本地历史。
+- `EJU_ESSAY_INTEGRATION_PLAN.md` / `PROJECT_STATUS.md` / `HANDOVER.md` — 更新为双知识库现状与边界说明。
+
+### Validation
+- `node --check functions/api/eju-essay/analyze.js`
+- `node --check functions/api/eju-essay/follow-up.js`
+- `node --check functions/api/eju-essay/_rubric.js`
+- `node --check functions/api/eju-essay/_reference-bank.js`
+- `node --check functions/api/eju-essay/_select-reference.js`
+- `node --check assets/eju-essay.js`
+
+### Risks / next steps
+- `reference_bank` 目前是基于旧扫描结果人工整理的轻量条目，足够支撑 MVP，但还不是完整生产版素材库。
+- 本轮未做 Cloudflare Preview 实机提交流程，也未复测登录后 DeepSeek 批改链路；若继续验收，应在带 `DEEPSEEK_API_KEY` 的 Preview 环境再跑一次。
+- branch 仍然是 draft PR #2，未合并 main。
+
+### Commit
+- `a7ca291`
