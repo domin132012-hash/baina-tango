@@ -188,3 +188,48 @@ Entry template:
 
 ### Commit
 - `a7ca291`
+
+---
+
+## 2026-06-15 / Codex / EJU 記述作文双知识库验收与小修
+
+### Task
+- 验收 `feat/eju-essay-integration` / draft PR #2 的 Preview 分支状态、语法、PR diff 和页面链路。
+- 修复验收发现的小 bug：当前端发送空 `Authorization: Bearer` 头时，`analyze` / `follow-up` 会误判成“登录状态已失效”，而不是“请先登录账号”。
+
+### Files changed
+- `functions/api/eju-essay/analyze.js` — `requireUser()` 的 bearer 解析改为 `^Bearer\\b\\s*`，把空 bearer 视为未登录。
+- `functions/api/eju-essay/follow-up.js` — 同步修正空 bearer 解析。
+
+### Validation
+- 分支同步：
+  - `git pull`：up to date
+  - `git log --oneline -5`：含 `fb81f00` / `a7ca291`
+- 语法检查：
+  - `node --check functions/api/eju-essay/analyze.js`
+  - `node --check functions/api/eju-essay/follow-up.js`
+  - `node --check functions/api/eju-essay/_rubric.js`
+  - `node --check functions/api/eju-essay/_reference-bank.js`
+  - `node --check functions/api/eju-essay/_select-reference.js`
+  - `node --check assets/eju-essay.js`
+  - `node --check functions/_middleware.js`
+- PR diff 检查：
+  - 未发现 `index.html` 改动
+  - 未发现原始 PDF、整本 OCR、`docmind_result.md` 全文、教材大文件、secret / API key 被提交
+- Cloudflare Preview：
+  - URL：`https://feat-eju-essay-integration.baina-tango.pages.dev`
+  - 路径 `学习 → 真题试炼 → 日本語 → 記述` 可达
+  - `記述` 卡片可点击，作文输入页可打开
+  - 未登录提交：初始因空 bearer 头返回“登录状态已失效”；修复并推送 `603bb38` 后，Preview 更新为正确返回“请先登录账号”
+  - network：`/api/eju-essay/analyze` 在未登录场景返回 `401`
+  - console：本次看到的 error 都是预期的 `401 /api/eju-essay/analyze` 与注册尝试时的 Supabase signup 请求结果；未见额外全局 JS 异常
+- 登录链路：
+  - 站点支持邮箱注册；使用测试邮箱可触发 Supabase 注册
+  - 但注册后要求点击邮箱确认链接，当前会话无法访问该邮箱，因此未能完成“已登录 analyze / follow-up”实测
+
+### Risks / next steps
+- Preview 的未登录链路现已通过，但“登录后 analyze / follow-up、rubricSource / matchedReferences 展示、追问按 rubric/reference 分流”这条链仍需一个已确认邮箱账号才能完成最终验收。
+- 目前不建议把 PR 从 draft 改成 ready，除非补完一次真实登录后的端到端验证。
+
+### Commit
+- `603bb38`
