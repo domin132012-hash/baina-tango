@@ -1,6 +1,13 @@
 // EJU 記述批改追问接口（POST，需登录）
 
 import { createClient } from "@supabase/supabase-js";
+import { RUBRIC_SOURCE, formatRubricForPrompt } from "./_rubric.js";
+import {
+  questionNeedsReferenceBank,
+  questionIsMainlyAboutScoring,
+  selectReferences,
+  summarizeReferencesForPrompt
+} from "./_select-reference.js";
 
 function jsonResp(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -19,12 +26,12 @@ async function readJson(request) {
 }
 
 async function requireUser(request, env) {
-  if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
-    return { user: null, error: "Supabase 环境变量未配置" };
-  }
   const auth = request.headers.get("authorization") || "";
   const token = auth.replace(/^Bearer\s+/i, "").trim();
   if (!token) return { user: null, error: "请先登录账号", code: "unauthenticated", status: 401 };
+  if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
+    return { user: null, error: "Supabase 环境变量未配置" };
+  }
   const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
   const { data, error } = await supabase.auth.getUser(token);
   if (error || !data?.user) return { user: null, error: "登录状态已失效，请重新登录", code: "unauthenticated", status: 401 };
@@ -59,6 +66,48 @@ function compactContext(context) {
   })).filter(item => item.content.trim());
 }
 
+function buildFollowUpPrompt(input) {
+  const question = String(input.question || "").trim();
+  const essayTheme = String(input.essayTheme || "").trim();
+  const essay = String(input.essay || "").trim();
+  const critique = String(input.critique || "").trim();
+  const rubricPrompt = formatRubricForPrompt();
+  const useReferenceBank = questionNeedsReferenceBank(question);
+  const scoringFocus = questionIsMainlyAboutScoring(question);
+  const references = useReferenceBank ? selectReferences({ essayTheme, essay }, 3) : [];
+
+  return {
+    useReferenceBank,
+    references,
+    system: [
+      "你是 EJU 日本語記述作文老师。",
+      "回答必须优先基于同一套 rubric / 基礎編规则。",
+      "reference bank 只能在用户明确索要例子、范文方向、理由素材、表达建议或改写建议时使用。",
+      "reference bank 不得影响分数判断，不得因为参考素材与学生作文不同就修改分数判断。",
+      scoringFocus
+        ? "当前问题与扣分或分数解释有关，请重点按 rubric 解释题目理解、主张、根拠、具体例、结构、段落、文体、書き言葉等维度。"
+        : "回答要具体、可执行，尽量结合学生原文说明。"
+    ].join("\n"),
+    brief: [
+      "评分依据来源：" + RUBRIC_SOURCE,
+      "固定 rubric：",
+      rubricPrompt,
+      "",
+      useReferenceBank
+        ? "命中的参考素材（仅供举例、范文方向、补充理由、表达建议，不可参与评分）：\n" + summarizeReferencesForPrompt(references)
+        : "本轮未启用 reference bank；如果问题只是扣分解释或分数说明，请不要额外引用范文素材。",
+      "",
+      "题目：\n" + essayTheme,
+      "",
+      "学生作文：\n" + essay,
+      "",
+      "上一轮批改：\n" + critique,
+      "",
+      "请回答这个追问：\n" + question
+    ].join("\n")
+  };
+}
+
 export async function onRequestPost(context) {
   const { request, env } = context;
   const auth = await requireUser(request, env);
@@ -76,9 +125,10 @@ export async function onRequestPost(context) {
   const history = compactContext(body.context);
 
   try {
+    const followUpPrompt = buildFollowUpPrompt({ question, essayTheme, essay, critique });
     const messages = [
-      { role: "system", content: "你是 EJU 日本語記述作文老师。回答要具体、可执行，优先解释学生哪里错、为什么错、怎么改。" },
-      { role: "user", content: "题目：\n" + essayTheme + "\n\n学生作文：\n" + essay + "\n\n上一轮批改：\n" + critique }
+      { role: "system", content: followUpPrompt.system },
+      { role: "user", content: followUpPrompt.brief }
     ].concat(history).concat([
       { role: "user", content: question }
     ]);

@@ -1,6 +1,6 @@
 # EJU 記述作文批改嫁接方案
 
-最后更新：2026-06-14
+最后更新：2026-06-15
 分支：`feat/eju-essay-integration`
 
 ## 1. 结论：嫁接到哪里
@@ -29,6 +29,9 @@
 | 記述卡片启用 + 作文批改 UI | `assets/eju-essay.js` | 已新增 |
 | 批改接口 | `functions/api/eju-essay/analyze.js` | 已新增 |
 | 批改追问接口 | `functions/api/eju-essay/follow-up.js` | 已新增 |
+| 基礎編评分依据 | `functions/api/eju-essay/_rubric.js` | 2026-06-15 新增 |
+| 実践編参考素材库 | `functions/api/eju-essay/_reference-bank.js` | 2026-06-15 新增 |
+| 题目匹配器 | `functions/api/eju-essay/_select-reference.js` | 2026-06-15 新增 |
 | HTML 注入 | `functions/_middleware.js` | 已追加 `eju-essay.js` 注入 |
 | 科目接口 | `functions/api/eju-categories.js` | `writing.available=true` |
 
@@ -41,7 +44,7 @@
 | 教材问答三层检索 | 体量大，容易拖慢主产品；建议等作文批改稳定后单独做。 |
 | React 结果页组件 | 百纳不是 React 项目，已改为纯 JS 注入模块。 |
 
-## 3. 当前接口设计
+## 3. 当前接口设计（双知识库版）
 
 ### POST `/api/eju-essay/analyze`
 
@@ -66,9 +69,23 @@
   "strictScore": 35,
   "summaryLine": "一句话评价",
   "errorRows": [],
-  "charCount": 421
+  "charCount": 421,
+  "rubricSource": "速攻トレーニング記述・基礎編 rubric",
+  "matchedReferences": [
+    { "id": "ref-binary-friends", "topic": "友だちとの付き合い方", "type": "二項対立" }
+  ]
 }
 ```
+
+规则：
+
+- 每次批改固定加载 `rubric`，来源只认旧扫描结果里的 `rubric.json` / `rubric.md`。
+- 根据 `essayTheme` 和作文正文，从 `reference_bank` 匹配 1〜3 条参考素材。
+- prompt 中明确写死：
+  - 评分只能依据 `rubric / 基礎編规则`
+  - `reference bank` 只用于举例、范文方向、补充理由、表达建议
+  - 不得因为学生作文不像参考范文就扣分
+  - 不得照抄参考素材
 
 ### POST `/api/eju-essay/follow-up`
 
@@ -92,6 +109,12 @@
   "answer": "回答文本"
 }
 ```
+
+追问规则：
+
+- 问“为什么扣分 / 为什么这个分数 / 评分依据”时，优先按 `rubric` 解释。
+- 问“给例子 / 范文 / 理由 / 表达 / 怎么改写”时，才带入 `reference_bank`。
+- `reference_bank` 不得影响分数判断。
 
 ## 4. 必需环境变量
 
@@ -121,6 +144,12 @@ SUPABASE_SERVICE_ROLE_KEY=...
 4. 点击后在原 `view-eju-japanese` / `#ejuJapaneseMount` 内渲染作文批改页面。
 5. 批改历史先放 localStorage：`baina-eju-essay-history-v1`，最多 30 条。
 
+结果页额外显示：
+
+- `评分依据`：固定文案 `速攻トレーニング記述・基礎編 rubric`
+- `参考素材`：显示命中的 `reference id / topic / type`
+- 若未命中：显示 `未命中具体参考素材，仅使用通用 rubric 评分`
+
 这个方式的好处是：
 
 - 不直接编辑 `index.html`。
@@ -143,6 +172,9 @@ AGENTS.md → PROJECT_STATUS.md → HANDOVER.md → AGENT_WORKLOG.md → EJU_ESS
    node --check assets/eju-essay.js
    node --check functions/api/eju-essay/analyze.js
    node --check functions/api/eju-essay/follow-up.js
+   node --check functions/api/eju-essay/_rubric.js
+   node --check functions/api/eju-essay/_reference-bank.js
+   node --check functions/api/eju-essay/_select-reference.js
    node --check functions/_middleware.js
    ```
 3. 本地/Preview 验证：
@@ -204,17 +236,23 @@ Cloudflare 环境下优先考虑：
 - 轮询结果。
 - 返回识别文本。
 
-### P3：教材问答 / 评分准则库
+### P3：把 MVP 双知识库升级成生产版
 
-原 `data/library/` 是本地文件系统，线上要改成：
+当前分支已经明确分为两层：
 
-- R2：教材 PDF / OCR 原文。
-- KV：小型 rubric / structure 缓存。
-- Supabase：用户历史、批改记录、范文样本。
+- `rubric`：仅基于 `rubric.json` / `rubric.md` 提炼基础评分依据
+- `reference bank`：仅基于 `textbook.json` / `structure.json` / `notes.json` / `notes/` 提炼例子与表达
+
+但这还只是 MVP，后续要补：
+
+- 更细的 reference entry 结构化抽取
+- 更稳的题型识别与主题匹配
+- 线上可维护的 R2/KV/Supabase 存储方案
+- 更严格的输出结构约束，减少 AI 自由发挥
 
 ## 8. 风险
 
-1. 当前分支未在本地运行 `node --check`，因为本次是 GitHub 远程落代码；合并前必须由本地代理验证。
+1. `reference_bank` 目前是人工整理后的轻量条目，不是整本教材的全结构化库。
 2. DeepSeek 输出不是强 JSON，虽然保留了 `<ERRORS_JSON>` 解析，但仍可能失败。
 3. middleware 注入会让所有 HTML 页面加载 `eju-essay.js`，脚本已做 no-op/延迟 patch，但上线前仍要看控制台。
 4. 第一版历史存在 localStorage，换设备不会同步。

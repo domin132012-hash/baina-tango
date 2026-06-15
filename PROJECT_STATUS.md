@@ -45,6 +45,7 @@
 | 模块 | 状态 | 备注 |
 |---|---|---|
 | Cloudflare 通知配置 | ⚠️ 待线上配置 | 需要在 Pages 设置里绑定 `NOTICES_KV` 并配置 `ADMIN_NOTICE_TOKEN` |
+| EJU 記述作文双知识库 | 🛠️ 分支中 | `feat/eju-essay-integration` 已把批改拆成 `rubric`（基礎編评分依据）+ `reference bank`（実践編例子/表达），已完成本地 `node --check`，但仍是 draft PR #2，未合并 main |
 | 未部署年份灰色建设中 UI | 📝 待做 | 可后续让 Codex 做，但避免与 Claude 同时改 `assets/eju.js` 撞车 |
 
 ---

@@ -2,6 +2,8 @@
 // Cloudflare Pages Functions 版本：不搬 Express server.mjs，只迁移核心批改链路。
 
 import { createClient } from "@supabase/supabase-js";
+import { EJU_ESSAY_RUBRIC, RUBRIC_SOURCE, formatRubricForPrompt } from "./_rubric.js";
+import { selectReferences, summarizeReferencesForPrompt, publicReferenceSummary } from "./_select-reference.js";
 
 const SCORE_LADDER = [0, 10, 20, 25, 30, 35, 40, 45, 50];
 
@@ -76,13 +78,20 @@ function buildCritiquePrompt(input) {
   const essay = String(input.essay || "").trim();
   const charCount = Number.isFinite(Number(input.essayCharCount)) ? Number(input.essayCharCount) : countJapaneseChars(essay);
   const essayMode = input.essayMode === "model" ? "model" : "student";
+  const references = Array.isArray(input.references) ? input.references : [];
+  const rubricPrompt = formatRubricForPrompt();
+  const referencePrompt = summarizeReferencesForPrompt(references);
+  const spec = EJU_ESSAY_RUBRIC.examSpec;
 
   return [
     "你是 EJU 日本語『記述』评分辅助老师，面向中文母语学习者。",
+    "评分只能依据 rubric / 基礎編规则，绝不能依据参考范文相似度来扣分。",
+    "reference bank 只可用于举例、范文方向、补充理由、表达建议，不能参与评分。",
+    "不得因为学生作文不像参考素材就扣分，不得要求照抄参考素材。",
     "请按 JASSO 记述评分档位进行批改：0/10/20/25/30/35/40/45/50。",
     "普通評価=预测区间上限，严格評価=预测区间下限；两者通常相差 5 分。",
-    "字数规则：400〜500 字为合格；350〜399 普通分上限 35；300〜349 上限 30；250〜299 上限 25；250 未满上限 20。",
-    "如果字数合格、题目回应完整、观点明确、结构完整、有具体例且 high 错误 ≤1，则普通評価不应低于40，严格評価不应低于35。",
+    "字数规则以基礎編为准：400〜500 字目标；350〜399 普通分上限 35；300〜349 上限 30；250〜299 上限 25；250 未满上限 20。",
+    "如果字数合格、题目回应完整、观点明确、结构完整、有具体例且 high 错误 ≤1，则普通評価通常不应低于40，严格評価通常不应低于35。",
     "错误严重级别：high=根本语法/活用/意义错误；medium=助词/搭配/动词选择等建议改；low=风格建议或可保留表达。",
     "不要把自然但不够高级的表达强行判成 high。",
     "输出必须使用下面固定结构，不要省略标题：",
@@ -96,20 +105,27 @@ function buildCritiquePrompt(input) {
     "【改写版 — 原意保持版（目标30〜35分）】",
     "【改写版 — 40分目标版（目标35〜40分）】",
     "",
+    "固定评分依据（rubric / 基礎編）：",
+    rubricPrompt,
+    "",
+    "命中的参考素材（仅供举例、理由、表达、范文方向，不可参与评分）：",
+    referencePrompt,
+    "",
     "作文模式：" + (essayMode === "model" ? "范文分析模式" : "学生作文批改模式"),
     "题目：" + (theme || "（未填写）"),
     "前端精确字数：" + charCount + "字。禁止自行重新统计字数。",
+    "本题目标字数区间：" + spec.charRange + "；考试时间：" + spec.recommendedTime + "；满分：" + spec.fullScore + "点。",
     "学生作文：\n" + essay
   ].join("\n");
 }
 
 async function requireUser(request, env) {
-  if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
-    return { user: null, error: "Supabase 环境变量未配置" };
-  }
   const auth = request.headers.get("authorization") || "";
   const token = auth.replace(/^Bearer\s+/i, "").trim();
   if (!token) return { user: null, error: "请先登录账号", code: "unauthenticated", status: 401 };
+  if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
+    return { user: null, error: "Supabase 环境变量未配置" };
+  }
   const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
   const { data, error } = await supabase.auth.getUser(token);
   if (error || !data?.user) return { user: null, error: "登录状态已失效，请重新登录", code: "unauthenticated", status: 401 };
@@ -149,7 +165,12 @@ export async function onRequestPost(context) {
 
   try {
     const charCount = Number.isFinite(Number(body.essayCharCount)) ? Number(body.essayCharCount) : countJapaneseChars(essay);
-    const prompt = buildCritiquePrompt(Object.assign({}, body, { essay, essayCharCount: charCount }));
+    const matchedReferences = selectReferences({ essayTheme: body.essayTheme, essay }, 3);
+    const prompt = buildCritiquePrompt(Object.assign({}, body, {
+      essay,
+      essayCharCount: charCount,
+      references: matchedReferences
+    }));
     const result = await callDeepSeek(env, [
       { role: "system", content: "你是严谨的 EJU 日本語記述评分老师。必须按用户指定格式输出。" },
       { role: "user", content: prompt }
@@ -163,7 +184,9 @@ export async function onRequestPost(context) {
       strictScore: extractScore(result, "strict"),
       summaryLine: extractSummary(result),
       errorRows,
-      charCount
+      charCount,
+      rubricSource: RUBRIC_SOURCE,
+      matchedReferences: matchedReferences.map(publicReferenceSummary)
     });
   } catch (err) {
     return jsonResp({ error: err?.message || String(err) }, 500);

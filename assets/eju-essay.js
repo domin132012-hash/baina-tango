@@ -17,6 +17,8 @@
     strictScore: null,
     summaryLine: '',
     charCount: 0,
+    rubricSource: '',
+    matchedReferences: [],
     followInput: '',
     thread: []
   };
@@ -92,6 +94,8 @@
     state.summaryLine = item.summaryLine || '';
     state.errorRows = item.errorRows || null;
     state.charCount = item.charCount || countChars(state.essay);
+    state.rubricSource = item.rubricSource || '';
+    state.matchedReferences = Array.isArray(item.matchedReferences) ? item.matchedReferences : [];
     state.thread = [];
     renderEssayResult();
   }
@@ -154,7 +158,7 @@
       + '<div class="eju-essay-shell">'
       + '<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">'
       + '<button class="ghost" onclick="ejuEssayBackToJapanese()">← 返回日本語</button>'
-      + '<span class="pill ok" style="font-size:11px">AI 批改底座 v1</span>'
+      + '<span class="pill ok" style="font-size:11px">AI 批改底座 v2</span>'
       + '</div>'
       + '<div class="eju-essay-card">'
       + '<label class="eju-essay-label">题目 / テーマ</label>'
@@ -223,6 +227,8 @@
       state.summaryLine = data.summaryLine || '';
       state.errorRows = data.errorRows;
       state.charCount = data.charCount || state.charCount;
+      state.rubricSource = data.rubricSource || '';
+      state.matchedReferences = Array.isArray(data.matchedReferences) ? data.matchedReferences : [];
       state.thread = [];
       var item = {
         id: String(Date.now()),
@@ -235,7 +241,9 @@
         strictScore: state.strictScore,
         summaryLine: state.summaryLine,
         errorRows: state.errorRows,
-        charCount: state.charCount
+        charCount: state.charCount,
+        rubricSource: state.rubricSource,
+        matchedReferences: state.matchedReferences
       };
       saveHistory(item);
       renderEssayResult();
@@ -264,6 +272,15 @@
     }).join('') + '</div>';
   }
 
+  function matchedReferencesHtml() {
+    if (!Array.isArray(state.matchedReferences) || state.matchedReferences.length === 0) {
+      return '<p style="color:#8b86a3;margin:0">未命中具体参考素材，仅使用通用 rubric 评分。</p>';
+    }
+    return '<div class="eju-essay-history">' + state.matchedReferences.map(function(ref) {
+      return '<div class="eju-essay-history-item"><div><b>' + esc(ref.id || '-') + '</b><br><span style="font-size:12px;color:#8b86a3">' + esc(ref.topic || '-') + ' · ' + esc(ref.type || '-') + '</span></div><span class="pill" style="font-size:11px">' + esc(ref.type || '参考') + '</span></div>';
+    }).join('') + '</div>';
+  }
+
   function renderEssayResult() {
     injectStyle();
     var m = mount();
@@ -283,6 +300,14 @@
       + '<div class="eju-essay-score"><span>字数</span><br><b>' + esc(state.charCount) + '</b><span>字</span></div>'
       + '</div>'
       + (state.summaryLine ? '<p style="font-weight:900;color:#30294d;margin:14px 0 0">' + esc(state.summaryLine) + '</p>' : '')
+      + '</div>'
+      + '<div class="eju-essay-card">'
+      + '<div style="font-weight:950;color:#30294d;margin-bottom:10px">评分依据</div>'
+      + '<p style="margin:0;color:#332b4f;line-height:1.7">' + esc(state.rubricSource || '速攻トレーニング記述・基礎編 rubric') + '</p>'
+      + '</div>'
+      + '<div class="eju-essay-card">'
+      + '<div style="font-weight:950;color:#30294d;margin-bottom:10px">参考素材</div>'
+      + matchedReferencesHtml()
       + '</div>'
       + '<div class="eju-essay-card">'
       + '<div style="font-weight:950;color:#30294d;margin-bottom:10px">错误修正表</div>'
@@ -339,6 +364,8 @@
     state.strictScore = null;
     state.summaryLine = '';
     state.charCount = 0;
+    state.rubricSource = '';
+    state.matchedReferences = [];
     state.thread = [];
     renderEssayHome();
   }
