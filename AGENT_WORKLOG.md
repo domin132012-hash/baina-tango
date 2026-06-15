@@ -233,3 +233,33 @@ Entry template:
 
 ### Commit
 - `603bb38`
+
+---
+
+## 2026-06-15 / Codex / 直接打开 renderEjuJapanese 里的 記述 入口
+
+### Task
+- 不再只依赖 `assets/eju-essay.js` 的 runtime patch，直接在 `assets/eju.js` 的 `renderEjuJapanese()` 中把 `記述` 卡片从建设中改为可点击入口。
+- 保持 `聴読解` 继续建设中，不修改 `index.html`，不重构 `assets/eju.js`，不变更双知识库内容。
+
+### Files changed
+- `assets/eju.js` — 新增 `ejuOpenEssayEntry()` fallback；把 `記述` 卡片改成 `id="ejuEssaySkillBtn"`、`onclick="ejuOpenEssayEntry()"`、文案 `EJU 記述作文 AI 批改`、badge `试验开放`。
+- `functions/_middleware.js` — 保持继续注入 `/assets/eju-essay.js`，cache bust 更新为 `20260615-eju-essay-v4-entry-open`。
+- `PROJECT_STATUS.md` / `HANDOVER.md` / `EJU_ESSAY_INTEGRATION_PLAN.md` — 记录入口现在是 `renderEjuJapanese()` 直接打开。
+
+### Validation
+- `node --check assets/eju.js`
+- `node --check assets/eju-essay.js`
+- `node --check functions/_middleware.js`
+- Preview：`https://feat-eju-essay-integration.baina-tango.pages.dev`
+  - `学习 → 真题试炼 → 日本語` 页面里，`記述` 不再显示建设中
+  - `記述` badge 显示 `试验开放`
+  - 点击 `記述` 可进入作文输入页
+  - 未登录提交 `/api/eju-essay/analyze` 返回 `401`，页面提示 `请先登录账号`
+
+### Risks / next steps
+- 当前只验证了入口打开和未登录链路；登录后批改链路的完整验收仍依赖一个已确认邮箱账号。
+- `assets/eju-essay.js` 的 runtime patch 仍保留，属于故意双保险，不是冲突。
+
+### Commit
+- `2d40940`

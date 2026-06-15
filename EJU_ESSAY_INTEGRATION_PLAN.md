@@ -136,12 +136,12 @@ SUPABASE_SERVICE_ROLE_KEY=...
 
 ## 5. 前端嫁接方式
 
-`assets/eju-essay.js` 运行后会：
+当前分支的入口方式是双保险：
 
-1. 保存原 `renderEjuJapanese()`。
-2. 覆盖 `renderEjuJapanese()`，在原渲染完成后找到「記述」卡片。
-3. 移除 disabled 状态，把说明改成「EJU 記述作文 AI 批改」。
-4. 点击后在原 `view-eju-japanese` / `#ejuJapaneseMount` 内渲染作文批改页面。
+1. `assets/eju.js` 的 `renderEjuJapanese()` 已直接把「記述」卡片渲染成可点击入口，文案为 `EJU 記述作文 AI 批改 / 试验开放`。
+2. `assets/eju-essay.js` 仍保留 runtime patch 与页面渲染逻辑，防止旧缓存或异步时序导致入口状态回退。
+3. 点击后在原 `view-eju-japanese` / `#ejuJapaneseMount` 内渲染作文批改页面。
+4. 若 `ejuEssayRenderHome` 尚未就绪，入口会 toast：`作文批改模块加载中，请刷新后重试`。
 5. 批改历史先放 localStorage：`baina-eju-essay-history-v1`，最多 30 条。
 
 结果页额外显示：

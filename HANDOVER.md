@@ -21,6 +21,7 @@
 ### EJU 記述作文双知识库现状（2026-06-15）
 
 - 前端入口仍然是：`学习 → 真题试炼 → 日本語 → 記述`。
+- 当前分支已不再只依赖 `assets/eju-essay.js` 的 runtime patch；`assets/eju.js` 的 `renderEjuJapanese()` 已直接把 `記述` 卡片渲染成可点击入口，`聴読解` 仍保持建设中。
 - 当前分支新增 3 个底层模块：
   - `functions/api/eju-essay/_rubric.js`
   - `functions/api/eju-essay/_reference-bank.js`
@@ -46,6 +47,7 @@
   - `评分依据`
   - `参考素材`
   - 若没匹配到题目，会显示 `未命中具体参考素材，仅使用通用 rubric 评分`
+- `functions/_middleware.js` 仍继续注入 `/assets/eju-essay.js`；当前 cache bust 版本是 `20260615-eju-essay-v4-entry-open`。
 - 这次只整理了轻量 reference entries，没有把整本 OCR 文本提交进仓库，也没有把 `docmind_result.md` 整段塞进 prompt。
 
 ### 消息通知系统现状（2026-06-14）
