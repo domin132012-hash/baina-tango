@@ -121,7 +121,7 @@ function buildCritiquePrompt(input) {
 
 async function requireUser(request, env) {
   const auth = request.headers.get("authorization") || "";
-  const token = auth.replace(/^Bearer\s+/i, "").trim();
+  const token = auth.replace(/^Bearer\b\s*/i, "").trim();
   if (!token) return { user: null, error: "请先登录账号", code: "unauthenticated", status: 401 };
   if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
     return { user: null, error: "Supabase 环境变量未配置" };
