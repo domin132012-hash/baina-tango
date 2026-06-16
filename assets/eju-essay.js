@@ -50,6 +50,13 @@
     return String(text || '').replace(/[\s\n\r\t]/g, '').length;
   }
 
+  function cleanCritiqueForDisplay(text) {
+    return String(text || '')
+      .replace(/<ERRORS_JSON>\s*[\s\S]*?\s*<\/ERRORS_JSON>/gi, '')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+  }
+
   async function essayFetch(path, opts) {
     if (typeof ejuFetch === 'function') return ejuFetch(path, opts);
     var res = await fetch(path, Object.assign({
@@ -315,7 +322,7 @@
       + '</div>'
       + '<div class="eju-essay-card">'
       + '<div style="font-weight:950;color:#30294d;margin-bottom:10px">完整批改</div>'
-      + '<div class="eju-essay-result">' + esc(state.result) + '</div>'
+      + '<div class="eju-essay-result">' + esc(cleanCritiqueForDisplay(state.result)) + '</div>'
       + '</div>'
       + '<div class="eju-essay-card">'
       + '<div style="font-weight:950;color:#30294d;margin-bottom:10px">继续追问</div>'
