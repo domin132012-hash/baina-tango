@@ -1,6 +1,6 @@
 # EJU 記述作文批改嫁接方案
 
-最后更新：2026-06-15
+最后更新：2026-06-16
 分支：`feat/eju-essay-integration`
 
 ## 1. 结论：嫁接到哪里
@@ -34,6 +34,12 @@
 | 题目匹配器 | `functions/api/eju-essay/_select-reference.js` | 2026-06-15 新增 |
 | HTML 注入 | `functions/_middleware.js` | 已追加 `eju-essay.js` 注入 |
 | 科目接口 | `functions/api/eju-categories.js` | `writing.available=true` |
+
+### 2026-06-16 验收补丁
+
+- `analyze.js` 已加请求体最大 30000 字符、题目最大 1000 字符、作文最大 6000 字符。
+- `follow-up.js` 已加请求体最大 40000 字符、追问最大 2000 字符、题目最大 1000 字符、作文最大 6000 字符、上一轮批改最大 8000 字符、历史上下文最多 8 条且每条最多 2000 字符。
+- 两个接口都已把 JSON 解析错误改成清晰 400，把后端配置/DeepSeek 上游错误改成用户可读的通用错误，避免把环境变量名、stack 或上游原文暴露给页面。
 
 ### 第一版故意不做
 
@@ -132,7 +138,7 @@ SUPABASE_SERVICE_ROLE_KEY=...
 
 - DeepSeek 密钥只在 Cloudflare Functions 使用，不能进前端。
 - 当前接口要求用户登录，前端通过现有 `ejuFetch()` 自动带 Supabase token。
-- 如果 Supabase 或 DeepSeek 环境变量缺失，接口会直接报错，不会静默假成功。
+- 如果 Supabase 或 DeepSeek 环境变量缺失，接口会返回清晰失败，不会静默假成功；对用户展示的是通用错误，不暴露环境变量名。
 
 ## 5. 前端嫁接方式
 
@@ -184,8 +190,9 @@ AGENTS.md → PROJECT_STATUS.md → HANDOVER.md → AGENT_WORKLOG.md → EJU_ESS
    - 未登录时应提示登录。
    - 登录且环境变量正确时应返回批改结果、分数、错误表。
    - 追问接口可继续回答。
-4. Cloudflare Pages 配置 `DEEPSEEK_API_KEY` 后再合并上线。
-5. 验收通过后更新 `PROJECT_STATUS.md`、`HANDOVER.md`、`AGENT_WORKLOG.md`。
+4. 必须有一个已确认邮箱账号完成登录后真实 analyze + follow-up 验收；否则 PR #2 保持 draft，不得 ready/merge。
+5. Cloudflare Pages 配置 `DEEPSEEK_API_KEY` 后再合并上线。
+6. 验收通过后更新 `PROJECT_STATUS.md`、`HANDOVER.md`、`AGENT_WORKLOG.md`。
 
 ## 7. 后续升级路线
 

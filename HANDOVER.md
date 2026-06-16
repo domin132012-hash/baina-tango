@@ -1,7 +1,7 @@
 # 交接文档 — EJU 真题试炼 + 远程通知系统
 
 > 本文件面向**完全没有上下文的接手人/代理**。读完即可接手。
-> 最后更新：2026-06-15。配套阅读：`AGENTS.md`（开工规则）、`PROJECT_STATUS.md`（当前进度）、`AGENT_WORKLOG.md`（最近动作流水）、`NOTICES_ADMIN.md`（通知后台）。
+> 最后更新：2026-06-16。配套阅读：`AGENTS.md`（开工规则）、`PROJECT_STATUS.md`（当前进度）、`AGENT_WORKLOG.md`（最近动作流水）、`NOTICES_ADMIN.md`（通知后台）。
 
 ---
 
@@ -16,7 +16,7 @@
 - 理科：2023-1 样板与 bug 修复已上线；2023-2、2022-1、2022-2、2021-1、2021-2 已上线。
 - 理科剩余 6 套暂缓：2018-1、2018-2、2019-1、2020-2、2024-1、2025-1。
 - 综合科目：2024 一套 MVP 已完成并上线（见下）。
-- EJU 記述作文：`feat/eju-essay-integration` 分支已改成双知识库底座，仍是 draft PR #2，不能直接 merge。
+- EJU 記述作文：`feat/eju-essay-integration` 分支已改成双知识库底座，仍是 draft PR #2，不能直接 merge。2026-06-16 已验证入口和未登录 401；登录后真实 analyze/follow-up 仍缺已确认账号验收。
 
 ### EJU 記述作文双知识库现状（2026-06-15）
 
@@ -49,6 +49,18 @@
   - 若没匹配到题目，会显示 `未命中具体参考素材，仅使用通用 rubric 评分`
 - `functions/_middleware.js` 仍继续注入 `/assets/eju-essay.js`；当前 cache bust 版本是 `20260615-eju-essay-v4-entry-open`。
 - 这次只整理了轻量 reference entries，没有把整本 OCR 文本提交进仓库，也没有把 `docmind_result.md` 整段塞进 prompt。
+- 2026-06-16 补了最低限度防滥用/稳定性保护：
+  - `analyze.js`：请求体最大 30000 字符，题目最大 1000 字符，作文最大 6000 字符；JSON 解析错误返回清晰 400；后端配置或 DeepSeek 上游错误不再把环境变量名、stack 或原始上游消息返回给用户。
+  - `follow-up.js`：请求体最大 40000 字符，追问最大 2000 字符，题目最大 1000 字符，作文最大 6000 字符，上一轮批改最大 8000 字符，历史上下文最多 8 条且每条最多 2000 字符；错误同样脱敏。
+- 当前 Preview 验收范围：
+  - `学习 → 真题试炼 → 日本語 → 記述` 可达，`記述` 显示 `试验开放` 且可点击。
+  - 未登录提交 408 字作文时，页面显示 `批改失败：请先登录账号`，`/api/eju-essay/analyze` 返回 401，浏览器 console 无额外全局 JS error。
+  - 直接请求 `/api/eju-essay/follow-up` 的空 Bearer 也返回 401。
+- 尚未验收：
+  - 登录后真实 analyze 成功返回分数、完整批改、`rubricSource`、`matchedReferences`。
+  - 登录后 follow-up 按 rubric/reference 分流返回。
+  - 刷新后的本地历史，因为未登录批改不会产生成功历史。
+  - DeepSeek 环境变量是否在 Preview 已配置，因没有有效登录 token 无法走到 AI 调用。
 
 ### 消息通知系统现状（2026-06-14）
 

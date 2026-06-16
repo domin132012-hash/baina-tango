@@ -263,3 +263,56 @@ Entry template:
 
 ### Commit
 - `2d40940`
+
+---
+
+## 2026-06-16 / Codex / PR #2 記述作文验收与合并前补强
+
+### Task
+- 继续验收 draft PR #2 `feat(eju-essay): add EJU writing critique integration`，目标入口为 `学习 → 真题试炼 → 日本語 → 記述`。
+- 不处理远程通知系统，不新增真题年份，不大改 `index.html`，只在发现安全/稳定性缺口时做最小补丁。
+- 检查 PR #1 `chore: add selected agent skills` 是否值得继续处理。
+
+### Files changed
+- `functions/api/eju-essay/analyze.js` — 增加请求体、题目、作文长度限制；JSON 解析错误清晰返回；后端配置/DeepSeek 上游错误对用户脱敏。
+- `functions/api/eju-essay/follow-up.js` — 增加请求体、题目、作文、追问、上一轮批改和历史上下文限制；JSON 解析错误清晰返回；后端配置/DeepSeek 上游错误对用户脱敏。
+- `PROJECT_STATUS.md` — 记录 PR #2 仍 draft、未合并，以及当前通过/未通过的验收范围。
+- `HANDOVER.md` — 记录作文批改架构、环境变量、输入限制、Preview 验收结果和剩余阻塞。
+- `EJU_ESSAY_INTEGRATION_PLAN.md` — 补充 2026-06-16 验收补丁和不得合并条件。
+- `AGENT_WORKLOG.md` — 追加本条交接记录。
+
+### Validation
+- Preflight：在真实项目根和 PR worktree 都执行 `codex-preflight --task "validate and finish EJU essay integration PR #2"` 并读取 `.codex-context-pack.json`。
+- 分支同步：`origin/main` 是 `feat/eju-essay-integration` 的祖先，无需 rebase；PR #2 diff 只包含作文批改前端、Cloudflare Functions、计划/交接文档和 `assets/eju.js` 的入口小补丁，未夹带 PDF/media/secret/新增真题年份。
+- 静态检查通过：
+  - `node --check assets/eju-essay.js`
+  - `node --check assets/eju.js`
+  - `node --check functions/api/eju-categories.js`
+  - `node --check functions/api/eju-essay/analyze.js`
+  - `node --check functions/api/eju-essay/follow-up.js`
+  - `node --check functions/api/eju-essay/_rubric.js`
+  - `node --check functions/api/eju-essay/_reference-bank.js`
+  - `node --check functions/api/eju-essay/_select-reference.js`
+  - `node --check functions/_middleware.js`
+- Safety check：
+  - 未发现原始 secret 提交；DeepSeek 只在后端 `functions/api/eju-essay/*` 读取。
+  - 前端未出现 `DEEPSEEK_API_KEY` 或 `SUPABASE_SERVICE_ROLE_KEY`。
+  - 空 `Authorization: Bearer` 对 `analyze` / `follow-up` 都返回 401 `请先登录账号`。
+  - 伪 token 返回 401 `登录状态已失效，请重新登录`，说明 Supabase 鉴权路径存在。
+- Cloudflare Preview：
+  - URL：`https://feat-eju-essay-integration.baina-tango.pages.dev`
+  - `学习 → 真题试炼 → 日本語` 可达。
+  - `記述` 卡片显示 `EJU 記述作文 AI 批改` / `试验开放`，不是建设中，且可点击。
+  - 点击 `記述` 可进入作文批改页。
+  - 未登录提交 408 字作文：页面显示 `批改失败：请先登录账号`。
+  - 直接 API：`/api/eju-essay/analyze` 空 Bearer 返回 401；`/api/eju-essay/follow-up` 空 Bearer 返回 401。
+  - 浏览器 console 未见额外全局 JS error。
+
+### Risks / next steps
+- 不得把 PR #2 从 draft 改 ready，也不得 merge：当前没有可用已确认邮箱账号，登录后 analyze + follow-up 没有真实通过。
+- 也无法确认 Preview 的 `DEEPSEEK_API_KEY` 是否配置正确，因为没有有效登录 token 走到 AI 调用。
+- 未能验证成功批改后的 `normalScore` / `strictScore`、完整批改文本、`rubricSource`、`matchedReferences`、follow-up rubric/reference 分流、刷新后的 localStorage 历史。
+- PR #1 暂不处理：它 mergeable=false 可由 `AGENT_WORKLOG.md` 冲突复现，且改动范围包含整套 `.agents/skills`、`.claude/skills`、`skills-lock.json`，不是只落后 main 的低风险文档 PR；应另开任务按当前 `AGENTS.md` token saving rule 和 worklog 重新评估。
+
+### Commit
+- pending in this branch; final pushed hash reported by the completing agent.
