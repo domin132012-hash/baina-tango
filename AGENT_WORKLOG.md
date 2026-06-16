@@ -316,3 +316,39 @@ Entry template:
 
 ### Commit
 - pending in this branch; final pushed hash reported by the completing agent.
+
+---
+
+## 2026-06-16 / Codex / PR #2 Invalid header 收口补丁
+
+### Task
+- 接手 draft PR #2 `feat(eju-essay): add EJU writing critique integration`，处理 Preview 上 `批改失败：Invalid header value.` 的高概率原因。
+- 找回本地安全补丁 `823377e` 并在其基础上做最小补强；不处理通知系统、PR #1、OCR、新增真题年份、`index.html` 或 `assets/eju.js` 重构。
+
+### Files changed
+- `functions/api/eju-essay/analyze.js` — `DEEPSEEK_API_KEY` 读取改为 `String(...).trim()`，拦截误填 `Bearer`、外层引号、换行/制表符；配置类错误映射为固定文案，不暴露底层 header 错误。
+- `functions/api/eju-essay/follow-up.js` — 同步 DeepSeek key 规范化与配置错误映射。
+- `PROJECT_STATUS.md` / `HANDOVER.md` / `EJU_ESSAY_INTEGRATION_PLAN.md` / `AGENT_WORKLOG.md` — 记录本次收口范围、Cloudflare secret 状态和仍需用户真实验收。
+
+### Validation
+- Preflight：在真实项目根和 PR worktree 执行 `codex-preflight --task "finish EJU essay integration PR2 invalid header and validation"` 并读取 `.codex-context-pack.json`。
+- Git：本地 `feat/eju-essay-integration` HEAD 为 `823377e`，包含此前未推送的 request guardrails；远端分支仍停在 `8688412`，本地 HEAD 是其快进后代。
+- Cloudflare：`npx wrangler whoami` 已登录；用 `bridge-secrets get --raw deepseek` 在 shell 内确认 raw key 是单行 `sk-...`、无 `Bearer`、无引号、无 CR/LF；通过 `npx wrangler pages secret put DEEPSEEK_API_KEY --project-name baina-tango` 重置 production secret，未打印 key。
+- 静态检查通过：
+  - `node --check assets/eju-essay.js`
+  - `node --check assets/eju.js`
+  - `node --check functions/_middleware.js`
+  - `node --check functions/api/eju-categories.js`
+  - `node --check functions/api/eju-essay/analyze.js`
+  - `node --check functions/api/eju-essay/follow-up.js`
+  - `node --check functions/api/eju-essay/_rubric.js`
+  - `node --check functions/api/eju-essay/_reference-bank.js`
+  - `node --check functions/api/eju-essay/_select-reference.js`
+
+### Risks / next steps
+- Wrangler Pages secret CLI 本轮输出只标明更新 production；Preview secret 是否也已正确重置仍需在 Cloudflare Dashboard 或登录后真实 analyze 请求确认。
+- `gh` CLI 不存在，SSH 仍无 publickey；push 需走现有 HTTPS 凭据，若失败需要用户重新认证 GitHub。
+- PR #2 仍不得 ready/merge，直到用户用已确认账号完成登录后 analyze 和 follow-up 验收。
+
+### Commit
+- pending in this branch; final pushed hash reported by the completing agent.

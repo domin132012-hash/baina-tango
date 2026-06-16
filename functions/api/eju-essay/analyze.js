@@ -93,6 +93,19 @@ function extractErrors(text) {
   }
 }
 
+function getDeepSeekApiKey(env) {
+  const apiKey = String(env.DEEPSEEK_API_KEY || "").trim();
+  if (!apiKey) throw new Error("ai_service_not_configured");
+  if (/^Bearer\s+/i.test(apiKey) || /^['"]|['"]$/.test(apiKey) || /[\r\n\t]/.test(apiKey)) {
+    throw new Error("ai_service_key_format_invalid");
+  }
+  return apiKey;
+}
+
+function isAiConfigError(err) {
+  return err?.message === "ai_service_not_configured" || err?.message === "ai_service_key_format_invalid";
+}
+
 function buildCritiquePrompt(input) {
   const theme = String(input.essayTheme || "").trim();
   const essay = String(input.essay || "").trim();
@@ -153,8 +166,7 @@ async function requireUser(request, env) {
 }
 
 async function callDeepSeek(env, messages, temperature = 0.3) {
-  const apiKey = env.DEEPSEEK_API_KEY;
-  if (!apiKey) throw new Error("ai_service_not_configured");
+  const apiKey = getDeepSeekApiKey(env);
   const baseUrl = (env.DEEPSEEK_BASE_URL || "https://api.deepseek.com").replace(/\/$/, "");
   const model = env.DEEPSEEK_MODEL || "deepseek-v4-flash";
   const res = await fetch(baseUrl + "/v1/chat/completions", {
@@ -214,6 +226,9 @@ export async function onRequestPost(context) {
     });
   } catch (err) {
     console.error("eju_essay_analyze_failed", err?.message || String(err));
+    if (isAiConfigError(err)) {
+      return jsonResp({ error: "AI批改服务配置有误，请联系管理员检查 DEEPSEEK_API_KEY" }, 500);
+    }
     return jsonResp({ error: "批改服务暂时不可用，请稍后再试" }, 502);
   }
 }

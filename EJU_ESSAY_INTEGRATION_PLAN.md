@@ -40,6 +40,8 @@
 - `analyze.js` 已加请求体最大 30000 字符、题目最大 1000 字符、作文最大 6000 字符。
 - `follow-up.js` 已加请求体最大 40000 字符、追问最大 2000 字符、题目最大 1000 字符、作文最大 6000 字符、上一轮批改最大 8000 字符、历史上下文最多 8 条且每条最多 2000 字符。
 - 两个接口都已把 JSON 解析错误改成清晰 400，把后端配置/DeepSeek 上游错误改成用户可读的通用错误，避免把环境变量名、stack 或上游原文暴露给页面。
+- 两个接口都已对 `DEEPSEEK_API_KEY` 做 `trim()` 和格式检查；误填 `Bearer`、外层引号、换行/制表符时返回固定配置错误，避免 `Invalid header value` 直接暴露给用户。
+- Cloudflare Pages production secret 已用本地 Keychain raw key 重置；Preview secret 是否正确生效仍需登录后真实批改请求确认。
 
 ### 第一版故意不做
 
