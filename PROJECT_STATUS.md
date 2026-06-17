@@ -3,6 +3,7 @@
 > 📋 接手人必须先读：[`AGENTS.md`](AGENTS.md) → [`HANDOVER.md`](HANDOVER.md) → [`AGENT_WORKLOG.md`](AGENT_WORKLOG.md)。
 > 当前真实版本：`20260614-notices-kv`（EJU 缓存号仍为 `20260614-sogo-2024-1-materials-fix`）。
 > ✅ 消息通知已改为 Cloudflare KV 远程配置，新增 `/admin/notices.html` 可视化后台。
+> ⚠️ EJU 記述作文 PR #2 仍是 draft，未合并；已补 `DEEPSEEK_API_KEY` 格式防护，登录后真实批改/追问仍缺已确认账号验收。
 
 ## 最近完成（远程可配置消息通知）— 本轮
 
@@ -45,6 +46,7 @@
 | 模块 | 状态 | 备注 |
 |---|---|---|
 | Cloudflare 通知配置 | ⚠️ 待线上配置 | 需要在 Pages 设置里绑定 `NOTICES_KV` 并配置 `ADMIN_NOTICE_TOKEN` |
+| EJU 記述作文双知识库 | 🛠️ Draft PR #2，未合并 | `feat/eju-essay-integration` 已把批改拆成 `rubric`（基礎編评分依据）+ `reference bank`（実践編例子/表达）；`renderEjuJapanese()` 中的 `記述` 入口已直接打开并显示 `试验开放`。2026-06-16 收口：入口与未登录 401 通过，已补请求体/题目/作文/追问/上下文长度限制、错误脱敏、`DEEPSEEK_API_KEY` trim 与格式拦截；Cloudflare production secret 已用本地 Keychain raw key 重置，Preview secret 仍需登录后真实 analyze/follow-up 验收确认；不能 ready/merge |
 | 未部署年份灰色建设中 UI | 📝 待做 | 可后续让 Codex 做，但避免与 Claude 同时改 `assets/eju.js` 撞车 |
 
 ---

@@ -152,3 +152,203 @@ Entry template:
 ### Risks / next steps
 - Claude may be working locally on 综合科目 2024; later agents should pull/rebase before editing docs or `assets/eju.js`.
 - Future task prompts should include the standard "开工前必读" header from `AGENTS.md`.
+
+### Commit
+- `784f2d7`
+
+---
+
+## 2026-06-15 / Codex / EJU 記述作文双知识库改造
+
+### Task
+- 将 EJU 記述作文批改从单一 prompt 改成双知识库结构：`rubric` 负责评分依据，`reference bank` 负责例子、范文方向、理由素材和表达建议。
+- 明确复用旧扫描结果，不重新 OCR 整本 PDF；`sample_essays.json` 已确认基本为空，因此没有作为依赖接入。
+
+### Files changed
+- `functions/api/eju-essay/_rubric.js` — 新增基礎編评分依据，固定整理 400〜500 字、30 分、50 点制、题目理解、主张、根拠、具体例、多角度、序論/本論/結論、段落、文体、書き言葉。
+- `functions/api/eju-essay/_reference-bank.js` — 新增実践編参考素材库，按题型/话题/关键词/题目摘要/可用理由/常用表达/范文结构整理轻量条目。
+- `functions/api/eju-essay/_select-reference.js` — 新增题目匹配与追问分类逻辑。
+- `functions/api/eju-essay/analyze.js` — 固定加载 `rubric`，按题目命中 1〜3 条参考素材，并把 `rubricSource` / `matchedReferences` 返回给前端。
+- `functions/api/eju-essay/follow-up.js` — 扣分解释优先按 `rubric`，只有问例子/范文/表达/改写时才启用 `reference bank`。
+- `assets/eju-essay.js` — 结果页新增 `评分依据` 与 `参考素材` 展示，并把新字段保存到本地历史。
+- `EJU_ESSAY_INTEGRATION_PLAN.md` / `PROJECT_STATUS.md` / `HANDOVER.md` — 更新为双知识库现状与边界说明。
+
+### Validation
+- `node --check functions/api/eju-essay/analyze.js`
+- `node --check functions/api/eju-essay/follow-up.js`
+- `node --check functions/api/eju-essay/_rubric.js`
+- `node --check functions/api/eju-essay/_reference-bank.js`
+- `node --check functions/api/eju-essay/_select-reference.js`
+- `node --check assets/eju-essay.js`
+
+### Risks / next steps
+- `reference_bank` 目前是基于旧扫描结果人工整理的轻量条目，足够支撑 MVP，但还不是完整生产版素材库。
+- 本轮未做 Cloudflare Preview 实机提交流程，也未复测登录后 DeepSeek 批改链路；若继续验收，应在带 `DEEPSEEK_API_KEY` 的 Preview 环境再跑一次。
+- branch 仍然是 draft PR #2，未合并 main。
+
+### Commit
+- `a7ca291`
+
+---
+
+## 2026-06-15 / Codex / EJU 記述作文双知识库验收与小修
+
+### Task
+- 验收 `feat/eju-essay-integration` / draft PR #2 的 Preview 分支状态、语法、PR diff 和页面链路。
+- 修复验收发现的小 bug：当前端发送空 `Authorization: Bearer` 头时，`analyze` / `follow-up` 会误判成“登录状态已失效”，而不是“请先登录账号”。
+
+### Files changed
+- `functions/api/eju-essay/analyze.js` — `requireUser()` 的 bearer 解析改为 `^Bearer\\b\\s*`，把空 bearer 视为未登录。
+- `functions/api/eju-essay/follow-up.js` — 同步修正空 bearer 解析。
+
+### Validation
+- 分支同步：
+  - `git pull`：up to date
+  - `git log --oneline -5`：含 `fb81f00` / `a7ca291`
+- 语法检查：
+  - `node --check functions/api/eju-essay/analyze.js`
+  - `node --check functions/api/eju-essay/follow-up.js`
+  - `node --check functions/api/eju-essay/_rubric.js`
+  - `node --check functions/api/eju-essay/_reference-bank.js`
+  - `node --check functions/api/eju-essay/_select-reference.js`
+  - `node --check assets/eju-essay.js`
+  - `node --check functions/_middleware.js`
+- PR diff 检查：
+  - 未发现 `index.html` 改动
+  - 未发现原始 PDF、整本 OCR、`docmind_result.md` 全文、教材大文件、secret / API key 被提交
+- Cloudflare Preview：
+  - URL：`https://feat-eju-essay-integration.baina-tango.pages.dev`
+  - 路径 `学习 → 真题试炼 → 日本語 → 記述` 可达
+  - `記述` 卡片可点击，作文输入页可打开
+  - 未登录提交：初始因空 bearer 头返回“登录状态已失效”；修复并推送 `603bb38` 后，Preview 更新为正确返回“请先登录账号”
+  - network：`/api/eju-essay/analyze` 在未登录场景返回 `401`
+  - console：本次看到的 error 都是预期的 `401 /api/eju-essay/analyze` 与注册尝试时的 Supabase signup 请求结果；未见额外全局 JS 异常
+- 登录链路：
+  - 站点支持邮箱注册；使用测试邮箱可触发 Supabase 注册
+  - 但注册后要求点击邮箱确认链接，当前会话无法访问该邮箱，因此未能完成“已登录 analyze / follow-up”实测
+
+### Risks / next steps
+- Preview 的未登录链路现已通过，但“登录后 analyze / follow-up、rubricSource / matchedReferences 展示、追问按 rubric/reference 分流”这条链仍需一个已确认邮箱账号才能完成最终验收。
+- 目前不建议把 PR 从 draft 改成 ready，除非补完一次真实登录后的端到端验证。
+
+### Commit
+- `603bb38`
+
+---
+
+## 2026-06-15 / Codex / 直接打开 renderEjuJapanese 里的 記述 入口
+
+### Task
+- 不再只依赖 `assets/eju-essay.js` 的 runtime patch，直接在 `assets/eju.js` 的 `renderEjuJapanese()` 中把 `記述` 卡片从建设中改为可点击入口。
+- 保持 `聴読解` 继续建设中，不修改 `index.html`，不重构 `assets/eju.js`，不变更双知识库内容。
+
+### Files changed
+- `assets/eju.js` — 新增 `ejuOpenEssayEntry()` fallback；把 `記述` 卡片改成 `id="ejuEssaySkillBtn"`、`onclick="ejuOpenEssayEntry()"`、文案 `EJU 記述作文 AI 批改`、badge `试验开放`。
+- `functions/_middleware.js` — 保持继续注入 `/assets/eju-essay.js`，cache bust 更新为 `20260615-eju-essay-v4-entry-open`。
+- `PROJECT_STATUS.md` / `HANDOVER.md` / `EJU_ESSAY_INTEGRATION_PLAN.md` — 记录入口现在是 `renderEjuJapanese()` 直接打开。
+
+### Validation
+- `node --check assets/eju.js`
+- `node --check assets/eju-essay.js`
+- `node --check functions/_middleware.js`
+- Preview：`https://feat-eju-essay-integration.baina-tango.pages.dev`
+  - `学习 → 真题试炼 → 日本語` 页面里，`記述` 不再显示建设中
+  - `記述` badge 显示 `试验开放`
+  - 点击 `記述` 可进入作文输入页
+  - 未登录提交 `/api/eju-essay/analyze` 返回 `401`，页面提示 `请先登录账号`
+
+### Risks / next steps
+- 当前只验证了入口打开和未登录链路；登录后批改链路的完整验收仍依赖一个已确认邮箱账号。
+- `assets/eju-essay.js` 的 runtime patch 仍保留，属于故意双保险，不是冲突。
+
+### Commit
+- `2d40940`
+
+---
+
+## 2026-06-16 / Codex / PR #2 記述作文验收与合并前补强
+
+### Task
+- 继续验收 draft PR #2 `feat(eju-essay): add EJU writing critique integration`，目标入口为 `学习 → 真题试炼 → 日本語 → 記述`。
+- 不处理远程通知系统，不新增真题年份，不大改 `index.html`，只在发现安全/稳定性缺口时做最小补丁。
+- 检查 PR #1 `chore: add selected agent skills` 是否值得继续处理。
+
+### Files changed
+- `functions/api/eju-essay/analyze.js` — 增加请求体、题目、作文长度限制；JSON 解析错误清晰返回；后端配置/DeepSeek 上游错误对用户脱敏。
+- `functions/api/eju-essay/follow-up.js` — 增加请求体、题目、作文、追问、上一轮批改和历史上下文限制；JSON 解析错误清晰返回；后端配置/DeepSeek 上游错误对用户脱敏。
+- `PROJECT_STATUS.md` — 记录 PR #2 仍 draft、未合并，以及当前通过/未通过的验收范围。
+- `HANDOVER.md` — 记录作文批改架构、环境变量、输入限制、Preview 验收结果和剩余阻塞。
+- `EJU_ESSAY_INTEGRATION_PLAN.md` — 补充 2026-06-16 验收补丁和不得合并条件。
+- `AGENT_WORKLOG.md` — 追加本条交接记录。
+
+### Validation
+- Preflight：在真实项目根和 PR worktree 都执行 `codex-preflight --task "validate and finish EJU essay integration PR #2"` 并读取 `.codex-context-pack.json`。
+- 分支同步：`origin/main` 是 `feat/eju-essay-integration` 的祖先，无需 rebase；PR #2 diff 只包含作文批改前端、Cloudflare Functions、计划/交接文档和 `assets/eju.js` 的入口小补丁，未夹带 PDF/media/secret/新增真题年份。
+- 静态检查通过：
+  - `node --check assets/eju-essay.js`
+  - `node --check assets/eju.js`
+  - `node --check functions/api/eju-categories.js`
+  - `node --check functions/api/eju-essay/analyze.js`
+  - `node --check functions/api/eju-essay/follow-up.js`
+  - `node --check functions/api/eju-essay/_rubric.js`
+  - `node --check functions/api/eju-essay/_reference-bank.js`
+  - `node --check functions/api/eju-essay/_select-reference.js`
+  - `node --check functions/_middleware.js`
+- Safety check：
+  - 未发现原始 secret 提交；DeepSeek 只在后端 `functions/api/eju-essay/*` 读取。
+  - 前端未出现 `DEEPSEEK_API_KEY` 或 `SUPABASE_SERVICE_ROLE_KEY`。
+  - 空 `Authorization: Bearer` 对 `analyze` / `follow-up` 都返回 401 `请先登录账号`。
+  - 伪 token 返回 401 `登录状态已失效，请重新登录`，说明 Supabase 鉴权路径存在。
+- Cloudflare Preview：
+  - URL：`https://feat-eju-essay-integration.baina-tango.pages.dev`
+  - `学习 → 真题试炼 → 日本語` 可达。
+  - `記述` 卡片显示 `EJU 記述作文 AI 批改` / `试验开放`，不是建设中，且可点击。
+  - 点击 `記述` 可进入作文批改页。
+  - 未登录提交 408 字作文：页面显示 `批改失败：请先登录账号`。
+  - 直接 API：`/api/eju-essay/analyze` 空 Bearer 返回 401；`/api/eju-essay/follow-up` 空 Bearer 返回 401。
+  - 浏览器 console 未见额外全局 JS error。
+
+### Risks / next steps
+- 不得把 PR #2 从 draft 改 ready，也不得 merge：当前没有可用已确认邮箱账号，登录后 analyze + follow-up 没有真实通过。
+- 也无法确认 Preview 的 `DEEPSEEK_API_KEY` 是否配置正确，因为没有有效登录 token 走到 AI 调用。
+- 未能验证成功批改后的 `normalScore` / `strictScore`、完整批改文本、`rubricSource`、`matchedReferences`、follow-up rubric/reference 分流、刷新后的 localStorage 历史。
+- PR #1 暂不处理：它 mergeable=false 可由 `AGENT_WORKLOG.md` 冲突复现，且改动范围包含整套 `.agents/skills`、`.claude/skills`、`skills-lock.json`，不是只落后 main 的低风险文档 PR；应另开任务按当前 `AGENTS.md` token saving rule 和 worklog 重新评估。
+
+### Commit
+- pending in this branch; final pushed hash reported by the completing agent.
+
+---
+
+## 2026-06-16 / Codex / PR #2 Invalid header 收口补丁
+
+### Task
+- 接手 draft PR #2 `feat(eju-essay): add EJU writing critique integration`，处理 Preview 上 `批改失败：Invalid header value.` 的高概率原因。
+- 找回本地安全补丁 `823377e` 并在其基础上做最小补强；不处理通知系统、PR #1、OCR、新增真题年份、`index.html` 或 `assets/eju.js` 重构。
+
+### Files changed
+- `functions/api/eju-essay/analyze.js` — `DEEPSEEK_API_KEY` 读取改为 `String(...).trim()`，拦截误填 `Bearer`、外层引号、换行/制表符；配置类错误映射为固定文案，不暴露底层 header 错误。
+- `functions/api/eju-essay/follow-up.js` — 同步 DeepSeek key 规范化与配置错误映射。
+- `PROJECT_STATUS.md` / `HANDOVER.md` / `EJU_ESSAY_INTEGRATION_PLAN.md` / `AGENT_WORKLOG.md` — 记录本次收口范围、Cloudflare secret 状态和仍需用户真实验收。
+
+### Validation
+- Preflight：在真实项目根和 PR worktree 执行 `codex-preflight --task "finish EJU essay integration PR2 invalid header and validation"` 并读取 `.codex-context-pack.json`。
+- Git：本地 `feat/eju-essay-integration` HEAD 为 `823377e`，包含此前未推送的 request guardrails；远端分支仍停在 `8688412`，本地 HEAD 是其快进后代。
+- Cloudflare：`npx wrangler whoami` 已登录；用 `bridge-secrets get --raw deepseek` 在 shell 内确认 raw key 是单行 `sk-...`、无 `Bearer`、无引号、无 CR/LF；通过 `npx wrangler pages secret put DEEPSEEK_API_KEY --project-name baina-tango` 重置 production secret，未打印 key。
+- 静态检查通过：
+  - `node --check assets/eju-essay.js`
+  - `node --check assets/eju.js`
+  - `node --check functions/_middleware.js`
+  - `node --check functions/api/eju-categories.js`
+  - `node --check functions/api/eju-essay/analyze.js`
+  - `node --check functions/api/eju-essay/follow-up.js`
+  - `node --check functions/api/eju-essay/_rubric.js`
+  - `node --check functions/api/eju-essay/_reference-bank.js`
+  - `node --check functions/api/eju-essay/_select-reference.js`
+
+### Risks / next steps
+- Wrangler Pages secret CLI 本轮输出只标明更新 production；Preview secret 是否也已正确重置仍需在 Cloudflare Dashboard 或登录后真实 analyze 请求确认。
+- `gh` CLI 不存在，SSH 仍无 publickey；push 需走现有 HTTPS 凭据，若失败需要用户重新认证 GitHub。
+- PR #2 仍不得 ready/merge，直到用户用已确认账号完成登录后 analyze 和 follow-up 验收。
+
+### Commit
+- pending in this branch; final pushed hash reported by the completing agent.
