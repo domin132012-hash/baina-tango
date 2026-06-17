@@ -56,7 +56,7 @@ PR #2 `feat(eju-essay): add EJU writing critique integration` 已从 draft 改 r
 
 | 模块 | 状态 | 备注 |
 |---|---|---|
-| 词典优先查词 | 📝 执行计划已补充 | 新增 `docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md`，下一步才是 JMdict MVP 实作 |
+| 词典优先查词 | 🧪 MVP PR 准备中 | Issue #3 分支 `feat/dictionary-lookup-mvp` 已接入小型 JMdict fixture、`/api/dictionary/lookup` 和词典优先前端；完整 JMdict/D1/R2 导入仍是后续任务 |
 | 代理 closeout 回写机制 | ✅ 已制度化 | 新增 `docs/ops/AGENT_CLOSEOUT_CHECKLIST.md`，并要求所有时间使用 JST、收尾必须 commit + push + 远端校验 |
 | Cloudflare 通知配置 | ✅ 线上配置已解决（用户确认） | 本轮未处理通知系统 |
 | 未部署年份灰色建设中 UI | 📝 待做 | 可后续让 Codex 做，但避免与 Claude 同时改 `assets/eju.js` 撞车 |

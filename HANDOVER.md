@@ -17,7 +17,7 @@
 - 理科剩余 6 套暂缓：2018-1、2018-2、2019-1、2020-2、2024-1、2025-1。
 - 综合科目：2024 一套 MVP 已完成并上线（见下）。
 - EJU 記述作文：PR #2 已在用户完成真实 Cloudflare Branch Preview 验收后合并到 `main`，Production 已部署 active。入口为 `学习 → 真题试炼 → 日本語 → 記述`。
-- 词典优先查词：架构计划在 `docs/architecture/DICTIONARY_LOOKUP_PLAN.md`，执行计划在 `docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md`。下一步才是 JMdict MVP，当前没有接入真实词典、API 或前端逻辑。
+- 词典优先查词：架构计划在 `docs/architecture/DICTIONARY_LOOKUP_PLAN.md`，执行计划在 `docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md`。Issue #3 分支 `feat/dictionary-lookup-mvp` 已接入 JMdict 小型 fixture、`GET /api/dictionary/lookup` 和普通查词的词典优先前端；命中词典不默认调用 AI，未命中只提示可尝试 AI 解释。完整 JMdict/KANJIDIC2、D1/R2/SQLite 和批量中文释义仍未接入。
 - 代理 closeout 机制：`docs/ops/AGENT_CLOSEOUT_CHECKLIST.md` 是非平凡任务收尾必读文件。任务完成前必须更新 GitHub 文档、commit + push、远端校验，并用 JST 记录时间。
 
 ### EJU 記述作文双知识库现状（2026-06-17）

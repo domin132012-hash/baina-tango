@@ -2,7 +2,20 @@
 
 本文件是 `docs/architecture/DICTIONARY_LOOKUP_PLAN.md` 的执行层计划。目标是把普通查词改成“词典优先、AI 增强”，先做可上线的 JMdict 查词 MVP，再分阶段补中文释义、AI 语境解释和 App 离线包。
 
-本计划不代表本轮已经接入 JMdict、KANJIDIC2、API 或前端逻辑。
+Issue #3 分支 `feat/dictionary-lookup-mvp` 已完成第一阶段小型 fixture MVP：新增 `/api/dictionary/lookup`、JMdict sample fixture，以及普通查词的词典优先前端。完整 JMdict、KANJIDIC2、D1/R2/SQLite、批量中文释义和 AI explain 仍是后续阶段。
+
+## 0. Issue #3 MVP 状态（2026-06-17 JST）
+
+- API: `GET /api/dictionary/lookup?q=<query>&lang=zh&mode=basic`
+- Fixture: `functions/api/dictionary/_sample-data.js`
+- API implementation: `functions/api/dictionary/lookup.js`
+- Frontend entry: `index.html` 的「新增 -> 查词收藏」
+- 覆盖样例：`努力`、`食べる`、`読む`、`高い`
+- 活用还原 MVP：`読まなかった -> 読む`、`食べました -> 食べる`、常见 い形容词过去/否定形
+- 普通查词：先查词典；命中词典时 `aiCalled: false` 且前端不调用旧 AI 查词接口
+- 未命中：显示 `未命中词典，可尝试 AI 解释`
+- Attribution: 查词结果显示 `Dictionary data: JMdict / EDRDG, CC BY-SA 4.0`
+- 明确未做：完整 JMdict/KANJIDIC2 导入、D1/R2/SQLite、批量中文翻译、AI explain 后端、Cloudflare Dashboard 配置
 
 ## 1. 当前问题
 

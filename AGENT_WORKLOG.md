@@ -492,6 +492,73 @@ Entry template:
 
 ---
 
+## 2026-06-17 20:57 JST / Codex / Issue #3 JMdict lookup MVP
+
+### Task
+- Execute GitHub Issue #3: implement dictionary-first JMdict lookup MVP on `feat/dictionary-lookup-mvp`.
+- Use a small fixture/sample dataset only; do not commit full JMdict/KANJIDIC2 files.
+- Make ordinary lookup call the dictionary first; dictionary hits do not call AI by default; misses show `未命中词典，可尝试 AI 解释`.
+
+### Branch / commits
+- Branch: `feat/dictionary-lookup-mvp`
+- Start commit: `caca731cd961d68216395e8b57b4bce7cb02202a`
+- End commit: final commit reported in final response after commit + push
+- Issue: `#3`
+- PR: pending until branch is pushed; final PR URL reported after creation
+
+### Files changed
+- `functions/api/dictionary/_sample-data.js`
+- `functions/api/dictionary/lookup.js`
+- `index.html`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md`
+
+### External services touched
+- GitHub: branch push, PR, and Issue #3 closeout comment only.
+- Cloudflare: code only, dashboard not touched.
+- Supabase: not touched.
+- Stripe: not touched.
+- DeepSeek: not touched.
+- Other: not touched.
+
+### Validation
+- `git diff --check`
+- `node --check functions/api/dictionary/_sample-data.js`
+- `node --check functions/api/dictionary/lookup.js`
+- `node --check functions/api/eju-essay/analyze.js`
+- `node --check functions/api/eju-essay/follow-up.js`
+- `node --check assets/eju-essay.js`
+- Inline `index.html` script parse check via `new Function(...)`
+- Direct API checks:
+  - `努力` -> dictionary hit, `aiCalled=false`
+  - `食べる` -> dictionary hit, `aiCalled=false`
+  - `読まなかった` -> `読む`, `matchType=deinflected`, `aiCalled=false`
+  - `nonexistent-word` -> miss, `aiCalled=false`
+- Browser checks on local temporary server:
+  - `新增 -> 查词收藏 -> 努力` shows dictionary hit and attribution.
+  - `食べる` shows dictionary hit and attribution.
+  - `読まなかった` shows deinflection `読まなかった -> 読む`.
+  - `存在しない語` shows `未命中词典，可尝试 AI 解释`.
+  - Console errors: none.
+- `node scripts/agent-closeout-check.js`
+- Secret scan: `rg -n "sk-|gho_|service role|JWT secret|session token|STRIPE_SECRET|WEBHOOK_SECRET|DEEPSEEK_API_KEY|SUPABASE_SERVICE_ROLE_KEY" .`
+
+### Remaining risks
+- MVP uses a tiny fixture, not full JMdict/KANJIDIC2.
+- Chinese gloss is intentionally `null` in fixture; frontend keeps and displays JMdict English gloss.
+- AI explain is only a user-trigger placeholder; no AI explain backend was added.
+- Cloudflare Pages preview/deployment is not manually triggered by this task.
+- Full D1/R2/SQLite import, license-page polish, ranking, and expanded deinflection remain future work.
+- `RIKA_PLAN.md` is unrelated and was not processed.
+
+### Commit
+- Final commit hash reported in final response.
+
+---
+
 ## 2026-06-17 20:20 JST / Codex / Backfill closeout for GitHub Issue task protocol
 
 ### Task

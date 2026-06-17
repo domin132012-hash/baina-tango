@@ -169,7 +169,7 @@
 
     <section class="panel hidden" id="view-learn"><h2>新学词汇</h2><div class="row"><div><label>选择要新学的文件夹</label><select id="learnFolderSelect"></select></div><div><label>本轮新学数量</label><input type="number" id="learnLimit" value="30" min="1" max="500" /></div><div><label>练习模式</label><select id="learnModeSelect"><option value="default">默认模式</option><option value="listen">🎧 听声辨词</option><option value="read">👁 看词识义</option></select></div><div class="fit"><label>&nbsp;</label><button class="primary" id="startLearnBtn">开始新学</button></div></div><div id="learnFolderInfo" class="hint" style="margin-top:8px"></div><div id="learnMount"></div></section>
 
-    <section class="panel hidden" id="view-lookup"><h2>查词收藏</h2><p class="hint">输入日语单词后，系统会用豆包生成最精简的中文释义。限制：假名长度最多 10 个；如果输入汉字词，会按 AI 返回的假名长度判断，超过 10 个会拒绝保存。</p><div class="row"><div><label>查询单词</label><input id="lookupQuery" placeholder="例如：二つ / テキスト / 検討" maxlength="24" /></div><div class="fit"><label>&nbsp;</label><button class="primary" id="lookupBtn">查询</button></div></div><div class="row" style="margin-top:10px"><div><label>收藏到文件夹</label><select id="lookupFolderSelect"></select></div><div><label>或者新建文件夹名</label><input id="lookupNewFolderName" placeholder="例如：查词收藏 / 今日生词" /></div></div><p class="hint" id="lookupStatus"></p><div id="lookupResults" class="grid" style="margin-top:12px"></div></section>
+    <section class="panel hidden" id="view-lookup"><h2>查词收藏</h2><p class="hint">输入日语单词后，系统会先查 JMdict 小型样本词典。命中词典时不会默认调用 AI；未命中时只提示可尝试 AI 解释。</p><div class="row"><div><label>查询单词</label><input id="lookupQuery" placeholder="例如：努力 / 食べる / 読まなかった" maxlength="24" /></div><div class="fit"><label>&nbsp;</label><button class="primary" id="lookupBtn">查询</button></div></div><div class="row" style="margin-top:10px"><div><label>收藏到文件夹</label><select id="lookupFolderSelect"></select></div><div><label>或者新建文件夹名</label><input id="lookupNewFolderName" placeholder="例如：查词收藏 / 今日生词" /></div></div><p class="hint" id="lookupStatus"></p><div id="lookupResults" class="grid" style="margin-top:12px"></div></section>
 
     <section class="panel hidden" id="view-add">
       <h2>新增</h2>
@@ -549,7 +549,7 @@ function apiUrl(name,params){
   return url+'?'+query.toString();
 }
 let state=loadState();let queue=[];let current=null;let sessionMode='review';
-let cloudEntitlements={word_limit_bonus:0,ai_quota:0,premium_until:null,unlimited_until:null};let showingDefinition=false;let introGuideShown=false;let authPromptShown=false;let calendarMonth=localTodayISO().slice(0,7);let lastExport={name:'',text:'',type:''};let lookupCache=[];let clearArmed=false;let deleteAccountArmed=false;let articleReadingCache={};let speechVoices=[];
+let cloudEntitlements={word_limit_bonus:0,ai_quota:0,premium_until:null,unlimited_until:null};let showingDefinition=false;let introGuideShown=false;let authPromptShown=false;let calendarMonth=localTodayISO().slice(0,7);let lastExport={name:'',text:'',type:''};let lookupCache=[];let lookupMissState=null;let clearArmed=false;let deleteAccountArmed=false;let articleReadingCache={};let speechVoices=[];
 function localTodayISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function defaultState(){return{folders:[{id:'folder-1',name:'默认文件夹',createdAt:localTodayISO()}],words:[],nextId:1,nextFolderId:2,maxWords:500,unlimited:false,redeemedCodes:[],checkins:{},firstCheckinDate:'',profile:{displayName:'',avatarUrl:'',avatarPath:''},speech:{voiceURI:'',rate:0.9,volume:1,pitch:1,autoSpeak:true},ejuSession:{}};}
 function loadState(){try{let raw=localStorage.getItem(STORAGE_KEY);if(!raw){for(const k of OLD_KEYS){raw=localStorage.getItem(k);if(raw)break;}}if(!raw)return defaultState();return migrateState(JSON.parse(raw));}catch(e){return defaultState();}}
@@ -1242,13 +1242,14 @@ async function lookupWord(){
   if(!q){toast('请输入要查询的日语单词');return;}
   if(!isLikelyJapaneseLookup(q)){toast('请输入日语单词，暂不支持英语查词');return;}
   if(isPureKana(q)&&kanaLength(q)>10){toast('输入过长：假名不能超过 10 个');return;}
-  $('lookupStatus').textContent='正在用豆包生成精简释义：'+q;
+  $('lookupStatus').textContent='正在查 JMdict 样本词典：'+q;
   try{
     lookupCache=await lookupOnline(q);
     renderLookupResults();
-    $('lookupStatus').textContent='查询完成：1 条结果。';
+    $('lookupStatus').textContent=lookupCache.length?'词典命中：'+lookupCache.length+' 条结果。':'未命中词典，可尝试 AI 解释';
   }catch(e){
     lookupCache=[];
+    lookupMissState=null;
     renderLookupResults();
     const msg=e&&e.message?e.message:String(e||'查词失败');
     $('lookupStatus').textContent='查询失败：'+msg;
@@ -1256,36 +1257,21 @@ async function lookupWord(){
   }
 }
 async function lookupOnline(q){
-  const cached=getAiLookupCache(q);
-  if(cached)return [cached];
-  const sb=initSupabase();if(!sb)throw new Error('账号模块未加载');
-  const user=await requireCloudUser();
-  if(!user){goAuthPage();throw new Error('请先登录邮箱账号');}
-  const {data:sessionData}=await sb.auth.getSession();
-  const token=sessionData&&sessionData.session?sessionData.session.access_token:'';
-  if(!token){goAuthPage();throw new Error('登录状态已失效');}
-  const res=await fetch(apiUrl('ai-lookup-word'),{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
-    body:JSON.stringify({word:q})
-  });
+  lookupMissState=null;
+  const res=await fetch(apiUrl('dictionary/lookup',{q:q,lang:'zh',mode:'basic'}));
   let data={};
   let rawText='';
   try{rawText=await res.text();data=rawText?JSON.parse(rawText):{};}catch(e){data={};}
   if(!res.ok){
-    if(res.status===404)throw new Error('后端函数不存在：请确认 netlify/functions/ai-lookup-word.js 已部署，且不要在 ChatGPT 预览页测试');
-    throw new Error(data.error||data.message||rawText.slice(0,120)||'豆包查词失败');
+    if(res.status===404)throw new Error('后端函数不存在：请确认 functions/api/dictionary/lookup.js 已部署，且不要在 ChatGPT 预览页测试');
+    throw new Error(data.error||data.message||rawText.slice(0,120)||'词典查词失败');
   }
-  const item={
-    word:data.word||q,
-    reading:data.reading||'',
-    pos:data.pos||'词语',
-    meaning:data.definition||data.zh||'',
-    definition:formatLookupDefinition(data.reading||'',data.pos||'词语',data.definition||data.zh||'')
-  };
-  if(!item.meaning)throw new Error('没有返回中文释义');
-  setAiLookupCache(q,item);
-  return [item];
+  const entries=Array.isArray(data.entries)?data.entries:[];
+  if(!entries.length){
+    lookupMissState={query:q,message:'未命中词典，可尝试 AI 解释',attribution:data.source&&data.source.attributionText?data.source.attributionText:'Dictionary data: JMdict / EDRDG, CC BY-SA 4.0'};
+    return [];
+  }
+  return entries.map(dictionaryEntryToLookupItem);
 }
 function lookupLocal(q){return [];} 
 function normalizeLookupQuery(s){return norm(s).split(' ').join('');}
@@ -1306,7 +1292,33 @@ function formatLookupDefinition(reading,pos,meaning){return (reading?'发音：'
 function cleanLookupMeaning(text){let s=String(text||'').trim();s=s.split('|').join('；').split('[fútátsú]').join('').split('(東京)').join('').split('(尾高型 - [3])').join('').split('(平板型 - [0])').join('');while(s.includes('  '))s=s.split('  ').join(' ');while(s.includes('；；'))s=s.split('；；').join('；');return s.trim();}
 function valueAfterLabel(raw,label){const i=raw.indexOf(label);if(i<0)return '';let s=raw.slice(i+label.length);const j=s.indexOf('；');if(j>=0)s=s.slice(0,j);return s.trim();}
 function splitLookupDefinition(item){const raw=String(item.definition||'');let reading=item.reading||valueAfterLabel(raw,'发音：');let pos=item.pos||valueAfterLabel(raw,'词性：');let meaning=item.meaning||'';const m=raw.indexOf('释义：');if(!meaning&&m>=0)meaning=raw.slice(m+3);if(!meaning)meaning=raw;meaning=cleanLookupMeaning(meaning||'未填写');return{reading:reading,pos:pos,meaning:meaning};}
-function renderLookupResults(){const box=$('lookupResults');box.innerHTML=lookupCache.map((it,i)=>{const d=splitLookupDefinition(it);return '<div class="lookup-result-card"><div class="lookup-result-main"><div><h3 class="lookup-word-title">'+esc(it.word)+'</h3><div class="lookup-meta">'+(d.reading?'<span class="pill">假名：'+esc(d.reading)+'</span>':'')+(d.pos?'<span class="pill">词性：'+esc(d.pos)+'</span>':'')+'</div><div class="lookup-meaning"><b>中文释义：</b>'+esc(d.meaning||'未填写')+'</div></div><div class="lookup-actions"><button class="primary" data-collect="'+i+'">收藏</button></div></div></div>';}).join('');}
+function dictionaryEntryToLookupItem(entry){
+  const senses=Array.isArray(entry.senses)?entry.senses:[];
+  const english=senses.map(s=>(s.englishGloss||[]).join('; ')).filter(Boolean);
+  const chinese=senses.map(s=>Array.isArray(s.chineseGloss)?s.chineseGloss.join('；'):s.chineseGloss).filter(Boolean);
+  const meaning=(chinese.length?chinese:english).join('；')||'未填写';
+  return{
+    word:entry.headword||'',
+    reading:entry.reading||'',
+    pos:(entry.partOfSpeech||[]).join('・')||'词语',
+    meaning:meaning,
+    definition:formatLookupDefinition(entry.reading||'',(entry.partOfSpeech||[]).join('・')||'词语',meaning),
+    senses:senses,
+    source:entry.source||'JMdict',
+    sourceVersion:entry.sourceVersion||'sample-fixture',
+    license:entry.license||'CC BY-SA 4.0',
+    attribution:entry.attribution||'JMdict / EDRDG',
+    attributionText:entry.attributionText||'Dictionary data: JMdict / EDRDG, CC BY-SA 4.0',
+    matchType:entry.matchType||'exact',
+    rankReason:entry.rankReason||'exact match',
+    deinflection:entry.deinflection||null
+  };
+}
+function renderSenseList(senses){
+  if(!senses||!senses.length)return '';
+  return '<ol style="margin:8px 0 0;padding-left:20px;color:#4d4770;line-height:1.7">'+senses.map(s=>{const en=(s.englishGloss||[]).join('; ');const zh=Array.isArray(s.chineseGloss)?s.chineseGloss.join('；'):(s.chineseGloss||'');return '<li><b>English:</b> '+esc(en||'未填写')+(zh?'<br><b>中文:</b> '+esc(zh):'<br><span class="hint small">中文释义：MVP 暂无，保留 JMdict 英文 gloss</span>')+'</li>';}).join('')+'</ol>';
+}
+function renderLookupResults(){const box=$('lookupResults');if(!lookupCache.length&&lookupMissState){box.innerHTML='<div class="lookup-result-card"><div class="lookup-meaning"><b>'+esc(lookupMissState.message)+'</b><br><span class="hint small">普通查词没有调用 AI。后续可接入用户手动触发的 AI 解释。</span><br><span class="hint small">'+esc(lookupMissState.attribution)+'</span></div><div class="lookup-actions" style="margin-top:10px"><button class="ghost" data-ai-explain="1">AI 解释</button></div></div>';return;}box.innerHTML=lookupCache.map((it,i)=>{const d=splitLookupDefinition(it);return '<div class="lookup-result-card"><div class="lookup-result-main"><div><h3 class="lookup-word-title">'+esc(it.word)+'</h3><div class="lookup-meta">'+(d.reading?'<span class="pill">假名：'+esc(d.reading)+'</span>':'')+(d.pos?'<span class="pill">词性：'+esc(d.pos)+'</span>':'')+'<span class="pill">match：'+esc(it.matchType||'exact')+'</span></div><div class="lookup-meaning"><b>义项：</b>'+renderSenseList(it.senses)+'<div style="margin-top:10px"><b>来源：</b>'+esc(it.attributionText||'Dictionary data: JMdict / EDRDG, CC BY-SA 4.0')+'<br><span class="hint small">sourceVersion: '+esc(it.sourceVersion||'sample-fixture')+'；license: '+esc(it.license||'CC BY-SA 4.0')+(it.deinflection?'<br>活用还原：'+esc(it.deinflection.surface)+' → '+esc(it.deinflection.dictionaryForm):'')+'</span></div></div></div><div class="lookup-actions"><button class="primary" data-collect="'+i+'">收藏</button></div></div></div>';}).join('');}
 async function articleWordsSmart(text,max){
   articleReadingCache={};
   const mode=$('articleMode')?$('articleMode').value:'fast';
@@ -1730,7 +1742,7 @@ $('avatarInput').onchange=async()=>{const f=$('avatarInput').files&&$('avatarInp
 $('openGuideBtn').onclick=()=>switchView('guide');
 $('backProfileBtn').onclick=()=>switchView('profile');
 $('todayInput').value=localTodayISO();$('todayInput').onchange=renderAll;$('restoreTodayBtn').onclick=()=>{$('todayInput').value=localTodayISO();renderAll();};$('goReviewBtn').onclick=()=>switchView('review');$('checkinBtn').onclick=doCheckin;$('prevMonthBtn').onclick=()=>shiftMonth(-1);$('nextMonthBtn').onclick=()=>shiftMonth(1);$('statFolderCard').onclick=()=>switchView('library');$('statTotalCard').onclick=()=>switchView('library');$('statReviewCard').onclick=()=>switchView('review');$('statNewCard').onclick=()=>switchView('learn');$('startReviewBtn').onclick=buildReviewQueue;$('startLearnBtn').onclick=buildLearnQueue;$('learnFolderSelect').onchange=updateLearnFolderInfo;
-$('lookupBtn').onclick=lookupWord;$('lookupQuery').onkeydown=e=>{if(e.key==='Enter')lookupWord();};$('lookupResults').onclick=e=>{const i=e.target.dataset.collect;if(i!==undefined)addWords([lookupCache[Number(i)]],selectedLookupFolder(),'ai-lookup');};
+$('lookupBtn').onclick=lookupWord;$('lookupQuery').onkeydown=e=>{if(e.key==='Enter')lookupWord();};$('lookupResults').onclick=e=>{const i=e.target.dataset.collect;if(i!==undefined)addWords([lookupCache[Number(i)]],selectedLookupFolder(),'dictionary-lookup');if(e.target.dataset.aiExplain!==undefined)toast('AI 解释入口后续接入；本次普通查词没有调用 AI。');};
 $('redeemBtn').onclick=redeemCode;
 $('refreshEntitlementsBtn').onclick=()=>refreshEntitlements(false);
 if($('refreshPurchaseHistoryBtn'))$('refreshPurchaseHistoryBtn').onclick=()=>loadPurchaseHistory(false);

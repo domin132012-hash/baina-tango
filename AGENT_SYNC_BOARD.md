@@ -4,39 +4,42 @@
 > do not recheck Supabase / Stripe unless the task touches them, a related fault appears, or the recorded status is older than 30 days and the task depends on that platform.
 > Never record API keys, service role keys, JWT secrets, session tokens, customer data, payment records, card data, or raw secret values.
 
-Last updated: 2026-06-17 20:50 JST by ChatGPT/GitHub connector
+Last updated: 2026-06-17 20:57 JST by Codex
 
 ## 1. 当前锁定状态
 
 | Area | Status | Note |
 |---|---|---|
-| Repository docs | Unlocked | Current task records ChatGPT manager direct GitHub task-writing preference |
-| Application code | Locked by task scope | Do not change code in this task |
-| Cloudflare | Not touched in this task | Existing deployment status carried forward; no dashboard/API recheck |
+| Repository docs | Unlocked | Current task executes GitHub Issue #3 JMdict lookup MVP closeout |
+| Application code | Unlocked for Issue #3 scope only | Dictionary lookup API and ordinary lookup frontend only |
+| Cloudflare | Code only, dashboard not touched | New Pages Function code under `functions/api/dictionary/`; no deployment/settings/env changes by agent |
 | Supabase | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
 | Stripe | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
-| DeepSeek | Not touched in this task | No backend, secret, or API changes |
+| DeepSeek | Not touched in this task | No backend, secret, or API changes; normal lookup does not call AI by default |
 
 ## 2. GitHub 状态
 
 | Item | Value |
 |---|---|
 | Repository | `domin132012-hash/baina-tango` |
-| Current branch | `main` |
-| Main latest hash at task start | `59b99765527f2ae87e934de8300365a4ef89d3f6` |
-| Current task | Record ChatGPT manager default: when user says to write instructions in the repo, ChatGPT should create/update the GitHub Issue or task document directly |
+| Current branch | `feat/dictionary-lookup-mvp` |
+| Main latest hash at task start | `caca731cd961d68216395e8b57b4bce7cb02202a` |
+| Current task | Execute GitHub Issue #3: JMdict lookup MVP with dictionary-first ordinary lookup |
+| Issue | `#3` `[AGENT-TASK] JMdict lookup MVP: dictionary-first lookup` |
+| PR | Pending until branch is pushed; final PR URL will be recorded after creation |
+| Latest relevant commit | pending; final branch hash reported in closeout |
 | Latest relevant commit | `ab7f366` docs: record ChatGPT repository task-writing preference |
 | Latest relevant commit | `0b4f74a` docs: add manager task-writing preference to agents rules |
 | PR #2 | `MERGED`; merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` |
-| This task | Docs only: adds `docs/ops/CHATGPT_TASK_WRITING_PREFERENCE.md`, updates `AGENTS.md`, and updates closeout records; no application code or external backend changes; final pushed commit hash is reported in the final response |
+| This task | Code + docs for dictionary-first lookup MVP: adds `/api/dictionary/lookup`, small JMdict fixture data, and updates ordinary lookup UI so dictionary hits do not call AI by default |
 | Dictionary plan commit | `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main` |
-| External services touched - GitHub | Documentation commits only |
-| External services touched - Cloudflare | Not touched |
+| External services touched - GitHub | Branch push and PR only; Issue #3 final comment pending closeout |
+| External services touched - Cloudflare | Code only, dashboard not touched |
 | External services touched - Supabase | Not touched |
 | External services touched - Stripe | Not touched |
 | External services touched - DeepSeek | Not touched |
-| Current status | ChatGPT manager task-writing preference is documented; `AGENTS.md` now says repo-writing requests should be handled directly through GitHub unless the user asks for text only |
-| Current blocker | None; this task is docs-only preference recording |
+| Current status | JMdict lookup MVP implemented with small sample fixture; `努力` and `食べる` hit dictionary; `読まなかった` deinflects to `読む`; misses show `未命中词典，可尝试 AI 解释`; attribution visible |
+| Current blocker | None for PR review; full JMdict import/D1/R2 production data remains future work |
 
 ## 3. Cloudflare 状态
 
@@ -124,3 +127,4 @@ Update triggers:
 | 2026-06-17 18:40 JST | Docs-only implementation plan and closeout mechanism task started on `main` at `591dedf618ddb99373bd05b2ac75950101cbadf0`; Cloudflare / Supabase / Stripe / DeepSeek not touched. |
 | 2026-06-17 20:20 JST | GitHub Issue task protocol closeout backfill started on `main` at `326a4bd49c278505eb15339a610ed60583544cd7`; Cloudflare / Supabase / Stripe / DeepSeek not touched. |
 | 2026-06-17 20:50 JST | ChatGPT manager task-writing preference recorded: repo-writing requests now mean direct GitHub Issue/task-file write by default unless user asks for text only; Cloudflare / Supabase / Stripe / DeepSeek not touched. |
+| 2026-06-17 20:57 JST | Issue #3 JMdict lookup MVP implemented on `feat/dictionary-lookup-mvp`; Cloudflare code changed only, dashboard not touched; Supabase / Stripe / DeepSeek not touched. |
