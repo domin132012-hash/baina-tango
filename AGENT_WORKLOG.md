@@ -27,6 +27,37 @@ Entry template:
 
 ---
 
+## 2026-06-17 / Codex / PR #2 merged and Agent sync board established
+
+### Task
+- Close out PR #2 `feat(eju-essay): add EJU writing critique integration` after user completed real Cloudflare Branch Preview validation.
+- Mark PR #2 ready, merge it to `main`, confirm Cloudflare Production deployment, run minimal Production smoke, and establish `AGENT_SYNC_BOARD.md`.
+
+### Files changed
+- `AGENT_SYNC_BOARD.md` — new real-time sync board for GitHub / Cloudflare / Supabase / DeepSeek / user acceptance state.
+- `AGENTS.md` — added mandatory sync board read/update rules and no-secret rule.
+- `PROJECT_STATUS.md` — updated PR #2 from draft/blocked to merged and Production active.
+- `HANDOVER.md` — updated EJU essay architecture/status, env status, deployment ids, and sync board workflow.
+- `EJU_ESSAY_INTEGRATION_PLAN.md` — recorded PR #2 closeout, merge hash, deployment ids, and remaining risks.
+- `AGENT_WORKLOG.md` — appended this entry.
+
+### Validation
+- Preflight: `codex-preflight --task "finish PR #2 EJU essay and establish agent sync board"` and read `.codex-context-pack.json`.
+- GitHub PR #2 before merge: head `dea412c4c937e976fa73af815abeb1b408c2c820`, draft/open, `MERGEABLE`, clean.
+- Cloudflare Preview before merge: deployment `7a85773e-6a2d-44e6-92e2-a8aed5520b7d`, source `dea412c`, successful.
+- User acceptance recorded: login `analyze` passed, login `follow-up` passed, `rubricSource` and `matchedReferences` displayed, `ERRORS_JSON` not exposed, `DEEPSEEK_API_KEY 未配置` and `Invalid header value` gone.
+- PR #2 marked ready and merged with merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339`.
+- Cloudflare Production: deployment `1c5b2430-6b20-4334-8e04-e9fb2243dbca`, source `79a2b7e`, status Active, URL `https://baina-tango.pages.dev`.
+- Production smoke: `学习 -> 真题试炼 -> 日本語 -> 記述` opens; unauthenticated submit shows `批改失败：请先登录账号`; browser console had no extra error.
+
+### Risks / next steps
+- Agent did not repeat logged-in Production `analyze` / `follow-up` because no agent-held logged-in session was available; rely on user-provided real Preview acceptance plus Production unauthenticated smoke.
+- `reference_bank` remains MVP-sized, not a full structured textbook database.
+- `RIKA_PLAN.md` is an unrelated untracked local file and was intentionally left out of this task.
+
+### Commit
+- pending; final pushed hash reported by this task's completing agent.
+
 ## 2026-06-14 / ChatGPT / 远程可配置消息通知系统
 
 ### Task

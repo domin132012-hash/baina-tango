@@ -1,7 +1,18 @@
 # EJU 記述作文批改嫁接方案
 
-最后更新：2026-06-16
-分支：`feat/eju-essay-integration`
+最后更新：2026-06-17
+分支：`feat/eju-essay-integration`（PR #2 已合并到 `main`）
+
+## 0. 2026-06-17 收口结论
+
+PR #2 `feat(eju-essay): add EJU writing critique integration` 已在用户完成 Cloudflare Branch Preview 真实验收后从 draft 改 ready，并以 merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` 合并到 `main`。
+
+- PR head：`dea412c4c937e976fa73af815abeb1b408c2c820`
+- Preview deployment：`7a85773e-6a2d-44e6-92e2-a8aed5520b7d`，source `dea412c`
+- Production deployment：`1c5b2430-6b20-4334-8e04-e9fb2243dbca`，source `79a2b7e`，URL `https://baina-tango.pages.dev`
+- 用户真实验收：登录后 `analyze` 成功、`follow-up` 成功、`rubricSource` 和 `matchedReferences` 显示、`ERRORS_JSON` 不外露、`DEEPSEEK_API_KEY 未配置` 和 `Invalid header value` 不再出现。
+- Production smoke：`学习 → 真题试炼 → 日本語 → 記述` 可打开；未登录提交显示 `批改失败：请先登录账号`；浏览器 console 无额外 error。
+- 后续状态同步必须同时更新 `AGENT_SYNC_BOARD.md`、`AGENT_WORKLOG.md`、`PROJECT_STATUS.md`。
 
 ## 1. 结论：嫁接到哪里
 
@@ -41,7 +52,7 @@
 - `follow-up.js` 已加请求体最大 40000 字符、追问最大 2000 字符、题目最大 1000 字符、作文最大 6000 字符、上一轮批改最大 8000 字符、历史上下文最多 8 条且每条最多 2000 字符。
 - 两个接口都已把 JSON 解析错误改成清晰 400，把后端配置/DeepSeek 上游错误改成用户可读的通用错误，避免把环境变量名、stack 或上游原文暴露给页面。
 - 两个接口都已对 `DEEPSEEK_API_KEY` 做 `trim()` 和格式检查；误填 `Bearer`、外层引号、换行/制表符时返回固定配置错误，避免 `Invalid header value` 直接暴露给用户。
-- Cloudflare Pages production secret 已用本地 Keychain raw key 重置；Preview secret 是否正确生效仍需登录后真实批改请求确认。
+- Cloudflare Pages Preview / Production secret 已确认配置；Preview 已通过用户真实登录批改请求验收。
 
 ### 第一版故意不做
 
@@ -128,13 +139,13 @@
 
 Cloudflare Pages 环境变量：
 
-```text
-DEEPSEEK_API_KEY=sk-xxx
-DEEPSEEK_BASE_URL=https://api.deepseek.com   # 可选
-DEEPSEEK_MODEL=deepseek-v4-flash             # 可选
-SUPABASE_URL=...
-SUPABASE_SERVICE_ROLE_KEY=...
-```
+| Variable | Required | Status note |
+|---|---:|---|
+| `DEEPSEEK_API_KEY` | Yes | Preview / Production configured as secret |
+| `SUPABASE_URL` | Yes | Configured as plain variable |
+| `SUPABASE_SERVICE_ROLE_KEY` | Yes | Preview / Production configured as secret |
+| `DEEPSEEK_BASE_URL` | No | Optional; code has default |
+| `DEEPSEEK_MODEL` | No | Optional; code has default |
 
 注意：
 
@@ -192,9 +203,9 @@ AGENTS.md → PROJECT_STATUS.md → HANDOVER.md → AGENT_WORKLOG.md → EJU_ESS
    - 未登录时应提示登录。
    - 登录且环境变量正确时应返回批改结果、分数、错误表。
    - 追问接口可继续回答。
-4. 必须有一个已确认邮箱账号完成登录后真实 analyze + follow-up 验收；否则 PR #2 保持 draft，不得 ready/merge。
-5. Cloudflare Pages 配置 `DEEPSEEK_API_KEY` 后再合并上线。
-6. 验收通过后更新 `PROJECT_STATUS.md`、`HANDOVER.md`、`AGENT_WORKLOG.md`。
+4. 已有用户完成登录后真实 analyze + follow-up 验收；PR #2 已合并。
+5. Cloudflare Pages Preview / Production 已配置 `DEEPSEEK_API_KEY`，只记录配置状态，不记录值。
+6. 后续变更必须更新 `PROJECT_STATUS.md`、`HANDOVER.md`、`AGENT_SYNC_BOARD.md`、`AGENT_WORKLOG.md`。
 
 ## 7. 后续升级路线
 
@@ -265,3 +276,4 @@ Cloudflare 环境下优先考虑：
 2. DeepSeek 输出不是强 JSON，虽然保留了 `<ERRORS_JSON>` 解析，但仍可能失败。
 3. middleware 注入会让所有 HTML 页面加载 `eju-essay.js`，脚本已做 no-op/延迟 patch，但上线前仍要看控制台。
 4. 第一版历史存在 localStorage，换设备不会同步。
+5. 本轮 agent 只做了 Production 未登录 smoke；登录后 Production analyze/follow-up 依赖用户账号状态，未由 agent 重复执行。

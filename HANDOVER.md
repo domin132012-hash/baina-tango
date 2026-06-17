@@ -1,7 +1,7 @@
-# 交接文档 — EJU 真题试炼 + 远程通知系统
+# 交接文档 — EJU 真题试炼 + 远程通知系统 + 記述作文批改
 
 > 本文件面向**完全没有上下文的接手人/代理**。读完即可接手。
-> 最后更新：2026-06-16。配套阅读：`AGENTS.md`（开工规则）、`PROJECT_STATUS.md`（当前进度）、`AGENT_WORKLOG.md`（最近动作流水）、`NOTICES_ADMIN.md`（通知后台）。
+> 最后更新：2026-06-17。配套阅读：`AGENTS.md`（开工规则）、`PROJECT_STATUS.md`（当前进度）、`AGENT_SYNC_BOARD.md`（实时同步看板）、`AGENT_WORKLOG.md`（最近动作流水）、`NOTICES_ADMIN.md`（通知后台）。
 
 ---
 
@@ -16,9 +16,9 @@
 - 理科：2023-1 样板与 bug 修复已上线；2023-2、2022-1、2022-2、2021-1、2021-2 已上线。
 - 理科剩余 6 套暂缓：2018-1、2018-2、2019-1、2020-2、2024-1、2025-1。
 - 综合科目：2024 一套 MVP 已完成并上线（见下）。
-- EJU 記述作文：`feat/eju-essay-integration` 分支已改成双知识库底座，仍是 draft PR #2，不能直接 merge。2026-06-16 已验证入口和未登录 401，并补了 DeepSeek key trim/格式拦截；登录后真实 analyze/follow-up 仍缺已确认账号验收。
+- EJU 記述作文：PR #2 已在用户完成真实 Cloudflare Branch Preview 验收后合并到 `main`，Production 已部署 active。入口为 `学习 → 真题试炼 → 日本語 → 記述`。
 
-### EJU 記述作文双知识库现状（2026-06-15）
+### EJU 記述作文双知识库现状（2026-06-17）
 
 - 前端入口仍然是：`学习 → 真题试炼 → 日本語 → 記述`。
 - 当前分支已不再只依赖 `assets/eju-essay.js` 的 runtime patch；`assets/eju.js` 的 `renderEjuJapanese()` 已直接把 `記述` 卡片渲染成可点击入口，`聴読解` 仍保持建设中。
@@ -52,16 +52,31 @@
 - 2026-06-16 补了最低限度防滥用/稳定性保护：
   - `analyze.js`：请求体最大 30000 字符，题目最大 1000 字符，作文最大 6000 字符；JSON 解析错误返回清晰 400；后端配置或 DeepSeek 上游错误不再把环境变量名、stack 或原始上游消息返回给用户；`DEEPSEEK_API_KEY` 会先 `trim()`，误填 `Bearer`、引号或控制字符会返回固定配置错误，不再把 `Invalid header value` 暴露给页面。
   - `follow-up.js`：请求体最大 40000 字符，追问最大 2000 字符，题目最大 1000 字符，作文最大 6000 字符，上一轮批改最大 8000 字符，历史上下文最多 8 条且每条最多 2000 字符；错误同样脱敏，并使用同一套 DeepSeek key 格式防护。
-  - Cloudflare：production 环境 `DEEPSEEK_API_KEY` 已用本地 Keychain raw key 重置；Wrangler Pages secret CLI 本轮只显示更新 production，Preview 环境是否也正确仍需登录后真实 analyze 验收确认，必要时在 Dashboard 手动重置 Preview secret。
-- 当前 Preview 验收范围：
-  - `学习 → 真题试炼 → 日本語 → 記述` 可达，`記述` 显示 `试验开放` 且可点击。
-  - 未登录提交 408 字作文时，页面显示 `批改失败：请先登录账号`，`/api/eju-essay/analyze` 返回 401，浏览器 console 无额外全局 JS error。
-  - 直接请求 `/api/eju-essay/follow-up` 的空 Bearer 也返回 401。
-- 尚未验收：
-  - 登录后真实 analyze 成功返回分数、完整批改、`rubricSource`、`matchedReferences`。
-  - 登录后 follow-up 按 rubric/reference 分流返回。
-  - 刷新后的本地历史，因为未登录批改不会产生成功历史。
-  - DeepSeek 环境变量是否在 Preview 已正确生效，因没有有效登录 token 无法走到 AI 调用。
+  - Cloudflare：Preview 和 Production 都已配置 `DEEPSEEK_API_KEY` secret；`SUPABASE_SERVICE_ROLE_KEY` 为 secret；`SUPABASE_URL` 为普通变量。只记录是否配置，不能记录值。
+- PR #2 合并状态：
+  - PR head：`dea412c4c937e976fa73af815abeb1b408c2c820`
+  - merge commit / main：`79a2b7e80d7b5c83062e24afba69ed66fcac3339`
+  - Preview deployment：`7a85773e-6a2d-44e6-92e2-a8aed5520b7d`，source `dea412c`
+  - Production deployment：`1c5b2430-6b20-4334-8e04-e9fb2243dbca`，source `79a2b7e`，URL `https://baina-tango.pages.dev`
+- 用户真实验收：
+  - 登录后 `analyze` 成功。
+  - 登录后 `follow-up` 成功。
+  - `rubricSource` / `matchedReferences` 显示。
+  - `ERRORS_JSON` 不再外露。
+  - `DEEPSEEK_API_KEY 未配置` 和 `Invalid header value` 不再出现。
+- 2026-06-17 Production smoke：
+  - `学习 → 真题试炼 → 日本語 → 記述` 可达，`記述` 显示 `EJU 記述作文 AI 批改 / 试验开放`。
+  - 未登录提交显示 `批改失败：请先登录账号`。
+  - 浏览器 console 无额外 error。
+
+### Agent 同步看板制度（2026-06-17）
+
+- `AGENT_SYNC_BOARD.md` 是 GitHub / Cloudflare / Supabase / DeepSeek / 用户验收的实时状态板。
+- 涉及 PR、部署、环境变量、用户验收的任务必须更新它。
+- Cloudflare 变化必须写 deployment id、source commit、Preview/Production URL。
+- GitHub 变化必须写 branch、PR、head hash、main hash。
+- 不允许记录任何 secret 值。
+- 收工前必须让 `AGENT_SYNC_BOARD.md`、`AGENT_WORKLOG.md`、`PROJECT_STATUS.md` 三者状态一致。
 
 ### 消息通知系统现状（2026-06-14）
 
@@ -117,13 +132,15 @@
 1. `AGENTS.md`
 2. `PROJECT_STATUS.md`
 3. `HANDOVER.md`
-4. `AGENT_WORKLOG.md`
-5. 相关计划文件（例如 `RIKA_PLAN.md`、`SOGO_PLAN.md`、`NOTICES_ADMIN.md`；不存在就先确认，不要猜）
+4. `AGENT_SYNC_BOARD.md`
+5. `AGENT_WORKLOG.md`
+6. 相关计划文件（例如 `RIKA_PLAN.md`、`SOGO_PLAN.md`、`EJU_ESSAY_INTEGRATION_PLAN.md`、`NOTICES_ADMIN.md`；不存在就先确认，不要猜）
 
 做完后必须：
 
 - 更新 `PROJECT_STATUS.md`。
 - 如影响接手信息，更新 `HANDOVER.md`。
+- 如涉及 GitHub / Cloudflare / Supabase / DeepSeek / 用户验收，更新 `AGENT_SYNC_BOARD.md`。
 - 追加 `AGENT_WORKLOG.md`。
 - 更新相关计划文件。
 - commit + push，并汇报 commit hash、验证结果、剩余风险。

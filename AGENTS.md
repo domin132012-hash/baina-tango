@@ -5,15 +5,26 @@ For every non-trivial task in this repository, start by reading the project hand
 1. `PROJECT_STATUS.md` — current real progress and active direction
 2. `HANDOVER.md` — architecture, pitfalls, and handoff context
 3. `AGENT_WORKLOG.md` — latest agent actions, commits, validation, and remaining risks
-4. Relevant plan files, such as `RIKA_PLAN.md`, `SOGO_PLAN.md`, or task-specific notes if present
+4. `AGENT_SYNC_BOARD.md` — live GitHub / Cloudflare / Supabase / DeepSeek / user acceptance state
+5. Relevant plan files, such as `RIKA_PLAN.md`, `SOGO_PLAN.md`, or task-specific notes if present
 
 Before finishing a task, every agent must leave a GitHub trace:
 
 - Update `PROJECT_STATUS.md` when the visible project state changes.
 - Update `HANDOVER.md` when the change affects how the next agent should work.
 - Append a dated entry to `AGENT_WORKLOG.md` with task, files, validation, risks, and commit hash.
+- Update `AGENT_SYNC_BOARD.md` for any task that touches GitHub PRs, Cloudflare, Supabase, DeepSeek, deployment status, or user acceptance.
 - Update the relevant plan file if the task advances or pauses a workstream.
 - Commit and push. A task is not complete until GitHub documents reflect the final state.
+
+## Agent Sync Board Rules
+
+- Non-trivial tasks must read `AGENT_SYNC_BOARD.md` before changing GitHub PRs, Cloudflare, Supabase, DeepSeek, or deployment-related docs.
+- Any Cloudflare change must be written back to `AGENT_SYNC_BOARD.md` with deployment id, source commit, environment, and URL.
+- GitHub operations must record branch, PR number, head hash, and main hash in `AGENT_SYNC_BOARD.md`.
+- Environment status may record whether variables are configured, but must never record secret values.
+- User acceptance must record whether `analyze` and `follow-up` passed, and whether that result was user-provided or agent-verified.
+- Before finishing, `AGENT_SYNC_BOARD.md`, `AGENT_WORKLOG.md`, and `PROJECT_STATUS.md` must describe the same current state.
 
 Recommended prompt header for future agent instructions:
 

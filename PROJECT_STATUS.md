@@ -1,9 +1,19 @@
 # baina-tango 项目进度
 
 > 📋 接手人必须先读：[`AGENTS.md`](AGENTS.md) → [`HANDOVER.md`](HANDOVER.md) → [`AGENT_WORKLOG.md`](AGENT_WORKLOG.md)。
-> 当前真实版本：`20260614-notices-kv`（EJU 缓存号仍为 `20260614-sogo-2024-1-materials-fix`）。
+> 当前真实版本：`20260617-eju-essay-production`（main `79a2b7e`；EJU 缓存号仍含 `20260615-eju-essay-v4-entry-open` 注入脚本）。
 > ✅ 消息通知已改为 Cloudflare KV 远程配置，新增 `/admin/notices.html` 可视化后台。
-> ⚠️ EJU 記述作文 PR #2 仍是 draft，未合并；已补 `DEEPSEEK_API_KEY` 格式防护，登录后真实批改/追问仍缺已确认账号验收。
+> ✅ EJU 記述作文批改 PR #2 已在用户完成真实 Preview 验收后合并并部署 Production。
+
+## 最近完成（EJU 記述作文批改）— 2026-06-17
+
+PR #2 `feat(eju-essay): add EJU writing critique integration` 已从 draft 改 ready，并以 merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` 合并到 `main`。
+
+- 用户已在 Cloudflare Branch Preview 完成真实验收：登录后 `analyze` 成功、`follow-up` 成功、`rubricSource` 显示、`matchedReferences` 显示、`ERRORS_JSON` 不外露、`DEEPSEEK_API_KEY 未配置` 和 `Invalid header value` 不再出现。
+- Cloudflare Preview：deployment `7a85773e-6a2d-44e6-92e2-a8aed5520b7d`，source `dea412c`，successful。
+- Cloudflare Production：deployment `1c5b2430-6b20-4334-8e04-e9fb2243dbca`，source `79a2b7e`，Active，URL `https://baina-tango.pages.dev`。
+- Production smoke：`学习 → 真题试炼 → 日本語 → 記述` 可打开；未登录提交显示 `批改失败：请先登录账号`；浏览器 console 无额外 error。
+- 新增 `AGENT_SYNC_BOARD.md`，用于同步 GitHub / Cloudflare / Supabase / DeepSeek / 用户验收状态。
 
 ## 最近完成（远程可配置消息通知）— 本轮
 
@@ -25,6 +35,7 @@
 | 模块 | 状态 | 备注 |
 |---|---|---|
 | 消息通知远程配置 | ✅ 已推送 main | Cloudflare KV + `/api/notices` + `/api/admin/notices` + `/admin/notices.html` |
+| EJU 記述作文批改 | ✅ 已合并并部署 Production | PR #2 merge commit `79a2b7e`；Production deployment `1c5b2430`；用户已完成真实 Preview analyze/follow-up 验收 |
 | 数学2 | ✅ 已上线 | 早期完成，已作为数学卷基础样板 |
 | 数学1 | ✅ 已上线 | 12 套全部完成，commit `b3f37b3`，缓存号 `20260613-math1-all` |
 | 理科 2023-1 | ✅ 已上线 | 样板 + 后续 bug 修复，缓存号曾到 `20260614-rika-2023-1-v2` |
@@ -45,8 +56,7 @@
 
 | 模块 | 状态 | 备注 |
 |---|---|---|
-| Cloudflare 通知配置 | ⚠️ 待线上配置 | 需要在 Pages 设置里绑定 `NOTICES_KV` 并配置 `ADMIN_NOTICE_TOKEN` |
-| EJU 記述作文双知识库 | 🛠️ Draft PR #2，未合并 | `feat/eju-essay-integration` 已把批改拆成 `rubric`（基礎編评分依据）+ `reference bank`（実践編例子/表达）；`renderEjuJapanese()` 中的 `記述` 入口已直接打开并显示 `试验开放`。2026-06-16 收口：入口与未登录 401 通过，已补请求体/题目/作文/追问/上下文长度限制、错误脱敏、`DEEPSEEK_API_KEY` trim 与格式拦截；Cloudflare production secret 已用本地 Keychain raw key 重置，Preview secret 仍需登录后真实 analyze/follow-up 验收确认；不能 ready/merge |
+| Cloudflare 通知配置 | ✅ 线上配置已解决（用户确认） | 本轮未处理通知系统 |
 | 未部署年份灰色建设中 UI | 📝 待做 | 可后续让 Codex 做，但避免与 Claude 同时改 `assets/eju.js` 撞车 |
 
 ---
@@ -55,10 +65,11 @@
 
 本仓库现在使用固定交接制度：
 
-1. 开工前读 `AGENTS.md`、`PROJECT_STATUS.md`、`HANDOVER.md`、`AGENT_WORKLOG.md`。
+1. 开工前读 `AGENTS.md`、`PROJECT_STATUS.md`、`HANDOVER.md`、`AGENT_WORKLOG.md`、`AGENT_SYNC_BOARD.md`。
 2. 做完后必须更新 `PROJECT_STATUS.md`、必要时更新 `HANDOVER.md`、并追加 `AGENT_WORKLOG.md`。
-3. 任务没有写入 GitHub 文档，不算完成。
-4. 多代理并行时，先确认谁正在改 `assets/eju.js`，避免覆盖。
+3. 涉及 GitHub / Cloudflare / Supabase / DeepSeek / 用户验收的任务必须更新 `AGENT_SYNC_BOARD.md`。
+4. 任务没有写入 GitHub 文档，不算完成。
+5. 多代理并行时，先确认谁正在改 `assets/eju.js`，避免覆盖。
 
 推荐任务头部：
 
