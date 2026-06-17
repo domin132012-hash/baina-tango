@@ -13,7 +13,7 @@ Before finishing a task, every agent must leave a GitHub trace:
 - Update `PROJECT_STATUS.md` when the visible project state changes.
 - Update `HANDOVER.md` when the change affects how the next agent should work.
 - Append a dated entry to `AGENT_WORKLOG.md` with task, files, validation, risks, and commit hash.
-- Update `AGENT_SYNC_BOARD.md` for any task that touches GitHub PRs, Cloudflare, Supabase, DeepSeek, deployment status, or user acceptance.
+- Update `AGENT_SYNC_BOARD.md` for any task that touches GitHub PRs, Cloudflare, Supabase, Stripe, DeepSeek, deployment status, or user acceptance.
 - Update the relevant plan file if the task advances or pauses a workstream.
 - Commit and push. A task is not complete until GitHub documents reflect the final state.
 
@@ -25,6 +25,16 @@ Before finishing a task, every agent must leave a GitHub trace:
 - Environment status may record whether variables are configured, but must never record secret values.
 - User acceptance must record whether `analyze` and `follow-up` passed, and whether that result was user-provided or agent-verified.
 - Before finishing, `AGENT_SYNC_BOARD.md`, `AGENT_WORKLOG.md`, and `PROJECT_STATUS.md` must describe the same current state.
+
+## External Platform Baseline + Delta Rules
+
+- External platforms use baseline + delta updates. Do not fully recheck Supabase or Stripe on every task.
+- `docs/ops/SUPABASE_STATUS.md` is the Supabase baseline. Update it only when Supabase config/data/Auth/health is touched, when a Supabase-related fault appears, or when the record is older than 30 days and the current task depends on Supabase.
+- `docs/ops/STRIPE_CATALOG.md` is the Stripe baseline. Update it only when products/prices/price IDs/product IDs/webhooks/payment entitlement logic are touched, when payment and entitlement disagree, or when the record is older than 30 days and the current task depends on Stripe.
+- If the task does not touch Supabase or Stripe, mark "not touched; using previous record" in `AGENT_SYNC_BOARD.md` instead of spending context on routine backend checks.
+- Cloudflare remains live-state sensitive: deployments, environment variables, KV, R2, Functions, Pages settings, deployment failures, and source commit mismatches must be written back promptly.
+- If Supabase, Stripe, Cloudflare, or DeepSeek changes outside GitHub, write the delta back to GitHub docs before finishing.
+- Do not record secrets or user privacy data: no API keys, service role keys, JWT secrets, webhook signing secrets, session tokens, user emails, customer records, payment records, or card data.
 
 Recommended prompt header for future agent instructions:
 

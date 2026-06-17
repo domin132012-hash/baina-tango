@@ -27,6 +27,38 @@ Entry template:
 
 ---
 
+## 2026-06-17 / Codex / External platform baseline + delta sync rules
+
+### Task
+- Add Baseline + Delta Update rules so agents do not fully recheck Supabase / Stripe unless the task touches them, a related fault appears, or the status is stale and needed.
+- Add baseline docs for Supabase and Stripe while avoiding external dashboard/API checks in this docs-only task.
+- Correct `AGENT_SYNC_BOARD.md` main/docs closeout hash from the previous pending state to `3ca722ec49cc588370f9bd2ec0400a2f7a4e0fde`.
+
+### Files changed
+- `AGENT_SYNC_BOARD.md` — rewritten as current summary with GitHub / Cloudflare / Supabase / Stripe / DeepSeek sections, last checked, touched-by-task, recheck need, and blockers.
+- `docs/ops/SUPABASE_STATUS.md` — new Supabase baseline; records public project URL, Auth usage, env variable names, known tables, no migrations in repo, and `Unhealthy` status from user-provided screenshot.
+- `docs/ops/STRIPE_CATALOG.md` — new Stripe catalog baseline from repository code; records product names, prices, price IDs, webhook event type, and entitlement mapping; product IDs remain pending dashboard baseline.
+- `AGENTS.md` — added external platform baseline + delta rules and no-routine-recheck guidance.
+- `HANDOVER.md` — added the operating model and current Supabase/Stripe baseline caveats.
+- `AGENT_WORKLOG.md` — appended this entry.
+
+### Validation
+- Preflight: `codex-preflight --task "add external platform baseline and delta sync docs"` and read `.codex-context-pack.json`.
+- No Cloudflare, Supabase, or Stripe dashboard/API operation was performed.
+- Repository-only inspection:
+  - Supabase public URL and usage found in `index.html` and Cloudflare Functions.
+  - Stripe price IDs and entitlement mapping found in `functions/api/create-checkout-session.js` and `functions/api/stripe-webhook.js`.
+  - No migration folder/file found in the repo baseline scan.
+- Docs-only validation pending final `git diff --check` and secret-pattern scan before commit.
+
+### Risks / next steps
+- Supabase health is recorded as `Unhealthy` from the user-provided screenshot; root cause is not diagnosed in this task.
+- Stripe `product_id` values and dashboard active status are not available from the repository and should be filled during a real Stripe dashboard baseline/check.
+- Pushing docs to `main` may trigger Cloudflare deployment automatically, but this task intentionally does not touch Cloudflare per user instruction.
+
+### Commit
+- pending; final pushed hash reported by this task's completing agent.
+
 ## 2026-06-17 / Codex / PR #2 merged and Agent sync board established
 
 ### Task

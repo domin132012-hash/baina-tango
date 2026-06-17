@@ -78,6 +78,18 @@
 - 不允许记录任何 secret 值。
 - 收工前必须让 `AGENT_SYNC_BOARD.md`、`AGENT_WORKLOG.md`、`PROJECT_STATUS.md` 三者状态一致。
 
+### 外部平台 Baseline + Delta 制度（2026-06-17）
+
+- 不再要求每个代理每次全量复查 Supabase / Stripe。
+- Supabase 基线文档：`docs/ops/SUPABASE_STATUS.md`。
+- Stripe 产品目录基线：`docs/ops/STRIPE_CATALOG.md`。
+- 如果任务未触碰 Supabase / Stripe，只在 `AGENT_SYNC_BOARD.md` 标记未触碰、沿用上次记录，不要为了例行检查浪费上下文。
+- 如果任务触碰 Supabase / Stripe / Cloudflare，或出现对应线上故障，必须更新对应状态文档。
+- 如果状态记录超过 30 天，且当前任务依赖该平台，必须复查。
+- Cloudflare 部署、环境变量、KV/R2/Functions/Pages 设置、部署失败、source commit 不一致仍必须及时回写 GitHub。
+- 当前 Supabase baseline 记录：用户截图显示 Status `Unhealthy`，后续依赖 Auth/user data/payment/essay history 的任务需先排查。
+- 当前 Stripe baseline 记录：price IDs 和站内权益来自仓库代码；product IDs 与 dashboard active 状态尚未复查。
+
 ### 消息通知系统现状（2026-06-14）
 
 - 前端模块：`assets/notices.js`。
