@@ -489,3 +489,45 @@ Entry template:
 
 ### Commit
 - Final commit hash reported in final response.
+
+---
+
+## 2026-06-17 20:20 JST / Codex / Backfill closeout for GitHub Issue task protocol
+
+### Task
+- Backfill closeout records for the GitHub Issue task protocol documentation changes that were already committed and pushed.
+- Do not process `RIKA_PLAN.md`, do not change application code, and do not touch Cloudflare / Supabase / Stripe / DeepSeek backends.
+
+### Branch / commits
+- Branch: `main`
+- Start commit: `326a4bd49c278505eb15339a610ed60583544cd7`
+- End commit: final commit reported in final response after commit + push
+
+### Files changed
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+
+### Related prior commits
+- `814b8e9f6b37cf1fc1814c77c9e5b62bd6efc360`
+- `ce7cfcfb0f4eca97bd94b08faa8ae65e10be069a`
+- `326a4bd49c278505eb15339a610ed60583544cd7`
+
+### External services touched
+- GitHub: commit + push only.
+- Cloudflare: not touched.
+- Supabase: not touched.
+- Stripe: not touched.
+- DeepSeek: not touched.
+
+### Validation
+- `git diff --check`
+- `node scripts/agent-closeout-check.js`
+- Secret scan: `rg -n "sk-|gho_|service role|JWT secret|session token|STRIPE_SECRET|WEBHOOK_SECRET|DEEPSEEK_API_KEY|SUPABASE_SERVICE_ROLE_KEY" AGENT_SYNC_BOARD.md AGENT_WORKLOG.md`
+
+### Remaining risks
+- No code changes.
+- No external platform changes.
+- This task only backfills closeout records.
+
+### Commit
+- Final commit hash reported in final response.
