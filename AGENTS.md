@@ -6,16 +6,20 @@ For every non-trivial task in this repository, start by reading the project hand
 2. `HANDOVER.md` — architecture, pitfalls, and handoff context
 3. `AGENT_WORKLOG.md` — latest agent actions, commits, validation, and remaining risks
 4. `AGENT_SYNC_BOARD.md` — live GitHub / Cloudflare / Supabase / DeepSeek / user acceptance state
-5. Relevant plan files, such as `RIKA_PLAN.md`, `SOGO_PLAN.md`, or task-specific notes if present
+5. `docs/ops/AGENT_CLOSEOUT_CHECKLIST.md` — required closeout and GitHub writeback checklist
+6. Relevant plan files, such as `RIKA_PLAN.md`, `SOGO_PLAN.md`, or task-specific notes if present
 
 Before finishing a task, every agent must leave a GitHub trace:
 
+- Execute `docs/ops/AGENT_CLOSEOUT_CHECKLIST.md` before final response.
 - Update `PROJECT_STATUS.md` when the visible project state changes.
 - Update `HANDOVER.md` when the change affects how the next agent should work.
 - Append a dated entry to `AGENT_WORKLOG.md` with task, files, validation, risks, and commit hash.
 - Update `AGENT_SYNC_BOARD.md` for any task that touches GitHub PRs, Cloudflare, Supabase, Stripe, DeepSeek, deployment status, or user acceptance.
 - Update the relevant plan file if the task advances or pauses a workstream.
-- Commit and push. A task is not complete until GitHub documents reflect the final state.
+- Commit and push. A task is not complete until GitHub documents reflect the final state and the remote branch has been verified.
+- It is not allowed to finish with local-only changes or local-only commits. "Done but not written back to GitHub" is not a completed task.
+- All task records, worklog timestamps, sync board timestamps, deployment notes, and final reports must use JST.
 
 ## Agent Sync Board Rules
 

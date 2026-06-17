@@ -2,6 +2,8 @@
 
 百纳日语查词系统采用“词典优先、AI 增强”的架构：基础释义、读音、词性、常见义项和词形匹配优先来自开源词典；AI 只用于 fallback、语境解释、辨析、例句和深度讲解。本文档是方案设计，不包含代码实现、词典全量翻译或外部平台配置变更。
 
+执行层拆分见：`docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md`。
+
 ## 1. 词典源与 License 策略
 
 明确数据源优先级：

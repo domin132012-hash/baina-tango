@@ -442,3 +442,50 @@ Entry template:
 
 ### Commit
 - pending in this branch; final pushed hash reported by the completing agent.
+
+---
+
+## 2026-06-17 18:40 JST / Codex / Dictionary implementation plan and agent closeout checklist
+
+### Task
+- Turn the existing dictionary-first architecture plan into an execution-level implementation plan for JMdict lookup MVP, staged AI Chinese gloss translation, AI context explanation, and future App offline dictionary packages.
+- Add a fixed closeout mechanism so agents do not finish with local-only work or forget to write status back to GitHub.
+- Keep this task docs/process-only: no real JMdict import, no lookup API, no frontend business logic, no Cloudflare / Supabase / Stripe / DeepSeek backend changes, and no `RIKA_PLAN.md` work.
+
+### Branch / commits
+- Branch: `main`
+- start commit: `591dedf618ddb99373bd05b2ac75950101cbadf0`
+- end commit: final commit reported in final response after commit + push
+
+### Files changed
+- `docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md` - added execution-level plan for dictionary-first lookup.
+- `docs/architecture/DICTIONARY_LOOKUP_PLAN.md` - linked to the implementation plan.
+- `docs/ops/AGENT_CLOSEOUT_CHECKLIST.md` - added required task closeout and GitHub writeback checklist.
+- `scripts/agent-closeout-check.js` - added local static closeout checker.
+- `AGENTS.md` - added closeout checklist read/execute rules, no-local-only completion rule, remote verification rule, and JST time rule.
+- `PROJECT_STATUS.md` - recorded dictionary implementation plan and closeout mechanism status.
+- `HANDOVER.md` - recorded the new dictionary and closeout handoff paths.
+- `AGENT_SYNC_BOARD.md` - recorded this docs/process-only task and external services not touched.
+- `AGENT_WORKLOG.md` - appended this closeout entry.
+
+### External services touched
+- GitHub: commit + push only.
+- Cloudflare: not touched.
+- Supabase: not touched.
+- Stripe: not touched.
+- DeepSeek: not touched.
+- Other: not touched.
+
+### Validation
+- `git diff --check`
+- `node --check scripts/agent-closeout-check.js`
+- `node scripts/agent-closeout-check.js`
+- Secret scan: `rg -n "sk-|gho_|service role|JWT secret|session token|STRIPE_SECRET|WEBHOOK_SECRET|DEEPSEEK_API_KEY|SUPABASE_SERVICE_ROLE_KEY" .`
+- Remote verification after push: final hash reported in final response.
+
+### Remaining risks
+- This task only plans dictionary implementation; JMdict/KANJIDIC2 data import, API design validation, frontend UX, and license display still need future implementation and review.
+- License display wording should still be finally confirmed before publishing derived dictionary data.
+
+### Commit
+- Final commit hash reported in final response.

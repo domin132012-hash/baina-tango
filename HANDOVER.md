@@ -17,6 +17,8 @@
 - 理科剩余 6 套暂缓：2018-1、2018-2、2019-1、2020-2、2024-1、2025-1。
 - 综合科目：2024 一套 MVP 已完成并上线（见下）。
 - EJU 記述作文：PR #2 已在用户完成真实 Cloudflare Branch Preview 验收后合并到 `main`，Production 已部署 active。入口为 `学习 → 真题试炼 → 日本語 → 記述`。
+- 词典优先查词：架构计划在 `docs/architecture/DICTIONARY_LOOKUP_PLAN.md`，执行计划在 `docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md`。下一步才是 JMdict MVP，当前没有接入真实词典、API 或前端逻辑。
+- 代理 closeout 机制：`docs/ops/AGENT_CLOSEOUT_CHECKLIST.md` 是非平凡任务收尾必读文件。任务完成前必须更新 GitHub 文档、commit + push、远端校验，并用 JST 记录时间。
 
 ### EJU 記述作文双知识库现状（2026-06-17）
 
@@ -146,7 +148,8 @@
 3. `HANDOVER.md`
 4. `AGENT_SYNC_BOARD.md`
 5. `AGENT_WORKLOG.md`
-6. 相关计划文件（例如 `RIKA_PLAN.md`、`SOGO_PLAN.md`、`EJU_ESSAY_INTEGRATION_PLAN.md`、`NOTICES_ADMIN.md`；不存在就先确认，不要猜）
+6. `docs/ops/AGENT_CLOSEOUT_CHECKLIST.md`
+7. 相关计划文件（例如 `RIKA_PLAN.md`、`SOGO_PLAN.md`、`EJU_ESSAY_INTEGRATION_PLAN.md`、`docs/architecture/DICTIONARY_LOOKUP_PLAN.md`、`docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md`、`NOTICES_ADMIN.md`；不存在就先确认，不要猜）
 
 做完后必须：
 
@@ -155,9 +158,10 @@
 - 如涉及 GitHub / Cloudflare / Supabase / DeepSeek / 用户验收，更新 `AGENT_SYNC_BOARD.md`。
 - 追加 `AGENT_WORKLOG.md`。
 - 更新相关计划文件。
-- commit + push，并汇报 commit hash、验证结果、剩余风险。
+- 按 `docs/ops/AGENT_CLOSEOUT_CHECKLIST.md` 执行 closeout。
+- commit + push，远端校验，并汇报 commit hash、验证结果、剩余风险。
 
-任务没有写进 GitHub 文档，不算完成。
+任务没有写进 GitHub 文档、没有 push、没有远端校验，不算完成。所有记录时间用 JST。
 
 ---
 

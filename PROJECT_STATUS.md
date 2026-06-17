@@ -56,6 +56,8 @@ PR #2 `feat(eju-essay): add EJU writing critique integration` 已从 draft 改 r
 
 | 模块 | 状态 | 备注 |
 |---|---|---|
+| 词典优先查词 | 📝 执行计划已补充 | 新增 `docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md`，下一步才是 JMdict MVP 实作 |
+| 代理 closeout 回写机制 | ✅ 已制度化 | 新增 `docs/ops/AGENT_CLOSEOUT_CHECKLIST.md`，并要求所有时间使用 JST、收尾必须 commit + push + 远端校验 |
 | Cloudflare 通知配置 | ✅ 线上配置已解决（用户确认） | 本轮未处理通知系统 |
 | 未部署年份灰色建设中 UI | 📝 待做 | 可后续让 Codex 做，但避免与 Claude 同时改 `assets/eju.js` 撞车 |
 
@@ -66,10 +68,12 @@ PR #2 `feat(eju-essay): add EJU writing critique integration` 已从 draft 改 r
 本仓库现在使用固定交接制度：
 
 1. 开工前读 `AGENTS.md`、`PROJECT_STATUS.md`、`HANDOVER.md`、`AGENT_WORKLOG.md`、`AGENT_SYNC_BOARD.md`。
-2. 做完后必须更新 `PROJECT_STATUS.md`、必要时更新 `HANDOVER.md`、并追加 `AGENT_WORKLOG.md`。
-3. 涉及 GitHub / Cloudflare / Supabase / DeepSeek / 用户验收的任务必须更新 `AGENT_SYNC_BOARD.md`。
-4. 任务没有写入 GitHub 文档，不算完成。
-5. 多代理并行时，先确认谁正在改 `assets/eju.js`，避免覆盖。
+2. 同时读取 `docs/ops/AGENT_CLOSEOUT_CHECKLIST.md`，收尾时按 checklist 执行。
+3. 做完后必须更新 `PROJECT_STATUS.md`、必要时更新 `HANDOVER.md`、并追加 `AGENT_WORKLOG.md`。
+4. 涉及 GitHub / Cloudflare / Supabase / DeepSeek / 用户验收的任务必须更新 `AGENT_SYNC_BOARD.md`。
+5. 任务没有写入 GitHub 文档、没有 commit + push、没有远端校验，不算完成。
+6. 所有任务记录时间使用 JST。
+7. 多代理并行时，先确认谁正在改 `assets/eju.js`，避免覆盖。
 
 推荐任务头部：
 

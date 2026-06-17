@@ -4,13 +4,13 @@
 > do not recheck Supabase / Stripe unless the task touches them, a related fault appears, or the recorded status is older than 30 days and the task depends on that platform.
 > Never record API keys, service role keys, JWT secrets, session tokens, customer data, payment records, card data, or raw secret values.
 
-Last updated: 2026-06-17 by Codex
+Last updated: 2026-06-17 18:40 JST by Codex
 
 ## 1. 当前锁定状态
 
 | Area | Status | Note |
 |---|---|---|
-| Repository docs | Unlocked | Current task updates dictionary architecture docs only |
+| Repository docs | Unlocked | Current task updates dictionary implementation docs and closeout rules only |
 | Application code | Locked by task scope | Do not change code in this task |
 | Cloudflare | Not manually touched in this task | Existing deployment status carried forward; no dashboard/API recheck |
 | Supabase | Not touched in this task | Baseline added in `docs/ops/SUPABASE_STATUS.md` |
@@ -22,10 +22,10 @@ Last updated: 2026-06-17 by Codex
 |---|---|
 | Repository | `domin132012-hash/baina-tango` |
 | Current branch | `main` |
-| Main latest hash at task start | `d50f8a3c066d00ff8e51ca590adb3b71de784258` |
+| Main latest hash at task start | `591dedf618ddb99373bd05b2ac75950101cbadf0` |
 | Previous docs closeout commit | `d50f8a3c066d00ff8e51ca590adb3b71de784258` |
 | PR #2 | `MERGED`; merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` |
-| This task | Docs only: adds `docs/architecture/DICTIONARY_LOOKUP_PLAN.md`; no Cloudflare / Supabase / Stripe / DeepSeek changes; final pushed commit hash is reported in the final response |
+| This task | Docs only: adds `docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md`, `docs/ops/AGENT_CLOSEOUT_CHECKLIST.md`, and `scripts/agent-closeout-check.js`; links the architecture plan to the implementation plan; updates agent closeout rules; no application code or external backend changes; final pushed commit hash is reported in the final response |
 | Dictionary plan commit | `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main` |
 
 ## 3. Cloudflare 状态
@@ -111,3 +111,4 @@ Update triggers:
 | 2026-06-17 | Added baseline + delta update model for external platforms. |
 | 2026-06-17 | Docs-only dictionary lookup architecture plan task: Cloudflare / Supabase / Stripe / DeepSeek not touched; no secret added. |
 | 2026-06-17 | Dictionary lookup architecture plan commit `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main`. |
+| 2026-06-17 18:40 JST | Docs-only implementation plan and closeout mechanism task started on `main` at `591dedf618ddb99373bd05b2ac75950101cbadf0`; Cloudflare / Supabase / Stripe / DeepSeek not touched. |
