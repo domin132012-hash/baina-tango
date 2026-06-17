@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Small fixture only. Do not replace this with full JMdict in Git. -->
+<JMdict>
+  <entry>
+    <ent_seq>1000001</ent_seq>
+    <k_ele>
+      <keb>努力</keb>
+      <ke_pri>news1</ke_pri>
+    </k_ele>
+    <r_ele>
+      <reb>どりょく</reb>
+      <re_pri>news1</re_pri>
+    </r_ele>
+    <sense>
+      <pos>&n;</pos>
+      <pos>&vs;</pos>
+      <gloss>effort</gloss>
+      <gloss>exertion</gloss>
+    </sense>
+  </entry>
+  <entry>
+    <ent_seq>1000002</ent_seq>
+    <k_ele>
+      <keb>食べる</keb>
+      <ke_pri>ichi1</ke_pri>
+    </k_ele>
+    <r_ele>
+      <reb>たべる</reb>
+      <re_pri>ichi1</re_pri>
+    </r_ele>
+    <sense>
+      <pos>&v1;</pos>
+      <pos>&vt;</pos>
+      <gloss>to eat</gloss>
+    </sense>
+  </entry>
+  <entry>
+    <ent_seq>1000003</ent_seq>
+    <k_ele>
+      <keb>読む</keb>
+      <ke_pri>ichi1</ke_pri>
+    </k_ele>
+    <r_ele>
+      <reb>よむ</reb>
+      <re_pri>ichi1</re_pri>
+    </r_ele>
+    <sense>
+      <pos>&v5m;</pos>
+      <pos>&vt;</pos>
+      <gloss>to read</gloss>
+    </sense>
+  </entry>
+  <entry>
+    <ent_seq>1000004</ent_seq>
+    <k_ele>
+      <keb>高い</keb>
+      <ke_pri>ichi1</ke_pri>
+    </k_ele>
+    <r_ele>
+      <reb>たかい</reb>
+      <re_pri>ichi1</re_pri>
+    </r_ele>
+    <sense>
+      <pos>&adj-i;</pos>
+      <gloss>high</gloss>
+      <gloss>tall</gloss>
+    </sense>
+    <sense>
+      <pos>&adj-i;</pos>
+      <gloss>expensive</gloss>
+    </sense>
+  </entry>
+</JMdict>

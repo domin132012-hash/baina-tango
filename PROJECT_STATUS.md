@@ -4,6 +4,7 @@
 > 当前真实版本：`20260617-eju-essay-production`（main `79a2b7e`；EJU 缓存号仍含 `20260615-eju-essay-v4-entry-open` 注入脚本）。
 > ✅ 消息通知已改为 Cloudflare KV 远程配置，新增 `/admin/notices.html` 可视化后台。
 > ✅ EJU 記述作文批改 PR #2 已在用户完成真实 Preview 验收后合并并部署 Production。
+> ✅ 词典优先查词 PR #4 已合并并部署 Production；当前仍是 JMdict 小样本 MVP。
 
 ## 最近完成（EJU 記述作文批改）— 2026-06-17
 
@@ -56,7 +57,8 @@ PR #2 `feat(eju-essay): add EJU writing critique integration` 已从 draft 改 r
 
 | 模块 | 状态 | 备注 |
 |---|---|---|
-| 词典优先查词 | 🧪 MVP PR 准备中 | Issue #3 分支 `feat/dictionary-lookup-mvp` 已接入小型 JMdict fixture、`/api/dictionary/lookup` 和词典优先前端；完整 JMdict/D1/R2 导入仍是后续任务 |
+| 词典优先查词 | ✅ 小样本 MVP 已上线 | PR #4 merge commit `c340f75a5f8cf51dac691732a9c66e50cd22af09` 已部署 Production；`新增 -> 查词收藏` 先查 JMdict 小样本 fixture，命中不默认调用 AI；完整 JMdict/D1/R2/SQLite 导入仍是后续任务 |
+| 完整 JMdict 导入 | 🧪 Spike PR 中 | Issue #5 分支 `feat/full-jmdict-import-spike` 输出 `docs/architecture/DICTIONARY_FULL_IMPORT_SPIKE.md`、D1 schema 草案和 import 脚本；不得提交完整 JMdict/KANJIDIC2 原始文件或大型生成物 |
 | 代理 closeout 回写机制 | ✅ 已制度化 | 新增 `docs/ops/AGENT_CLOSEOUT_CHECKLIST.md`，并要求所有时间使用 JST、收尾必须 commit + push + 远端校验 |
 | Cloudflare 通知配置 | ✅ 线上配置已解决（用户确认） | 本轮未处理通知系统 |
 | 未部署年份灰色建设中 UI | 📝 待做 | 可后续让 Codex 做，但避免与 Claude 同时改 `assets/eju.js` 撞车 |

@@ -697,3 +697,92 @@ Entry template:
 
 ### Commit
 - Final commit hash reported in final response.
+
+---
+
+## 2026-06-17 23:44 JST / Codex / Issue #5 dictionary rollout closeout and full JMdict import spike
+
+### Task
+- Execute GitHub Issue #5: merge PR #4 small-sample JMdict lookup MVP, confirm Cloudflare Production, smoke test dictionary/EJU paths, then start a full JMdict import/storage/query spike.
+- Keep Phase 2 on `feat/full-jmdict-import-spike` as a draft PR only; do not merge it.
+- Do not commit full JMdict/KANJIDIC2 raw files or large generated artifacts, do not batch translate the dictionary, do not touch Stripe / Supabase / DeepSeek configuration, and do not process `RIKA_PLAN.md`.
+
+### Branch / commits
+- Phase 1 branch: `main`
+- Phase 2 branch: `feat/full-jmdict-import-spike`
+- Start commit: `caca731cd961d68216395e8b57b4bce7cb02202a`
+- PR #4 merge commit / main after merge: `c340f75a5f8cf51dac691732a9c66e50cd22af09`
+- End commit: final branch head reported in final response after commit + push
+- Issue: `#5` `[AGENT-TASK] Dictionary rollout closeout + full JMdict import spike`
+- Prior Issue: `#3`
+- PR #4: merged
+- Phase 2 draft PR: final URL reported in final response
+
+### Files changed
+- `.gitignore`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md`
+- `docs/architecture/DICTIONARY_FULL_IMPORT_SPIKE.md`
+- `scripts/dictionary/jmdict-import-spike.js`
+- `scripts/dictionary/d1-schema.sql`
+- `scripts/dictionary/fixtures/sample-fixture.xml`
+
+### External services touched
+- GitHub: PR #4 merge, branch push, draft PR, PR/Issue comments.
+- Cloudflare: read-only Production deployment verification and browser/API smoke; dashboard/settings/env not touched.
+- Supabase: not touched.
+- Stripe: not touched.
+- DeepSeek: not touched.
+- Other: EDRDG official public dictionary source downloaded to `/tmp` for local spike statistics only; no raw full data committed.
+
+### Phase 1 validation
+- Re-fetched PR #4 before merge and confirmed: open, non-draft, mergeable, clean, head `123e99090246d168d2b6606214493a0d8f955b2f`.
+- Merged PR #4 with merge commit `c340f75a5f8cf51dac691732a9c66e50cd22af09`.
+- Pulled latest `main`; latest main hash matches the PR #4 merge commit.
+- Cloudflare Production deployment `8f0ef91f-4dbb-4f21-a5f8-1dfcc66c5367` is Active, source `c340f75`, URL `https://baina-tango.pages.dev`.
+- Production API checks:
+  - `努力` -> hit, `aiCalled=false`
+  - `平和` -> miss, `canUseAiExplain=true`, `aiCalled=false`
+  - `食べる` -> hit, `aiCalled=false`
+  - `読まなかった` -> `読む`, `matchType=deinflected`, `aiCalled=false`
+- Production browser smoke:
+  - `新增 -> 查词收藏` shows the JMdict small-sample MVP notice.
+  - `努力` renders a dictionary hit with attribution.
+  - `平和` renders `当前小样本词典未收录`.
+  - Dictionary hit flow made no `/api/ai-lookup-word` request.
+  - `学习 -> 真题试炼 -> 日本語 -> 記述` opens.
+  - Browser console/page errors: none.
+
+### Phase 2 spike validation
+- Official source checks:
+  - `https://www.edrdg.org/pub/Nihongo/JMdict_e.gz` is reachable; `Last-Modified: Wed, 17 Jun 2026 03:30:21 GMT`.
+  - `https://www.edrdg.org/pub/Nihongo/kanjidic2.xml.gz` is reachable; `Last-Modified: Wed, 17 Jun 2026 03:30:33 GMT`.
+  - `https://ftp.edrdg.org/...` had a TLS certificate host mismatch, so the spike records `www.edrdg.org` as the HTTPS download host.
+- Local `/tmp` full JMdict analysis:
+  - `JMdict_e.gz` SHA-256 `8feac9cc6eda31a737e5e89a4aa876189d16a49443bdde3a86ec6a85392ccf6d`
+  - source created date `2026-06-17`
+  - compressed size `10,471,251` bytes; decompressed XML size `62,606,784` bytes
+  - rough counts: `217,554` entries, `251,760` senses, `231,559` kanji elements, `264,163` reading elements
+- `node --check scripts/dictionary/jmdict-import-spike.js`
+- `node scripts/dictionary/jmdict-import-spike.js --input scripts/dictionary/fixtures/sample-fixture.xml --out /tmp/baina-jmdict-fixture-spike`
+- `node scripts/dictionary/jmdict-import-spike.js --input /tmp/.../JMdict_e.gz --out /tmp/baina-jmdict-full-spike --max-entries 1000`
+- Final closeout validation pending before commit: `git diff --check`, `node scripts/agent-closeout-check.js`, secret scan, and remote verification.
+
+### Bridge usage summary
+- Used `codex-preflight` and read `.codex-context-pack.json` before source inspection.
+- Used `repo-map` for repository orientation.
+- Used `bridge-meter status` to confirm no bridge job was running.
+- Used bridge only for context compression/repo orientation; original files, GitHub state, Cloudflare deployment state, Production smoke, validation, edits, and secret scan were handled directly by Codex.
+
+### Remaining risks
+- Full JMdict/KANJIDIC2 is not deployed; this branch is a spike with docs, schema draft, import analysis script, and small fixture only.
+- The spike parser is dependency-free and regex-based for shape analysis; production import should use a streaming XML parser and entity-aware validation.
+- D1 row count/index sizing needs a real staging import benchmark before final schema/index commitments.
+- Phase 2 draft PR must not be merged without user validation.
+- `RIKA_PLAN.md` remains unrelated and untracked; intentionally not processed.
+
+### Commit
+- Final commit hash reported in final response.

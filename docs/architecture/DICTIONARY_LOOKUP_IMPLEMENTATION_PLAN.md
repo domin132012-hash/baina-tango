@@ -2,7 +2,9 @@
 
 本文件是 `docs/architecture/DICTIONARY_LOOKUP_PLAN.md` 的执行层计划。目标是把普通查词改成“词典优先、AI 增强”，先做可上线的 JMdict 查词 MVP，再分阶段补中文释义、AI 语境解释和 App 离线包。
 
-Issue #3 分支 `feat/dictionary-lookup-mvp` 已完成第一阶段小型 fixture MVP：新增 `/api/dictionary/lookup`、JMdict sample fixture，以及普通查词的词典优先前端。完整 JMdict、KANJIDIC2、D1/R2/SQLite、批量中文释义和 AI explain 仍是后续阶段。
+Issue #3 / PR #4 已完成第一阶段小型 fixture MVP，并在 2026-06-17 23:35 JST 合并部署到 Production：新增 `/api/dictionary/lookup`、JMdict sample fixture，以及普通查词的词典优先前端。完整 JMdict、KANJIDIC2、D1/R2/SQLite、批量中文释义和 AI explain 仍是后续阶段。
+
+Issue #5 的完整 JMdict 导入 / 存储 / 查询 spike 见 `docs/architecture/DICTIONARY_FULL_IMPORT_SPIKE.md`。该 spike 推荐 Cloudflare R2 保存 raw source 与 SQLite artifact，Cloudflare D1 保存网站查询结构化索引；当前只提交文档、schema 草案、import 脚本和小 fixture，不提交完整 JMdict/KANJIDIC2 原始文件或大型生成物。
 
 ## 0. Issue #3 MVP 状态（2026-06-17 JST）
 

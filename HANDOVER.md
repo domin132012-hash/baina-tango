@@ -17,7 +17,8 @@
 - 理科剩余 6 套暂缓：2018-1、2018-2、2019-1、2020-2、2024-1、2025-1。
 - 综合科目：2024 一套 MVP 已完成并上线（见下）。
 - EJU 記述作文：PR #2 已在用户完成真实 Cloudflare Branch Preview 验收后合并到 `main`，Production 已部署 active。入口为 `学习 → 真题试炼 → 日本語 → 記述`。
-- 词典优先查词：架构计划在 `docs/architecture/DICTIONARY_LOOKUP_PLAN.md`，执行计划在 `docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md`。Issue #3 分支 `feat/dictionary-lookup-mvp` 已接入 JMdict 小型 fixture、`GET /api/dictionary/lookup` 和普通查词的词典优先前端；命中词典不默认调用 AI，未命中只提示可尝试 AI 解释。完整 JMdict/KANJIDIC2、D1/R2/SQLite 和批量中文释义仍未接入。
+- 词典优先查词：架构计划在 `docs/architecture/DICTIONARY_LOOKUP_PLAN.md`，执行计划在 `docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md`。PR #4 已合并到 `main`，merge commit `c340f75a5f8cf51dac691732a9c66e50cd22af09`，Cloudflare Production deployment `8f0ef91f-4dbb-4f21-a5f8-1dfcc66c5367` source `c340f75` 已通过 smoke。当前 Production 仍是 JMdict 小型 fixture MVP：`努力`、`食べる`、`読む`、`高い`；`平和` 等基础词未命中是完整 JMdict 尚未导入，不是 API 故障。命中词典不默认调用 AI，未命中只提示可尝试 AI 解释。
+- 完整 JMdict 导入 spike：Issue #5 分支 `feat/full-jmdict-import-spike` 输出 `docs/architecture/DICTIONARY_FULL_IMPORT_SPIKE.md`、`scripts/dictionary/jmdict-import-spike.js`、`scripts/dictionary/d1-schema.sql` 和小 fixture。完整 JMdict/KANJIDIC2 原始文件、大型 SQLite/JSON 产物不得提交 GitHub；如需分析只能放 `/tmp`、R2 或显式 build cache。
 - 代理 closeout 机制：`docs/ops/AGENT_CLOSEOUT_CHECKLIST.md` 是非平凡任务收尾必读文件。任务完成前必须更新 GitHub 文档、commit + push、远端校验，并用 JST 记录时间。
 
 ### EJU 記述作文双知识库现状（2026-06-17）
