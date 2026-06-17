@@ -382,6 +382,32 @@ Entry template:
 
 ---
 
+## 2026-06-17 / Codex / Dictionary lookup architecture plan docs
+
+### Task
+- Create/supplement `docs/architecture/DICTIONARY_LOOKUP_PLAN.md` for a dictionary-first, AI-enhanced Japanese lookup system.
+- Keep this task docs-only: no code changes and no Cloudflare / Supabase / Stripe / DeepSeek configuration changes.
+
+### Files changed
+- `docs/architecture/DICTIONARY_LOOKUP_PLAN.md` — added the architecture plan covering JMdict/KANJIDIC2 source choices, CC BY-SA 4.0 license strategy, deinflection, result ranking, sense display, website/App architecture, version updates, and staged AI translation.
+- `AGENT_SYNC_BOARD.md` — marked the task as docs only and recorded that Cloudflare / Supabase / Stripe / DeepSeek were not touched.
+- `AGENT_WORKLOG.md` — appended this worklog entry.
+
+### Validation
+- `git diff --check` passed.
+- Required-term coverage check passed for JMdict, KANJIDIC2, EDICT, CC BY-SA 4.0, ShareAlike, deinflection, ranking, SQLite, checksum, version switch, `ai_translated`, and `reviewed`.
+- Secret-pattern scan over changed docs found no raw secret values added. Existing historical docs contain variable names and masked examples only.
+- `git ls-remote origin refs/heads/main` to be checked after push.
+
+### Risks / next steps
+- License interpretation should still be confirmed by the project owner before publishing derived Chinese dictionary data.
+- AI-translated Chinese glosses should be treated conservatively as CC BY-SA 4.0 governed derivative data unless legal review decides otherwise.
+
+### Commit
+- pending; final pushed commit hash reported in the final response.
+
+---
+
 ## 2026-06-16 / Codex / PR #2 Invalid header 收口补丁
 
 ### Task
