@@ -4,39 +4,40 @@
 > do not recheck Supabase / Stripe unless the task touches them, a related fault appears, or the recorded status is older than 30 days and the task depends on that platform.
 > Never record API keys, service role keys, JWT secrets, session tokens, customer data, payment records, card data, or raw secret values.
 
-Last updated: 2026-06-17 20:50 JST by ChatGPT/GitHub connector
+Last updated: 2026-06-17 23:05 JST by Codex
 
 ## 1. 当前锁定状态
 
 | Area | Status | Note |
 |---|---|---|
-| Repository docs | Unlocked | Current task records ChatGPT manager direct GitHub task-writing preference |
-| Application code | Locked by task scope | Do not change code in this task |
-| Cloudflare | Not touched in this task | Existing deployment status carried forward; no dashboard/API recheck |
+| Repository docs | Unlocked | Current task records PR #4 Cloudflare Preview validation and ready-for-review state |
+| Application code | Unlocked for Issue #3 scope only | Dictionary lookup API and ordinary lookup frontend only |
+| Cloudflare | Code only, dashboard not touched | New Pages Function code under `functions/api/dictionary/`; no deployment/settings/env changes by agent |
 | Supabase | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
 | Stripe | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
-| DeepSeek | Not touched in this task | No backend, secret, or API changes |
+| DeepSeek | Not touched in this task | No backend, secret, or API changes; normal lookup does not call AI by default |
 
 ## 2. GitHub 状态
 
 | Item | Value |
 |---|---|
 | Repository | `domin132012-hash/baina-tango` |
-| Current branch | `main` |
-| Main latest hash at task start | `59b99765527f2ae87e934de8300365a4ef89d3f6` |
-| Current task | Record ChatGPT manager default: when user says to write instructions in the repo, ChatGPT should create/update the GitHub Issue or task document directly |
-| Latest relevant commit | `ab7f366` docs: record ChatGPT repository task-writing preference |
-| Latest relevant commit | `0b4f74a` docs: add manager task-writing preference to agents rules |
+| Current branch | `feat/dictionary-lookup-mvp` |
+| Main latest hash at task start | `caca731cd961d68216395e8b57b4bce7cb02202a` |
+| Current task | Cloudflare Preview validation for PR #4 JMdict sample MVP wording patch |
+| Issue | `#3` `[AGENT-TASK] JMdict lookup MVP: dictionary-first lookup` |
+| PR | `#4` `https://github.com/domin132012-hash/baina-tango/pull/4` |
+| Latest relevant commit | `c294976` docs: clarify dictionary lookup sample scope |
 | PR #2 | `MERGED`; merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` |
-| This task | Docs only: adds `docs/ops/CHATGPT_TASK_WRITING_PREFERENCE.md`, updates `AGENTS.md`, and updates closeout records; no application code or external backend changes; final pushed commit hash is reported in the final response |
+| This task | Preview validation + closeout: Cloudflare Pages Preview for PR #4 is updated to source `c294976`; lookup sample-scope wording and sample-miss behavior are verified; PR #4 can be marked ready, but must not be merged without user confirmation |
 | Dictionary plan commit | `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main` |
-| External services touched - GitHub | Documentation commits only |
-| External services touched - Cloudflare | Not touched |
+| External services touched - GitHub | Issue comment and PR state update only; no merge |
+| External services touched - Cloudflare | Read-only Preview verification; dashboard not touched |
 | External services touched - Supabase | Not touched |
 | External services touched - Stripe | Not touched |
 | External services touched - DeepSeek | Not touched |
-| Current status | ChatGPT manager task-writing preference is documented; `AGENTS.md` now says repo-writing requests should be handled directly through GitHub unless the user asks for text only |
-| Current blocker | None; this task is docs-only preference recording |
+| Current status | Cloudflare Preview `https://8c882ad2.baina-tango.pages.dev` and Branch Preview `https://feat-dictionary-lookup-mvp.baina-tango.pages.dev` report source `c294976`; sample MVP notice visible; `平和` shows small-sample miss; `努力` / `食べる` / `読まなかった` pass; EJU 記述 entry opens; PR #4 is ready for review after final push |
+| Current blocker | Awaiting user final confirmation; do not merge PR #4 |
 
 ## 3. Cloudflare 状态
 
@@ -49,6 +50,7 @@ Last updated: 2026-06-17 20:50 JST by ChatGPT/GitHub connector
 | Production deployment | `aa904346-7139-4f49-9cc8-d916213b5725`, source `3ca722e`, URL `https://baina-tango.pages.dev`, last known Active |
 | Previous app merge deployment | `1c5b2430-6b20-4334-8e04-e9fb2243dbca`, source `79a2b7e` |
 | PR #2 Preview deployment | `7a85773e-6a2d-44e6-92e2-a8aed5520b7d`, source `dea412c` |
+| PR #4 Preview deployment | `8c882ad2-3432-4d21-a422-be0357eedb19`, source `c294976`, URL `https://8c882ad2.baina-tango.pages.dev`, branch URL `https://feat-dictionary-lookup-mvp.baina-tango.pages.dev`, status successful |
 
 Update triggers:
 - New Preview or Production deployment.
@@ -111,6 +113,10 @@ Update triggers:
 | PR #2 Preview logged-in `analyze` | Passed | User reported real Branch Preview validation |
 | PR #2 Preview logged-in `follow-up` | Passed | User reported real Branch Preview validation |
 | Production unauthenticated smoke | Passed | Agent verified 2026-06-17 in previous task |
+| PR #4 Cloudflare Preview sample MVP notice | Passed | Agent verified 2026-06-17 23:05 JST on source `c294976` |
+| PR #4 Cloudflare Preview `平和` sample miss | Passed | Shows `当前小样本词典未收录，可等待完整 JMdict 接入或尝试 AI 解释` |
+| PR #4 Cloudflare Preview sample hits | Passed | `努力` / `食べる` exact hits; `読まなかった` deinflects to `読む` |
+| PR #4 Cloudflare Preview EJU 記述 entry | Passed | `学习 -> 真题试炼 -> 日本語 -> 記述` opens; console errors none |
 
 ## 8. 最近事件流水
 
@@ -124,3 +130,7 @@ Update triggers:
 | 2026-06-17 18:40 JST | Docs-only implementation plan and closeout mechanism task started on `main` at `591dedf618ddb99373bd05b2ac75950101cbadf0`; Cloudflare / Supabase / Stripe / DeepSeek not touched. |
 | 2026-06-17 20:20 JST | GitHub Issue task protocol closeout backfill started on `main` at `326a4bd49c278505eb15339a610ed60583544cd7`; Cloudflare / Supabase / Stripe / DeepSeek not touched. |
 | 2026-06-17 20:50 JST | ChatGPT manager task-writing preference recorded: repo-writing requests now mean direct GitHub Issue/task-file write by default unless user asks for text only; Cloudflare / Supabase / Stripe / DeepSeek not touched. |
+| 2026-06-17 20:57 JST | Issue #3 JMdict lookup MVP implemented on `feat/dictionary-lookup-mvp`; Cloudflare code changed only, dashboard not touched; Supabase / Stripe / DeepSeek not touched. |
+| 2026-06-17 21:00 JST | Draft PR #4 opened for Issue #3: `https://github.com/domin132012-hash/baina-tango/pull/4`; no merge performed. |
+| 2026-06-17 21:11 JST | PR #4 wording patched to state this is a JMdict small-sample MVP only; `平和`-style misses are expected until full JMdict import. |
+| 2026-06-17 23:05 JST | Cloudflare Preview for PR #4 verified at source `c294976`: `https://8c882ad2.baina-tango.pages.dev`; PR #4 ready can be enabled after closeout push; no merge performed. |

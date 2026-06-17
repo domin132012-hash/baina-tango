@@ -1,0 +1,172 @@
+import { DICTIONARY_SOURCE, SAMPLE_ENTRIES } from "./_sample-data.js";
+
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Allow-Methods": "GET, OPTIONS"
+};
+
+function json(status, body) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      ...CORS_HEADERS,
+      "Content-Type": "application/json; charset=utf-8"
+    }
+  });
+}
+
+function normalizeQuery(value) {
+  return String(value || "").trim().replace(/[　\s]+/g, "");
+}
+
+function toHiragana(value) {
+  return String(value || "").replace(/[ァ-ン]/g, (ch) =>
+    String.fromCharCode(ch.charCodeAt(0) - 0x60)
+  );
+}
+
+function deinflect(query) {
+  const rules = [
+    { suffix: "まなかった", replacement: "む", note: "godan negative past" },
+    { suffix: "まない", replacement: "む", note: "godan negative" },
+    { suffix: "んだ", replacement: "む", note: "godan past" },
+    { suffix: "んで", replacement: "む", note: "godan te-form" },
+    { suffix: "なかった", replacement: "る", note: "ichidan negative past" },
+    { suffix: "ない", replacement: "る", note: "ichidan negative" },
+    { suffix: "ました", replacement: "る", note: "masu past" },
+    { suffix: "ます", replacement: "る", note: "masu form" },
+    { suffix: "かった", replacement: "い", note: "i-adjective past" },
+    { suffix: "くなかった", replacement: "い", note: "i-adjective negative past" },
+    { suffix: "くない", replacement: "い", note: "i-adjective negative" },
+    { suffix: "くて", replacement: "い", note: "i-adjective te-form" }
+  ];
+  const candidates = [];
+  for (const rule of rules) {
+    if (query.length > rule.suffix.length && query.endsWith(rule.suffix)) {
+      candidates.push({
+        form: query.slice(0, -rule.suffix.length) + rule.replacement,
+        matchType: "deinflected",
+        rankReason: `surface form -> deinflection -> dictionary lookup (${rule.note})`,
+        deinflection: {
+          surface: query,
+          dictionaryForm: query.slice(0, -rule.suffix.length) + rule.replacement,
+          rule: rule.note
+        }
+      });
+    }
+  }
+  return candidates;
+}
+
+function lookupCandidates(query) {
+  const normalized = normalizeQuery(query);
+  const candidates = [
+    {
+      form: normalized,
+      matchType: "exact",
+      rankReason: "exact match"
+    }
+  ];
+  const hiragana = toHiragana(normalized);
+  if (hiragana && hiragana !== normalized) {
+    candidates.push({
+      form: hiragana,
+      matchType: "reading",
+      rankReason: "katakana normalized to hiragana reading match"
+    });
+  }
+  candidates.push(...deinflect(normalized), ...deinflect(hiragana));
+
+  const seen = new Set();
+  return candidates.filter((candidate) => {
+    const key = `${candidate.matchType}:${candidate.form}`;
+    if (!candidate.form || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function matchEntry(entry, candidate) {
+  const form = candidate.form;
+  const forms = new Set([entry.headword, ...(entry.forms || [])]);
+  const readings = new Set(entry.readings || []);
+
+  if (candidate.matchType === "exact" && forms.has(form)) return true;
+  if (candidate.matchType === "reading" && readings.has(form)) return true;
+  if (candidate.matchType === "deinflected" && forms.has(form)) return true;
+  if (forms.has(form)) return true;
+  if (readings.has(form)) return true;
+  return false;
+}
+
+function publicEntry(entry, candidate, mode) {
+  const senses = mode === "all" ? entry.senses : entry.senses.slice(0, 3);
+  return {
+    id: entry.id,
+    headword: entry.headword,
+    reading: entry.readings[0] || "",
+    readings: entry.readings,
+    partOfSpeech: entry.partOfSpeech,
+    senses,
+    source: DICTIONARY_SOURCE.source,
+    sourceVersion: DICTIONARY_SOURCE.sourceVersion,
+    license: DICTIONARY_SOURCE.license,
+    attribution: DICTIONARY_SOURCE.attribution,
+    attributionText: DICTIONARY_SOURCE.attributionText,
+    licenseUrl: DICTIONARY_SOURCE.licenseUrl,
+    matchType: candidate.matchType,
+    rankReason: candidate.rankReason,
+    deinflection: candidate.deinflection || null,
+    isCommon: !!entry.isCommon
+  };
+}
+
+function lookup(query, mode) {
+  const matches = [];
+  const seen = new Set();
+  for (const candidate of lookupCandidates(query)) {
+    for (const entry of SAMPLE_ENTRIES) {
+      if (!matchEntry(entry, candidate) || seen.has(entry.id)) continue;
+      seen.add(entry.id);
+      matches.push(publicEntry(entry, candidate, mode));
+    }
+  }
+  return matches.sort((a, b) => {
+    const rank = { exact: 0, reading: 1, deinflected: 2 };
+    return (rank[a.matchType] ?? 9) - (rank[b.matchType] ?? 9);
+  });
+}
+
+export async function onRequest(context) {
+  const { request } = context;
+  if (request.method === "OPTIONS") return json(200, { ok: true });
+  if (request.method !== "GET") return json(405, { error: "Method not allowed" });
+
+  const url = new URL(request.url);
+  const query = normalizeQuery(url.searchParams.get("q"));
+  const lang = url.searchParams.get("lang") || "zh";
+  const mode = url.searchParams.get("mode") === "all" ? "all" : "basic";
+
+  if (!query) {
+    return json(400, {
+      error: "Missing query",
+      fallbackAvailable: false,
+      canUseAiExplain: false
+    });
+  }
+
+  const entries = lookup(query, mode);
+  return json(200, {
+    query,
+    normalizedQuery: query,
+    lang,
+    mode,
+    entries,
+    results: entries,
+    fallbackAvailable: true,
+    canUseAiExplain: entries.length === 0,
+    aiCalled: false,
+    source: DICTIONARY_SOURCE
+  });
+}

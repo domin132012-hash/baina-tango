@@ -492,6 +492,172 @@ Entry template:
 
 ---
 
+## 2026-06-17 23:05 JST / Codex / PR #4 Cloudflare Preview validation
+
+### Task
+- Wait for Cloudflare Pages Preview for PR #4 to update to commit `c294976b67d1fac88481934920a44521631aaaa2`.
+- Verify the sample-MVP wording and dictionary lookup behavior on the Cloudflare Preview.
+- If the requested checks pass, mark PR #4 ready for review without merging.
+
+### Branch / commits
+- Branch: `feat/dictionary-lookup-mvp`
+- Start commit: `c294976b67d1fac88481934920a44521631aaaa2`
+- End commit: final commit reported in final response after commit + push
+- Issue: `#3`
+- PR: `#4` `https://github.com/domin132012-hash/baina-tango/pull/4`
+
+### Files changed
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+
+### External services touched
+- GitHub: Issue #3 comment, PR #4 ready-state update, branch push only.
+- Cloudflare: read-only Preview verification; dashboard not touched.
+- Supabase: not touched.
+- Stripe: not touched.
+- DeepSeek: not touched.
+- Other: not touched.
+
+### Validation
+- Cloudflare Pages PR comment/check reported latest commit `c294976`, status successful.
+- Preview URL: `https://8c882ad2.baina-tango.pages.dev`
+- Branch Preview URL: `https://feat-dictionary-lookup-mvp.baina-tango.pages.dev`
+- Browser checks on Cloudflare Preview:
+  - Lookup page clearly displays current JMdict small-sample MVP notice.
+  - `平和` shows `当前小样本词典未收录，可等待完整 JMdict 接入或尝试 AI 解释`.
+  - `努力` and `食べる` still return dictionary hits.
+  - `読まなかった` still deinflects to `読む`.
+  - Dictionary hit flow does not default to AI; code path uses `/api/dictionary/lookup` and API returns `aiCalled=false`.
+  - `学习 -> 真题试炼 -> 日本語 -> 記述` opens the EJU writing entry.
+  - Browser console errors: none.
+- `git diff --check`
+- `node scripts/agent-closeout-check.js`
+- Secret scan over changed files.
+- Remote verification after push: final hash reported in final response.
+
+### Remaining risks
+- Full JMdict/KANJIDIC2 import remains future work.
+- PR #4 must not be merged until user final confirmation.
+- Cloudflare Preview was verified, but no production deployment was touched.
+
+### Commit
+- Final commit hash reported in final response.
+
+---
+
+## 2026-06-17 21:11 JST / Codex / PR #4 sample-MVP wording patch
+
+### Task
+- Apply the user acceptance follow-up for PR #4: make the lookup UI clearly state that the current dictionary is a JMdict small-sample MVP, not a full JMdict import.
+- Clarify that misses such as `平和` are expected because the fixture only contains `努力`, `食べる`, `読む`, and `高い`.
+- Do not start full JMdict import and do not merge.
+
+### Branch / commits
+- Branch: `feat/dictionary-lookup-mvp`
+- Start commit: `26e2d26c97701707f9cee339c2a13a1a32fe7ac0`
+- End commit: final commit reported in final response after commit + push
+- Issue: `#3`
+- PR: `#4` `https://github.com/domin132012-hash/baina-tango/pull/4`
+
+### Files changed
+- `index.html`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+
+### External services touched
+- GitHub: branch push, PR body update, and Issue #3 comment only.
+- Cloudflare: not touched.
+- Supabase: not touched.
+- Stripe: not touched.
+- DeepSeek: not touched.
+- Other: not touched.
+
+### Validation
+- `git diff --check`
+- `node --check functions/api/dictionary/_sample-data.js`
+- `node --check functions/api/dictionary/lookup.js`
+- Inline `index.html` script parse check via `new Function(...)`
+- Direct API sanity check: `平和` misses because sample fixture does not include it; sample hit still works.
+- `node scripts/agent-closeout-check.js`
+- Secret scan over changed files.
+
+### Remaining risks
+- Full JMdict/KANJIDIC2 import remains future work by design.
+- `平和` and other basic words outside the fixture will continue to miss until the next phase.
+- No merge performed.
+
+### Commit
+- Final commit hash reported in final response.
+
+---
+
+## 2026-06-17 20:57 JST / Codex / Issue #3 JMdict lookup MVP
+
+### Task
+- Execute GitHub Issue #3: implement dictionary-first JMdict lookup MVP on `feat/dictionary-lookup-mvp`.
+- Use a small fixture/sample dataset only; do not commit full JMdict/KANJIDIC2 files.
+- Make ordinary lookup call the dictionary first; dictionary hits do not call AI by default; misses show `未命中词典，可尝试 AI 解释`.
+
+### Branch / commits
+- Branch: `feat/dictionary-lookup-mvp`
+- Start commit: `caca731cd961d68216395e8b57b4bce7cb02202a`
+- End commit: final commit reported in final response after commit + push
+- Issue: `#3`
+- PR: `#4` `https://github.com/domin132012-hash/baina-tango/pull/4`
+
+### Files changed
+- `functions/api/dictionary/_sample-data.js`
+- `functions/api/dictionary/lookup.js`
+- `index.html`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md`
+
+### External services touched
+- GitHub: branch push, PR, and Issue #3 closeout comment only.
+- Cloudflare: code only, dashboard not touched.
+- Supabase: not touched.
+- Stripe: not touched.
+- DeepSeek: not touched.
+- Other: not touched.
+
+### Validation
+- `git diff --check`
+- `node --check functions/api/dictionary/_sample-data.js`
+- `node --check functions/api/dictionary/lookup.js`
+- `node --check functions/api/eju-essay/analyze.js`
+- `node --check functions/api/eju-essay/follow-up.js`
+- `node --check assets/eju-essay.js`
+- Inline `index.html` script parse check via `new Function(...)`
+- Direct API checks:
+  - `努力` -> dictionary hit, `aiCalled=false`
+  - `食べる` -> dictionary hit, `aiCalled=false`
+  - `読まなかった` -> `読む`, `matchType=deinflected`, `aiCalled=false`
+  - `nonexistent-word` -> miss, `aiCalled=false`
+- Browser checks on local temporary server:
+  - `新增 -> 查词收藏 -> 努力` shows dictionary hit and attribution.
+  - `食べる` shows dictionary hit and attribution.
+  - `読まなかった` shows deinflection `読まなかった -> 読む`.
+  - `存在しない語` shows `未命中词典，可尝试 AI 解释`.
+  - Console errors: none.
+- `node scripts/agent-closeout-check.js`
+- Secret scan: `rg -n "sk-|gho_|service role|JWT secret|session token|STRIPE_SECRET|WEBHOOK_SECRET|DEEPSEEK_API_KEY|SUPABASE_SERVICE_ROLE_KEY" .`
+
+### Remaining risks
+- MVP uses a tiny fixture, not full JMdict/KANJIDIC2.
+- Chinese gloss is intentionally `null` in fixture; frontend keeps and displays JMdict English gloss.
+- AI explain is only a user-trigger placeholder; no AI explain backend was added.
+- Cloudflare Pages preview/deployment is not manually triggered by this task.
+- Full D1/R2/SQLite import, license-page polish, ranking, and expanded deinflection remain future work.
+- `RIKA_PLAN.md` is unrelated and was not processed.
+
+### Commit
+- Final commit hash reported in final response.
+
+---
+
 ## 2026-06-17 20:20 JST / Codex / Backfill closeout for GitHub Issue task protocol
 
 ### Task
