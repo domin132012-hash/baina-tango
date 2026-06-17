@@ -4,7 +4,7 @@
 > do not recheck Supabase / Stripe unless the task touches them, a related fault appears, or the recorded status is older than 30 days and the task depends on that platform.
 > Never record API keys, service role keys, JWT secrets, session tokens, customer data, payment records, card data, or raw secret values.
 
-Last updated: 2026-06-17 20:57 JST by Codex
+Last updated: 2026-06-17 21:00 JST by Codex
 
 ## 1. 当前锁定状态
 
@@ -26,10 +26,8 @@ Last updated: 2026-06-17 20:57 JST by Codex
 | Main latest hash at task start | `caca731cd961d68216395e8b57b4bce7cb02202a` |
 | Current task | Execute GitHub Issue #3: JMdict lookup MVP with dictionary-first ordinary lookup |
 | Issue | `#3` `[AGENT-TASK] JMdict lookup MVP: dictionary-first lookup` |
-| PR | Pending until branch is pushed; final PR URL will be recorded after creation |
-| Latest relevant commit | pending; final branch hash reported in closeout |
-| Latest relevant commit | `ab7f366` docs: record ChatGPT repository task-writing preference |
-| Latest relevant commit | `0b4f74a` docs: add manager task-writing preference to agents rules |
+| PR | `#4` `https://github.com/domin132012-hash/baina-tango/pull/4` |
+| Latest relevant commit | `1fe19ce` feat(dictionary): add JMdict lookup MVP |
 | PR #2 | `MERGED`; merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` |
 | This task | Code + docs for dictionary-first lookup MVP: adds `/api/dictionary/lookup`, small JMdict fixture data, and updates ordinary lookup UI so dictionary hits do not call AI by default |
 | Dictionary plan commit | `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main` |
@@ -128,3 +126,4 @@ Update triggers:
 | 2026-06-17 20:20 JST | GitHub Issue task protocol closeout backfill started on `main` at `326a4bd49c278505eb15339a610ed60583544cd7`; Cloudflare / Supabase / Stripe / DeepSeek not touched. |
 | 2026-06-17 20:50 JST | ChatGPT manager task-writing preference recorded: repo-writing requests now mean direct GitHub Issue/task-file write by default unless user asks for text only; Cloudflare / Supabase / Stripe / DeepSeek not touched. |
 | 2026-06-17 20:57 JST | Issue #3 JMdict lookup MVP implemented on `feat/dictionary-lookup-mvp`; Cloudflare code changed only, dashboard not touched; Supabase / Stripe / DeepSeek not touched. |
+| 2026-06-17 21:00 JST | Draft PR #4 opened for Issue #3: `https://github.com/domin132012-hash/baina-tango/pull/4`; no merge performed. |

@@ -504,7 +504,7 @@ Entry template:
 - Start commit: `caca731cd961d68216395e8b57b4bce7cb02202a`
 - End commit: final commit reported in final response after commit + push
 - Issue: `#3`
-- PR: pending until branch is pushed; final PR URL reported after creation
+- PR: `#4` `https://github.com/domin132012-hash/baina-tango/pull/4`
 
 ### Files changed
 - `functions/api/dictionary/_sample-data.js`
