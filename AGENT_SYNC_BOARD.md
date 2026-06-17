@@ -25,7 +25,7 @@ Last updated: 2026-06-17 by Codex
 | Main latest hash | `3ca722ec49cc588370f9bd2ec0400a2f7a4e0fde` |
 | Docs closeout commit | `3ca722ec49cc588370f9bd2ec0400a2f7a4e0fde` |
 | PR #2 | `MERGED`; merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` |
-| This task | External platform sync docs; pending commit |
+| This task | External platform sync docs committed in this turn; use `git log -1` / final report for exact latest commit hash |
 
 ## 3. Cloudflare 状态
 
