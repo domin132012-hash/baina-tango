@@ -492,6 +492,59 @@ Entry template:
 
 ---
 
+## 2026-06-17 23:05 JST / Codex / PR #4 Cloudflare Preview validation
+
+### Task
+- Wait for Cloudflare Pages Preview for PR #4 to update to commit `c294976b67d1fac88481934920a44521631aaaa2`.
+- Verify the sample-MVP wording and dictionary lookup behavior on the Cloudflare Preview.
+- If the requested checks pass, mark PR #4 ready for review without merging.
+
+### Branch / commits
+- Branch: `feat/dictionary-lookup-mvp`
+- Start commit: `c294976b67d1fac88481934920a44521631aaaa2`
+- End commit: final commit reported in final response after commit + push
+- Issue: `#3`
+- PR: `#4` `https://github.com/domin132012-hash/baina-tango/pull/4`
+
+### Files changed
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+
+### External services touched
+- GitHub: Issue #3 comment, PR #4 ready-state update, branch push only.
+- Cloudflare: read-only Preview verification; dashboard not touched.
+- Supabase: not touched.
+- Stripe: not touched.
+- DeepSeek: not touched.
+- Other: not touched.
+
+### Validation
+- Cloudflare Pages PR comment/check reported latest commit `c294976`, status successful.
+- Preview URL: `https://8c882ad2.baina-tango.pages.dev`
+- Branch Preview URL: `https://feat-dictionary-lookup-mvp.baina-tango.pages.dev`
+- Browser checks on Cloudflare Preview:
+  - Lookup page clearly displays current JMdict small-sample MVP notice.
+  - `平和` shows `当前小样本词典未收录，可等待完整 JMdict 接入或尝试 AI 解释`.
+  - `努力` and `食べる` still return dictionary hits.
+  - `読まなかった` still deinflects to `読む`.
+  - Dictionary hit flow does not default to AI; code path uses `/api/dictionary/lookup` and API returns `aiCalled=false`.
+  - `学习 -> 真题试炼 -> 日本語 -> 記述` opens the EJU writing entry.
+  - Browser console errors: none.
+- `git diff --check`
+- `node scripts/agent-closeout-check.js`
+- Secret scan over changed files.
+- Remote verification after push: final hash reported in final response.
+
+### Remaining risks
+- Full JMdict/KANJIDIC2 import remains future work.
+- PR #4 must not be merged until user final confirmation.
+- Cloudflare Preview was verified, but no production deployment was touched.
+
+### Commit
+- Final commit hash reported in final response.
+
+---
+
 ## 2026-06-17 21:11 JST / Codex / PR #4 sample-MVP wording patch
 
 ### Task
