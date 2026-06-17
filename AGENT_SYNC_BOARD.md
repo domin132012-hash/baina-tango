@@ -4,13 +4,13 @@
 > do not recheck Supabase / Stripe unless the task touches them, a related fault appears, or the recorded status is older than 30 days and the task depends on that platform.
 > Never record API keys, service role keys, JWT secrets, session tokens, customer data, payment records, card data, or raw secret values.
 
-Last updated: 2026-06-17 20:20 JST by Codex
+Last updated: 2026-06-17 20:50 JST by ChatGPT/GitHub connector
 
 ## 1. 当前锁定状态
 
 | Area | Status | Note |
 |---|---|---|
-| Repository docs | Unlocked | Current task backfills GitHub Issue task protocol closeout records only |
+| Repository docs | Unlocked | Current task records ChatGPT manager direct GitHub task-writing preference |
 | Application code | Locked by task scope | Do not change code in this task |
 | Cloudflare | Not touched in this task | Existing deployment status carried forward; no dashboard/API recheck |
 | Supabase | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
@@ -23,21 +23,20 @@ Last updated: 2026-06-17 20:20 JST by Codex
 |---|---|
 | Repository | `domin132012-hash/baina-tango` |
 | Current branch | `main` |
-| Main latest hash at task start | `326a4bd49c278505eb15339a610ed60583544cd7` |
-| Current task | Backfill closeout for GitHub Issue task protocol |
-| Latest relevant commit | `814b8e9` docs: add agent issue task protocol |
-| Latest relevant commit | `ce7cfcf` docs: add agent task issue template |
-| Latest relevant commit | `326a4bd` docs: add GitHub issue task protocol rules |
+| Main latest hash at task start | `59b99765527f2ae87e934de8300365a4ef89d3f6` |
+| Current task | Record ChatGPT manager default: when user says to write instructions in the repo, ChatGPT should create/update the GitHub Issue or task document directly |
+| Latest relevant commit | `ab7f366` docs: record ChatGPT repository task-writing preference |
+| Latest relevant commit | `0b4f74a` docs: add manager task-writing preference to agents rules |
 | PR #2 | `MERGED`; merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` |
-| This task | Closeout docs only: updates `AGENT_SYNC_BOARD.md` and appends `AGENT_WORKLOG.md`; no application code or external backend changes; final pushed commit hash is reported in the final response |
+| This task | Docs only: adds `docs/ops/CHATGPT_TASK_WRITING_PREFERENCE.md`, updates `AGENTS.md`, and updates closeout records; no application code or external backend changes; final pushed commit hash is reported in the final response |
 | Dictionary plan commit | `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main` |
-| External services touched - GitHub | Documentation commits only for prior protocol work; this task uses commit + push only |
+| External services touched - GitHub | Documentation commits only |
 | External services touched - Cloudflare | Not touched |
 | External services touched - Supabase | Not touched |
 | External services touched - Stripe | Not touched |
 | External services touched - DeepSeek | Not touched |
-| Current status | GitHub Issue task protocol is committed; Issue template is committed; `AGENTS.md` includes GitHub Issue assignment rules |
-| Current blocker | None; this task only backfills closeout records |
+| Current status | ChatGPT manager task-writing preference is documented; `AGENTS.md` now says repo-writing requests should be handled directly through GitHub unless the user asks for text only |
+| Current blocker | None; this task is docs-only preference recording |
 
 ## 3. Cloudflare 状态
 
@@ -124,3 +123,4 @@ Update triggers:
 | 2026-06-17 | Dictionary lookup architecture plan commit `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main`. |
 | 2026-06-17 18:40 JST | Docs-only implementation plan and closeout mechanism task started on `main` at `591dedf618ddb99373bd05b2ac75950101cbadf0`; Cloudflare / Supabase / Stripe / DeepSeek not touched. |
 | 2026-06-17 20:20 JST | GitHub Issue task protocol closeout backfill started on `main` at `326a4bd49c278505eb15339a610ed60583544cd7`; Cloudflare / Supabase / Stripe / DeepSeek not touched. |
+| 2026-06-17 20:50 JST | ChatGPT manager task-writing preference recorded: repo-writing requests now mean direct GitHub Issue/task-file write by default unless user asks for text only; Cloudflare / Supabase / Stripe / DeepSeek not touched. |
