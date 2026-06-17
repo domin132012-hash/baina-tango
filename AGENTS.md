@@ -8,7 +8,8 @@ For every non-trivial task in this repository, start by reading:
 4. `AGENT_SYNC_BOARD.md` — live GitHub / Cloudflare / Supabase / Stripe / DeepSeek / user acceptance state
 5. `docs/ops/AGENT_CLOSEOUT_CHECKLIST.md` — required closeout and GitHub writeback checklist
 6. `docs/ops/AGENT_TASK_ISSUE_PROTOCOL.md` — required protocol when the user assigns a GitHub Issue task
-7. Relevant plan files, such as `RIKA_PLAN.md`, `SOGO_PLAN.md`, or task-specific notes if present
+7. `docs/ops/CHATGPT_TASK_WRITING_PREFERENCE.md` — manager-side default for writing task instructions directly into GitHub when the user asks
+8. Relevant plan files, such as `RIKA_PLAN.md`, `SOGO_PLAN.md`, or task-specific notes if present
 
 ## Closeout Rules
 
@@ -36,6 +37,15 @@ When the user assigns a GitHub Issue number, the Issue is the task ticket and th
 - If the Issue body conflicts with the latest user/chat instruction, follow the latest user/chat instruction and record the change in an Issue comment or final closeout.
 - At closeout, comment on the Issue with JST time, branch, start/end commit, files changed, external services touched, validation, user acceptance, remaining risks, commit/merge hash, and remote verification.
 - If the task changes code or deployable behavior, prefer a branch/PR linked to the Issue. Docs-only tasks may commit to `main` only when the user explicitly allows it.
+
+## ChatGPT / Manager Task Writing Preference
+
+When the user tells ChatGPT/manager to "write the instruction in the repository", "go into the repo and write the instruction", or equivalent wording, the default action is to create or update the GitHub Issue / repository task document directly through the GitHub connection.
+
+- Do not only return a copy-paste instruction block unless the user explicitly asks for text only.
+- After writing to GitHub, report the exact Issue number, file path, or commit hash.
+- The execution agent should still only execute the Issue number or task path explicitly provided by the user/manager.
+- If the user says "先不要写进 GitHub，只给我文本", "只生成指令", "我自己复制", or "不要创建 Issue", provide chat text only and do not write to GitHub.
 
 ## Agent Sync Board Rules
 
