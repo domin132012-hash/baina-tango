@@ -4,7 +4,7 @@
 > do not recheck Supabase / Stripe unless the task touches them, a related fault appears, or the recorded status is older than 30 days and the task depends on that platform.
 > Never record API keys, service role keys, JWT secrets, session tokens, customer data, payment records, card data, or raw secret values.
 
-Last updated: 2026-06-17 21:00 JST by Codex
+Last updated: 2026-06-17 21:11 JST by Codex
 
 ## 1. 当前锁定状态
 
@@ -24,19 +24,19 @@ Last updated: 2026-06-17 21:00 JST by Codex
 | Repository | `domin132012-hash/baina-tango` |
 | Current branch | `feat/dictionary-lookup-mvp` |
 | Main latest hash at task start | `caca731cd961d68216395e8b57b4bce7cb02202a` |
-| Current task | Execute GitHub Issue #3: JMdict lookup MVP with dictionary-first ordinary lookup |
+| Current task | Patch PR #4 wording so JMdict fixture MVP is not mistaken for full dictionary import |
 | Issue | `#3` `[AGENT-TASK] JMdict lookup MVP: dictionary-first lookup` |
 | PR | `#4` `https://github.com/domin132012-hash/baina-tango/pull/4` |
-| Latest relevant commit | `1fe19ce` feat(dictionary): add JMdict lookup MVP |
+| Latest relevant commit | `26e2d26` docs: record dictionary lookup PR closeout |
 | PR #2 | `MERGED`; merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` |
-| This task | Code + docs for dictionary-first lookup MVP: adds `/api/dictionary/lookup`, small JMdict fixture data, and updates ordinary lookup UI so dictionary hits do not call AI by default |
+| This task | Minimal wording patch for PR #4: clearly labels the lookup as a JMdict small-sample MVP and clarifies sample misses such as `平和` are expected until full JMdict import |
 | Dictionary plan commit | `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main` |
 | External services touched - GitHub | Branch push and PR only; Issue #3 final comment pending closeout |
 | External services touched - Cloudflare | Code only, dashboard not touched |
 | External services touched - Supabase | Not touched |
 | External services touched - Stripe | Not touched |
 | External services touched - DeepSeek | Not touched |
-| Current status | JMdict lookup MVP implemented with small sample fixture; `努力` and `食べる` hit dictionary; `読まなかった` deinflects to `読む`; misses show `未命中词典，可尝试 AI 解释`; attribution visible |
+| Current status | JMdict lookup MVP uses only fixture sample words `努力`, `食べる`, `読む`, `高い`; page now says full dictionary import is next phase; sample misses show the small-sample explanation; attribution visible |
 | Current blocker | None for PR review; full JMdict import/D1/R2 production data remains future work |
 
 ## 3. Cloudflare 状态
@@ -127,3 +127,4 @@ Update triggers:
 | 2026-06-17 20:50 JST | ChatGPT manager task-writing preference recorded: repo-writing requests now mean direct GitHub Issue/task-file write by default unless user asks for text only; Cloudflare / Supabase / Stripe / DeepSeek not touched. |
 | 2026-06-17 20:57 JST | Issue #3 JMdict lookup MVP implemented on `feat/dictionary-lookup-mvp`; Cloudflare code changed only, dashboard not touched; Supabase / Stripe / DeepSeek not touched. |
 | 2026-06-17 21:00 JST | Draft PR #4 opened for Issue #3: `https://github.com/domin132012-hash/baina-tango/pull/4`; no merge performed. |
+| 2026-06-17 21:11 JST | PR #4 wording patched to state this is a JMdict small-sample MVP only; `平和`-style misses are expected until full JMdict import. |

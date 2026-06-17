@@ -492,6 +492,52 @@ Entry template:
 
 ---
 
+## 2026-06-17 21:11 JST / Codex / PR #4 sample-MVP wording patch
+
+### Task
+- Apply the user acceptance follow-up for PR #4: make the lookup UI clearly state that the current dictionary is a JMdict small-sample MVP, not a full JMdict import.
+- Clarify that misses such as `平和` are expected because the fixture only contains `努力`, `食べる`, `読む`, and `高い`.
+- Do not start full JMdict import and do not merge.
+
+### Branch / commits
+- Branch: `feat/dictionary-lookup-mvp`
+- Start commit: `26e2d26c97701707f9cee339c2a13a1a32fe7ac0`
+- End commit: final commit reported in final response after commit + push
+- Issue: `#3`
+- PR: `#4` `https://github.com/domin132012-hash/baina-tango/pull/4`
+
+### Files changed
+- `index.html`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+
+### External services touched
+- GitHub: branch push, PR body update, and Issue #3 comment only.
+- Cloudflare: not touched.
+- Supabase: not touched.
+- Stripe: not touched.
+- DeepSeek: not touched.
+- Other: not touched.
+
+### Validation
+- `git diff --check`
+- `node --check functions/api/dictionary/_sample-data.js`
+- `node --check functions/api/dictionary/lookup.js`
+- Inline `index.html` script parse check via `new Function(...)`
+- Direct API sanity check: `平和` misses because sample fixture does not include it; sample hit still works.
+- `node scripts/agent-closeout-check.js`
+- Secret scan over changed files.
+
+### Remaining risks
+- Full JMdict/KANJIDIC2 import remains future work by design.
+- `平和` and other basic words outside the fixture will continue to miss until the next phase.
+- No merge performed.
+
+### Commit
+- Final commit hash reported in final response.
+
+---
+
 ## 2026-06-17 20:57 JST / Codex / Issue #3 JMdict lookup MVP
 
 ### Task

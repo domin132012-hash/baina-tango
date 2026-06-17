@@ -169,7 +169,7 @@
 
     <section class="panel hidden" id="view-learn"><h2>新学词汇</h2><div class="row"><div><label>选择要新学的文件夹</label><select id="learnFolderSelect"></select></div><div><label>本轮新学数量</label><input type="number" id="learnLimit" value="30" min="1" max="500" /></div><div><label>练习模式</label><select id="learnModeSelect"><option value="default">默认模式</option><option value="listen">🎧 听声辨词</option><option value="read">👁 看词识义</option></select></div><div class="fit"><label>&nbsp;</label><button class="primary" id="startLearnBtn">开始新学</button></div></div><div id="learnFolderInfo" class="hint" style="margin-top:8px"></div><div id="learnMount"></div></section>
 
-    <section class="panel hidden" id="view-lookup"><h2>查词收藏</h2><p class="hint">输入日语单词后，系统会先查 JMdict 小型样本词典。命中词典时不会默认调用 AI；未命中时只提示可尝试 AI 解释。</p><div class="row"><div><label>查询单词</label><input id="lookupQuery" placeholder="例如：努力 / 食べる / 読まなかった" maxlength="24" /></div><div class="fit"><label>&nbsp;</label><button class="primary" id="lookupBtn">查询</button></div></div><div class="row" style="margin-top:10px"><div><label>收藏到文件夹</label><select id="lookupFolderSelect"></select></div><div><label>或者新建文件夹名</label><input id="lookupNewFolderName" placeholder="例如：查词收藏 / 今日生词" /></div></div><p class="hint" id="lookupStatus"></p><div id="lookupResults" class="grid" style="margin-top:12px"></div></section>
+    <section class="panel hidden" id="view-lookup"><h2>查词收藏</h2><p class="hint">输入日语单词后，系统会先查 JMdict 小型样本词典。命中词典时不会默认调用 AI；未命中时只提示可尝试 AI 解释。当前为 JMdict 小样本 MVP，仅用于验证查词链路；完整词典导入将在下一阶段接入。</p><div class="row"><div><label>查询单词</label><input id="lookupQuery" placeholder="例如：努力 / 食べる / 読まなかった" maxlength="24" /></div><div class="fit"><label>&nbsp;</label><button class="primary" id="lookupBtn">查询</button></div></div><div class="row" style="margin-top:10px"><div><label>收藏到文件夹</label><select id="lookupFolderSelect"></select></div><div><label>或者新建文件夹名</label><input id="lookupNewFolderName" placeholder="例如：查词收藏 / 今日生词" /></div></div><p class="hint" id="lookupStatus"></p><div id="lookupResults" class="grid" style="margin-top:12px"></div></section>
 
     <section class="panel hidden" id="view-add">
       <h2>新增</h2>
@@ -1246,7 +1246,7 @@ async function lookupWord(){
   try{
     lookupCache=await lookupOnline(q);
     renderLookupResults();
-    $('lookupStatus').textContent=lookupCache.length?'词典命中：'+lookupCache.length+' 条结果。':'未命中词典，可尝试 AI 解释';
+    $('lookupStatus').textContent=lookupCache.length?'词典命中：'+lookupCache.length+' 条结果。':'当前小样本词典未收录，可等待完整 JMdict 接入或尝试 AI 解释';
   }catch(e){
     lookupCache=[];
     lookupMissState=null;
@@ -1268,7 +1268,7 @@ async function lookupOnline(q){
   }
   const entries=Array.isArray(data.entries)?data.entries:[];
   if(!entries.length){
-    lookupMissState={query:q,message:'未命中词典，可尝试 AI 解释',attribution:data.source&&data.source.attributionText?data.source.attributionText:'Dictionary data: JMdict / EDRDG, CC BY-SA 4.0'};
+    lookupMissState={query:q,message:'当前小样本词典未收录，可等待完整 JMdict 接入或尝试 AI 解释',attribution:data.source&&data.source.attributionText?data.source.attributionText:'Dictionary data: JMdict / EDRDG, CC BY-SA 4.0'};
     return [];
   }
   return entries.map(dictionaryEntryToLookupItem);
