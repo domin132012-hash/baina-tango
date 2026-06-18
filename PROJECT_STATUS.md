@@ -59,8 +59,8 @@ PR #2 `feat(eju-essay): add EJU writing critique integration` 已从 draft 改 r
 | 模块 | 状态 | 备注 |
 |---|---|---|
 | 词典优先查词 | ✅ 小样本 MVP 已上线 | PR #4 merge commit `c340f75a5f8cf51dac691732a9c66e50cd22af09` 已部署 Production；`新增 -> 查词收藏` 先查 JMdict 小样本 fixture，命中不默认调用 AI；完整 JMdict/D1/R2/SQLite 导入仍是后续任务 |
-| JMdict 1,000-entry beta | 🧪 PR #6 draft 中 | Issue #5 分支 `feat/full-jmdict-import-spike` 已生成 `functions/api/dictionary/_beta-data.js`，约 1,000 条 English-only JMdict-derived entries，约 500 KiB；Preview 验证后才能继续。不得提交完整 JMdict/KANJIDIC2 原始文件或大型生成物，不做批量中文翻译 |
-| 完整 JMdict 导入 | 🧭 后续阶段 | `docs/architecture/DICTIONARY_FULL_IMPORT_SPIKE.md` 继续记录 R2 raw/artifact、D1 lookup tables、SQLite artifact 的完整接入路线；D1/R2 尚未配置或部署 |
+| JMdict 1,000-entry beta | 🧪 PR #6 draft 中 | Issue #5 分支 `feat/full-jmdict-import-spike` 已生成 `functions/api/dictionary/_beta-data.js`，约 1,000 条 English-only JMdict-derived entries，约 500 KiB；PR #6 必须继续保持 draft。不得提交完整 JMdict/KANJIDIC2 原始文件或大型生成物，不做批量中文翻译 |
+| 完整 JMdict 导入 | 🧭 Issue #7 cost-safe 路线已建立 | R2 bucket `baina-dictionary-artifacts` 和 D1 database `baina-dictionary` 已创建；官方 JMdict `2026-06-17` raw/checksum/manifest/import estimate 已上传 R2。D1 full import 未执行：完整结构化导入估算 `2,425,795` rows written，超过 Workers Free `100,000` rows/day；推荐下一步改为 R2 sharded dictionary lookup + D1 metadata |
 | 代理 closeout 回写机制 | ✅ 已制度化 | 新增 `docs/ops/AGENT_CLOSEOUT_CHECKLIST.md`，并要求所有时间使用 JST、收尾必须 commit + push + 远端校验 |
 | Cloudflare 通知配置 | ✅ 线上配置已解决（用户确认） | 本轮未处理通知系统 |
 | 未部署年份灰色建设中 UI | 📝 待做 | 可后续让 Codex 做，但避免与 Claude 同时改 `assets/eju.js` 撞车 |

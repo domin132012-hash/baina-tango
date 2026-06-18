@@ -1,5 +1,7 @@
--- Draft Cloudflare D1 schema for the full JMdict import spike.
--- This is not applied by this task.
+-- Draft Cloudflare D1 schema for a full normalized JMdict import.
+-- Issue #7 did not apply this full schema remotely because the estimated row
+-- writes exceed the Workers Free 100,000 rows written/day guardrail.
+-- Use d1-metadata-schema.sql for the cost-safe R2-sharded alternative.
 
 PRAGMA foreign_keys = ON;
 

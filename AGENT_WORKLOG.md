@@ -571,6 +571,79 @@ Entry template:
 
 ---
 
+## 2026-06-18 10:24 JST / Codex / Issue #7 cost-safe full JMdict D1/R2 continuation
+
+### Task
+- Continue only GitHub Issue #7 on `feat/full-jmdict-import-spike` / draft PR #6.
+- Follow the billing guardrail from Issue #7: stop before any paid prompt, paid plan confirmation, recurring charge, or action expected to exceed the free tier.
+- User selected option 1: complete code, schema, import dry-run, R2 raw source / manifest / checksum upload, cost report, and a cost-safe alternative; do not execute D1 full import.
+
+### Branch / commits
+- Branch: `feat/full-jmdict-import-spike`
+- Start commit: `f4daa9a4cd8474fb18367ada058248d6a57864b7`
+- End commit: final commit reported in final response
+- Issue: `#7` `[AGENT-TASK] Full JMdict D1/R2 import: complete English-only dictionary beta`
+- PR: `#6` draft; do not merge; do not mark ready
+
+### Files changed
+- `.gitignore`
+- `wrangler.toml`
+- `scripts/dictionary/d1-schema.sql`
+- `scripts/dictionary/d1-metadata-schema.sql`
+- `scripts/dictionary/jmdict-full-dry-run.js`
+- `docs/architecture/DICTIONARY_FULL_IMPORT_SPIKE.md`
+- `docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+
+### External services touched
+- GitHub: Issue #7 scope-difference comment; final Issue/PR comments pending.
+- Cloudflare: created R2 bucket `baina-dictionary-artifacts`; created D1 database `baina-dictionary` id `5e8eeeda-0029-4c2e-958e-845ea0020c6e`; uploaded raw JMdict/checksum/manifest/import-estimate to R2; no D1 full import.
+- Supabase: not touched.
+- Stripe: not touched.
+- DeepSeek: not touched.
+- EDRDG public source: official `JMdict_e.gz` downloaded to `/tmp` for dry-run and uploaded to R2; not committed.
+
+### Dry-run / cost results
+- Source URL: `https://www.edrdg.org/pub/Nihongo/JMdict_e.gz`
+- Source created date: `2026-06-17`
+- Source SHA-256: `8feac9cc6eda31a737e5e89a4aa876189d16a49443bdde3a86ec6a85392ccf6d`
+- Parsed counts: `217,554` entries, `495,722` forms, `251,759` senses, `438,777` English glosses.
+- Full normalized D1 estimate: `965,038` base rows; `2,425,795` conservative rows written with current indexes.
+- Workers Free write guardrail: `100,000` rows written/day; estimated `25` days if split under the free limit.
+- R2 estimate for this task: about `10.5 MB` Standard storage and `4` remote Class A writes, within the visible R2 free tier.
+- Billing / paid prompt seen: no.
+
+### Validation
+- `codex-preflight --task "continue GitHub Issue #7 full JMdict D1 R2 beta after R2 enabled"`
+- Read `.codex-context-pack.json`.
+- Read latest Issue #7 comments, including billing guardrail.
+- `node --check scripts/dictionary/jmdict-full-dry-run.js`
+- `node scripts/dictionary/jmdict-full-dry-run.js --input scripts/dictionary/fixtures/sample-fixture.xml --out /tmp/baina-jmdict-full-dry-run-fixture --r2-prefix dictionary/raw/jmdict/fixture`
+- `curl -I -L https://www.edrdg.org/pub/Nihongo/JMdict_e.gz`
+- `curl -L https://www.edrdg.org/pub/Nihongo/JMdict_e.gz -o /tmp/baina-JMdict_e-2026-06-17.gz`
+- `shasum -a 256 /tmp/baina-JMdict_e-2026-06-17.gz`
+- Full dry-run command wrote only to `/tmp/baina-jmdict-full-dry-run-2026-06-17`.
+- R2 remote upload of raw/checksum/manifest/import-estimate.
+- R2 checksum round-trip verified by `wrangler r2 object get`.
+- `wrangler d1 list` confirmed D1 database exists with `0` tables and `12288` bytes.
+- Final validation pending before commit: `git diff --check`, `git diff --cached --check`, changed JS syntax checks, closeout check, secret scan, remote verification.
+
+### Bridge usage summary
+- Used `codex-preflight`, `.codex-context-pack.json`, `repo-map`, and `smart-read`.
+- Used direct Wrangler/curl/Node verification for Cloudflare, source checksum, dry-run, R2 upload, and D1 non-import confirmation.
+- No bridge output was used as final evidence for code edits or Cloudflare state.
+
+### Remaining risks
+- Full Preview lookup is still not complete because D1 full import was intentionally not executed.
+- R2 shard runtime is proposed but not implemented in this issue step.
+- D1 full import would exceed the free write guardrail in one pass; paid/limit approval or a multi-day import plan is required before choosing it.
+- PR #6 remains draft and must not be merged or marked ready.
+
+---
+
 ## 2026-06-18 09:14 JST / Codex / Issue #5 JMdict 1,000-entry English-only beta
 
 ### Task

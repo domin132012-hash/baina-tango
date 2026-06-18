@@ -19,7 +19,7 @@
 - EJU 記述作文：PR #2 已在用户完成真实 Cloudflare Branch Preview 验收后合并到 `main`，Production 已部署 active。入口为 `学习 → 真题试炼 → 日本語 → 記述`。
 - 词典优先查词：架构计划在 `docs/architecture/DICTIONARY_LOOKUP_PLAN.md`，执行计划在 `docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md`。PR #4 已合并到 `main`，merge commit `c340f75a5f8cf51dac691732a9c66e50cd22af09`，Cloudflare Production deployment `8f0ef91f-4dbb-4f21-a5f8-1dfcc66c5367` source `c340f75` 已通过 smoke。当前 Production 仍是 JMdict 小型 fixture MVP：`努力`、`食べる`、`読む`、`高い`；`平和` 等基础词未命中是完整 JMdict 尚未导入，不是 API 故障。命中词典不默认调用 AI，未命中只提示可尝试 AI 解释。
 - JMdict 1,000-entry beta：Issue #5 / PR #6 分支 `feat/full-jmdict-import-spike` 现在实现 English-only beta，数据在 `functions/api/dictionary/_beta-data.js`，由官方 `JMdict_e.gz` 通过 `scripts/dictionary/jmdict-import-spike.js` 抽取生成，约 1,000 条、约 500 KiB。英文 gloss 来自 JMdict 原始数据，中文释义为 `null`，不使用 AI 生成/翻译/改写词条。PR #6 必须保持 draft，等 Preview 验证后再决定下一步。
-- 完整 JMdict 导入路线：`docs/architecture/DICTIONARY_FULL_IMPORT_SPIKE.md`、`scripts/dictionary/d1-schema.sql` 记录 D1/R2/SQLite artifact 后续方案。完整 JMdict/KANJIDIC2 原始文件、大型 SQLite/JSON 产物不得提交 GitHub；如需分析只能放 `/tmp`、R2 或显式 build cache。
+- 完整 JMdict 导入路线：Issue #7 已创建 Cloudflare R2 bucket `baina-dictionary-artifacts` 和 D1 database `baina-dictionary`（id `5e8eeeda-0029-4c2e-958e-845ea0020c6e`），并把官方 JMdict `2026-06-17` raw source、checksum、manifest、import estimate 上传到 R2 `dictionary/raw/jmdict/2026-06-17/`。D1 full import 没有执行：完整结构化导入估算约 `2,425,795` rows written，会超过 Workers Free `100,000` rows/day。下一步优先做 R2 sharded dictionary lookup + D1 metadata，而不是硬导入 full D1。完整 JMdict/KANJIDIC2 原始文件、大型 SQLite/JSON 产物不得提交 GitHub；如需分析只能放 `/tmp`、R2 或显式 build cache。
 - 代理 closeout 机制：`docs/ops/AGENT_CLOSEOUT_CHECKLIST.md` 是非平凡任务收尾必读文件。任务完成前必须更新 GitHub 文档、commit + push、远端校验，并用 JST 记录时间。
 
 ### EJU 記述作文双知识库现状（2026-06-17）

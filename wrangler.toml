@@ -4,3 +4,12 @@ compatibility_flags = ["nodejs_compat"]
 
 [build]
 command = "npm install"
+
+[[d1_databases]]
+binding = "DICTIONARY_DB"
+database_name = "baina-dictionary"
+database_id = "5e8eeeda-0029-4c2e-958e-845ea0020c6e"
+
+[[r2_buckets]]
+binding = "DICTIONARY_R2"
+bucket_name = "baina-dictionary-artifacts"

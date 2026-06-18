@@ -1,5 +1,6 @@
 .codex-context-pack.json
 .visual-bridge/
+.wrangler/
 scripts/__pycache__/
 __pycache__/
 *.pyc
@@ -10,6 +11,9 @@ __pycache__/
 /data/dictionary/
 /scripts/dictionary/cache/
 /scripts/dictionary/output/
+full-jmdict*.json
+jmdict-full*.json
+jmdict-shards/
 JMdict*.gz
 JMdict*.xml
 JMdict*.xml.gz

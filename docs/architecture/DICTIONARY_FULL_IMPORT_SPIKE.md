@@ -1,8 +1,61 @@
 # Dictionary Full Import Spike And 1,000-Entry Beta
 
-Last updated: 2026-06-18 09:20 JST
+Last updated: 2026-06-18 10:24 JST
 
 This document covers the next phase after PR #4: moving from a JMdict small-sample MVP to a usable 1,000-entry English-only beta, while preserving the full, versioned D1/R2 import path. It does not import full JMdict into Production, does not apply Cloudflare D1/R2 settings, and does not commit full JMdict/KANJIDIC2 raw files or generated database artifacts.
+
+## Issue #7 Cost-Safe Full JMdict Outcome
+
+Issue #7 continued on draft PR #6 but did not execute a full normalized D1 import because of the Cloudflare billing/free-tier guardrail.
+
+Cloudflare resources:
+
+- R2 bucket / binding: `baina-dictionary-artifacts` / `DICTIONARY_R2`
+- D1 database / binding: `baina-dictionary` / `DICTIONARY_DB`
+- D1 database id: `5e8eeeda-0029-4c2e-958e-845ea0020c6e`
+- Billing / paid prompt observed by Wrangler: no
+
+R2 uploaded artifacts:
+
+- `dictionary/raw/jmdict/2026-06-17/JMdict_e.gz`
+- `dictionary/raw/jmdict/2026-06-17/JMdict_e.gz.sha256`
+- `dictionary/raw/jmdict/2026-06-17/manifest.json`
+- `dictionary/raw/jmdict/2026-06-17/import-estimate.json`
+
+Official source:
+
+- URL: `https://www.edrdg.org/pub/Nihongo/JMdict_e.gz`
+- Last-Modified: `Wed, 17 Jun 2026 03:30:21 GMT`
+- Source created date: `2026-06-17`
+- SHA-256: `8feac9cc6eda31a737e5e89a4aa876189d16a49443bdde3a86ec6a85392ccf6d`
+- Compressed size: `10,471,251` bytes
+- Decompressed XML size: `62,606,784` bytes
+
+Dry-run parser results:
+
+- Entries: `217,554`
+- Forms: `495,722`
+- Senses: `251,759`
+- English glosses: `438,777`
+- Required terms found in source: `平和`, `学校`, `先生`, `問題`, `社会`, `生活`, `必要`, `考える`, `分かる`, `努力`, `食べる`, `読む`, `高い`
+- AI-generated entries: no
+- Chinese gloss generation: not done
+
+Full normalized D1 estimate:
+
+- Base rows: `965,038`
+- Conservative rows written with current indexes: `2,425,795`
+- Workers Free write allowance: `100,000` rows/day
+- Estimated minimum free-tier import duration: `25` days
+- D1 full import executed: no
+
+Cost-safe recommendation:
+
+1. Keep D1 for source/version/active metadata only, using `scripts/dictionary/d1-metadata-schema.sql`.
+2. Generate R2 dictionary shards from official JMdict in a later task.
+3. Lookup by exact surface/reading/deinflected candidates should read one to a few small R2 shards.
+4. Keep the 1,000-entry beta as local/missing-binding fallback until R2 shards are deployed and Preview-validated.
+5. Only revisit full normalized D1 import if the user explicitly approves billing or a multi-day free-tier import plan.
 
 ## Issue #5 Beta Outcome
 
