@@ -1295,3 +1295,40 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - R2 object storage and reads may increase once Preview/Production traffic actually uses R2 shards.
 - D1 metadata reads are expected to be tiny, but any future D1 full import remains forbidden without an explicit cost-safe plan.
 - Additional Preview redeploys and validation requests should stay low volume.
+
+## 2026-06-19 00:10 JST / Codex / Issue #8 Preview PASS status closeout fix
+
+### Task
+- Status closeout fix only after prior Preview validation passed.
+- Update repository status docs and PR #6 body to replace the stale waiting/blocked binding language.
+- Do not change application code, Cloudflare, R2, D1, Production, or `RIKA_PLAN.md`.
+
+### Branch / commits
+- Branch: `feat/full-jmdict-import-spike`
+- Start commit: `fb7d58ae32763bd8ea5dac407c81e6a247f923da`
+- End commit: final closeout commit reported in final response after push
+- PR: `#6` remains open draft; not merged; not marked ready.
+
+### Files changed
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+
+### External services touched
+- GitHub: PR #6 body updated after commit.
+- Cloudflare: not touched.
+- Cloudflare R2/D1: not touched; no D1 full import; no large R2/D1 operation.
+- Production: not touched.
+
+### Validation recorded
+- Prior PASS evidence: Preview deployment `bde77489-e786-4764-9b55-8e9154cb9605`, source `fb7d58a`.
+- Branch Preview returned `dictionarySource=r2-shard`.
+- `食べられる` returned count `1`.
+- Required terms all returned `aiCalled=false`.
+- Production unchanged.
+- Billing prompt seen: no.
+
+### Remaining risks
+- PR #6 still needs user review before any ready/merge action.
+- D1 full import remains forbidden.
