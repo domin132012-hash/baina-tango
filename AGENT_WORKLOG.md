@@ -587,7 +587,6 @@ Entry template:
 
 ### Files changed
 - `.gitignore`
-- `wrangler.toml`
 - `scripts/dictionary/d1-schema.sql`
 - `scripts/dictionary/d1-metadata-schema.sql`
 - `scripts/dictionary/jmdict-full-dry-run.js`
@@ -629,6 +628,7 @@ Entry template:
 - R2 remote upload of raw/checksum/manifest/import-estimate.
 - R2 checksum round-trip verified by `wrangler r2 object get`.
 - `wrangler d1 list` confirmed D1 database exists with `0` tables and `12288` bytes.
+- Active `wrangler.toml` binding config was tried and then reverted because the resulting Cloudflare Preview became static-only and `/api/dictionary/lookup` returned an HTML 404. Binding config must be reintroduced only after downloading/verifying the Pages config.
 - Final validation pending before commit: `git diff --check`, `git diff --cached --check`, changed JS syntax checks, closeout check, secret scan, remote verification.
 
 ### Bridge usage summary
@@ -639,6 +639,7 @@ Entry template:
 ### Remaining risks
 - Full Preview lookup is still not complete because D1 full import was intentionally not executed.
 - R2 shard runtime is proposed but not implemented in this issue step.
+- Active Cloudflare Pages D1/R2 bindings are not committed yet; next work must verify Pages config first so Functions remain deployed.
 - D1 full import would exceed the free write guardrail in one pass; paid/limit approval or a multi-day import plan is required before choosing it.
 - PR #6 remains draft and must not be merged or marked ready.
 

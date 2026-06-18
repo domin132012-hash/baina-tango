@@ -255,6 +255,7 @@ Issue #7 cost-safe adjustment:
 - If full D1 import is required under free-tier limits, import no more than `100,000` estimated rows written per day and expect about `25` days with the current schema/index estimate.
 - Preferred Preview path is D1 metadata only plus R2 lookup shards.
 - `scripts/dictionary/d1-metadata-schema.sql` stores source/version/active metadata and R2 keys without storing the full entries/forms/senses payload in D1.
+- Do not re-add active D1/R2 entries to `wrangler.toml` until the current Pages config is downloaded and verified. A direct binding edit caused a static-only Preview deployment without Pages Functions.
 
 ### Cost-safe R2 sharded lookup option
 
@@ -268,6 +269,7 @@ Recommended for the next issue:
 4. Read only the shard(s) needed for those candidates from R2.
 5. Use D1 only to resolve the active version, source metadata, license, and shard strategy.
 6. Keep `aiCalled=false` for hits and misses; AI explain remains a future user-triggered action.
+7. Add `DICTIONARY_R2` / `DICTIONARY_DB` bindings through a verified Pages config or Dashboard flow, then redeploy and confirm `/api/dictionary/lookup` still returns JSON before adding shard reads.
 
 Tradeoff:
 

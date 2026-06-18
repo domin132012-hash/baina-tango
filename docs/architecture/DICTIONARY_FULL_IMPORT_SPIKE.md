@@ -14,6 +14,7 @@ Cloudflare resources:
 - D1 database / binding: `baina-dictionary` / `DICTIONARY_DB`
 - D1 database id: `5e8eeeda-0029-4c2e-958e-845ea0020c6e`
 - Billing / paid prompt observed by Wrangler: no
+- Active `wrangler.toml` binding config: not kept in this PR, because adding D1/R2 bindings directly caused the next Preview deployment to become static-only and `/api/dictionary/lookup` returned an HTML 404. Next binding work should first run `wrangler pages download config baina-tango`, verify the Pages build output/functions settings, then add `DICTIONARY_R2` / `DICTIONARY_DB` safely.
 
 R2 uploaded artifacts:
 
@@ -55,7 +56,8 @@ Cost-safe recommendation:
 2. Generate R2 dictionary shards from official JMdict in a later task.
 3. Lookup by exact surface/reading/deinflected candidates should read one to a few small R2 shards.
 4. Keep the 1,000-entry beta as local/missing-binding fallback until R2 shards are deployed and Preview-validated.
-5. Only revisit full normalized D1 import if the user explicitly approves billing or a multi-day free-tier import plan.
+5. Add active Pages bindings only after downloading/verifying the current Cloudflare Pages config, so Functions remain deployed.
+6. Only revisit full normalized D1 import if the user explicitly approves billing or a multi-day free-tier import plan.
 
 ## Issue #5 Beta Outcome
 

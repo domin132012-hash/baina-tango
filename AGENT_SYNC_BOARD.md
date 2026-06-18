@@ -11,7 +11,7 @@ Last updated: 2026-06-18 10:24 JST by Codex
 | Area | Status | Note |
 |---|---|---|
 | Repository docs | Locked for Issue #7 cost-safe full JMdict planning | Updating D1/R2 resource, dry-run, cost guardrail, and full import path docs |
-| Application code | PR #6 beta + full dry-run tooling | Runtime lookup still uses the bounded 1,000-entry beta fallback; new dry-run tooling estimates full JMdict import and R2 artifact metadata without committing full source |
+| Application code | PR #6 beta + full dry-run tooling | Runtime lookup still uses the bounded 1,000-entry beta fallback; new dry-run tooling estimates full JMdict import and R2 artifact metadata without committing full source; active wrangler D1/R2 binding config was not kept because it made the Preview static-only |
 | Cloudflare | R2/D1 resources created; D1 full import blocked by free-tier write guardrail | R2 bucket `baina-dictionary-artifacts` and D1 database `baina-dictionary` created; raw JMdict/checksum/manifest/estimate uploaded to R2; D1 remains empty, no full import |
 | Supabase | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
 | Stripe | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
@@ -58,6 +58,7 @@ Last updated: 2026-06-18 10:24 JST by Codex
 | PR #6 Preview deployment | `467d1f82-b5e5-46e0-bd47-9a78a542e3be`, source `02cbddb`, URL `https://467d1f82.baina-tango.pages.dev`, branch URL `https://feat-full-jmdict-import-spik.baina-tango.pages.dev`, status successful |
 | R2 dictionary bucket | `baina-dictionary-artifacts`; raw/checksum/manifest/estimate keys under `dictionary/raw/jmdict/2026-06-17/` |
 | D1 dictionary database | `baina-dictionary`, id `5e8eeeda-0029-4c2e-958e-845ea0020c6e`, `0` tables, `12288` bytes; full import not executed |
+| Planned dictionary bindings | `DICTIONARY_R2` and `DICTIONARY_DB`; not active in `wrangler.toml` until Pages config is downloaded/verified because the first active-binding deploy produced a static-only Preview |
 | Billing / paid prompt seen | No |
 
 Update triggers:
