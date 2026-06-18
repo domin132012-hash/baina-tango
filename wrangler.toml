@@ -1,40 +1,6 @@
 name = "baina-tango"
-compatibility_date = "2026-05-20"
+compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 
 [build]
 command = "npm install"
-
-[vars]
-AI_DEFAULT_PROVIDER = "qwen"
-DICTIONARY_MANIFEST_KEY = "dictionary/shards/jmdict/jmdict-english-r2-shards-2026-06-18/manifest.json"
-DOUBAO_BASE_URL = "https://ark.cn-beijing.volces.com/api/v3"
-DOUBAO_MODEL = "doubao-1-5-lite-32k-250115"
-GEMINI_MODEL = "gemini-2.5-flash-lite"
-SITE_URL = "https://baina-tango.pages.dev"
-SUPABASE_URL = "https://hgimtyrbnfooemepaovk.supabase.co"
-
-[[kv_namespaces]]
-id = "2897d76367f1492293a0be62dbb09911"
-binding = "NOTICES_KV"
-
-[[d1_databases]]
-binding = "DICTIONARY_DB"
-database_name = "baina-dictionary"
-database_id = "5e8eeeda-0029-4c2e-958e-845ea0020c6e"
-
-[[r2_buckets]]
-binding = "DICTIONARY_R2"
-bucket_name = "baina-dictionary-artifacts"
-
-[env.production.vars]
-AI_DEFAULT_PROVIDER = "qwen"
-DOUBAO_BASE_URL = "https://ark.cn-beijing.volces.com/api/v3"
-DOUBAO_MODEL = "doubao-1-5-lite-32k-250115"
-GEMINI_MODEL = "gemini-2.5-flash-lite"
-SITE_URL = "https://baina-tango.pages.dev"
-SUPABASE_URL = "https://hgimtyrbnfooemepaovk.supabase.co"
-
-[[env.production.kv_namespaces]]
-id = "2897d76367f1492293a0be62dbb09911"
-binding = "NOTICES_KV"

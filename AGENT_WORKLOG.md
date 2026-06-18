@@ -1230,3 +1230,68 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - The import script remains regex-based for local beta/spike use; full Production import should use a streaming XML parser and stricter entity validation.
 - D1/R2/SQLite artifact path is documented but not configured or deployed.
 - Chinese glosses remain `null`; no translation work was done.
+## 2026-06-18 15:25 JST / Codex / Issue #8 Cloudflare Pages Preview binding confirmation
+
+### Task
+- Execute only the Cloudflare Pages binding confirmation task for Issue #8 on PR #6 / branch `feat/full-jmdict-import-spike`.
+- Target Preview/branch bindings: `DICTIONARY_R2` -> R2 bucket `baina-dictionary-artifacts`, `DICTIONARY_DB` -> D1 database `baina-dictionary`, optional `DICTIONARY_MANIFEST_KEY` -> `dictionary/shards/jmdict/jmdict-english-r2-shards-2026-06-18/manifest.json`.
+- Do not randomly change Production; keep PR #6 draft; do not merge or mark ready.
+- Stop if Dashboard/manual confirmation, permission confirmation, or cost confirmation is needed.
+
+### Branch / commits
+- Branch: `feat/full-jmdict-import-spike`
+- Start commit: `e09f0b0ff072be94aac25f2943a414fb22ef10bb`
+- Attempted binding config commit: `52d12daf21864daa597769af4cba44316f81f075`
+- End commit: final closeout commit recorded in GitHub comments and final response after commit + push
+- Issue: `#8` `[AGENT-TASK] Dictionary full lookup via R2 shards + D1 metadata`
+- PR: `#6` `https://github.com/domin132012-hash/baina-tango/pull/6`, still draft
+
+### Files changed
+- `wrangler.toml` - safe CLI/repo config attempt was reverted before closeout because Cloudflare Pages config download still did not show active bindings.
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+
+### External services touched
+- GitHub: PR #6 and Issue #8 comments/body updated after final commit; PR #6 kept draft.
+- Cloudflare Pages: downloaded current project config; observed Preview redeploy for source `52d12da`; re-downloaded project config; validated Branch Preview API.
+- Cloudflare R2: not written in this binding-confirmation task; previously uploaded shards remain under `dictionary/shards/jmdict/jmdict-english-r2-shards-2026-06-18/`.
+- Cloudflare D1: not written in this binding-confirmation task; metadata-only active version remains in `baina-dictionary`; no D1 full import.
+- Cloudflare Production: not changed.
+- Supabase: not touched.
+- Stripe: not touched.
+- DeepSeek/AI providers: not touched; lookup validation showed `aiCalled=false`.
+
+### Cloudflare Pages config read
+- `npx wrangler pages download config baina-tango --cwd /tmp/baina-pages-config-binding-check --force`
+- Downloaded config included existing vars and `NOTICES_KV`, but no `DICTIONARY_R2`, no `DICTIONARY_DB`, and no `DICTIONARY_MANIFEST_KEY`.
+- Safe repo/Wrangler config attempt triggered Preview deployment `3d56bd8f-af65-4872-922d-6475075e2265`, source `52d12da`, URL `https://3d56bd8f.baina-tango.pages.dev`.
+- Re-downloaded Pages config after that deployment; dictionary bindings still absent.
+- `npx wrangler pages project --help` exposes list/create/delete only, not a safe binding edit command for this project.
+
+### Validation
+- `codex-preflight --task "Issue #8 Cloudflare Pages Preview bindings for DICTIONARY_R2 DICTIONARY_DB"`
+- Read `.codex-context-pack.json`.
+- `npx wrangler pages download config baina-tango --cwd /tmp/baina-pages-config-binding-check --force`
+- `npx wrangler pages deployment list --project-name baina-tango`
+- Branch Preview API base: `https://feat-full-jmdict-import-spik.baina-tango.pages.dev/api/dictionary/lookup`
+- Required query validation at source `52d12da`: `平和`, `学校`, `先生`, `問題`, `社会`, `生活`, `必要`, `考える`, `分かる`, `努力`, `食べる`, `読まなかった`, `食べられる`, `高かった`, `高くない`, `存在しない語`.
+- All required queries returned HTTP 200 and `aiCalled=false`.
+- Validation failed the binding goal: every response used `dictionarySource=fallback`; `source` / `dictionarySource` never reported `r2-shard`.
+- `食べられる` returned count `0` on Preview because it still used the 1,000-entry fallback instead of R2 shards.
+
+### Billing / paid prompt seen
+- No.
+
+### Remaining risks
+- Preview Functions still cannot access `DICTIONARY_R2` / `DICTIONARY_DB`; Cloudflare Pages project settings or API capability must make the bindings effective before Issue #8 can be considered complete.
+- Manual Dashboard/API permission confirmation is now the blocker; work stopped before changing those settings.
+- PR #6 must remain draft, not merged, and not marked ready.
+- Do not execute D1 full import; keep D1 metadata-only.
+- Do not commit complete JMdict/XML/large JSON/SQLite/DB artifacts.
+
+### Remaining cost risks
+- R2 object storage and reads may increase once Preview/Production traffic actually uses R2 shards.
+- D1 metadata reads are expected to be tiny, but any future D1 full import remains forbidden without an explicit cost-safe plan.
+- Additional Preview redeploys and validation requests should stay low volume.
