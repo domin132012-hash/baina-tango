@@ -1,18 +1,57 @@
-# Dictionary Full Import Spike
+# Dictionary Full Import Spike And 1,000-Entry Beta
 
-Last updated: 2026-06-17 23:40 JST
+Last updated: 2026-06-18 09:20 JST
 
-This spike covers the next phase after PR #4: moving from a JMdict small-sample MVP to a full, versioned import path. It does not import full data into production, does not apply Cloudflare D1/R2 settings, and does not commit full JMdict/KANJIDIC2 raw files or generated database artifacts.
+This document covers the next phase after PR #4: moving from a JMdict small-sample MVP to a usable 1,000-entry English-only beta, while preserving the full, versioned D1/R2 import path. It does not import full JMdict into Production, does not apply Cloudflare D1/R2 settings, and does not commit full JMdict/KANJIDIC2 raw files or generated database artifacts.
+
+## Issue #5 Beta Outcome
+
+PR #6 now includes a bounded JMdict-derived beta for Preview testing:
+
+- Data module: `functions/api/dictionary/_beta-data.js`
+- Entry count: `1,000`
+- File size at generation time: about `500 KiB`
+- Source URL: `https://www.edrdg.org/pub/Nihongo/JMdict_e.gz`
+- Source created date: `2026-06-17`
+- Source SHA-256: `8feac9cc6eda31a737e5e89a4aa876189d16a49443bdde3a86ec6a85392ccf6d`
+- Source license / attribution: `Dictionary data: JMdict / EDRDG, CC BY-SA 4.0`
+- Chinese gloss status: intentionally `null`
+
+Generation command:
+
+```sh
+node scripts/dictionary/jmdict-import-spike.js \
+  --input /tmp/baina-JMdict_e.gz \
+  --out /tmp/baina-jmdict-beta-1000 \
+  --beta-module functions/api/dictionary/_beta-data.js \
+  --beta-count 1000
+```
+
+The beta entries are parsed from official JMdict XML. AI is not used to create, translate, paraphrase, or invent dictionary entries. The selection starts with required Issue #5 test terms, then fills with scored JMdict priority/common learner entries, preferring kanji/basic forms and excluding obvious adult-content glosses from this bounded learner beta.
+
+Required local API tests passed for:
+
+- `平和`
+- `学校`
+- `先生`
+- `問題`
+- `努力`
+- `食べる`
+- `読まなかった`
+- `存在しない語`
+
+All local API responses kept `aiCalled=false`.
 
 ## Summary Decision
 
 Recommended path:
 
-1. Store official raw source files and generated artifacts in Cloudflare R2.
-2. Parse JMdict locally or in a controlled build job into normalized tables.
-3. Load lookup-critical structured rows into Cloudflare D1.
-4. Generate a SQLite artifact from the same normalized data and store it in R2 for rollback, future app/offline use, and reproducible releases.
-5. Keep the current sample fixture as runtime fallback until a D1 binding and active dictionary version are deployed.
+1. Use the committed 1,000-entry English-only beta for PR #6 Preview validation.
+2. Store official raw source files and generated full artifacts in Cloudflare R2.
+3. Parse JMdict locally or in a controlled build job into normalized tables.
+4. Load lookup-critical structured rows into Cloudflare D1.
+5. Generate a SQLite artifact from the same normalized data and store it in R2 for rollback, future app/offline use, and reproducible releases.
+6. Keep the bounded beta or smaller fixture as runtime fallback until a D1 binding and active dictionary version are deployed.
 
 This gives fast structured lookup for the website, durable artifact storage for traceability, and a future offline/app path without downloading the entire dictionary to browsers.
 
@@ -43,6 +82,7 @@ Download note: `https://ftp.edrdg.org/...` returned a certificate host mismatch 
 
 - Do not commit full JMdict/KANJIDIC2 XML, gzip files, sharded JSON, or generated SQLite/D1 database artifacts to GitHub.
 - Do not batch translate the whole dictionary into Chinese.
+- Do not use AI to generate, translate, paraphrase, or invent dictionary entries for the beta.
 - Do not use static sharded JSON as the primary website storage path for full data. It is harder to version-switch, query, and roll back cleanly at this scale.
 - Do not use Supabase Postgres for the first full dictionary rollout unless D1 proves unsuitable. The current app already has Cloudflare Pages Functions, and dictionary lookup is read-heavy and edge-adjacent.
 - Do not make AI the default lookup path. Full import should preserve the PR #4 behavior: dictionary first, `aiCalled=false` for hits and misses, optional user-triggered AI explain later.
@@ -116,8 +156,9 @@ Added:
 - `scripts/dictionary/jmdict-import-spike.js`
 - `scripts/dictionary/fixtures/sample-fixture.xml`
 - `scripts/dictionary/d1-schema.sql`
+- `functions/api/dictionary/_beta-data.js`
 
-The script is dependency-free and validates the shape against a small XML fixture. It can also analyze a full `/tmp/JMdict_e.gz` file and write a report to `/tmp`, but generated reports and full data are intentionally ignored by Git.
+The script is dependency-free and validates the shape against a small XML fixture. It can also analyze a full `/tmp/JMdict_e.gz` file, write reports to `/tmp`, and emit a bounded 1,000-entry beta data module. Generated reports and full raw data are intentionally ignored by Git.
 
 Production importer requirements before deployment:
 
@@ -148,24 +189,28 @@ Use the conservative policy already recorded in `DICTIONARY_LOOKUP_PLAN.md`:
 
 ## Rollout Plan
 
-1. Land this spike as a draft PR only.
+1. Keep PR #6 draft for user Preview validation of the 1,000-entry beta.
 2. In a later implementation PR, add D1/R2 bindings and a staging import command.
 3. Import full JMdict into staging D1 and R2 outside Git.
 4. Run lookup tests for:
    - `努力`
    - `平和`
+   - `学校`
+   - `先生`
+   - `問題`
    - `食べる`
    - `読まなかった`
    - common kana-only terms
    - no-match input
-5. Switch `/api/dictionary/lookup` from fixture fallback to D1 active version.
-6. Keep fixture fallback when D1 binding or active version is unavailable.
+5. Switch `/api/dictionary/lookup` from beta/static fallback to D1 active version.
+6. Keep beta/static fallback when D1 binding or active version is unavailable.
 7. Deploy Preview, then Production after user validation.
 
 ## Risks And Open Questions
 
 - D1 row count and index size need a real import benchmark before committing to exact schema/index choices.
 - Full XML import should use streaming parsing; reading full XML into memory is acceptable only for this local spike.
+- The 1,000-entry beta selection is useful for display/search validation, but it is not a frequency-ranked or complete learner dictionary.
 - Deinflection remains rule-based MVP; full Japanese morphology is a separate decision.
 - KANJIDIC2 should be imported after JMdict lookup is stable, unless kanji detail becomes a blocking user feature.
 - Chinese gloss generation needs a separate model evaluation and review workflow; do not start full translation in the import PR.

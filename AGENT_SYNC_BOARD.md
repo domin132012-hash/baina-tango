@@ -4,15 +4,15 @@
 > do not recheck Supabase / Stripe unless the task touches them, a related fault appears, or the recorded status is older than 30 days and the task depends on that platform.
 > Never record API keys, service role keys, JWT secrets, session tokens, customer data, payment records, card data, or raw secret values.
 
-Last updated: 2026-06-17 23:44 JST by Codex
+Last updated: 2026-06-18 09:14 JST by Codex
 
 ## 1. 当前锁定状态
 
 | Area | Status | Note |
 |---|---|---|
-| Repository docs | Locked for Issue #5 closeout | Updating dictionary rollout closeout and full import spike docs |
-| Application code | Spike docs/scripts only | No change to production lookup runtime after PR #4 merge |
-| Cloudflare | Production read-only verification | PR #4 merge deployed to Production; dashboard/settings/env not touched |
+| Repository docs | Locked for Issue #5 beta closeout | Updating dictionary beta rollout and full import path docs |
+| Application code | PR #6 beta implementation | `functions/api/dictionary/lookup.js` now reads a bounded 1,000-entry JMdict English-only beta on the PR branch |
+| Cloudflare | Production read-only verification; Preview pending | PR #4 merge remains deployed to Production; PR #6 Preview must be rechecked after push; dashboard/settings/env not touched |
 | Supabase | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
 | Stripe | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
 | DeepSeek | Not touched in this task | No backend, secret, or API changes; normal lookup does not call AI by default |
@@ -24,37 +24,38 @@ Last updated: 2026-06-17 23:44 JST by Codex
 | Repository | `domin132012-hash/baina-tango` |
 | Current branch | `feat/full-jmdict-import-spike` |
 | Main latest hash at task start | `caca731cd961d68216395e8b57b4bce7cb02202a` |
-| Current task | Issue #5 dictionary rollout closeout + full JMdict import spike |
-| Issue | `#5` `[AGENT-TASK] Dictionary rollout closeout + full JMdict import spike` |
+| Current task | Issue #5 dictionary rollout closeout + 1000-entry JMdict English beta |
+| Issue | `#5` `[AGENT-TASK] Dictionary rollout closeout + 1000-entry JMdict English beta` |
 | PR #4 | `MERGED` `https://github.com/domin132012-hash/baina-tango/pull/4` |
 | PR #4 merge commit | `c340f75a5f8cf51dac691732a9c66e50cd22af09` |
 | Main latest hash after PR #4 | `c340f75a5f8cf51dac691732a9c66e50cd22af09` |
 | Phase 2 branch | `feat/full-jmdict-import-spike` |
-| Phase 2 draft PR | pending final push/open |
+| Phase 2 draft PR | `https://github.com/domin132012-hash/baina-tango/pull/6` open draft; do not merge |
 | Latest relevant commit | `c340f75` Merge pull request #4 from `feat/dictionary-lookup-mvp` |
 | PR #2 | `MERGED`; merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` |
-| This task | Phase 1 complete: PR #4 merged to `main`, Cloudflare Production source matches latest main, dictionary smoke passed. Phase 2 in progress: full JMdict import/storage spike doc and scaffolding on draft PR branch |
+| This task | Phase 1 complete: PR #4 merged to `main`, Cloudflare Production source matches latest main, dictionary smoke passed. Phase 2 now implements 1,000-entry English-only JMdict beta on draft PR #6 |
 | Dictionary plan commit | `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main` |
-| External services touched - GitHub | PR #4 merge, branch push, draft PR, Issue/PR comments |
-| External services touched - Cloudflare | Read-only Production deployment verification and smoke; dashboard not touched |
+| External services touched - GitHub | PR #4/Issue #3/PR #6 state read; PR #6 branch push and Issue/PR comments pending closeout |
+| External services touched - Cloudflare | Read-only Production API verification; PR #6 Preview verification pending after push; dashboard/settings/env not touched |
 | External services touched - Supabase | Not touched |
 | External services touched - Stripe | Not touched |
 | External services touched - DeepSeek | Not touched |
-| Current status | Production `https://baina-tango.pages.dev` reports dictionary small-sample MVP notice; `努力` / `食べる` / `読まなかった` pass; `平和` shows small-sample miss; dictionary hits do not call AI by default; EJU 記述 opens |
-| Current blocker | Full JMdict import is not deployed; Phase 2 spike PR must stay draft and unmerged pending user review |
+| Current status | Production `https://baina-tango.pages.dev` still reports dictionary small-sample MVP notice; `努力` / `食べる` / `読まなかった` pass; `平和` shows small-sample miss; dictionary hits do not call AI by default. PR #6 branch locally passes beta API checks for `平和` / `学校` / `先生` / `問題` / `努力` / `食べる` / `読まなかった` / `存在しない語`, all `aiCalled=false` |
+| Current blocker | PR #6 beta needs pushed Preview verification and user validation; PR #6 must stay draft and unmerged |
 
 ## 3. Cloudflare 状态
 
 | Field | Value |
 |---|---|
-| Last checked | 2026-06-17 23:35 JST during Issue #5 Phase 1 |
-| Touched by this task | Read-only Production deployment verification and browser/API smoke |
+| Last checked | 2026-06-18 09:08 JST during Issue #5 Phase 1 recheck |
+| Touched by this task | Read-only Production API verification; no dashboard/settings/env changes |
 | Needs recheck | Yes before merging any future full import runtime change or if source commit mismatch appears |
 | Current blocker | None recorded |
 | Production deployment | `8f0ef91f-4dbb-4f21-a5f8-1dfcc66c5367`, source `c340f75`, URL `https://baina-tango.pages.dev`, Active |
 | Previous app merge deployment | `1c5b2430-6b20-4334-8e04-e9fb2243dbca`, source `79a2b7e` |
 | PR #2 Preview deployment | `7a85773e-6a2d-44e6-92e2-a8aed5520b7d`, source `dea412c` |
 | PR #4 Preview deployment | `8c882ad2-3432-4d21-a422-be0357eedb19`, source `c294976`, URL `https://8c882ad2.baina-tango.pages.dev`, branch URL `https://feat-dictionary-lookup-mvp.baina-tango.pages.dev`, status successful |
+| PR #6 previous Preview deployment | `22c2319e-680e-4ab0-8077-fde1de97e417`, source `571d5bb`, URL `https://22c2319e.baina-tango.pages.dev`, branch URL `https://feat-full-jmdict-import-spik.baina-tango.pages.dev`, status successful |
 
 Update triggers:
 - New Preview or Production deployment.
@@ -123,6 +124,7 @@ Update triggers:
 | PR #4 Cloudflare Preview EJU 記述 entry | Passed | `学习 -> 真题试炼 -> 日本語 -> 記述` opens; console errors none |
 | PR #4 Production deployment source | Passed | Cloudflare Production deployment `8f0ef91f-4dbb-4f21-a5f8-1dfcc66c5367` reports source `c340f75`, matching latest `main` |
 | PR #4 Production smoke | Passed | Browser smoke on `https://baina-tango.pages.dev`: sample notice, `努力`, `平和`, `食べる`, `読まなかった`, no AI lookup request, EJU 記述 opens, console/page errors none |
+| PR #6 local beta API checks | Passed | `平和` / `学校` / `先生` / `問題` / `努力` / `食べる` / `読まなかった` / `存在しない語`, all `aiCalled=false`, beta sourceVersion `jmdict-english-beta-1000-2026-06-17` |
 
 ## 8. 最近事件流水
 
@@ -143,3 +145,4 @@ Update triggers:
 | 2026-06-17 23:34 JST | Issue #5 Phase 1: PR #4 merged to `main` with merge commit `c340f75a5f8cf51dac691732a9c66e50cd22af09`. |
 | 2026-06-17 23:35 JST | Cloudflare Production deployment `8f0ef91f-4dbb-4f21-a5f8-1dfcc66c5367` Active at source `c340f75`; Production smoke passed. |
 | 2026-06-17 23:44 JST | Issue #5 Phase 2 branch `feat/full-jmdict-import-spike` created from merged `main`; full import spike doc/scripts/schema prepared without committing full JMdict/KANJIDIC2 data. |
+| 2026-06-18 09:14 JST | Issue #5 scope updated from docs-only spike to PR #6 1,000-entry JMdict English-only beta; local beta data generated from official JMdict source and local API checks passed; Preview verification pending after push. |

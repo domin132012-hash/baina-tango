@@ -1,4 +1,4 @@
-import { DICTIONARY_SOURCE, SAMPLE_ENTRIES } from "./_sample-data.js";
+import { BETA_ENTRIES, DICTIONARY_SOURCE } from "./_beta-data.js";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -126,7 +126,7 @@ function lookup(query, mode) {
   const matches = [];
   const seen = new Set();
   for (const candidate of lookupCandidates(query)) {
-    for (const entry of SAMPLE_ENTRIES) {
+    for (const entry of BETA_ENTRIES) {
       if (!matchEntry(entry, candidate) || seen.has(entry.id)) continue;
       seen.add(entry.id);
       matches.push(publicEntry(entry, candidate, mode));

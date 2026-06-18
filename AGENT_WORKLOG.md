@@ -492,6 +492,100 @@ Entry template:
 
 ---
 
+## 2026-06-18 09:14 JST / Codex / Issue #5 JMdict 1,000-entry English-only beta
+
+### Task
+- Continue GitHub Issue #5 after user scope update.
+- Keep PR #4 rollout closeout as completed and do not repeat the merge.
+- Implement a bounded 1,000-entry English-only JMdict beta on `feat/full-jmdict-import-spike` / draft PR #6.
+- Do not AI-generate, translate, paraphrase, or invent dictionary entries.
+- Do not commit full JMdict/KANJIDIC2 raw files or large SQLite/DB artifacts.
+- Keep PR #6 draft; do not merge.
+- Do not touch `RIKA_PLAN.md`.
+
+### Branch / commits
+- Branch: `feat/full-jmdict-import-spike`
+- Start commit: `571d5bb52201a6852586c42422ce150d724cba20`
+- End commit: final commit reported in final response
+- Issue: `#5` `[AGENT-TASK] Dictionary rollout closeout + 1000-entry JMdict English beta`
+- PR: `#6` `https://github.com/domin132012-hash/baina-tango/pull/6` open draft
+
+### Files changed
+- `functions/api/dictionary/_beta-data.js`
+- `functions/api/dictionary/lookup.js`
+- `index.html`
+- `scripts/dictionary/jmdict-import-spike.js`
+- `docs/architecture/DICTIONARY_FULL_IMPORT_SPIKE.md`
+- `docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+
+### Data source and generation
+- Official source: `https://www.edrdg.org/pub/Nihongo/JMdict_e.gz`
+- Local source path: `/tmp/baina-JMdict_e.gz`
+- Source created date: `2026-06-17`
+- Source SHA-256: `8feac9cc6eda31a737e5e89a4aa876189d16a49443bdde3a86ec6a85392ccf6d`
+- Generated beta module: `functions/api/dictionary/_beta-data.js`
+- Beta entry count: `1,000`
+- Beta module size: about `500 KiB`
+- Chinese gloss: `null`
+- English gloss: parsed from JMdict, not AI-generated.
+- Generation command:
+
+```sh
+node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --out /tmp/baina-jmdict-beta-1000 --beta-module functions/api/dictionary/_beta-data.js --beta-count 1000
+```
+
+### External services touched
+- GitHub: PR/Issue state read; branch push and Issue/PR comments pending closeout.
+- Cloudflare: read-only Production API verification; PR #6 Preview verification pending after push; dashboard/settings/env not touched.
+- Supabase: not touched.
+- Stripe: not touched.
+- DeepSeek: not touched.
+- Other: EDRDG official public dictionary source downloaded to `/tmp` for local parsing only; no raw source committed.
+
+### Validation so far
+- `codex-preflight --task "execute Issue #5 PR4 closeout record and implement PR6 1000-entry JMdict English-only beta"`
+- Read `.codex-context-pack.json`.
+- `repo-map summary . --format json`
+- PR #4 state read: merged, merge commit `c340f75a5f8cf51dac691732a9c66e50cd22af09`.
+- PR #6 state read: open draft, head `571d5bb52201a6852586c42422ce150d724cba20`.
+- Production API recheck on `https://baina-tango.pages.dev/api/dictionary/lookup`:
+  - `努力` hit, `aiCalled=false`
+  - `平和` miss, `aiCalled=false`
+  - `食べる` hit, `aiCalled=false`
+  - `読まなかった` -> `読む`, `aiCalled=false`
+  - `存在しない語` miss, `aiCalled=false`
+- Local beta API checks:
+  - `平和` hit, `aiCalled=false`
+  - `学校` hit, `aiCalled=false`
+  - `先生` hit, `aiCalled=false`
+  - `問題` hit, `aiCalled=false`
+  - `努力` hit, `aiCalled=false`
+  - `食べる` hit, `aiCalled=false`
+  - `読まなかった` -> `読む`, `aiCalled=false`
+  - `存在しない語` miss, `aiCalled=false`
+- `node --check functions/api/dictionary/_beta-data.js`
+- `node --check functions/api/dictionary/lookup.js`
+- `node --check scripts/dictionary/jmdict-import-spike.js`
+- Final closeout validation pending before commit/push: `git diff --check`, all changed JS `node --check`, import fixture run, secret scan, agent closeout check, remote verification, Preview/API tests if Cloudflare Preview is available.
+
+### Bridge usage summary
+- Used `codex-preflight` and read `.codex-context-pack.json`.
+- Used `repo-map summary` and `smart-read` for targeted source/doc reads.
+- Did not use DeepSeek bridge for final implementation, validation, secret scan, Cloudflare Preview result, or closeout writeback.
+
+### Remaining risks
+- PR #6 Preview has not yet been re-deployed and verified for the new beta commit.
+- The beta is a bounded 1,000-entry learner preview, not full JMdict.
+- The import script is still dependency-free and regex-based; full Production import should use a streaming XML parser and stricter entity validation.
+- D1/R2/SQLite artifact path is documented but not configured or deployed.
+- User validation is still required before changing PR #6 out of draft or merging.
+
+---
+
 ## 2026-06-17 23:05 JST / Codex / PR #4 Cloudflare Preview validation
 
 ### Task

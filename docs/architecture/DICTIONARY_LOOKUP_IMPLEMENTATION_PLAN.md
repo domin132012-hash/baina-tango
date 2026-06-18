@@ -2,9 +2,9 @@
 
 本文件是 `docs/architecture/DICTIONARY_LOOKUP_PLAN.md` 的执行层计划。目标是把普通查词改成“词典优先、AI 增强”，先做可上线的 JMdict 查词 MVP，再分阶段补中文释义、AI 语境解释和 App 离线包。
 
-Issue #3 / PR #4 已完成第一阶段小型 fixture MVP，并在 2026-06-17 23:35 JST 合并部署到 Production：新增 `/api/dictionary/lookup`、JMdict sample fixture，以及普通查词的词典优先前端。完整 JMdict、KANJIDIC2、D1/R2/SQLite、批量中文释义和 AI explain 仍是后续阶段。
+Issue #3 / PR #4 已完成第一阶段小型 fixture MVP，并在 2026-06-17 23:35 JST 合并部署到 Production：新增 `/api/dictionary/lookup`、JMdict sample fixture，以及普通查词的词典优先前端。Issue #5 / PR #6 继续在 draft 分支上实现 1,000-entry English-only JMdict beta，供 Preview 验证更多基础词搜索与显示；完整 JMdict、KANJIDIC2、D1/R2/SQLite、批量中文释义和 AI explain 仍是后续阶段。
 
-Issue #5 的完整 JMdict 导入 / 存储 / 查询 spike 见 `docs/architecture/DICTIONARY_FULL_IMPORT_SPIKE.md`。该 spike 推荐 Cloudflare R2 保存 raw source 与 SQLite artifact，Cloudflare D1 保存网站查询结构化索引；当前只提交文档、schema 草案、import 脚本和小 fixture，不提交完整 JMdict/KANJIDIC2 原始文件或大型生成物。
+Issue #5 的完整 JMdict 导入 / 存储 / 查询 spike 见 `docs/architecture/DICTIONARY_FULL_IMPORT_SPIKE.md`。该 spike 推荐 Cloudflare R2 保存 raw source 与 SQLite artifact，Cloudflare D1 保存网站查询结构化索引；PR #6 当前可提交受控体积的 `functions/api/dictionary/_beta-data.js` 作为 1,000-entry beta，但仍不提交完整 JMdict/KANJIDIC2 原始文件或大型生成物。
 
 ## 0. Issue #3 MVP 状态（2026-06-17 JST）
 
@@ -18,6 +18,19 @@ Issue #5 的完整 JMdict 导入 / 存储 / 查询 spike 见 `docs/architecture/
 - 未命中：显示 `未命中词典，可尝试 AI 解释`
 - Attribution: 查词结果显示 `Dictionary data: JMdict / EDRDG, CC BY-SA 4.0`
 - 明确未做：完整 JMdict/KANJIDIC2 导入、D1/R2/SQLite、批量中文翻译、AI explain 后端、Cloudflare Dashboard 配置
+
+## 0.1 Issue #5 / PR #6 beta 状态（2026-06-18 JST）
+
+- Beta data: `functions/api/dictionary/_beta-data.js`
+- Entry count: `1,000`
+- Source: official `https://www.edrdg.org/pub/Nihongo/JMdict_e.gz`
+- Source created date: `2026-06-17`
+- Source SHA-256: `8feac9cc6eda31a737e5e89a4aa876189d16a49443bdde3a86ec6a85392ccf6d`
+- Generation script: `scripts/dictionary/jmdict-import-spike.js`
+- Generation output command writes reports to `/tmp` and only commits the bounded beta module.
+- English glosses are parsed from JMdict. Chinese glosses remain `null`.
+- AI is not used to generate, translate, paraphrase, or invent entries.
+- Required beta tests: `平和`、`学校`、`先生`、`問題`、`努力`、`食べる`、`読まなかった`、`存在しない語`; all local API responses keep `aiCalled=false`.
 
 ## 1. 当前问题
 

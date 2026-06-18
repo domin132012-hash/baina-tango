@@ -169,7 +169,7 @@
 
     <section class="panel hidden" id="view-learn"><h2>新学词汇</h2><div class="row"><div><label>选择要新学的文件夹</label><select id="learnFolderSelect"></select></div><div><label>本轮新学数量</label><input type="number" id="learnLimit" value="30" min="1" max="500" /></div><div><label>练习模式</label><select id="learnModeSelect"><option value="default">默认模式</option><option value="listen">🎧 听声辨词</option><option value="read">👁 看词识义</option></select></div><div class="fit"><label>&nbsp;</label><button class="primary" id="startLearnBtn">开始新学</button></div></div><div id="learnFolderInfo" class="hint" style="margin-top:8px"></div><div id="learnMount"></div></section>
 
-    <section class="panel hidden" id="view-lookup"><h2>查词收藏</h2><p class="hint">输入日语单词后，系统会先查 JMdict 小型样本词典。命中词典时不会默认调用 AI；未命中时只提示可尝试 AI 解释。当前为 JMdict 小样本 MVP，仅用于验证查词链路；完整词典导入将在下一阶段接入。</p><div class="row"><div><label>查询单词</label><input id="lookupQuery" placeholder="例如：努力 / 食べる / 読まなかった" maxlength="24" /></div><div class="fit"><label>&nbsp;</label><button class="primary" id="lookupBtn">查询</button></div></div><div class="row" style="margin-top:10px"><div><label>收藏到文件夹</label><select id="lookupFolderSelect"></select></div><div><label>或者新建文件夹名</label><input id="lookupNewFolderName" placeholder="例如：查词收藏 / 今日生词" /></div></div><p class="hint" id="lookupStatus"></p><div id="lookupResults" class="grid" style="margin-top:12px"></div></section>
+    <section class="panel hidden" id="view-lookup"><h2>查词收藏</h2><p class="hint">输入日语单词后，系统会先查 JMdict 1,000 词 English-only beta。命中词典时不会默认调用 AI；未命中时只提示可尝试 AI 解释。完整 JMdict 仍将在下一阶段接入 D1/R2；当前中文释义尚未补全，以 JMdict 英文 gloss 为主。</p><div class="row"><div><label>查询单词</label><input id="lookupQuery" placeholder="例如：平和 / 学校 / 食べる / 読まなかった" maxlength="24" /></div><div class="fit"><label>&nbsp;</label><button class="primary" id="lookupBtn">查询</button></div></div><div class="row" style="margin-top:10px"><div><label>收藏到文件夹</label><select id="lookupFolderSelect"></select></div><div><label>或者新建文件夹名</label><input id="lookupNewFolderName" placeholder="例如：查词收藏 / 今日生词" /></div></div><p class="hint" id="lookupStatus"></p><div id="lookupResults" class="grid" style="margin-top:12px"></div></section>
 
     <section class="panel hidden" id="view-add">
       <h2>新增</h2>
@@ -1242,11 +1242,11 @@ async function lookupWord(){
   if(!q){toast('请输入要查询的日语单词');return;}
   if(!isLikelyJapaneseLookup(q)){toast('请输入日语单词，暂不支持英语查词');return;}
   if(isPureKana(q)&&kanaLength(q)>10){toast('输入过长：假名不能超过 10 个');return;}
-  $('lookupStatus').textContent='正在查 JMdict 样本词典：'+q;
+  $('lookupStatus').textContent='正在查 JMdict 1,000 词 beta：'+q;
   try{
     lookupCache=await lookupOnline(q);
     renderLookupResults();
-    $('lookupStatus').textContent=lookupCache.length?'词典命中：'+lookupCache.length+' 条结果。':'当前小样本词典未收录，可等待完整 JMdict 接入或尝试 AI 解释';
+    $('lookupStatus').textContent=lookupCache.length?'词典命中：'+lookupCache.length+' 条结果。':'当前 1,000 词 beta 未收录，可等待完整 JMdict 接入或尝试 AI 解释';
   }catch(e){
     lookupCache=[];
     lookupMissState=null;
@@ -1268,7 +1268,7 @@ async function lookupOnline(q){
   }
   const entries=Array.isArray(data.entries)?data.entries:[];
   if(!entries.length){
-    lookupMissState={query:q,message:'当前小样本词典未收录，可等待完整 JMdict 接入或尝试 AI 解释',attribution:data.source&&data.source.attributionText?data.source.attributionText:'Dictionary data: JMdict / EDRDG, CC BY-SA 4.0'};
+    lookupMissState={query:q,message:'当前 1,000 词 beta 未收录，可等待完整 JMdict 接入或尝试 AI 解释',attribution:data.source&&data.source.attributionText?data.source.attributionText:'Dictionary data: JMdict / EDRDG, CC BY-SA 4.0'};
     return [];
   }
   return entries.map(dictionaryEntryToLookupItem);
@@ -1305,7 +1305,7 @@ function dictionaryEntryToLookupItem(entry){
     definition:formatLookupDefinition(entry.reading||'',(entry.partOfSpeech||[]).join('・')||'词语',meaning),
     senses:senses,
     source:entry.source||'JMdict',
-    sourceVersion:entry.sourceVersion||'sample-fixture',
+    sourceVersion:entry.sourceVersion||'jmdict-english-beta-1000',
     license:entry.license||'CC BY-SA 4.0',
     attribution:entry.attribution||'JMdict / EDRDG',
     attributionText:entry.attributionText||'Dictionary data: JMdict / EDRDG, CC BY-SA 4.0',
@@ -1316,9 +1316,9 @@ function dictionaryEntryToLookupItem(entry){
 }
 function renderSenseList(senses){
   if(!senses||!senses.length)return '';
-  return '<ol style="margin:8px 0 0;padding-left:20px;color:#4d4770;line-height:1.7">'+senses.map(s=>{const en=(s.englishGloss||[]).join('; ');const zh=Array.isArray(s.chineseGloss)?s.chineseGloss.join('；'):(s.chineseGloss||'');return '<li><b>English:</b> '+esc(en||'未填写')+(zh?'<br><b>中文:</b> '+esc(zh):'<br><span class="hint small">中文释义：MVP 暂无，保留 JMdict 英文 gloss</span>')+'</li>';}).join('')+'</ol>';
+  return '<ol style="margin:8px 0 0;padding-left:20px;color:#4d4770;line-height:1.7">'+senses.map(s=>{const en=(s.englishGloss||[]).join('; ');const zh=Array.isArray(s.chineseGloss)?s.chineseGloss.join('；'):(s.chineseGloss||'');return '<li><b>English:</b> '+esc(en||'未填写')+(zh?'<br><b>中文:</b> '+esc(zh):'<br><span class="hint small">中文释义：1,000 词 English-only beta 暂无，保留 JMdict 英文 gloss</span>')+'</li>';}).join('')+'</ol>';
 }
-function renderLookupResults(){const box=$('lookupResults');if(!lookupCache.length&&lookupMissState){box.innerHTML='<div class="lookup-result-card"><div class="lookup-meaning"><b>'+esc(lookupMissState.message)+'</b><br><span class="hint small">普通查词没有调用 AI。后续可接入用户手动触发的 AI 解释。</span><br><span class="hint small">'+esc(lookupMissState.attribution)+'</span></div><div class="lookup-actions" style="margin-top:10px"><button class="ghost" data-ai-explain="1">AI 解释</button></div></div>';return;}box.innerHTML=lookupCache.map((it,i)=>{const d=splitLookupDefinition(it);return '<div class="lookup-result-card"><div class="lookup-result-main"><div><h3 class="lookup-word-title">'+esc(it.word)+'</h3><div class="lookup-meta">'+(d.reading?'<span class="pill">假名：'+esc(d.reading)+'</span>':'')+(d.pos?'<span class="pill">词性：'+esc(d.pos)+'</span>':'')+'<span class="pill">match：'+esc(it.matchType||'exact')+'</span></div><div class="lookup-meaning"><b>义项：</b>'+renderSenseList(it.senses)+'<div style="margin-top:10px"><b>来源：</b>'+esc(it.attributionText||'Dictionary data: JMdict / EDRDG, CC BY-SA 4.0')+'<br><span class="hint small">sourceVersion: '+esc(it.sourceVersion||'sample-fixture')+'；license: '+esc(it.license||'CC BY-SA 4.0')+(it.deinflection?'<br>活用还原：'+esc(it.deinflection.surface)+' → '+esc(it.deinflection.dictionaryForm):'')+'</span></div></div></div><div class="lookup-actions"><button class="primary" data-collect="'+i+'">收藏</button></div></div></div>';}).join('');}
+function renderLookupResults(){const box=$('lookupResults');if(!lookupCache.length&&lookupMissState){box.innerHTML='<div class="lookup-result-card"><div class="lookup-meaning"><b>'+esc(lookupMissState.message)+'</b><br><span class="hint small">普通查词没有调用 AI。后续可接入用户手动触发的 AI 解释。</span><br><span class="hint small">'+esc(lookupMissState.attribution)+'</span></div><div class="lookup-actions" style="margin-top:10px"><button class="ghost" data-ai-explain="1">AI 解释</button></div></div>';return;}box.innerHTML=lookupCache.map((it,i)=>{const d=splitLookupDefinition(it);return '<div class="lookup-result-card"><div class="lookup-result-main"><div><h3 class="lookup-word-title">'+esc(it.word)+'</h3><div class="lookup-meta">'+(d.reading?'<span class="pill">假名：'+esc(d.reading)+'</span>':'')+(d.pos?'<span class="pill">词性：'+esc(d.pos)+'</span>':'')+'<span class="pill">match：'+esc(it.matchType||'exact')+'</span></div><div class="lookup-meaning"><b>义项：</b>'+renderSenseList(it.senses)+'<div style="margin-top:10px"><b>来源：</b>'+esc(it.attributionText||'Dictionary data: JMdict / EDRDG, CC BY-SA 4.0')+'<br><span class="hint small">sourceVersion: '+esc(it.sourceVersion||'jmdict-english-beta-1000')+'；license: '+esc(it.license||'CC BY-SA 4.0')+(it.deinflection?'<br>活用还原：'+esc(it.deinflection.surface)+' → '+esc(it.deinflection.dictionaryForm):'')+'</span></div></div></div><div class="lookup-actions"><button class="primary" data-collect="'+i+'">收藏</button></div></div></div>';}).join('');}
 async function articleWordsSmart(text,max){
   articleReadingCache={};
   const mode=$('articleMode')?$('articleMode').value:'fast';
