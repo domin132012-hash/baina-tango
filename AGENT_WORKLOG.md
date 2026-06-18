@@ -492,6 +492,85 @@ Entry template:
 
 ---
 
+## 2026-06-18 09:20 JST / Codex / Issue #5 PR #6 beta Preview closeout
+
+### Task
+- Finish Issue #5 updated scope on `feat/full-jmdict-import-spike`.
+- Preserve PR #4 rollout closeout as already completed.
+- Implement and verify a 1,000-entry English-only JMdict beta on draft PR #6.
+- Keep PR #6 draft and unmerged.
+
+### Branch / commits
+- Branch: `feat/full-jmdict-import-spike`
+- Start commit: `571d5bb52201a6852586c42422ce150d724cba20`
+- End commit: final commit reported in final response
+- PR: `#6` `https://github.com/domin132012-hash/baina-tango/pull/6` open draft
+
+### Files changed
+- `functions/api/dictionary/_beta-data.js`
+- `functions/api/dictionary/lookup.js`
+- `index.html`
+- `scripts/dictionary/jmdict-import-spike.js`
+- `docs/architecture/DICTIONARY_FULL_IMPORT_SPIKE.md`
+- `docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+
+### External services touched
+- GitHub: PR/Issue state read, branch push, Issue/PR comments pending after final commit.
+- Cloudflare: read-only Production API verification and PR #6 Preview API verification; dashboard/settings/env not touched.
+- Supabase: not touched.
+- Stripe: not touched.
+- DeepSeek: not touched.
+- Other: EDRDG official public dictionary source downloaded to `/tmp` for local parsing only; no raw source committed.
+
+### Validation
+- `codex-preflight --task "execute Issue #5 PR4 closeout record and implement PR6 1000-entry JMdict English-only beta"`
+- Read `.codex-context-pack.json`.
+- `repo-map summary . --format json`
+- DeepSeek bridge attempted for non-generated diff; failed with non-JSON response, so no bridge output was used for edits or validation.
+- `bridge-meter status`
+- Production API recheck on `https://baina-tango.pages.dev/api/dictionary/lookup`: `努力` hit, `平和` miss, `食べる` hit, `読まなかった -> 読む`, `存在しない語` miss; all `aiCalled=false`.
+- Official source download: `https://www.edrdg.org/pub/Nihongo/JMdict_e.gz`
+- Source SHA-256: `8feac9cc6eda31a737e5e89a4aa876189d16a49443bdde3a86ec6a85392ccf6d`
+- Generated beta module: `functions/api/dictionary/_beta-data.js`, 1,000 entries, about 500 KiB.
+- `git diff --check`
+- `git diff --cached --check`
+- `node --check functions/api/dictionary/_beta-data.js`
+- `node --check functions/api/dictionary/_sample-data.js`
+- `node --check functions/api/dictionary/lookup.js`
+- `node --check scripts/dictionary/jmdict-import-spike.js`
+- `node --check functions/api/eju-essay/analyze.js`
+- `node --check functions/api/eju-essay/follow-up.js`
+- `node --check assets/eju-essay.js`
+- Inline `index.html` script parse check via `new Function(...)`
+- `node scripts/dictionary/jmdict-import-spike.js --input scripts/dictionary/fixtures/sample-fixture.xml --out /tmp/baina-jmdict-fixture-spike`
+- Full-source beta regeneration to `/tmp/baina-jmdict-beta-1000-verify`, confirming count `1000`, required terms present, and matching source SHA.
+- Local API checks: `平和`, `学校`, `先生`, `問題`, `努力`, `食べる`, `読まなかった`, `存在しない語`; all `aiCalled=false`.
+- Cloudflare Preview deployment: `467d1f82-b5e5-46e0-bd47-9a78a542e3be`, source `02cbddb`, URL `https://467d1f82.baina-tango.pages.dev`, status successful.
+- Cloudflare Preview API checks: `平和`, `学校`, `先生`, `問題`, `努力`, `食べる`, `読まなかった`, `存在しない語`; all `aiCalled=false`, sourceVersion `jmdict-english-beta-1000-2026-06-17`.
+- Preview page contains JMdict 1,000-entry beta wording and `Dictionary data: JMdict / EDRDG, CC BY-SA 4.0`.
+- `node scripts/agent-closeout-check.js`
+- Secret scan: matches were only existing rule text, variable names, `process.env` references, and masked/placeholder text; no raw secret found.
+- Repository check found no committed full `JMdict*`, `KANJIDIC*`, `.sqlite`, `.sqlite3`, or `.db` files.
+- Remote verification pending after final commit/push.
+
+### Bridge usage summary
+- Used `codex-preflight`, `.codex-context-pack.json`, `repo-map summary`, and `smart-read`.
+- Attempted `deepseek-bridge review-diff` on the non-generated diff because it exceeded 200 lines; it failed with non-JSON output and was not used as evidence.
+- Final implementation, validation, secret scan, Cloudflare Preview result, and closeout writeback were done directly by Codex.
+
+### Remaining risks
+- PR #6 is still draft and requires user validation before any merge.
+- The beta is a bounded 1,000-entry learner preview, not full JMdict.
+- The import script remains regex-based for local beta/spike use; full Production import should use a streaming XML parser and stricter entity validation.
+- D1/R2/SQLite artifact path is documented but not configured or deployed.
+- Chinese glosses remain `null`; no translation work was done.
+
+---
+
 ## 2026-06-18 09:14 JST / Codex / Issue #5 JMdict 1,000-entry English-only beta
 
 ### Task
@@ -880,3 +959,82 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 
 ### Commit
 - Final commit hash reported in final response.
+
+---
+
+## 2026-06-18 09:20 JST / Codex / Issue #5 PR #6 beta final closeout
+
+### Task
+- Finish Issue #5 updated scope on `feat/full-jmdict-import-spike`.
+- Preserve PR #4 rollout closeout as already completed.
+- Implement and verify a 1,000-entry English-only JMdict beta on draft PR #6.
+- Keep PR #6 draft and unmerged.
+
+### Branch / commits
+- Branch: `feat/full-jmdict-import-spike`
+- Start commit: `571d5bb52201a6852586c42422ce150d724cba20`
+- End commit: final commit reported in final response
+- PR: `#6` `https://github.com/domin132012-hash/baina-tango/pull/6` open draft
+
+### Files changed
+- `functions/api/dictionary/_beta-data.js`
+- `functions/api/dictionary/lookup.js`
+- `index.html`
+- `scripts/dictionary/jmdict-import-spike.js`
+- `docs/architecture/DICTIONARY_FULL_IMPORT_SPIKE.md`
+- `docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+
+### External services touched
+- GitHub: PR/Issue state read, branch push, Issue/PR comments pending after final commit.
+- Cloudflare: read-only Production API verification and PR #6 Preview API verification; dashboard/settings/env not touched.
+- Supabase: not touched.
+- Stripe: not touched.
+- DeepSeek: not touched.
+- Other: EDRDG official public dictionary source downloaded to `/tmp` for local parsing only; no raw source committed.
+
+### Validation
+- `codex-preflight --task "execute Issue #5 PR4 closeout record and implement PR6 1000-entry JMdict English-only beta"`
+- Read `.codex-context-pack.json`.
+- `repo-map summary . --format json`
+- DeepSeek bridge attempted for non-generated diff; failed with non-JSON response, so no bridge output was used for edits or validation.
+- `bridge-meter status`
+- Production API recheck on `https://baina-tango.pages.dev/api/dictionary/lookup`: `努力` hit, `平和` miss, `食べる` hit, `読まなかった -> 読む`, `存在しない語` miss; all `aiCalled=false`.
+- Official source download: `https://www.edrdg.org/pub/Nihongo/JMdict_e.gz`
+- Source SHA-256: `8feac9cc6eda31a737e5e89a4aa876189d16a49443bdde3a86ec6a85392ccf6d`
+- Generated beta module: `functions/api/dictionary/_beta-data.js`, 1,000 entries, about 500 KiB.
+- `git diff --check`
+- `git diff --cached --check`
+- `node --check functions/api/dictionary/_beta-data.js`
+- `node --check functions/api/dictionary/_sample-data.js`
+- `node --check functions/api/dictionary/lookup.js`
+- `node --check scripts/dictionary/jmdict-import-spike.js`
+- `node --check functions/api/eju-essay/analyze.js`
+- `node --check functions/api/eju-essay/follow-up.js`
+- `node --check assets/eju-essay.js`
+- Inline `index.html` script parse check via `new Function(...)`
+- `node scripts/dictionary/jmdict-import-spike.js --input scripts/dictionary/fixtures/sample-fixture.xml --out /tmp/baina-jmdict-fixture-spike`
+- Full-source beta regeneration to `/tmp/baina-jmdict-beta-1000-verify`, confirming count `1000`, required terms present, and matching source SHA.
+- Local API checks: `平和`, `学校`, `先生`, `問題`, `努力`, `食べる`, `読まなかった`, `存在しない語`; all `aiCalled=false`.
+- Cloudflare Preview deployment: `467d1f82-b5e5-46e0-bd47-9a78a542e3be`, source `02cbddb`, URL `https://467d1f82.baina-tango.pages.dev`, status successful.
+- Cloudflare Preview API checks: `平和`, `学校`, `先生`, `問題`, `努力`, `食べる`, `読まなかった`, `存在しない語`; all `aiCalled=false`, sourceVersion `jmdict-english-beta-1000-2026-06-17`.
+- Preview page contains JMdict 1,000-entry beta wording and `Dictionary data: JMdict / EDRDG, CC BY-SA 4.0`.
+- `node scripts/agent-closeout-check.js`
+- Secret scan: matches were only existing rule text, variable names, `process.env` references, and masked/placeholder text; no raw secret found.
+- Repository check found no committed full `JMdict*`, `KANJIDIC*`, `.sqlite`, `.sqlite3`, or `.db` files.
+- Remote verification pending after final commit/push.
+
+### Bridge usage summary
+- Used `codex-preflight`, `.codex-context-pack.json`, `repo-map summary`, and `smart-read`.
+- Attempted `deepseek-bridge review-diff` on the non-generated diff because it exceeded 200 lines; it failed with non-JSON output and was not used as evidence.
+- Final implementation, validation, secret scan, Cloudflare Preview result, and closeout writeback were done directly by Codex.
+
+### Remaining risks
+- PR #6 is still draft and requires user validation before any merge.
+- The beta is a bounded 1,000-entry learner preview, not full JMdict.
+- The import script remains regex-based for local beta/spike use; full Production import should use a streaming XML parser and stricter entity validation.
+- D1/R2/SQLite artifact path is documented but not configured or deployed.
+- Chinese glosses remain `null`; no translation work was done.
