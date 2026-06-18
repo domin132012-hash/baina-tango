@@ -1,5 +1,7 @@
 import { BETA_ENTRIES, DICTIONARY_SOURCE } from "./_beta-data.js";
 
+const DEFAULT_R2_MANIFEST_KEY = "dictionary/shards/jmdict/jmdict-english-r2-shards-2026-06-18/manifest.json";
+
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
@@ -18,6 +20,16 @@ function json(status, body) {
 
 function normalizeQuery(value) {
   return String(value || "").trim().replace(/[　\s]+/g, "");
+}
+
+function shardKeyForTerm(value) {
+  const term = normalizeQuery(value);
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < term.length; index += 1) {
+    hash ^= term.charCodeAt(index);
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return (hash & 0xff).toString(16).padStart(2, "0");
 }
 
 function toHiragana(value) {
@@ -100,7 +112,26 @@ function matchEntry(entry, candidate) {
   return false;
 }
 
-function publicEntry(entry, candidate, mode) {
+function sourceFromManifest(manifest) {
+  if (!manifest) return DICTIONARY_SOURCE;
+  return {
+    source: manifest.source || "JMdict",
+    sourceVersion: manifest.version || manifest.sourceVersion || "jmdict-english-r2-shards",
+    sourceUrl: manifest.sourceUrl,
+    sourceCreatedDate: manifest.sourceCreatedDate,
+    sourceLastModified: manifest.sourceLastModified || null,
+    sourceSha256: manifest.sourceSha256,
+    license: manifest.license || "CC BY-SA 4.0",
+    attribution: manifest.attribution || "JMdict / EDRDG",
+    attributionText: manifest.attributionText || "Dictionary data: JMdict / EDRDG, CC BY-SA 4.0",
+    licenseUrl: manifest.licenseUrl || "https://creativecommons.org/licenses/by-sa/4.0/",
+    entryCount: manifest.counts?.entries || manifest.entryCount || 0,
+    shardStrategy: manifest.shardStrategy,
+    r2ManifestKey: manifest.r2ManifestKey || null
+  };
+}
+
+function publicEntry(entry, candidate, mode, source = DICTIONARY_SOURCE, dictionarySource = "fallback") {
   const senses = mode === "all" ? entry.senses : entry.senses.slice(0, 3);
   return {
     id: entry.id,
@@ -109,37 +140,100 @@ function publicEntry(entry, candidate, mode) {
     readings: entry.readings,
     partOfSpeech: entry.partOfSpeech,
     senses,
-    source: DICTIONARY_SOURCE.source,
-    sourceVersion: DICTIONARY_SOURCE.sourceVersion,
-    license: DICTIONARY_SOURCE.license,
-    attribution: DICTIONARY_SOURCE.attribution,
-    attributionText: DICTIONARY_SOURCE.attributionText,
-    licenseUrl: DICTIONARY_SOURCE.licenseUrl,
+    source: source.source,
+    sourceVersion: source.sourceVersion,
+    license: source.license,
+    attribution: source.attribution,
+    attributionText: source.attributionText,
+    licenseUrl: source.licenseUrl,
     matchType: candidate.matchType,
     rankReason: candidate.rankReason,
     deinflection: candidate.deinflection || null,
-    isCommon: !!entry.isCommon
+    isCommon: !!entry.isCommon,
+    dictionarySource
   };
 }
 
-function lookup(query, mode) {
-  const matches = [];
-  const seen = new Set();
-  for (const candidate of lookupCandidates(query)) {
-    for (const entry of BETA_ENTRIES) {
-      if (!matchEntry(entry, candidate) || seen.has(entry.id)) continue;
-      seen.add(entry.id);
-      matches.push(publicEntry(entry, candidate, mode));
-    }
-  }
+function sortMatches(matches) {
   return matches.sort((a, b) => {
     const rank = { exact: 0, reading: 1, deinflected: 2 };
     return (rank[a.matchType] ?? 9) - (rank[b.matchType] ?? 9);
   });
 }
 
+function lookupFallback(query, mode) {
+  const matches = [];
+  const seen = new Set();
+  for (const candidate of lookupCandidates(query)) {
+    for (const entry of BETA_ENTRIES) {
+      if (!matchEntry(entry, candidate) || seen.has(entry.id)) continue;
+      seen.add(entry.id);
+      matches.push(publicEntry(entry, candidate, mode, DICTIONARY_SOURCE, "fallback"));
+    }
+  }
+  return sortMatches(matches);
+}
+
+async function readR2Json(bucket, key) {
+  const object = await bucket.get(key);
+  if (!object) return null;
+  return JSON.parse(await object.text());
+}
+
+async function activeManifestKeyFromD1(env) {
+  if (!env?.DICTIONARY_DB?.prepare) return null;
+  const row = await env.DICTIONARY_DB.prepare(`
+    SELECT v.r2_manifest_key
+    FROM dictionary_active_versions a
+    JOIN dictionary_versions v ON v.id = a.active_version_id
+    WHERE a.source_id = ?
+    LIMIT 1
+  `).bind("jmdict").first();
+  return row?.r2_manifest_key || null;
+}
+
+async function readR2Manifest(env) {
+  if (!env?.DICTIONARY_R2?.get) return null;
+  const key = await activeManifestKeyFromD1(env)
+    || env.DICTIONARY_MANIFEST_KEY
+    || DEFAULT_R2_MANIFEST_KEY;
+  const manifest = await readR2Json(env.DICTIONARY_R2, key);
+  return manifest ? { ...manifest, r2ManifestKey: key } : null;
+}
+
+async function lookupR2(query, mode, env) {
+  const manifest = await readR2Manifest(env);
+  if (!manifest?.r2Prefix) return null;
+
+  const source = sourceFromManifest(manifest);
+  const matches = [];
+  const seen = new Set();
+  const shardCache = new Map();
+  const candidates = lookupCandidates(query);
+  for (const candidate of candidates) {
+    const kinds = candidate.matchType === "reading" ? ["reading", "surface"] : ["surface"];
+    for (const kind of kinds) {
+      const shardKey = shardKeyForTerm(candidate.form);
+      const r2Key = `${manifest.r2Prefix}/shards/${kind}/${shardKey}.json`;
+      if (!shardCache.has(r2Key)) shardCache.set(r2Key, await readR2Json(env.DICTIONARY_R2, r2Key));
+      const shard = shardCache.get(r2Key);
+      const entries = shard?.terms?.[candidate.form] || [];
+      for (const entry of entries) {
+        if (!matchEntry(entry, candidate) || seen.has(entry.id)) continue;
+        seen.add(entry.id);
+        matches.push(publicEntry(entry, candidate, mode, source, "r2-shard"));
+      }
+    }
+  }
+  return {
+    entries: sortMatches(matches),
+    source,
+    manifest
+  };
+}
+
 export async function onRequest(context) {
-  const { request } = context;
+  const { request, env } = context;
   if (request.method === "OPTIONS") return json(200, { ok: true });
   if (request.method !== "GET") return json(405, { error: "Method not allowed" });
 
@@ -156,7 +250,14 @@ export async function onRequest(context) {
     });
   }
 
-  const entries = lookup(query, mode);
+  let lookupResult = null;
+  try {
+    lookupResult = await lookupR2(query, mode, env);
+  } catch (error) {
+    lookupResult = null;
+  }
+  const entries = lookupResult?.entries || lookupFallback(query, mode);
+  const source = lookupResult?.source || DICTIONARY_SOURCE;
   return json(200, {
     query,
     normalizedQuery: query,
@@ -167,6 +268,7 @@ export async function onRequest(context) {
     fallbackAvailable: true,
     canUseAiExplain: entries.length === 0,
     aiCalled: false,
-    source: DICTIONARY_SOURCE
+    source,
+    dictionarySource: lookupResult ? "r2-shard" : "fallback"
   });
 }

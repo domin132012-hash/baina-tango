@@ -6,7 +6,20 @@ Issue #3 / PR #4 已完成第一阶段小型 fixture MVP，并在 2026-06-17 23:
 
 Issue #5 的完整 JMdict 导入 / 存储 / 查询 spike 见 `docs/architecture/DICTIONARY_FULL_IMPORT_SPIKE.md`。该 spike 推荐 Cloudflare R2 保存 raw source 与 SQLite artifact，Cloudflare D1 保存网站查询结构化索引；PR #6 当前可提交受控体积的 `functions/api/dictionary/_beta-data.js` 作为 1,000-entry beta，但仍不提交完整 JMdict/KANJIDIC2 原始文件或大型生成物。
 
-Issue #7 的 billing guardrail 改变了完整导入执行策略：R2 bucket `baina-dictionary-artifacts` 和 D1 database `baina-dictionary` 已创建，官方 JMdict raw/checksum/manifest/import estimate 已上传 R2，但 full normalized D1 import 没有执行。完整导入 dry-run 估算 `2,425,795` rows written，超过 Workers Free `100,000` rows/day。下一步推荐改为 R2 sharded dictionary lookup + D1 metadata，而不是在 Preview 阶段硬走 full D1 import。
+Issue #7 的 billing guardrail 改变了完整导入执行策略：R2 bucket `baina-dictionary-artifacts` 和 D1 database `baina-dictionary` 已创建，官方 JMdict raw/checksum/manifest/import estimate 已上传 R2，但 full normalized D1 import 没有执行。完整导入 dry-run 估算 `2,425,795` rows written，超过 Workers Free `100,000` rows/day。Issue #8 已按该路线实现 R2 sharded dictionary lookup + D1 metadata，而不是在 Preview 阶段硬走 full D1 import。
+
+Issue #8 状态（2026-06-18 JST）：
+
+- Source: official `https://www.edrdg.org/pub/Nihongo/JMdict_e.gz`
+- Source created date: `2026-06-18`
+- Source SHA-256: `77cc98c43209d56e2ad44438a61ca02ce081ff083c58c5e87e4bc288cd860610`
+- Active R2 shard version: `jmdict-english-r2-shards-2026-06-18`
+- R2 manifest: `dictionary/shards/jmdict/jmdict-english-r2-shards-2026-06-18/manifest.json`
+- Shards: `512` objects, average `1,234,455` bytes, max `1,768,374` bytes, total `632,040,903` bytes
+- D1: metadata-only active version in `baina-dictionary`; no full entries/forms/senses import
+- Runtime: `/api/dictionary/lookup` reads R2 shards when `DICTIONARY_R2` is available, resolves active manifest from `DICTIONARY_DB` when available, and otherwise falls back to the 1,000-entry beta
+- AI: ordinary lookup hit/miss paths keep `aiCalled=false`
+- PR #6: must remain draft, unmerged, and not ready for review until explicit user approval
 
 ## 0. Issue #3 MVP 状态（2026-06-17 JST）
 
@@ -259,17 +272,17 @@ Issue #7 cost-safe adjustment:
 
 ### Cost-safe R2 sharded lookup option
 
-Recommended for the next issue:
+Implemented in Issue #8:
 
 1. Parse official JMdict into normalized lookup records outside Git.
-2. Build compact R2 shards keyed by normalized surface and reading, for example:
-   - `dictionary/shards/jmdict/2026-06-17/surface/<hash-prefix>.json`
-   - `dictionary/shards/jmdict/2026-06-17/reading/<hash-prefix>.json`
+2. Build compact R2 shards keyed by normalized surface and reading:
+   - `dictionary/shards/jmdict/jmdict-english-r2-shards-2026-06-18/shards/surface/<hash>.json`
+   - `dictionary/shards/jmdict/jmdict-english-r2-shards-2026-06-18/shards/reading/<hash>.json`
 3. On lookup, normalize the query and generate exact/reading/deinflected candidates.
 4. Read only the shard(s) needed for those candidates from R2.
 5. Use D1 only to resolve the active version, source metadata, license, and shard strategy.
 6. Keep `aiCalled=false` for hits and misses; AI explain remains a future user-triggered action.
-7. Add `DICTIONARY_R2` / `DICTIONARY_DB` bindings through a verified Pages config or Dashboard flow, then redeploy and confirm `/api/dictionary/lookup` still returns JSON before adding shard reads.
+7. Add or verify `DICTIONARY_R2` / `DICTIONARY_DB` bindings through a verified Pages config or Dashboard flow, then redeploy and confirm `/api/dictionary/lookup` returns `dictionarySource: "r2-shard"`. Until that binding is active, the code safely returns beta fallback results.
 
 Tradeoff:
 

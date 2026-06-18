@@ -571,6 +571,103 @@ Entry template:
 
 ---
 
+## 2026-06-18 13:10 JST / Codex / Issue #8 R2 sharded dictionary lookup + D1 metadata
+
+### Task
+- Execute only Issue #8 on PR #6 / branch `feat/full-jmdict-import-spike`.
+- Keep PR #6 draft, unmerged, and not ready for review.
+- Implement R2 sharded dictionary lookup plus D1 metadata only.
+- Follow Issue #8 billing guardrail; do not perform D1 full import; do not commit full JMdict/XML/large JSON/SQLite/DB artifacts; do not use AI to generate, translate, rewrite, or invent entries; do not process `RIKA_PLAN.md`.
+
+### Branch / commits
+- Branch: `feat/full-jmdict-import-spike`
+- Start commit: `adf5f67006da699135e6a3fa623bd8ad22cb0ea8`
+- End commit: final commit reported in GitHub closeout/final response
+- Issue: `#8` `[AGENT-TASK] Dictionary full lookup via R2 shards + D1 metadata`
+- PR: `#6` open draft
+
+### Files changed
+- `functions/api/dictionary/lookup.js`
+- `scripts/dictionary/jmdict-build-r2-shards.js`
+- `docs/architecture/DICTIONARY_FULL_IMPORT_SPIKE.md`
+- `docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+
+### External services touched
+- GitHub: Issue #8 and PR #6 read; closeout comments pending after final push.
+- Cloudflare R2: uploaded manifest and 512 shard objects to `baina-dictionary-artifacts`.
+- Cloudflare D1: created metadata-only tables and active version rows in `baina-dictionary`; no full entries/forms/senses import.
+- Cloudflare Pages: read-only project/deployment/config checks; Preview deployment pending final push.
+- Supabase: not touched.
+- Stripe: not touched.
+- DeepSeek: not touched.
+- Other: official EDRDG JMdict source downloaded to `/tmp` for local shard generation only; no raw source committed.
+
+### Source / artifact
+- Source URL: `https://www.edrdg.org/pub/Nihongo/JMdict_e.gz`
+- Last-Modified: `Thu, 18 Jun 2026 03:30:21 GMT`
+- Source created date: `2026-06-18`
+- Source SHA-256: `77cc98c43209d56e2ad44438a61ca02ce081ff083c58c5e87e4bc288cd860610`
+- Active dictionary version: `jmdict-english-r2-shards-2026-06-18`
+- R2 manifest key: `dictionary/shards/jmdict/jmdict-english-r2-shards-2026-06-18/manifest.json`
+- Shard count: `512`
+- Average / max shard size: `1,234,455` / `1,768,374` bytes
+- Total shard bytes: `632,040,903`
+- Counts: `217,564` entries, `495,748` forms, `251,778` senses, `438,834` English gloss strings
+
+### Billing / guardrail
+- Billing prompt seen: no
+- Expected free tier status: yes
+- R2 storage added: about `632,040,903` bytes plus manifest
+- R2 Class A operations used/estimated: `514` uploads after one manifest refresh (`512` shard objects + manifest uploads)
+- R2 Class B operations used/estimated: remote manifest/shard spot checks plus normal validation reads; each lookup reads one or a few shard objects
+- D1 rows written used: `21` observed rows written across metadata schema and active-version executions; no full dictionary rows
+- Pages Functions impact: final push/deploy pending; runtime code falls back safely if bindings are absent
+
+### Validation
+- `codex-preflight --task "Issue #8 R2 sharded dictionary lookup + D1 metadata on PR #6 branch feat/full-jmdict-import-spike"`
+- Read `.codex-context-pack.json`.
+- Used `repo-map query`, `smart-read`, and `bridge-meter status`.
+- `gh issue view 8 --json ...`
+- `gh pr view 6 --json ...` confirmed PR #6 is open draft on `feat/full-jmdict-import-spike`.
+- `node --check functions/api/dictionary/lookup.js`
+- `node --check scripts/dictionary/jmdict-build-r2-shards.js`
+- `node --check scripts/dictionary/jmdict-full-dry-run.js`
+- `node --check scripts/dictionary/jmdict-import-spike.js`
+- Fixture shard generation to `/tmp/baina-jmdict-r2-fixture`.
+- Full shard generation to `/tmp/baina-jmdict-r2-2026-06-18`.
+- Local API mock against full shard artifact:
+  - `平和`, `学校`, `先生`, `問題`, `社会`, `生活`, `必要`, `考える`, `分かる`, `努力`, `食べる`: hit exact, `source=r2-shard`, `aiCalled=false`
+  - `読まなかった`: hit `読む`, deinflected, `source=r2-shard`, `aiCalled=false`
+  - `食べられる`: hit exact JMdict entry, `source=r2-shard`, `aiCalled=false`
+  - `高かった`, `高くない`: hit `高い`, deinflected, `source=r2-shard`, `aiCalled=false`
+  - `存在しない語`: miss, `source=r2-shard`, `aiCalled=false`
+- Fallback API mock with no bindings: `平和` hit beta fallback, `存在しない語` miss, both `aiCalled=false`.
+- Remote R2 upload audit: `512` shard upload logs, `512` complete, `0` error/guardrail keyword matches.
+- Remote R2 manifest checksum matched local manifest.
+- Remote R2 spot checks confirmed `平和`, `読む`, `高い`, and `食べられる` are present in uploaded shards.
+- Remote D1 active metadata query returned active version `jmdict-english-r2-shards-2026-06-18`.
+- `npx wrangler pages functions build . --outfile /tmp/baina-pages-worker.js` still fails on existing Supabase package `.d.ts` parsing after local dependency install; not caused by dictionary lookup code.
+
+### Bridge usage summary
+- Bridge used: yes.
+- Bridge tools used: `codex-preflight`, `.codex-context-pack.json`, `repo-map`, `smart-read`, `bridge-meter`.
+- What was summarized: repository orientation, changed files, token budget, and bridge-meter running status.
+- DeepSeek bridge not used because no long log/diff/doc required compression after direct scoped reads; original evidence was verified directly before edits.
+- Bridge-meter/dashboard result: `bridge-meter status` reported no bridge job running.
+
+### Remaining risks
+- Preview R2 runtime depends on Cloudflare Pages `DICTIONARY_R2` / `DICTIONARY_DB` bindings. Code is binding-ready and safe-fallback, but active Pages binding still needs deployment verification.
+- `wrangler pages functions build` has an existing unrelated Supabase `.d.ts` bundling failure in this checkout.
+- R2 shard JSON is duplicated across surface/reading indexes, which is acceptable for free-tier storage now but can be compacted in a future artifact format.
+- PR #6 must remain draft until the user validates Preview behavior.
+- `RIKA_PLAN.md` remains unrelated and untracked; intentionally not processed.
+
+---
+
 ## 2026-06-18 10:24 JST / Codex / Issue #7 cost-safe full JMdict D1/R2 continuation
 
 ### Task

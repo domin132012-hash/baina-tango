@@ -1,8 +1,74 @@
 # Dictionary Full Import Spike And 1,000-Entry Beta
 
-Last updated: 2026-06-18 10:24 JST
+Last updated: 2026-06-18 13:10 JST
 
 This document covers the next phase after PR #4: moving from a JMdict small-sample MVP to a usable 1,000-entry English-only beta, while preserving the full, versioned D1/R2 import path. It does not import full JMdict into Production, does not apply Cloudflare D1/R2 settings, and does not commit full JMdict/KANJIDIC2 raw files or generated database artifacts.
+
+## Issue #8 R2 Sharded Lookup Outcome
+
+Issue #8 keeps PR #6 draft and implements the cost-safe full JMdict English-only lookup path as R2 shards plus D1 metadata. It does not perform a D1 full import.
+
+Implemented files:
+
+- `scripts/dictionary/jmdict-build-r2-shards.js`
+- `functions/api/dictionary/lookup.js`
+
+Official source used for Issue #8:
+
+- URL: `https://www.edrdg.org/pub/Nihongo/JMdict_e.gz`
+- Last-Modified: `Thu, 18 Jun 2026 03:30:21 GMT`
+- Source created date: `2026-06-18`
+- SHA-256: `77cc98c43209d56e2ad44438a61ca02ce081ff083c58c5e87e4bc288cd860610`
+
+Generated R2 shard version:
+
+- Active version: `jmdict-english-r2-shards-2026-06-18`
+- Manifest key: `dictionary/shards/jmdict/jmdict-english-r2-shards-2026-06-18/manifest.json`
+- Shard keys: `dictionary/shards/jmdict/jmdict-english-r2-shards-2026-06-18/shards/<surface-or-reading>/<hash>.json`
+- Shard strategy: deterministic FNV-1a UTF-16 low-byte hash, 256 surface shards + 256 reading shards
+- Counts: `217,564` entries, `495,748` forms, `251,778` senses, `438,834` English gloss strings
+- Shard count: `512`
+- Average shard size: `1,234,455` bytes
+- Max shard size: `1,768,374` bytes
+- Total shard bytes: `632,040,903`
+
+D1 metadata-only state:
+
+- Database: `baina-dictionary`
+- Database id: `5e8eeeda-0029-4c2e-958e-845ea0020c6e`
+- Tables: `dictionary_sources`, `dictionary_versions`, `dictionary_active_versions`
+- Active version: `jmdict-english-r2-shards-2026-06-18`
+- No full entries/forms/senses were written to D1.
+
+Runtime lookup path:
+
+1. Normalize query and generate exact / reading / deinflected candidates.
+2. If `DICTIONARY_R2` is available, resolve the active manifest key from `DICTIONARY_DB` when available; otherwise use the default manifest key or `DICTIONARY_MANIFEST_KEY`.
+3. Read only the needed surface/reading shard objects from R2.
+4. Return the same response shape as the beta path, with `dictionarySource: "r2-shard"`.
+5. If bindings are missing or R2/D1 lookup fails, fall back to the 1,000-entry beta without calling AI.
+
+Validation summary:
+
+- Local API mock against the complete R2 shard artifact passed all Issue #8 required queries with `aiCalled=false`.
+- Remote R2 manifest checksum matched the generated local manifest.
+- Remote R2 spot checks found expected entries for `平和`, `読む`, `高い`, and `食べられる`.
+- Remote D1 active metadata points to `jmdict-english-r2-shards-2026-06-18`.
+
+Cost guardrail:
+
+- Billing / paid prompt seen: no
+- R2 storage added: about `632,040,903` bytes of shards plus manifest
+- R2 Class A operations used/estimated: `514` uploads in this task after one manifest refresh (`512` shards + manifest uploads)
+- R2 Class B operations used/estimated: spot checks plus required validation reads; expected normal lookup reads one or a few shard objects
+- D1 rows written used: `21` total observed rows written across schema/metadata executions; no full dictionary rows
+- Expected free tier status: yes
+
+Rollback:
+
+1. Switch `dictionary_active_versions.active_version_id` back to the previous version if one exists, or remove the active row to force beta fallback.
+2. Keep R2 shard objects immutable by version prefix; do not overwrite old shard versions for rollback.
+3. If a Pages binding causes a bad Preview deployment, revert only the binding/config deployment and keep `/api/dictionary/lookup` fallback behavior.
 
 ## Issue #7 Cost-Safe Full JMdict Outcome
 
