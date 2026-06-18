@@ -4,7 +4,7 @@
 > do not recheck Supabase / Stripe unless the task touches them, a related fault appears, or the recorded status is older than 30 days and the task depends on that platform.
 > Never record API keys, service role keys, JWT secrets, session tokens, customer data, payment records, card data, or raw secret values.
 
-Last updated: 2026-06-18 10:24 JST by Codex
+Last updated: 2026-06-18 10:35 JST by Codex
 
 ## 1. 当前锁定状态
 
@@ -40,14 +40,14 @@ Last updated: 2026-06-18 10:24 JST by Codex
 | External services touched - Supabase | Not touched |
 | External services touched - Stripe | Not touched |
 | External services touched - DeepSeek | Not touched |
-| Current status | Official JMdict source `2026-06-17` dry-run parsed `217,554` entries / `495,722` forms / `251,759` senses. Full normalized D1 import estimate is `2,425,795` rows written with current indexes, about `25` days at the Workers Free daily write limit. Recommended next path is R2 sharded lookup + D1 metadata. |
+| Current status | Official JMdict source `2026-06-17` dry-run parsed `217,554` entries / `495,722` forms / `251,759` senses. Full normalized D1 import estimate is `2,425,795` rows written with current indexes, about `25` days at the Workers Free daily write limit. Recommended next path is R2 sharded lookup + D1 metadata. Branch Preview API still serves the 1,000-entry fallback and keeps `aiCalled=false`. |
 | Current blocker | Do not execute full D1 import without explicit user billing/limit approval or a multi-day free-tier import plan. PR #6 must stay draft and unmerged |
 
 ## 3. Cloudflare 状态
 
 | Field | Value |
 |---|---|
-| Last checked | 2026-06-18 10:24 JST during Issue #7 cost-safe D1/R2 setup |
+| Last checked | 2026-06-18 10:35 JST during Issue #7 cost-safe D1/R2 setup |
 | Touched by this task | R2 bucket/D1 database creation, R2 remote object upload, read-only D1/R2 verification; no paid prompt observed |
 | Needs recheck | Yes before any D1 import, R2 shard runtime, or Preview deployment that depends on new bindings |
 | Current blocker | Full D1 import exceeds Workers Free `100,000` rows written/day in one pass |
@@ -55,7 +55,7 @@ Last updated: 2026-06-18 10:24 JST by Codex
 | Previous app merge deployment | `1c5b2430-6b20-4334-8e04-e9fb2243dbca`, source `79a2b7e` |
 | PR #2 Preview deployment | `7a85773e-6a2d-44e6-92e2-a8aed5520b7d`, source `dea412c` |
 | PR #4 Preview deployment | `8c882ad2-3432-4d21-a422-be0357eedb19`, source `c294976`, URL `https://8c882ad2.baina-tango.pages.dev`, branch URL `https://feat-dictionary-lookup-mvp.baina-tango.pages.dev`, status successful |
-| PR #6 Preview deployment | `467d1f82-b5e5-46e0-bd47-9a78a542e3be`, source `02cbddb`, URL `https://467d1f82.baina-tango.pages.dev`, branch URL `https://feat-full-jmdict-import-spik.baina-tango.pages.dev`, status successful |
+| PR #6 Preview deployment | Latest listed deployment `18b5dfe2-7658-4af9-8e2d-56a725c667bd`, source `eeafe57`, URL `https://18b5dfe2.baina-tango.pages.dev`, status Active but direct deployment API URL returns Cloudflare Deployment Not Found; branch URL `https://feat-full-jmdict-import-spik.baina-tango.pages.dev` returns API JSON and was used for validation |
 | R2 dictionary bucket | `baina-dictionary-artifacts`; raw/checksum/manifest/estimate keys under `dictionary/raw/jmdict/2026-06-17/` |
 | D1 dictionary database | `baina-dictionary`, id `5e8eeeda-0029-4c2e-958e-845ea0020c6e`, `0` tables, `12288` bytes; full import not executed |
 | Planned dictionary bindings | `DICTIONARY_R2` and `DICTIONARY_DB`; not active in `wrangler.toml` until Pages config is downloaded/verified because the first active-binding deploy produced a static-only Preview |

@@ -629,7 +629,24 @@ Entry template:
 - R2 checksum round-trip verified by `wrangler r2 object get`.
 - `wrangler d1 list` confirmed D1 database exists with `0` tables and `12288` bytes.
 - Active `wrangler.toml` binding config was tried and then reverted because the resulting Cloudflare Preview became static-only and `/api/dictionary/lookup` returned an HTML 404. Binding config must be reintroduced only after downloading/verifying the Pages config.
-- Final validation pending before commit: `git diff --check`, `git diff --cached --check`, changed JS syntax checks, closeout check, secret scan, remote verification.
+- `git diff --check`
+- `git diff --cached --check`
+- `node --check scripts/dictionary/jmdict-full-dry-run.js`
+- `node --check scripts/dictionary/jmdict-import-spike.js`
+- `node --check functions/api/dictionary/lookup.js`
+- `node scripts/agent-closeout-check.js`
+- Secret scan: matches were only existing rule text, environment variable names, masked references, and `process.env` references; no raw secret found.
+- Tracked artifact check: no committed full `JMdict*`, `KANJIDIC*`, `.sqlite`, `.sqlite3`, `.db`, full generated JSON, or R2 shard artifact.
+- Remote verification: `origin/feat/full-jmdict-import-spike` and `refs/pull/6/head` point to the final commit reported in final response.
+- PR #6 status: open draft; not merged; not marked ready.
+- Cloudflare Preview: latest listed deployment `18b5dfe2-7658-4af9-8e2d-56a725c667bd`, source `eeafe57`, status Active; direct deployment URL returned Deployment Not Found for API, but branch URL `https://feat-full-jmdict-import-spik.baina-tango.pages.dev` returned API JSON.
+- Branch Preview API checks:
+  - `平和`, `学校`, `先生`, `問題`, `社会`, `生活`, `必要`, `考える`, `分かる`, `努力`, `食べる`: hit exact, `aiCalled=false`
+  - `読まなかった`: hit `読む`, deinflected, `aiCalled=false`
+  - `高かった`, `高くない`: hit `高い`, deinflected, `aiCalled=false`
+  - `食べられる`: miss in current 1,000-entry fallback/deinflection rules, `aiCalled=false`
+  - `存在しない語`: miss, `aiCalled=false`
+- Branch Preview page smoke: contains `查词收藏`, JMdict attribution text, `真题试炼`, and `記述`.
 
 ### Bridge usage summary
 - Used `codex-preflight`, `.codex-context-pack.json`, `repo-map`, and `smart-read`.
