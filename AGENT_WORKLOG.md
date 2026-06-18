@@ -650,6 +650,10 @@ Entry template:
 - Remote R2 manifest checksum matched local manifest.
 - Remote R2 spot checks confirmed `平和`, `読む`, `高い`, and `食べられる` are present in uploaded shards.
 - Remote D1 active metadata query returned active version `jmdict-english-r2-shards-2026-06-18`.
+- GitHub remote verification: `origin/feat/full-jmdict-import-spike` and `refs/pull/6/head` pointed to implementation commit `c1e9133c560b69a38f8201fe2a9628855a85ea86`; PR #6 remained open draft.
+- Cloudflare Preview deployment `03343590-9f82-4741-9212-4e9850120562`, source `c1e9133`, became Active. Direct deployment API URL returned HTML, while branch Preview API returned JSON.
+- Branch Preview API checks at `https://feat-full-jmdict-import-spik.baina-tango.pages.dev/api/dictionary/lookup` kept `aiCalled=false` for all Issue #8 required queries, but `dictionarySource` stayed `fallback` because Pages R2/D1 bindings are not active. `食べられる` therefore missed on Preview while it hits the uploaded R2 shard artifact.
+- Preview page smoke found `查词收藏`, `真题试炼`, `記述`, and JMdict attribution text.
 - `npx wrangler pages functions build . --outfile /tmp/baina-pages-worker.js` still fails on existing Supabase package `.d.ts` parsing after local dependency install; not caused by dictionary lookup code.
 
 ### Bridge usage summary
@@ -660,7 +664,7 @@ Entry template:
 - Bridge-meter/dashboard result: `bridge-meter status` reported no bridge job running.
 
 ### Remaining risks
-- Preview R2 runtime depends on Cloudflare Pages `DICTIONARY_R2` / `DICTIONARY_DB` bindings. Code is binding-ready and safe-fallback, but active Pages binding still needs deployment verification.
+- Preview R2 runtime depends on Cloudflare Pages `DICTIONARY_R2` / `DICTIONARY_DB` bindings. Code is binding-ready and safe-fallback, but latest Preview source `c1e9133` still uses fallback because active Pages bindings are not configured.
 - `wrangler pages functions build` has an existing unrelated Supabase `.d.ts` bundling failure in this checkout.
 - R2 shard JSON is duplicated across surface/reading indexes, which is acceptable for free-tier storage now but can be compacted in a future artifact format.
 - PR #6 must remain draft until the user validates Preview behavior.
