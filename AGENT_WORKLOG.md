@@ -652,7 +652,7 @@ Entry template:
 - Remote D1 active metadata query returned active version `jmdict-english-r2-shards-2026-06-18`.
 - GitHub remote verification: `origin/feat/full-jmdict-import-spike` and `refs/pull/6/head` pointed to implementation commit `c1e9133c560b69a38f8201fe2a9628855a85ea86`; PR #6 remained open draft.
 - Cloudflare Preview deployment `03343590-9f82-4741-9212-4e9850120562`, source `c1e9133`, became Active. Direct deployment API URL returned HTML, while branch Preview API returned JSON.
-- Branch Preview API checks at `https://feat-full-jmdict-import-spik.baina-tango.pages.dev/api/dictionary/lookup` kept `aiCalled=false` for all Issue #8 required queries, but `dictionarySource` stayed `fallback` because Pages R2/D1 bindings are not active. `食べられる` therefore missed on Preview while it hits the uploaded R2 shard artifact.
+- Historical check: Branch Preview API checks at `https://feat-full-jmdict-import-spik.baina-tango.pages.dev/api/dictionary/lookup` kept `aiCalled=false` for all Issue #8 required queries, but `dictionarySource` stayed `fallback` because Pages R2/D1 bindings were not available in that check. `食べられる` therefore missed in that historical Preview check while it hit the uploaded R2 shard artifact; this blocker was later superseded by the 2026-06-19 Preview PASS.
 - Preview page smoke found `查词收藏`, `真题试炼`, `記述`, and JMdict attribution text.
 - `npx wrangler pages functions build . --outfile /tmp/baina-pages-worker.js` still fails on existing Supabase package `.d.ts` parsing after local dependency install; not caused by dictionary lookup code.
 
@@ -667,7 +667,7 @@ Entry template:
 - Preview R2 runtime depends on Cloudflare Pages `DICTIONARY_R2` / `DICTIONARY_DB` bindings. Code is binding-ready and safe-fallback, but latest Preview source `c1e9133` still uses fallback because active Pages bindings are not configured.
 - `wrangler pages functions build` has an existing unrelated Supabase `.d.ts` bundling failure in this checkout.
 - R2 shard JSON is duplicated across surface/reading indexes, which is acceptable for free-tier storage now but can be compacted in a future artifact format.
-- PR #6 must remain draft until the user validates Preview behavior.
+- Historical state at that time: PR #6 was kept draft until the user validated Preview behavior; superseded by the 2026-06-21 ready-for-review transition.
 - `RIKA_PLAN.md` remains unrelated and untracked; intentionally not processed.
 
 ---
@@ -1287,7 +1287,7 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 ### Remaining risks
 - Preview Functions still cannot access `DICTIONARY_R2` / `DICTIONARY_DB`; Cloudflare Pages project settings or API capability must make the bindings effective before Issue #8 can be considered complete.
 - Manual Dashboard/API permission confirmation is now the blocker; work stopped before changing those settings.
-- PR #6 must remain draft, not merged, and not marked ready.
+- Historical state at that time: PR #6 was kept draft, not merged, and not marked ready; superseded by the 2026-06-21 ready-for-review transition.
 - Do not execute D1 full import; keep D1 metadata-only.
 - Do not commit complete JMdict/XML/large JSON/SQLite/DB artifacts.
 
@@ -1332,3 +1332,83 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 ### Remaining risks
 - PR #6 still needs user review before any ready/merge action.
 - D1 full import remains forbidden.
+
+## 2026-06-21 23:26 JST / Codex / PR #6 ready-for-review closeout
+
+### Task
+- User reported PR #6 Preview validation passed.
+- Mark PR #6 ready for review only.
+- Update PR #6 body checklist for Preview validation and ready approval.
+- Do not merge PR #6, change code, redeploy, change Cloudflare, touch Production, touch R2/D1, or touch `RIKA_PLAN.md`.
+
+### Branch / commits
+- Branch: `feat/full-jmdict-import-spike`
+- End commit: `5fb2c05322fbe98903eebd61b297e9237d6c14fc`
+- PR: `#6` `https://github.com/domin132012-hash/baina-tango/pull/6`
+
+### Files changed
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+
+### External services touched
+- GitHub: PR #6 body checklist updated; PR #6 marked ready for review.
+- Cloudflare: not touched.
+- Cloudflare R2/D1: not touched.
+- Production: not touched.
+
+### Validation recorded
+- PR #6 state: open, ready for review, not merged.
+- PR #6 merge checklist: merge approval remains unchecked.
+- Head branch/end commit: `feat/full-jmdict-import-spike` at `5fb2c05322fbe98903eebd61b297e9237d6c14fc`.
+
+### Billing / paid prompt seen
+- No.
+
+### Remaining risks
+- Merge still requires explicit user approval.
+- Production remains intentionally unchanged until a separate explicit merge/deploy path.
+
+## 2026-06-22 00:06 JST / Codex / PR #6 docs/title cleanup and final pre-merge check
+
+### Task
+- Update stale current-state docs and PR #6 title/body after user approved docs/title cleanup.
+- Run final pre-merge verification for PR #6.
+- Do not merge PR #6, change application code, manually redeploy, change Cloudflare settings, touch Production, touch R2/D1 data, execute D1 full import, touch `RIKA_PLAN.md`, create large generated artifacts, or generate/translate/rewrite dictionary entries with AI.
+
+### Branch / commits
+- Branch: `feat/full-jmdict-import-spike`
+- Start commit: `5fb2c05322fbe98903eebd61b297e9237d6c14fc`
+- End commit: final pushed docs/title cleanup commit recorded in PR #6 final verification comment after push.
+- PR: `#6` `https://github.com/domin132012-hash/baina-tango/pull/6`
+
+### Files changed
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+
+### External services touched
+- GitHub: PR #6 title/body updated; final verification comment posted; branch pushed.
+- Cloudflare: not touched; no manual redeploy and no settings change.
+- Cloudflare R2/D1: not touched; no R2/D1 data write and no D1 full import.
+- Production: not touched.
+
+### Validation
+- PR #6 state verified open, ready for review, not merged, target `main`, mergeable.
+- Branch Preview API verified `dictionarySource=r2-shard`.
+- `食べられる` returned count `1`.
+- Required terms all returned `aiCalled=false`.
+- Committed artifact scan found no full JMdict XML/gz, KANJIDIC, SQLite, DB, or large generated dictionary artifact committed.
+- Secret scan found no committed raw secret in the PR diff.
+- Status docs and PR title/body were brought into current-state alignment.
+- Billing prompt seen: no.
+- Production unchanged.
+
+### Remaining risks
+- Merge still requires explicit user approval.
+- Any post-merge Production deployment plan remains separate.
+- D1 full import remains prohibited unless a separate cost-safe plan is approved.
+
+### Remaining cost risks
+- R2 object storage and reads may increase if the R2 shard lookup is later promoted to Production traffic.
+- D1 metadata reads are expected to stay small; D1 full import remains prohibited without an approved cost-safe plan.
