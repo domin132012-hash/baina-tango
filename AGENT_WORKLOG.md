@@ -1469,3 +1469,62 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - R2 object storage/read costs may increase only after Production actually uses R2 shards.
 - D1 metadata reads should remain small after Production binding is fixed.
 - D1 full import remains prohibited without an approved cost-safe plan.
+
+## 2026-06-22 01:00 JST / Codex / Production R2-D1 binding runtime fix
+
+### Task
+- User requested only the Production R2/D1 binding/runtime fix after PR #6 merge.
+- Goal: make Production use the already validated R2 shard lookup path.
+- Strict scope: no application code change, no `RIKA_PLAN.md`, no D1 full import, no R2 shard upload or rewrite, no Stripe/Supabase/DeepSeek change, and stop on any billing/paid prompt.
+
+### Branch / commits
+- Branch: `main`
+- Start commit: `7cd4128f998649329e51bc1263e13e8bc60c1621`
+- Production deployment source after fix: `7cd4128f998649329e51bc1263e13e8bc60c1621`
+- Status writeback commit: recorded by the closeout push for this entry.
+- PR: `#6` `https://github.com/domin132012-hash/baina-tango/pull/6`
+- Issue: `#8`
+
+### Files changed
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+
+### External services touched
+- Cloudflare Pages config: read Production project config first, then updated only Production bindings:
+  - `DICTIONARY_R2` -> R2 bucket `baina-dictionary-artifacts`
+  - `DICTIONARY_DB` -> D1 database `baina-dictionary` id `5e8eeeda-0029-4c2e-958e-845ea0020c6e`
+- Cloudflare Pages deployment: triggered a Git-backed Production rebuild via Pages deployment API, not a local direct upload.
+- Cloudflare R2/D1 data: not touched; no object upload/delete/rewrite and no D1 full import.
+- GitHub: Issue #8 and PR #6 comments updated during closeout.
+- Stripe / Supabase / DeepSeek: not touched.
+
+### Production deployment
+- Deployment id: `fe86990e-2a04-470a-89ea-c7df55aea313`
+- Environment: Production
+- Branch: `main`
+- Source: `7cd4128f998649329e51bc1263e13e8bc60c1621`
+- URL: `https://baina-tango.pages.dev`
+- Status: Active / deploy success
+
+### Validation
+- Production Pages config before fix: Preview had `DICTIONARY_R2` and `DICTIONARY_DB`; Production was missing both.
+- Production Pages config after fix: Production has both bindings and existing KV/env var keys remained present.
+- `/api/dictionary/lookup?q=食べられる`: `dictionarySource=r2-shard`, count `1`, `aiCalled=false`.
+- Required API terms checked: `平和`, `学校`, `先生`, `問題`, `社会`, `生活`, `必要`, `考える`, `分かる`, `努力`, `食べる`, `読まなかった`, `食べられる`, `高かった`, `高くない`, `存在しない語`.
+- Required API terms all returned HTTP 200 and `aiCalled=false`.
+- Browser smoke: dictionary page opens; page lookup for `食べられる` renders one result.
+- Browser smoke: `学习 -> 真题试炼 -> 日本語 -> 記述` opens and the essay textarea is visible.
+- Browser smoke: console errors `0`; API 4xx/5xx failures `0`.
+- Billing prompt seen: no.
+
+### Remaining risks
+- Production now uses R2 shard lookup, so monitor behavior under real traffic.
+- The visible lookup page copy still mentions the older 1,000-word beta wording; this task intentionally did not change application code or copy.
+- D1 remains metadata-only. Full D1 import is still prohibited unless a separate cost-safe plan is explicitly approved.
+
+### Remaining cost risks
+- R2 read volume may increase now that Production uses shards.
+- D1 reads should remain limited to metadata lookup.
+- No new paid/billing prompt was seen, but provider consoles remain final truth for billing.
