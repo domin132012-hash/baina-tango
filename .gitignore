@@ -1,6 +1,26 @@
 .codex-context-pack.json
 .visual-bridge/
+.wrangler/
 scripts/__pycache__/
 __pycache__/
 *.pyc
 .DS_Store
+
+# Dictionary import spike artifacts. Keep full source dictionaries and generated
+# databases out of Git; use /tmp, R2, or an explicit build cache instead.
+/data/dictionary/
+/scripts/dictionary/cache/
+/scripts/dictionary/output/
+full-jmdict*.json
+jmdict-full*.json
+jmdict-shards/
+JMdict*.gz
+JMdict*.xml
+JMdict*.xml.gz
+KANJIDIC*.gz
+KANJIDIC*.xml
+kanjidic2*.gz
+kanjidic2*.xml
+*.sqlite
+*.sqlite3
+*.db
