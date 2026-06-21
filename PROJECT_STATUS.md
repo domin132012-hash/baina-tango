@@ -5,7 +5,7 @@
 > ✅ 消息通知已改为 Cloudflare KV 远程配置，新增 `/admin/notices.html` 可视化后台。
 > ✅ EJU 記述作文批改 PR #2 已在用户完成真实 Preview 验收后合并并部署 Production。
 > ✅ 词典优先查词 PR #4 已合并并部署 Production；当前仍是 JMdict 小样本 MVP。
-> ✅ PR #6 已按用户显式批准 merge 到 `main`，merge commit `c94735925798c604321631e1caa36c2f2c3190be`。Production R2/D1 binding/runtime fix 已完成：Cloudflare Production deployment `fe86990e-2a04-470a-89ea-c7df55aea313` 已 Active（source `7cd4128`），Production lookup 返回 `dictionarySource=r2-shard`，`食べられる` count `1`，全部 required terms `aiCalled=false`。D1 full import 仍禁止，除非另有 cost-safe plan。
+> ✅ PR #6 已按用户显式批准 merge 到 `main`，merge commit `c94735925798c604321631e1caa36c2f2c3190be`。Production R2/D1 binding/runtime fix 已完成：Cloudflare Production Pages config 已绑定 `DICTIONARY_R2` 和 `DICTIONARY_DB`，canonical Production lookup 返回 `dictionarySource=r2-shard`，`食べられる` count `1`，全部 required terms `aiCalled=false`。D1 full import 仍禁止，除非另有 cost-safe plan。
 
 ## 最近完成（EJU 記述作文批改）— 2026-06-17
 
@@ -60,7 +60,7 @@ PR #2 `feat(eju-essay): add EJU writing critique integration` 已从 draft 改 r
 |---|---|---|
 | 词典优先查词 | ✅ 小样本 MVP 已上线 | PR #4 merge commit `c340f75a5f8cf51dac691732a9c66e50cd22af09` 已部署 Production；`新增 -> 查词收藏` 先查 JMdict 小样本 fixture，命中不默认调用 AI；完整 JMdict/D1/R2/SQLite 导入仍是后续任务 |
 | JMdict 1,000-entry beta | ✅ Fallback retained only as safety path | PR #6 已 merge 到 `main`；Production 当前使用 R2 shard lookup。beta fallback 仍保留为 bindings 缺失/失败时的安全降级路径，命中/未命中仍不默认调用 AI。 |
-| 完整 JMdict R2 sharded lookup | ✅ Production active | 官方 JMdict `2026-06-18` 已生成并上传 R2 shards：512 shard objects，约 `632,040,903` bytes，active version `jmdict-english-r2-shards-2026-06-18`。D1 `baina-dictionary` 只写入 metadata schema 和 active version，不做 full import。Production Pages config 已绑定 `DICTIONARY_R2` -> `baina-dictionary-artifacts`、`DICTIONARY_DB` -> `baina-dictionary`；Production deployment `fe86990e` at source `7cd4128` 已 Active。Production `/api/dictionary/lookup?q=食べられる` 返回 `dictionarySource=r2-shard`、count `1`，全部要求测试词 `aiCalled=false`。不得提交完整 JMdict/XML/大型 JSON/SQLite/DB artifact，不做 AI 词条生成或翻译；D1 full import 仍禁止，除非另有 cost-safe plan。 |
+| 完整 JMdict R2 sharded lookup | ✅ Production active | 官方 JMdict `2026-06-18` 已生成并上传 R2 shards：512 shard objects，约 `632,040,903` bytes，active version `jmdict-english-r2-shards-2026-06-18`。D1 `baina-dictionary` 只写入 metadata schema 和 active version，不做 full import。Production Pages config 已绑定 `DICTIONARY_R2` -> `baina-dictionary-artifacts`、`DICTIONARY_DB` -> `baina-dictionary`；canonical Production `/api/dictionary/lookup?q=食べられる` 返回 `dictionarySource=r2-shard`、count `1`，全部要求测试词 `aiCalled=false`。不得提交完整 JMdict/XML/大型 JSON/SQLite/DB artifact，不做 AI 词条生成或翻译；D1 full import 仍禁止，除非另有 cost-safe plan。 |
 | 代理 closeout 回写机制 | ✅ 已制度化 | 新增 `docs/ops/AGENT_CLOSEOUT_CHECKLIST.md`，并要求所有时间使用 JST、收尾必须 commit + push + 远端校验 |
 | Cloudflare 通知配置 | ✅ 线上配置已解决（用户确认） | 本轮未处理通知系统 |
 | 未部署年份灰色建设中 UI | 📝 待做 | 可后续让 Codex 做，但避免与 Claude 同时改 `assets/eju.js` 撞车 |

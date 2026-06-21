@@ -4,7 +4,7 @@
 > do not recheck Supabase / Stripe unless the task touches them, a related fault appears, or the recorded status is older than 30 days and the task depends on that platform.
 > Never record API keys, service role keys, JWT secrets, session tokens, customer data, payment records, card data, or raw secret values.
 
-Last updated: 2026-06-22 01:00 JST by Codex
+Last updated: 2026-06-22 01:04 JST by Codex
 
 ## 1. 当前锁定状态
 
@@ -12,7 +12,7 @@ Last updated: 2026-06-22 01:00 JST by Codex
 |---|---|---|
 | Repository docs | Locked for PR #6 Production binding/runtime fix closeout | Recording Production Pages binding fix, active R2 shard smoke, cost guardrail, and D1 full-import prohibition |
 | Application code | PR #6 R2 shard lookup path + beta fallback | `/api/dictionary/lookup` is binding-ready for `DICTIONARY_R2` + optional `DICTIONARY_DB`; when bindings are absent or fail it keeps the bounded 1,000-entry beta fallback and `aiCalled=false` |
-| Cloudflare | Production R2 shard lookup active | Production Pages config now has `DICTIONARY_R2` -> `baina-dictionary-artifacts` and `DICTIONARY_DB` -> `baina-dictionary`; deployment `fe86990e` source `7cd4128` is Active and Production returns `dictionarySource=r2-shard` |
+| Cloudflare | Production R2 shard lookup active | Production Pages config now has `DICTIONARY_R2` -> `baina-dictionary-artifacts` and `DICTIONARY_DB` -> `baina-dictionary`; canonical Production returns `dictionarySource=r2-shard` |
 | Supabase | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
 | Stripe | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
 | DeepSeek | Not touched in this task | No backend, secret, or API changes; normal lookup does not call AI by default |
@@ -40,18 +40,18 @@ Last updated: 2026-06-22 01:00 JST by Codex
 | External services touched - Supabase | Not touched |
 | External services touched - Stripe | Not touched |
 | External services touched - DeepSeek | Not touched |
-| Current status | PR #6 merged to `main`; Production deployment `fe86990e` is Active at source `7cd4128`. Browser smoke passed for dictionary page and EJU 記述 entry; console errors `0`, API failures `0`. Production dictionary API returns `dictionarySource=r2-shard`; `食べられる` count `1`; all required terms `aiCalled=false`. |
+| Current status | PR #6 merged to `main`; Production Pages config has R2/D1 dictionary bindings. Browser smoke passed for dictionary page and EJU 記述 entry; console errors `0`, API failures `0`. Production dictionary API returns `dictionarySource=r2-shard`; `食べられる` count `1`; all required terms `aiCalled=false`. |
 | Current blocker | None for Production R2 shard lookup. D1 full import remains prohibited unless a separate cost-safe plan is approved. |
 
 ## 3. Cloudflare 状态
 
 | Field | Value |
 |---|---|
-| Last checked | 2026-06-22 00:59 JST after Production binding/runtime fix |
+| Last checked | 2026-06-22 01:04 JST after Production binding/runtime fix and docs-only deployment smoke |
 | Touched by this task | Cloudflare Pages Project production binding config updated; Git-backed Production rebuild triggered. No R2/D1 data write, no D1 full import, no Stripe/Supabase/DeepSeek change |
 | Needs recheck | No for current Production lookup result |
 | Current blocker | None for dictionary R2 shard lookup; continue monitoring cost/traffic after Production traffic uses R2 |
-| Production deployment | `fe86990e-2a04-470a-89ea-c7df55aea313`, source `7cd4128`, URL `https://baina-tango.pages.dev`, Active |
+| Production deployment | Latest validated during closeout: docs-only deployment `7ac71e04-bf01-4b71-9138-86f259b9703c`, source `942f1a2`; project-level bindings are active and canonical URL `https://baina-tango.pages.dev` returns `r2-shard` |
 | Previous app merge deployment | `1c5b2430-6b20-4334-8e04-e9fb2243dbca`, source `79a2b7e` |
 | PR #2 Preview deployment | `7a85773e-6a2d-44e6-92e2-a8aed5520b7d`, source `dea412c` |
 | PR #4 Preview deployment | `8c882ad2-3432-4d21-a422-be0357eedb19`, source `c294976`, URL `https://8c882ad2.baina-tango.pages.dev`, branch URL `https://feat-dictionary-lookup-mvp.baina-tango.pages.dev`, status successful |
@@ -136,7 +136,7 @@ Update triggers:
 | PR #6 user Preview validation / ready transition | Passed | 2026-06-21 23:26 JST: User reported Preview validation passed; PR #6 marked ready for review only; merge approval remains unchecked; PR remains unmerged at `5fb2c05322fbe98903eebd61b297e9237d6c14fc` |
 | PR #6 final pre-merge check | Passed | 2026-06-22 00:06 JST: title/docs cleanup approved; start commit `5fb2c05322fbe98903eebd61b297e9237d6c14fc`; final head recorded in PR #6 comment after push; PR open/ready/not merged; Preview `r2-shard`; `食べられる` count `1`; all required terms `aiCalled=false`; artifact/secret scan passed; Production unchanged; billing prompt seen: no |
 | PR #6 Production post-merge smoke | Failed | 2026-06-22 00:26 JST: PR #6 merged with commit `c94735925798c604321631e1caa36c2f2c3190be`; Production deployment `9ee954f2` Active at source `c947359`; dictionary page opens; EJU 記述 opens; no console/page errors; all required API terms `aiCalled=false`; blocker: Production returns `dictionarySource=fallback`, and `食べられる` count `0` instead of `1`; billing prompt seen: no |
-| PR #6 Production R2/D1 binding/runtime fix | Passed | 2026-06-22 01:00 JST: Production Pages config updated with `DICTIONARY_R2` and `DICTIONARY_DB`; Git-backed Production rebuild `fe86990e` Active at source `7cd4128`; Production `/api/dictionary/lookup?q=食べられる` returns `dictionarySource=r2-shard`, count `1`; required API terms all `aiCalled=false`; dictionary page and EJU 記述 entry open; console errors `0`, API failures `0`; billing prompt seen: no |
+| PR #6 Production R2/D1 binding/runtime fix | Passed | 2026-06-22 01:04 JST: Production Pages config updated with `DICTIONARY_R2` and `DICTIONARY_DB`; Git-backed Production rebuild `fe86990e` fixed runtime bindings, then docs-only deployment `7ac71e04` at source `942f1a2` also passed smoke. Production `/api/dictionary/lookup?q=食べられる` returns `dictionarySource=r2-shard`, count `1`; required API terms all `aiCalled=false`; dictionary page and EJU 記述 entry open; console errors `0`, API failures `0`; billing prompt seen: no |
 
 ## 8. 最近事件流水
 
@@ -165,4 +165,4 @@ Update triggers:
 | 2026-06-21 23:26 JST | User Preview validation passed; PR #6 body checklist updated and PR marked ready for review only. PR #6 remains open and unmerged at `5fb2c05322fbe98903eebd61b297e9237d6c14fc`; no code, deploy, Cloudflare, Production, R2/D1, or `RIKA_PLAN.md` change. |
 | 2026-06-22 00:06 JST | PR #6 docs/title cleanup and final pre-merge verification started from `5fb2c05322fbe98903eebd61b297e9237d6c14fc`; docs/status only plus GitHub PR metadata/comment; no app code, manual redeploy, Cloudflare settings, Production, R2/D1 data, D1 full import, `RIKA_PLAN.md`, or generated dictionary artifacts touched. |
 | 2026-06-22 00:26 JST | PR #6 merged to `main` with merge commit `c94735925798c604321631e1caa36c2f2c3190be`; automatic Production deployment `9ee954f2` Active at source `c947359`; Production smoke failed R2/count requirement because lookup still uses fallback and `食べられる` count is `0`; no manual Cloudflare settings change, no R2/D1 write, no D1 full import, no `RIKA_PLAN.md` touch, billing prompt seen: no. |
-| 2026-06-22 01:00 JST | Production R2/D1 binding/runtime fix completed: Cloudflare Pages production config now has `DICTIONARY_R2` -> `baina-dictionary-artifacts` and `DICTIONARY_DB` -> `baina-dictionary`; Git-backed Production rebuild `fe86990e` Active at source `7cd4128`; Production smoke passed with `dictionarySource=r2-shard`, `食べられる` count `1`, required terms `aiCalled=false`; no R2/D1 data write, no D1 full import, no `RIKA_PLAN.md` touch, billing prompt seen: no. |
+| 2026-06-22 01:04 JST | Production R2/D1 binding/runtime fix completed: Cloudflare Pages production config now has `DICTIONARY_R2` -> `baina-dictionary-artifacts` and `DICTIONARY_DB` -> `baina-dictionary`; runtime-fix deployment `fe86990e` and docs-only closeout deployment `7ac71e04` both passed Production smoke with `dictionarySource=r2-shard`, `食べられる` count `1`, required terms `aiCalled=false`; no R2/D1 data write, no D1 full import, no `RIKA_PLAN.md` touch, billing prompt seen: no. |

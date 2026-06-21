@@ -1517,6 +1517,7 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - Browser smoke: dictionary page opens; page lookup for `食べられる` renders one result.
 - Browser smoke: `学习 -> 真题试炼 -> 日本語 -> 記述` opens and the essay textarea is visible.
 - Browser smoke: console errors `0`; API 4xx/5xx failures `0`.
+- First status-doc push triggered docs-only Production deployment `7ac71e04-bf01-4b71-9138-86f259b9703c`, source `942f1a21ca06fd1016a1d7288f28dc4f4303c4a1`; it also passed the same API and browser smoke checks.
 - Billing prompt seen: no.
 
 ### Remaining risks
