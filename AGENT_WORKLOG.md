@@ -1412,3 +1412,60 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 ### Remaining cost risks
 - R2 object storage and reads may increase if the R2 shard lookup is later promoted to Production traffic.
 - D1 metadata reads are expected to stay small; D1 full import remains prohibited without an approved cost-safe plan.
+
+## 2026-06-22 00:26 JST / Codex / PR #6 merge and Production smoke
+
+### Task
+- User explicitly approved merging PR #6.
+- Merge PR #6 to `main`, wait for automatic Production deployment, run Production smoke, and update Issue #8 / PR #6 / status docs.
+- Do not modify code before merge, touch `RIKA_PLAN.md`, manually change Cloudflare settings, touch R2/D1 data, execute D1 full import, or confirm any billing/paid prompt.
+
+### Branch / commits
+- Branch before merge: `feat/full-jmdict-import-spike`
+- Start commit: `605c788e9ed572439905889934622d23b6a9261a`
+- Merge commit: `c94735925798c604321631e1caa36c2f2c3190be`
+- Branch after merge/writeback: `main`
+- End commit: `c94735925798c604321631e1caa36c2f2c3190be` for merged code; this entry records the post-merge Production smoke result.
+- PR: `#6` `https://github.com/domin132012-hash/baina-tango/pull/6`
+- Issue: `#8`
+
+### Files changed
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+
+### External services touched
+- GitHub: PR #6 merged; Issue #8 and PR #6 comments updated; post-merge status docs pushed.
+- Cloudflare: read-only deployment list and public Production smoke only; no manual settings change.
+- Cloudflare R2/D1: not touched; no R2/D1 data write and no D1 full import.
+- Production: automatic Cloudflare Pages deployment observed after merge; no manual redeploy.
+
+### Production deployment
+- Deployment id: `9ee954f2-22e0-405d-a18e-492cb12474bf`
+- Environment: Production
+- Branch: `main`
+- Source: `c947359`
+- URL: `https://baina-tango.pages.dev`
+- Status: Active
+
+### Production validation
+- Dictionary page opens: passed (`查词收藏` view opens in browser).
+- EJU 記述 entry opens: passed (`学习 -> 真题试炼 -> 日本語 -> 記述` visible).
+- Browser console/page errors: none observed.
+- Required API terms all returned `aiCalled=false`: passed.
+- `食べられる` expected count `1`: failed; Production returned count `0`.
+- Expected R2 shard source: failed; Production returned `dictionarySource=fallback`, sourceVersion `jmdict-english-beta-1000-2026-06-17`.
+- Direct deployment URL `https://9ee954f2.baina-tango.pages.dev/api/dictionary/lookup?q=食べられる` matched canonical Production fallback result.
+- Billing prompt seen: no.
+
+### Remaining risks
+- Production R2/D1 binding/runtime path is not active after merge.
+- Users on Production still receive beta fallback dictionary behavior for this path.
+- Fixing Production R2/D1 binding/runtime requires separate explicit approval; do not change Cloudflare settings under this task.
+- D1 full import remains prohibited unless a separate cost-safe plan is approved.
+
+### Remaining cost risks
+- R2 object storage/read costs may increase only after Production actually uses R2 shards.
+- D1 metadata reads should remain small after Production binding is fixed.
+- D1 full import remains prohibited without an approved cost-safe plan.

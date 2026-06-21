@@ -4,15 +4,15 @@
 > do not recheck Supabase / Stripe unless the task touches them, a related fault appears, or the recorded status is older than 30 days and the task depends on that platform.
 > Never record API keys, service role keys, JWT secrets, session tokens, customer data, payment records, card data, or raw secret values.
 
-Last updated: 2026-06-22 00:06 JST by Codex
+Last updated: 2026-06-22 00:26 JST by Codex
 
 ## 1. 当前锁定状态
 
 | Area | Status | Note |
 |---|---|---|
-| Repository docs | Locked for PR #6 final pre-merge cleanup | Recording active Preview bindings, r2-shard validation PASS, ready-for-review state, cost guardrail, and merge-approval warning |
+| Repository docs | Locked for PR #6 post-merge smoke closeout | Recording merge commit, active Production deployment, Production fallback blocker, cost guardrail, and D1 full-import prohibition |
 | Application code | PR #6 R2 shard lookup path + beta fallback | `/api/dictionary/lookup` is binding-ready for `DICTIONARY_R2` + optional `DICTIONARY_DB`; when bindings are absent or fail it keeps the bounded 1,000-entry beta fallback and `aiCalled=false` |
-| Cloudflare | R2 shards uploaded; D1 metadata active; Preview R2 shard lookup passed | Preview `DICTIONARY_R2` / `DICTIONARY_DB` bindings are active; Branch Preview returns `dictionarySource=r2-shard`, `食べられる` count `1`, and all required terms `aiCalled=false` |
+| Cloudflare | Production deployment active but R2 lookup blocked | Production deployment `9ee954f2` source `c947359` is Active, but Production lookup returns `dictionarySource=fallback`; Preview R2 shard lookup remains the last known `r2-shard` PASS |
 | Supabase | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
 | Stripe | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
 | DeepSeek | Not touched in this task | No backend, secret, or API changes; normal lookup does not call AI by default |
@@ -22,36 +22,36 @@ Last updated: 2026-06-22 00:06 JST by Codex
 | Item | Value |
 |---|---|
 | Repository | `domin132012-hash/baina-tango` |
-| Current branch | `feat/full-jmdict-import-spike` |
+| Current branch | `main` |
 | Main latest hash at task start | `c340f75a5f8cf51dac691732a9c66e50cd22af09` |
-| Current task | PR #6 docs/title cleanup and final pre-merge verification after user Preview validation |
+| Current task | PR #6 merge, Production deployment wait, smoke test, and post-merge writeback |
 | Issue | `#8` `[AGENT-TASK] Dictionary full lookup via R2 shards + D1 metadata` |
 | PR #4 | `MERGED` `https://github.com/domin132012-hash/baina-tango/pull/4` |
 | PR #4 merge commit | `c340f75a5f8cf51dac691732a9c66e50cd22af09` |
 | Main latest hash after PR #4 | `c340f75a5f8cf51dac691732a9c66e50cd22af09` |
 | Phase 2 branch | `feat/full-jmdict-import-spike` |
-| Phase 2 PR | `https://github.com/domin132012-hash/baina-tango/pull/6` open, ready for review, not merged; merge requires explicit user approval |
-| Latest relevant commit | PR #6 docs/title cleanup commit; exact end commit recorded in PR #6 final verification comment after push |
+| Phase 2 PR | `https://github.com/domin132012-hash/baina-tango/pull/6` merged |
+| Latest relevant commit | PR #6 merge commit `c94735925798c604321631e1caa36c2f2c3190be` |
 | PR #2 | `MERGED`; merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` |
 | This task | Cost-safe continuation from PR #6: full JMdict English-only R2 shards generated/uploaded from official JMdict, D1 metadata-only active version written, D1 full import not executed |
 | Dictionary plan commit | `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main` |
-| External services touched - GitHub | PR #6 title/body updated, final verification comment posted, docs-only branch commit pushed; PR #6 remains unmerged |
-| External services touched - Cloudflare | Not touched in this status closeout fix. Prior PASS validation used Preview deployment `bde77489-e786-4764-9b55-8e9154cb9605`, source `fb7d58a`; Production was unchanged. |
+| External services touched - GitHub | PR #6 merged; Issue #8 and PR #6 comments updated; post-merge status docs pushed |
+| External services touched - Cloudflare | Read-only deployment listing and public Production smoke only; no manual settings change. Automatic Production deployment `9ee954f2-22e0-405d-a18e-492cb12474bf`, source `c947359`, is Active. |
 | External services touched - Supabase | Not touched |
 | External services touched - Stripe | Not touched |
 | External services touched - DeepSeek | Not touched |
-| Current status | Official JMdict source `2026-06-18` is uploaded as R2 shards and D1 metadata-only active version remains present. Preview bindings are active: Branch Preview at source `fb7d58a` returned `dictionarySource=r2-shard`; `食べられる` returned count `1`; all required terms returned `aiCalled=false`; Production remained unchanged. |
-| Current blocker | Preview R2 shard lookup passed and PR is ready for review; merge still requires explicit user approval. Do not execute D1 full import or change Production without a separate approved plan. |
+| Current status | PR #6 merged to `main`; Production deployment `9ee954f2` is Active at source `c947359`. Browser smoke passed for dictionary page and EJU 記述 entry, with no console/page errors. Production dictionary API still returns fallback, not R2 shard; `食べられる` count `0`; all required terms remain `aiCalled=false`. |
+| Current blocker | Production R2/D1 binding/runtime path is not active. Do not execute D1 full import; next action requires separate approval for Production binding/runtime diagnosis or settings change. |
 
 ## 3. Cloudflare 状态
 
 | Field | Value |
 |---|---|
-| Last checked | 2026-06-22 00:06 JST during final pre-merge check; Branch Preview API still returned `dictionarySource=r2-shard`, `食べられる` count `1`, and all required terms `aiCalled=false` |
-| Touched by this task | Repository status docs and GitHub PR metadata/comment only; no Cloudflare, R2, D1, or Production operation |
-| Needs recheck | Yes before changing Production or after any new app-code commit |
-| Current blocker | Merge requires explicit user approval; D1 full import remains prohibited without a separate cost-safe plan |
-| Production deployment | `8f0ef91f-4dbb-4f21-a5f8-1dfcc66c5367`, source `c340f75`, URL `https://baina-tango.pages.dev`, Active |
+| Last checked | 2026-06-22 00:26 JST after PR #6 merge |
+| Touched by this task | Read-only deployment list and public Production smoke only; no Cloudflare settings, no R2/D1 data write, no D1 full import |
+| Needs recheck | Yes after fixing Production R2/D1 binding/runtime path |
+| Current blocker | Production lookup uses `dictionarySource=fallback`; `食べられる` count `0` |
+| Production deployment | `9ee954f2-22e0-405d-a18e-492cb12474bf`, source `c947359`, URL `https://baina-tango.pages.dev`, Active |
 | Previous app merge deployment | `1c5b2430-6b20-4334-8e04-e9fb2243dbca`, source `79a2b7e` |
 | PR #2 Preview deployment | `7a85773e-6a2d-44e6-92e2-a8aed5520b7d`, source `dea412c` |
 | PR #4 Preview deployment | `8c882ad2-3432-4d21-a422-be0357eedb19`, source `c294976`, URL `https://8c882ad2.baina-tango.pages.dev`, branch URL `https://feat-dictionary-lookup-mvp.baina-tango.pages.dev`, status successful |
@@ -135,6 +135,7 @@ Update triggers:
 | PR #6 Issue #8 Cloudflare Preview checks | Passed | Branch Preview at source `fb7d58a` returned `dictionarySource=r2-shard`; `食べられる` count `1`; all required queries kept `aiCalled=false`; Production unchanged |
 | PR #6 user Preview validation / ready transition | Passed | 2026-06-21 23:26 JST: User reported Preview validation passed; PR #6 marked ready for review only; merge approval remains unchecked; PR remains unmerged at `5fb2c05322fbe98903eebd61b297e9237d6c14fc` |
 | PR #6 final pre-merge check | Passed | 2026-06-22 00:06 JST: title/docs cleanup approved; start commit `5fb2c05322fbe98903eebd61b297e9237d6c14fc`; final head recorded in PR #6 comment after push; PR open/ready/not merged; Preview `r2-shard`; `食べられる` count `1`; all required terms `aiCalled=false`; artifact/secret scan passed; Production unchanged; billing prompt seen: no |
+| PR #6 Production post-merge smoke | Failed | 2026-06-22 00:26 JST: PR #6 merged with commit `c94735925798c604321631e1caa36c2f2c3190be`; Production deployment `9ee954f2` Active at source `c947359`; dictionary page opens; EJU 記述 opens; no console/page errors; all required API terms `aiCalled=false`; blocker: Production returns `dictionarySource=fallback`, and `食べられる` count `0` instead of `1`; billing prompt seen: no |
 
 ## 8. 最近事件流水
 
@@ -162,3 +163,4 @@ Update triggers:
 | 2026-06-19 00:10 JST | Status closeout fix: prior Preview PASS recorded in docs. Branch Preview source `fb7d58a` returns `r2-shard`; `食べられる` count `1`; all required terms `aiCalled=false`; PR #6 was kept draft at that time pending user review. |
 | 2026-06-21 23:26 JST | User Preview validation passed; PR #6 body checklist updated and PR marked ready for review only. PR #6 remains open and unmerged at `5fb2c05322fbe98903eebd61b297e9237d6c14fc`; no code, deploy, Cloudflare, Production, R2/D1, or `RIKA_PLAN.md` change. |
 | 2026-06-22 00:06 JST | PR #6 docs/title cleanup and final pre-merge verification started from `5fb2c05322fbe98903eebd61b297e9237d6c14fc`; docs/status only plus GitHub PR metadata/comment; no app code, manual redeploy, Cloudflare settings, Production, R2/D1 data, D1 full import, `RIKA_PLAN.md`, or generated dictionary artifacts touched. |
+| 2026-06-22 00:26 JST | PR #6 merged to `main` with merge commit `c94735925798c604321631e1caa36c2f2c3190be`; automatic Production deployment `9ee954f2` Active at source `c947359`; Production smoke failed R2/count requirement because lookup still uses fallback and `食べられる` count is `0`; no manual Cloudflare settings change, no R2/D1 write, no D1 full import, no `RIKA_PLAN.md` touch, billing prompt seen: no. |
