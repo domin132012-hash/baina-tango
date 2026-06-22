@@ -25,6 +25,7 @@ const ALLOWED_CONFIDENCE = new Set(["high", "medium", "low"]);
 const ALLOWED_FLAGS = new Set([
   "none",
   "wrong_sense_risk",
+  "specialized",
   "too_rare",
   "archaic",
   "dialect",
@@ -130,7 +131,12 @@ function userPromptForEntries(entries) {
       "Do not output Markdown.",
       "Do not wrap the JSON in a ```json code block.",
       "Do not include explanations, prefaces, or afterwords.",
-      "The top-level object must be {\"items\":[...]} and must not use another top-level key such as senses."
+      "The top-level object must be {\"items\":[...]} and must not use another top-level key such as senses.",
+      "Prioritize ordinary Japanese learners and EJU learners.",
+      "Set shouldDisplay=true only for common learner-useful senses.",
+      "Set shouldDisplay=false by default for mahjong, medical, legal, Buddhist, archaic, dialectal, rare-reading, or other specialized senses unless they are common learner-useful senses.",
+      "For specialized or rare senses, include suitable issueFlags from specialized, too_rare, archaic, dialect, and needs_human_review.",
+      "A correct translation is not enough to set shouldDisplay=true; shouldDisplay means default visibility for ordinary learners, not whether the sense exists."
     ],
     itemSchema: {
       entryId: "string",
@@ -142,7 +148,7 @@ function userPromptForEntries(entries) {
       usageNote: "string",
       shouldDisplay: true,
       confidence: "high|medium|low",
-      issueFlags: ["none|wrong_sense_risk|too_rare|archaic|dialect|ambiguous|needs_human_review"],
+      issueFlags: ["none|wrong_sense_risk|specialized|too_rare|archaic|dialect|ambiguous|needs_human_review"],
       reviewStatus: REVIEW_STATUS,
       provider: PROVIDER_NAME,
       model: REQUIRED_MODEL
@@ -160,6 +166,21 @@ function userPromptForEntries(entries) {
           shouldDisplay: true,
           confidence: "high",
           issueFlags: ["none"],
+          reviewStatus: REVIEW_STATUS,
+          provider: PROVIDER_NAME,
+          model: REQUIRED_MODEL
+        },
+        {
+          entryId: "jmdict-example-2",
+          writtenForm: "平和",
+          reading: "ピンフ",
+          senseIndex: 2,
+          shortGloss: "平和牌型",
+          zhGlosses: ["平和牌型"],
+          usageNote: "麻将术语，普通日语学习默认不展示。",
+          shouldDisplay: false,
+          confidence: "medium",
+          issueFlags: ["specialized", "needs_human_review"],
           reviewStatus: REVIEW_STATUS,
           provider: PROVIDER_NAME,
           model: REQUIRED_MODEL
@@ -772,6 +793,18 @@ function runJsonFixtureSelfTests() {
       name: "issueFlags_not_array",
       shouldPass: false,
       content: JSON.stringify({ items: valid.items.map((item, index) => index === 0 ? { ...item, issueFlags: "none" } : item) })
+    },
+    {
+      name: "specialized_flag_allowed",
+      shouldPass: true,
+      content: JSON.stringify({
+        items: valid.items.map((item, index) => index === 1 ? {
+          ...item,
+          shouldDisplay: false,
+          confidence: "medium",
+          issueFlags: ["specialized", "needs_human_review"]
+        } : item)
+      })
     },
     {
       name: "response_reasoning_content_ignored_when_content_is_json",

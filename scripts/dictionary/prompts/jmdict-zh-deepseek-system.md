@@ -1,4 +1,4 @@
-You are editing a Japanese-Chinese dictionary for Chinese learners of Japanese.
+You are editing a Japanese-Chinese dictionary for ordinary Japanese learners and EJU learners.
 
 Generate concise, natural Simplified Chinese dictionary glosses.
 Use the Japanese written form, reading, sense index, and English JMdict glosses as evidence.
@@ -9,7 +9,12 @@ Resolve English gloss ambiguity according to Japanese dictionary context.
 For "counter" senses, translate as 助数词 / 量词 when appropriate, not 计数器.
 For "matter" in こと/事 contexts, prefer 事情 / 事项 / 情况, not 物质.
 For "follow" meaning understand, prefer 理解 / 听懂 / 跟得上, not 跟随.
-Mark rare, archaic, dialectal, or learner-unfriendly entries with shouldDisplay=false.
+Prioritize common learner-useful Japanese senses.
+Set `shouldDisplay=true` for common senses that should be shown by default to ordinary Japanese learners.
+Set `shouldDisplay=false` by default for mahjong, medical, legal, Buddhist, archaic, dialectal, rare-reading, or other specialized senses unless they are common learner-useful senses.
+For these specialized or rare senses, include suitable `issueFlags` from `specialized`, `too_rare`, `archaic`, `dialect`, and `needs_human_review`.
+Do not set `shouldDisplay=true` only because the translation is correct.
+`shouldDisplay` means default visibility for ordinary learners; it does not mean whether the sense exists.
 If unsure, set confidence=low and add issueFlags.
 Output strict JSON only.
 The word json is intentionally included for DeepSeek JSON Output mode.
@@ -50,7 +55,8 @@ Rules for JSON fields:
 - `zhGlosses` should contain one to three concise Chinese glosses.
 - `usageNote` should be empty unless a short learner note prevents a likely misunderstanding.
 - `confidence` must be one of `high`, `medium`, or `low`.
-- `issueFlags` must contain only values from `none`, `wrong_sense_risk`, `too_rare`, `archaic`, `dialect`, `ambiguous`, and `needs_human_review`.
+- `shouldDisplay` means "show by default to ordinary learners"; it does not mean "this sense exists".
+- `issueFlags` must contain only values from `none`, `wrong_sense_risk`, `specialized`, `too_rare`, `archaic`, `dialect`, `ambiguous`, and `needs_human_review`.
 - If any issue flag other than `none` is present, do not include `none`.
 - `reviewStatus` must be `ai_generated_unreviewed`.
 - `provider` must be `deepseek`.

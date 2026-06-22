@@ -61,6 +61,15 @@ Each translated sense must preserve:
 
 Do not overwrite English glosses, merge unrelated senses, invent senses, add examples, or use runtime AI translation during lookup.
 
+## DeepSeek Learner Visibility Rule
+
+DeepSeek prompt/schema work for Issue #11 / PR #12 treats `shouldDisplay` as default visibility for ordinary Japanese learners and EJU learners, not as proof that a JMdict sense exists.
+
+- Common learner-useful senses should use `shouldDisplay=true`.
+- Mahjong, medical, legal, Buddhist, archaic, dialectal, rare-reading, or other specialized senses should default to `shouldDisplay=false` unless they are common learner-useful senses.
+- These specialized or rare senses should include suitable issue flags from `specialized`, `too_rare`, `archaic`, `dialect`, and `needs_human_review`.
+- A correct translation alone must not make `shouldDisplay=true`.
+
 ## Runtime Plan After Review Is Approved
 
 1. User reviews `docs/review/jmdict-zh-pilot-100-review.md`.

@@ -53,7 +53,7 @@ Without `--run-provider` or `--probe-provider`, the script only estimates tokens
 
 ## Prompt Policy
 
-The prompt asks the model to act as a Japanese-Chinese learner dictionary editor, not as a mechanical English translator.
+The prompt asks the model to act as a Japanese-Chinese learner dictionary editor for ordinary Japanese learners and EJU learners, not as a mechanical English translator.
 
 The prompt requires:
 
@@ -65,7 +65,11 @@ The prompt requires:
 - `counter` as 助数词 / 量词 when appropriate
 - `matter` in こと/事 contexts as 事情 / 事项 / 情况, not 物质
 - `follow` meaning understand as 理解 / 听懂 / 跟得上, not 跟随
-- `shouldDisplay=false` for rare, archaic, dialectal, or learner-unfriendly entries
+- `shouldDisplay=true` only for common learner-useful senses
+- `shouldDisplay=false` by default for mahjong, medical, legal, Buddhist, archaic, dialectal, rare-reading, or other specialized senses unless they are common learner-useful senses
+- `issueFlags` such as `specialized`, `too_rare`, `archaic`, `dialect`, and `needs_human_review` for specialized or rare senses
+- no `shouldDisplay=true` merely because a translation is correct
+- `shouldDisplay` as default visibility for ordinary learners, not as a claim that the sense exists
 - `confidence=low` with `issueFlags` when uncertain
 - strict JSON only
 - the word `json` in the prompt for DeepSeek JSON Output mode
@@ -94,7 +98,7 @@ The top-level response must validate against:
       "usageNote": "string",
       "shouldDisplay": true,
       "confidence": "high|medium|low",
-      "issueFlags": ["none|wrong_sense_risk|too_rare|archaic|dialect|ambiguous|needs_human_review"],
+      "issueFlags": ["none|wrong_sense_risk|specialized|too_rare|archaic|dialect|ambiguous|needs_human_review"],
       "reviewStatus": "ai_generated_unreviewed",
       "provider": "deepseek",
       "model": "deepseek-v4-flash"
@@ -103,7 +107,7 @@ The top-level response must validate against:
 }
 ```
 
-The validator also checks that the output contains exactly one object per input sense and no extra entry/sense keys. It fails if the provider returns Markdown fences, trailing explanatory text, an array without the top-level `items` object, missing fields, invalid enum values, mismatched `entryId`, mismatched `senseIndex`, duplicate senses, omitted senses, or extra senses.
+The validator also checks that the output contains exactly one object per input sense and no extra entry/sense keys. It fails if the provider returns Markdown fences, trailing explanatory text, an array without the top-level `items` object, missing fields, invalid enum values, mismatched `entryId`, mismatched `senseIndex`, duplicate senses, omitted senses, or extra senses. `specialized` is an allowed issue flag for domain-specific senses that should not be shown by default to ordinary learners.
 
 ## Provider JSON Mode
 

@@ -2202,3 +2202,62 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 ### Remaining cost risks
 - This successful 5-entry probe used actual input tokens `2228` and actual output tokens `1300`; local estimated/actual cost is unavailable because provider pricing is not configured in the scaffold.
 - The two prior failed DeepSeek requests plus successful 1-entry and 5-entry probes may have incurred cost; final usage/billing must be checked in the DeepSeek console.
+
+## 2026-06-22 23:35 JST / Codex / Issue #11 PR #12 specialized and rare sense display-rule fix
+
+### Task
+- Fix DeepSeek prompt/schema/docs after user review found `平和 / ピンフ` mahjong sense marked `shouldDisplay=true`.
+- Do not call DeepSeek or Google Translate.
+- Do not deploy, merge, mark PR ready, activate overlay, upload R2, update D1, commit `.env.local`, print secrets, or make runtime lookup call AI.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `78b1085f74369e6b5809ce1f114522301693b6b4`
+- End commit: this closeout commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Files changed
+- `scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `scripts/dictionary/prompts/jmdict-zh-deepseek-system.md`
+- `docs/design/deepseek-ai-zh-gloss-overlay.md`
+- `docs/dictionary/zh-overlay-pilot-100/README.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained untracked/not committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+
+### Prompt/schema result
+- DeepSeek prompt now prioritizes ordinary Japanese learners and EJU learners.
+- Common learner-useful senses should use `shouldDisplay=true`.
+- Mahjong, medical, legal, Buddhist, archaic, dialectal, rare-reading, and other specialized senses default to `shouldDisplay=false` unless common learner-useful.
+- Correct translation alone is not enough for `shouldDisplay=true`.
+- `shouldDisplay` means default learner visibility, not whether the sense exists.
+- Added `specialized` to allowed `issueFlags`.
+- Fixture self-test now covers `specialized` as an allowed non-`none` flag.
+
+### External services touched
+- DeepSeek API: no.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: branch push after validation only.
+- Billing prompt seen: no.
+
+### Validation
+- `codex-preflight --task "continue PR #12 / Issue #11: update DeepSeek prompt/schema/docs for specialized rare senses guardrails without provider calls"`
+- `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --self-test-json-fixtures` passed `17/17`, with `deepseekApiCalled=false`, `runtimeAiCalls=false`, `r2D1Writes=false`, `productionChanged=false`.
+- `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only` passed with `deepseekApiCalled=false`, `runtimeAiCalls=false`, `r2D1Writes=false`, `productionChanged=false`.
+- Guardrail sentinel matrix covered missing provider, wrong provider, wrong model, wrong approval, wrong base URL, invalid probe limit, max input tokens too low, and Top 100 max entries too low before external network.
+- Runtime dictionary lookup static check found no DeepSeek/provider/probe reference under `functions/api/dictionary`; `index.html` dictionary lookup still calls `/api/dictionary/lookup` and did not gain DeepSeek references.
+- `.env.local` is not tracked by Git.
+
+### Remaining risks
+- This was a prompt/schema/docs fix only; no new provider output was generated.
+- Future Top 100 DeepSeek run still requires separate user approval and may incur cost.
+- Earlier failed DeepSeek attempts plus successful probes may have cost; DeepSeek console remains final.
