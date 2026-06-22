@@ -1786,3 +1786,80 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 ### Remaining cost risks
 - One failed DeepSeek request may have consumed billable tokens, but actual usage/cost was not recorded by the current script.
 - Any future retry should account for this prior failed attempt and keep the Top 100/run limits explicit.
+
+## 2026-06-22 19:22 JST / Codex / Issue #11 PR #12 strict JSON hardening
+
+### Task
+- Fix strict JSON output, parsing, schema validation, prompt instructions, and local no-network fixture tests after the first DeepSeek provider attempt failed with non-strict JSON.
+- Do not call DeepSeek, do not run provider mode, do not call Google Translate, do not deploy, do not merge or mark PR ready, do not activate overlay, do not upload R2, do not update D1, do not read or commit `.env.local`, and do not change runtime lookup to call DeepSeek.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `0b507ccb470855e8e5bcba0499e4a4f4de99560a`
+- End commit: this hardening commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Files changed
+- `scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `scripts/dictionary/prompts/jmdict-zh-deepseek-system.md`
+- `docs/design/deepseek-ai-zh-gloss-overlay.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not read, printed, staged, or committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+
+### External services touched
+- DeepSeek API: no in this round.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: branch push after validation only.
+- Billing prompt seen: no.
+
+### Implementation
+- Kept provider request JSON mode: `response_format: { type: "json_object" }`.
+- Updated system and user prompts to require exactly one JSON object with top-level `items`, no Markdown, no fenced code block, no preface/explanation/afterword.
+- Unified provider schema from top-level `senses` to top-level `items`.
+- Kept strict `JSON.parse`; Markdown wrappers, trailing explanation text, arrays, missing fields, invalid enum values, mismatched `entryId`, mismatched `senseIndex`, duplicate/omitted/extra senses all fail.
+- Added `--self-test-json-fixtures`, a local fixture test mode that does not call provider/network.
+
+### Validation
+- `codex-preflight --task "fix PR 12 DeepSeek strict JSON parsing prompt schema and offline fixtures without provider call"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only`
+  - entries `100`
+  - senses `209`
+  - request count `5`
+  - estimated input tokens `26272`
+  - estimated output tokens `28035`
+  - estimated total tokens `54307`
+- `node --import <sentinel fetch> scripts/dictionary/jmdict-zh-deepseek-pilot.js --self-test-json-fixtures`
+  - fixture tests `11/11`
+  - legal strict JSON object passed
+  - Markdown fenced JSON failed
+  - JSON array without top-level `items` failed
+  - JSON with trailing explanation failed
+  - missing `entryId` failed
+  - missing `senseIndex` failed
+  - mismatched `entryId` failed
+  - mismatched `senseIndex` failed
+  - invalid `confidence` failed
+  - non-array `issueFlags` failed
+- Guardrail matrix with sentinel `fetch` passed for missing key, missing approval, wrong provider, wrong model, max entries too low, max input tokens too low, max output tokens too low, max total tokens too low, and max requests too low; all failed before provider/network call and wrote no provider artifact.
+- Runtime lookup static check found no DeepSeek/provider reference.
+
+### Remaining risks
+- This improves the next approved provider run's strict JSON success odds, but it does not prove DeepSeek will comply on retry.
+- Next provider run still requires separate user approval.
+- If DeepSeek returns strict JSON with wrong/missing fields, validation will still stop and no artifact should be accepted.
+
+### Remaining cost risks
+- No DeepSeek call was made in this hardening round.
+- The prior failed DeepSeek request may have incurred cost; final usage/billing must be checked in the DeepSeek console.

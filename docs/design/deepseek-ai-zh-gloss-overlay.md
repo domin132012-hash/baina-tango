@@ -1,6 +1,6 @@
 # DeepSeek AI Chinese Gloss Overlay Pilot
 
-Status: scaffolding only. No DeepSeek API call has been made for this branch.
+Status: scaffold plus strict JSON hardening. One approved DeepSeek Top 100 provider attempt was made on 2026-06-22 JST and stopped because the provider message content was not strict JSON.
 
 ## Goal
 
@@ -60,32 +60,58 @@ The prompt requires:
 - `shouldDisplay=false` for rare, archaic, dialectal, or learner-unfriendly entries
 - `confidence=low` with `issueFlags` when uncertain
 - strict JSON only
+- no Markdown
+- no fenced ```json code block
+- no explanation text, preface, or afterword
+- exactly one top-level JSON object with an `items` array
 
 Prompt file: `scripts/dictionary/prompts/jmdict-zh-deepseek-system.md`.
 
 ## Output Schema
 
-Each returned sense must validate against:
+The top-level response must validate against:
 
 ```json
 {
-  "entryId": "string",
-  "writtenForm": "string",
-  "reading": "string",
-  "senseIndex": 1,
-  "shortGloss": "string",
-  "zhGlosses": ["string"],
-  "usageNote": "string",
-  "shouldDisplay": true,
-  "confidence": "high|medium|low",
-  "issueFlags": ["none|wrong_sense_risk|too_rare|archaic|dialect|ambiguous|needs_human_review"],
-  "reviewStatus": "ai_generated_unreviewed",
-  "provider": "deepseek",
-  "model": "deepseek-v4-flash"
+  "items": [
+    {
+      "entryId": "string",
+      "writtenForm": "string",
+      "reading": "string",
+      "senseIndex": 1,
+      "shortGloss": "string",
+      "zhGlosses": ["string"],
+      "usageNote": "string",
+      "shouldDisplay": true,
+      "confidence": "high|medium|low",
+      "issueFlags": ["none|wrong_sense_risk|too_rare|archaic|dialect|ambiguous|needs_human_review"],
+      "reviewStatus": "ai_generated_unreviewed",
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash"
+    }
+  ]
 }
 ```
 
-The validator also checks that the output contains exactly one object per input sense and no extra entry/sense keys.
+The validator also checks that the output contains exactly one object per input sense and no extra entry/sense keys. It fails if the provider returns Markdown fences, trailing explanatory text, an array without the top-level `items` object, missing fields, invalid enum values, mismatched `entryId`, mismatched `senseIndex`, duplicate senses, omitted senses, or extra senses.
+
+## Provider JSON Mode
+
+The offline script sends the OpenAI-compatible request field:
+
+```json
+{
+  "response_format": { "type": "json_object" }
+}
+```
+
+This is a request-side JSON output hint. The script still treats the provider response as untrusted evidence and validates the returned message content with strict `JSON.parse` plus schema checks before writing any review artifact or usage ledger.
+
+## First Provider Attempt Result
+
+The first approved DeepSeek Top 100 provider attempt stopped before artifact generation because the provider message content was not strict JSON. The script did not accept malformed JSON, did not guess fields, did not recover partial natural-language output, did not write the review artifact, and did not write a usage ledger.
+
+Any next provider run requires separate user approval after reviewing this guardrail behavior. One failed DeepSeek request may already have incurred usage cost; exact usage and billing remain the DeepSeek console's source of truth because the failed attempt did not produce a local usage ledger.
 
 ## Usage Ledger
 

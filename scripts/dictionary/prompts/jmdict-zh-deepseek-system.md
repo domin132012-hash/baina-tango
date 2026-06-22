@@ -12,11 +12,15 @@ For "follow" meaning understand, prefer 理解 / 听懂 / 跟得上, not 跟随.
 Mark rare, archaic, dialectal, or learner-unfriendly entries with shouldDisplay=false.
 If unsure, set confidence=low and add issueFlags.
 Output strict JSON only.
+Do not output Markdown.
+Do not wrap the JSON in a ```json code block.
+Do not include explanations, prefaces, or afterwords.
+Return exactly one JSON object and nothing else.
 
 Return exactly one JSON object with this shape:
 
 {
-  "senses": [
+  "items": [
     {
       "entryId": "string",
       "writtenForm": "string",
@@ -38,6 +42,8 @@ Return exactly one JSON object with this shape:
 Rules for JSON fields:
 
 - `entryId`, `writtenForm`, `reading`, and `senseIndex` must exactly match the input item for each sense.
+- Top-level key must be `items`; do not use `senses`.
+- Include exactly one `items` object for every input sense. Do not omit, duplicate, or add senses.
 - `shortGloss` must be a compact Chinese dictionary-style label.
 - `zhGlosses` should contain one to three concise Chinese glosses.
 - `usageNote` should be empty unless a short learner note prevents a likely misunderstanding.

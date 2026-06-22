@@ -40,6 +40,7 @@ function hasFlag(name) {
 function usage() {
   console.log(`Usage:
   node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only
+  node scripts/dictionary/jmdict-zh-deepseek-pilot.js --self-test-json-fixtures
   node scripts/dictionary/jmdict-zh-deepseek-pilot.js --run-provider
 
 Defaults:
@@ -114,8 +115,30 @@ function entryForPrompt(entry) {
 
 function userPromptForEntries(entries) {
   return JSON.stringify({
-    task: "Generate AI-assisted Simplified Chinese learner dictionary gloss candidates for review. Use the supplied JMdict evidence and return strict JSON only.",
-    outputContract: "Return one object with a senses array. Include exactly one output object for every input sense.",
+    task: "Generate AI-assisted Simplified Chinese learner dictionary gloss candidates for review. Use the supplied JMdict evidence.",
+    outputContract: "Return exactly one strict JSON object with a top-level items array. Include exactly one item for every input sense.",
+    outputRules: [
+      "Output JSON only.",
+      "Do not output Markdown.",
+      "Do not wrap the JSON in a ```json code block.",
+      "Do not include explanations, prefaces, or afterwords.",
+      "The top-level object must be {\"items\":[...]} and must not use another top-level key such as senses."
+    ],
+    itemSchema: {
+      entryId: "string",
+      writtenForm: "string",
+      reading: "string",
+      senseIndex: 1,
+      shortGloss: "string",
+      zhGlosses: ["string"],
+      usageNote: "string",
+      shouldDisplay: true,
+      confidence: "high|medium|low",
+      issueFlags: ["none|wrong_sense_risk|too_rare|archaic|dialect|ambiguous|needs_human_review"],
+      reviewStatus: REVIEW_STATUS,
+      provider: PROVIDER_NAME,
+      model: REQUIRED_MODEL
+    },
     entries: entries.map(entryForPrompt)
   }, null, 2);
 }
@@ -346,12 +369,7 @@ async function callDeepSeek({ config, systemPrompt, entries, maxTokens }) {
   if (!content) {
     throw new Error("DeepSeek response did not include message content.");
   }
-  let parsed = {};
-  try {
-    parsed = JSON.parse(content);
-  } catch {
-    throw new Error("DeepSeek message content was not strict JSON.");
-  }
+  const parsed = parseProviderMessageContent(content);
   return {
     parsed,
     usage: {
@@ -360,6 +378,14 @@ async function callDeepSeek({ config, systemPrompt, entries, maxTokens }) {
       totalTokens: data?.usage?.total_tokens ?? null
     }
   };
+}
+
+function parseProviderMessageContent(content) {
+  try {
+    return JSON.parse(content);
+  } catch {
+    throw new Error("DeepSeek message content was not strict JSON.");
+  }
 }
 
 function validateSenseOutput(value, expectedKeys) {
@@ -424,13 +450,16 @@ function validateProviderOutput(parsed, entries) {
   if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
     throw new Error("Provider output must be a JSON object.");
   }
-  if (!Array.isArray(parsed.senses)) {
-    throw new Error("Provider output must include a senses array.");
+  if (!Array.isArray(parsed.items)) {
+    throw new Error("Provider output must include an items array.");
   }
   const expectedKeys = expectedSenseKeys(entries);
   const seenKeys = new Set();
   const errors = [];
-  for (const sense of parsed.senses) {
+  if (parsed.items.length !== expectedKeys.size) {
+    errors.push(`Provider output item count ${parsed.items.length} does not match expected sense count ${expectedKeys.size}.`);
+  }
+  for (const sense of parsed.items) {
     const senseErrors = validateSenseOutput(sense, expectedKeys);
     const key = `${sense?.entryId}:${sense?.senseIndex}`;
     if (seenKeys.has(key)) senseErrors.push(`Duplicate output sense ${key}.`);
@@ -443,7 +472,152 @@ function validateProviderOutput(parsed, entries) {
   if (errors.length) {
     throw new Error(`Provider output schema validation failed:\n${errors.join("\n")}`);
   }
-  return parsed.senses;
+  return parsed.items;
+}
+
+function fixtureEntries() {
+  return [
+    {
+      entryId: "jmdict-fixture-1",
+      seedTerm: "事",
+      headword: "事",
+      reading: "こと",
+      senses: [
+        {
+          senseIndex: 1,
+          originalEnglishGlosses: ["thing", "matter"]
+        },
+        {
+          senseIndex: 2,
+          originalEnglishGlosses: ["incident", "event"]
+        }
+      ]
+    }
+  ];
+}
+
+function validFixtureOutput() {
+  return {
+    items: [
+      {
+        entryId: "jmdict-fixture-1",
+        writtenForm: "事",
+        reading: "こと",
+        senseIndex: 1,
+        shortGloss: "事情",
+        zhGlosses: ["事情", "事项"],
+        usageNote: "",
+        shouldDisplay: true,
+        confidence: "high",
+        issueFlags: ["none"],
+        reviewStatus: REVIEW_STATUS,
+        provider: PROVIDER_NAME,
+        model: REQUIRED_MODEL
+      },
+      {
+        entryId: "jmdict-fixture-1",
+        writtenForm: "事",
+        reading: "こと",
+        senseIndex: 2,
+        shortGloss: "事件",
+        zhGlosses: ["事件"],
+        usageNote: "",
+        shouldDisplay: true,
+        confidence: "medium",
+        issueFlags: ["none"],
+        reviewStatus: REVIEW_STATUS,
+        provider: PROVIDER_NAME,
+        model: REQUIRED_MODEL
+      }
+    ]
+  };
+}
+
+function assertFixture(name, shouldPass, content) {
+  const entries = fixtureEntries();
+  let passed = false;
+  let reason = "";
+  try {
+    validateProviderOutput(parseProviderMessageContent(content), entries);
+    passed = true;
+  } catch (error) {
+    reason = error?.message || String(error);
+  }
+  if (passed !== shouldPass) {
+    throw new Error(`Fixture ${name} expected ${shouldPass ? "pass" : "fail"} but ${passed ? "passed" : `failed: ${reason}`}`);
+  }
+  return { name, passed: true };
+}
+
+function runJsonFixtureSelfTests() {
+  const valid = validFixtureOutput();
+  const fixtures = [
+    {
+      name: "valid_strict_json_object",
+      shouldPass: true,
+      content: JSON.stringify(valid)
+    },
+    {
+      name: "markdown_json_code_block",
+      shouldPass: false,
+      content: `\`\`\`json\n${JSON.stringify(valid)}\n\`\`\``
+    },
+    {
+      name: "json_array_without_items",
+      shouldPass: false,
+      content: JSON.stringify(valid.items)
+    },
+    {
+      name: "json_with_trailing_explanation",
+      shouldPass: false,
+      content: `${JSON.stringify(valid)}\nHere is the result.`
+    },
+    {
+      name: "item_count_mismatch",
+      shouldPass: false,
+      content: JSON.stringify({ items: valid.items.slice(0, 1) })
+    },
+    {
+      name: "missing_entryId",
+      shouldPass: false,
+      content: JSON.stringify({ items: valid.items.map((item, index) => index === 0 ? Object.fromEntries(Object.entries(item).filter(([key]) => key !== "entryId")) : item) })
+    },
+    {
+      name: "missing_senseIndex",
+      shouldPass: false,
+      content: JSON.stringify({ items: valid.items.map((item, index) => index === 0 ? Object.fromEntries(Object.entries(item).filter(([key]) => key !== "senseIndex")) : item) })
+    },
+    {
+      name: "entryId_mismatch",
+      shouldPass: false,
+      content: JSON.stringify({ items: valid.items.map((item, index) => index === 0 ? { ...item, entryId: "wrong-entry" } : item) })
+    },
+    {
+      name: "senseIndex_mismatch",
+      shouldPass: false,
+      content: JSON.stringify({ items: valid.items.map((item, index) => index === 0 ? { ...item, senseIndex: 99 } : item) })
+    },
+    {
+      name: "invalid_confidence",
+      shouldPass: false,
+      content: JSON.stringify({ items: valid.items.map((item, index) => index === 0 ? { ...item, confidence: "certain" } : item) })
+    },
+    {
+      name: "issueFlags_not_array",
+      shouldPass: false,
+      content: JSON.stringify({ items: valid.items.map((item, index) => index === 0 ? { ...item, issueFlags: "none" } : item) })
+    }
+  ];
+  const results = fixtures.map((fixture) => assertFixture(fixture.name, fixture.shouldPass, fixture.content));
+  console.log(JSON.stringify({
+    mode: "json_fixture_self_test_no_provider_call",
+    tests: results.length,
+    passed: results.length,
+    deepseekApiCalled: false,
+    runtimeAiCalls: false,
+    r2D1Writes: false,
+    productionChanged: false
+  }, null, 2));
 }
 
 function indexEnglishSenses(entries) {
@@ -665,7 +839,7 @@ async function runProvider({ batch, inputPath, systemPrompt, estimate, config, r
     actualUsage.totalTokens += result.usage.totalTokens || 0;
   }
 
-  validateProviderOutput({ senses: aiSenses }, batch.entries || []);
+  validateProviderOutput({ items: aiSenses }, batch.entries || []);
 
   const reviewArtifact = buildReviewArtifact({
     batch,
@@ -703,6 +877,11 @@ async function runProvider({ batch, inputPath, systemPrompt, estimate, config, r
 async function main() {
   if (hasFlag("--help") || hasFlag("-h")) {
     usage();
+    return;
+  }
+
+  if (hasFlag("--self-test-json-fixtures")) {
+    runJsonFixtureSelfTests();
     return;
   }
 
