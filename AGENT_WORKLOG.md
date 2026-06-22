@@ -1818,7 +1818,7 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - R2/D1 writes: `0`.
 - Production deploy: no.
 - Overlay activation: no.
-- GitHub: branch push after validation only.
+- GitHub: branch push after validation and PR body status refresh only.
 - Billing prompt seen: no.
 
 ### Implementation

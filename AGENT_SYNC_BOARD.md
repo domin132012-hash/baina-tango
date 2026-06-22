@@ -35,7 +35,7 @@ Last updated: 2026-06-22 23:52 JST by Codex
 | PR #2 | `MERGED`; merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` |
 | This task | Issue #11 / PR #12 approved DeepSeek Top 100 provider run; no retry, no overlay activation |
 | Dictionary plan commit | `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main` |
-| External services touched - GitHub | PR #12 branch push after validation only; PR kept draft/open/unmerged |
+| External services touched - GitHub | PR #12 branch push after validation and PR body status refresh; PR kept draft/open/unmerged |
 | External services touched - Cloudflare | No settings change; no Production change; no R2/D1 data write. Existing Preview lookup API was read for smoke validation only. |
 | External services touched - Google Cloud Translation | Official Translation API called offline for Top 100 Phase A only; `7,382` input chars; no runtime Google calls |
 | External services touched - Supabase | Not touched |
