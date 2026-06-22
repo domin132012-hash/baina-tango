@@ -2261,3 +2261,84 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - This was a prompt/schema/docs fix only; no new provider output was generated.
 - Future Top 100 DeepSeek run still requires separate user approval and may incur cost.
 - Earlier failed DeepSeek attempts plus successful probes may have cost; DeepSeek console remains final.
+
+## 2026-06-22 23:52 JST / Codex / Issue #11 PR #12 approved DeepSeek Top 100 provider run
+
+### Task
+- Run exactly one user-approved DeepSeek Top 100 provider run after the user accepted the 5-entry probe and prompt/schema rule fix.
+- Do not automatically retry if the run fails.
+- Do not call Google Translate, deploy Production, merge, mark PR ready, activate Chinese overlay, upload R2, update D1, modify English JMdict R2 shards, run D1 full import, commit `.env.local`, print/write secrets, or make runtime lookup call DeepSeek.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `aa85ed2becd9396d955e483f8f6a96f6352c05d1`
+- End commit: this closeout commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Files changed
+- `docs/review/jmdict-zh-deepseek-pilot-100-review.md`
+- `docs/review/jmdict-zh-deepseek-pilot-100-usage-ledger.json`
+- `scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not staged or committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+
+### External services touched
+- DeepSeek API: yes, once, only via `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --run-provider`.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: branch push after validation only.
+- Billing prompt seen: no.
+
+### Provider result
+- Provider: `deepseek`
+- Model: `deepseek-v4-flash`
+- Selected entries: `100`
+- Generated entries: `100`
+- Generated senses: `209`
+- Request count: `5`
+- Review file: `docs/review/jmdict-zh-deepseek-pilot-100-review.md`
+- Usage ledger: `docs/review/jmdict-zh-deepseek-pilot-100-usage-ledger.json`
+- Estimated input tokens: `29715`
+- Estimated output tokens: `28035`
+- Estimated total tokens: `57750`
+- Actual input tokens: `30544`
+- Actual output tokens: `27411`
+- Actual total tokens: `57955`
+- Estimated cost: `null`; pricing not configured in the scaffold.
+- Actual cost: `null`; pricing not configured locally. DeepSeek console is final.
+- Provider run status: `succeeded`
+- Failed request count: `0`
+- TextEdit open command was executed for the Top 100 review file.
+
+### Validation
+- `codex-preflight --task "PR #12 Issue #11 approved DeepSeek Top 100 provider run exactly once"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- Start head verified: `aa85ed2becd9396d955e483f8f6a96f6352c05d1`
+- PR #12 verified draft/open/unmerged before provider run.
+- `.env.local` exists, is ignored by `.git/info/exclude`, and is not tracked by Git.
+- Only `DEEPSEEK_API_KEY_length=35` was printed for the real key; required env values were checked without printing secret values.
+- Pre-run:
+  - `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+  - `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only`
+  - `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --self-test-json-fixtures` passed `17/17`
+  - guardrail sentinel matrix passed before provider/network call
+  - runtime dictionary lookup static check found no DeepSeek/provider/probe reference under `functions/api/dictionary` or `index.html`
+- Provider:
+  - `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --run-provider` succeeded once.
+- Post-run:
+  - review file inspected: `100` unique entry IDs and `209` table rows
+  - usage ledger inspected and includes timestamp, provider/model, request count, selected/generated counts, estimated/actual tokens, cost fields, providerRunStatus, and failedRequestCount
+  - no R2/D1 write, no Production deploy, no Google Translate call, no overlay activation, no PR ready/merge
+
+### Remaining risks
+- Top 100 output is `ai_generated_unreviewed`; user review is required before any overlay activation or data write.
+- Local cost values are not configured; DeepSeek console is final for billing.

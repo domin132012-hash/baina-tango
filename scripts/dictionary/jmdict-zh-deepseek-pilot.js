@@ -1026,10 +1026,14 @@ async function writeUsageLedger(filePath, value) {
   const ledger = {
     type,
     generatedAt: new Date().toISOString(),
+    timestamp: new Date().toISOString(),
     provider: PROVIDER_NAME,
     model: REQUIRED_MODEL,
     entriesRequested: value.estimate.entries,
+    selectedEntries: value.estimate.entries,
     sensesRequested: value.estimate.senses,
+    generatedEntries: value.reviewArtifact?.counts?.generatedEntries ?? null,
+    generatedSenses: value.reviewArtifact?.counts?.generatedSenses ?? null,
     estimatedInputTokens: value.estimate.estimatedInputTokens,
     estimatedOutputTokens: value.estimate.estimatedOutputTokens,
     estimatedTotalTokens: value.estimate.estimatedTotalTokens,
@@ -1038,6 +1042,8 @@ async function writeUsageLedger(filePath, value) {
     actualTotalTokens: value.actualUsage?.totalTokens ?? null,
     estimatedCostUsd: value.estimate.estimatedCostUsd,
     estimatedCostNote: ESTIMATED_COST_NOTE,
+    actualCostUsd: null,
+    actualCostNote: ESTIMATED_COST_NOTE,
     requestCount: value.estimate.requestCount,
     providerRequests: value.estimate.requests.map((request) => ({
       index: request.index,
@@ -1047,6 +1053,8 @@ async function writeUsageLedger(filePath, value) {
       estimatedOutputTokens: request.estimatedOutputTokens
     })),
     providerCalled: Boolean(value.providerCalled),
+    providerRunStatus: value.providerCalled ? "succeeded" : "not_run",
+    failedRequestCount: 0,
     runtimeAiCalls: false,
     r2D1Writes: false,
     productionChanged: false,
@@ -1091,7 +1099,7 @@ async function runProvider({ batch, inputPath, systemPrompt, estimate, config, r
   delete reviewArtifact._byKeySize;
   await writeReviewArtifact(reviewOut, reviewArtifact);
   const reviewBytes = await assertSmallArtifact(reviewOut);
-  await writeUsageLedger(ledgerOut, { estimate, actualUsage, providerCalled: true });
+  await writeUsageLedger(ledgerOut, { estimate, actualUsage, providerCalled: true, reviewArtifact });
 
   console.log(JSON.stringify({
     provider: PROVIDER_NAME,

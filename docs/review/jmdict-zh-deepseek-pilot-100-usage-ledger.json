@@ -1,30 +1,67 @@
 {
   "type": "jmdict-zh-deepseek-pilot-100-usage-ledger",
-  "generatedAt": "2026-06-22T20:51:00+09:00",
+  "generatedAt": "2026-06-22T14:50:42.985Z",
+  "timestamp": "2026-06-22T14:50:42.985Z",
   "provider": "deepseek",
   "model": "deepseek-v4-flash",
-  "providerRunStatus": "failed",
-  "failureReason": "DeepSeek message content was not strict JSON.",
   "entriesRequested": 100,
   "selectedEntries": 100,
   "sensesRequested": 209,
-  "requestCount": 5,
-  "attemptedRequestCount": 1,
-  "failedRequestCount": 1,
-  "estimatedInputTokens": 26272,
+  "generatedEntries": 100,
+  "generatedSenses": 209,
+  "estimatedInputTokens": 29715,
   "estimatedOutputTokens": 28035,
-  "estimatedTotalTokens": 54307,
-  "actualInputTokens": null,
-  "actualOutputTokens": null,
-  "actualTotalTokens": null,
+  "estimatedTotalTokens": 57750,
+  "actualInputTokens": 30544,
+  "actualOutputTokens": 27411,
+  "actualTotalTokens": 57955,
   "estimatedCostUsd": null,
+  "estimatedCostNote": "not_estimated_provider_pricing_not_configured",
   "actualCostUsd": null,
-  "costNote": "Actual failed-request usage and billing were not available locally; DeepSeek console is final.",
+  "actualCostNote": "not_estimated_provider_pricing_not_configured",
+  "requestCount": 5,
+  "providerRequests": [
+    {
+      "index": 1,
+      "entries": 20,
+      "senses": 46,
+      "estimatedInputTokens": 6529,
+      "estimatedOutputTokens": 6090
+    },
+    {
+      "index": 2,
+      "entries": 20,
+      "senses": 47,
+      "estimatedInputTokens": 6246,
+      "estimatedOutputTokens": 6205
+    },
+    {
+      "index": 3,
+      "entries": 20,
+      "senses": 23,
+      "estimatedInputTokens": 4053,
+      "estimatedOutputTokens": 3445
+    },
+    {
+      "index": 4,
+      "entries": 20,
+      "senses": 44,
+      "estimatedInputTokens": 6447,
+      "estimatedOutputTokens": 5860
+    },
+    {
+      "index": 5,
+      "entries": 20,
+      "senses": 49,
+      "estimatedInputTokens": 6440,
+      "estimatedOutputTokens": 6435
+    }
+  ],
   "providerCalled": true,
+  "providerRunStatus": "succeeded",
+  "failedRequestCount": 0,
   "runtimeAiCalls": false,
-  "googleTranslateCalled": false,
   "r2D1Writes": false,
   "productionChanged": false,
-  "overlayActivated": false,
   "billingPromptSeen": false
 }

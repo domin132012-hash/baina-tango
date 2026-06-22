@@ -4,18 +4,18 @@
 > do not recheck Supabase / Stripe unless the task touches them, a related fault appears, or the recorded status is older than 30 days and the task depends on that platform.
 > Never record API keys, service role keys, JWT secrets, session tokens, customer data, payment records, card data, or raw secret values.
 
-Last updated: 2026-06-22 23:35 JST by Codex
+Last updated: 2026-06-22 23:52 JST by Codex
 
 ## 1. 当前锁定状态
 
 | Area | Status | Note |
 |---|---|---|
-| Repository docs | Active for Issue #11 DeepSeek Chinese overlay pilot branch | Recording prompt/schema guardrail fix for specialized/rare senses and no provider/Production/R2/D1 data changes |
+| Repository docs | Active for Issue #11 DeepSeek Chinese overlay pilot branch | Recording approved DeepSeek Top 100 review generation and no Production/R2/D1 data changes |
 | Application code | PR #6 R2 shard lookup path + beta fallback | `/api/dictionary/lookup` is binding-ready for `DICTIONARY_R2` + optional `DICTIONARY_DB`; when bindings are absent or fail it keeps the bounded 1,000-entry beta fallback and `aiCalled=false` |
 | Cloudflare | Production R2 shard lookup active | Production Pages config now has `DICTIONARY_R2` -> `baina-dictionary-artifacts` and `DICTIONARY_DB` -> `baina-dictionary`; canonical Production returns `dictionarySource=r2-shard` |
 | Supabase | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
 | Stripe | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
-| DeepSeek | Not called in this task | Prompt/schema/docs only; normal lookup does not call AI by default |
+| DeepSeek | Top 100 offline provider run touched in this task | DeepSeek API called once through `--run-provider`; normal lookup does not call AI by default |
 
 ## 2. GitHub 状态
 
@@ -24,7 +24,7 @@ Last updated: 2026-06-22 23:35 JST by Codex
 | Repository | `domin132012-hash/baina-tango` |
 | Current branch | `feat/dictionary-zh-deepseek-pilot-100` |
 | Main latest hash at task start | `ebc320317e6ef212a38a53a603191c419aca527c` |
-| Current task | Issue #11 DeepSeek Chinese gloss overlay pilot: specialized/rare sense display-rule fix |
+| Current task | Issue #11 DeepSeek Chinese gloss overlay pilot: approved Top 100 provider run |
 | Issue | `#11` AI-assisted Chinese gloss overlay pilot: DeepSeek Top 100 |
 | PR #4 | `MERGED` `https://github.com/domin132012-hash/baina-tango/pull/4` |
 | PR #4 merge commit | `c340f75a5f8cf51dac691732a9c66e50cd22af09` |
@@ -33,16 +33,16 @@ Last updated: 2026-06-22 23:35 JST by Codex
 | Phase 2 PR | `https://github.com/domin132012-hash/baina-tango/pull/6` merged |
 | Latest relevant commit | Phase A start commit `42f936cc07ad4897b4dfe0b739a39fd580761df7`; final Phase A branch head recorded in PR #10 / Issue #9 comments after closeout push |
 | PR #2 | `MERGED`; merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` |
-| This task | Issue #11 / PR #12 prompt/schema/docs fix; no DeepSeek call, no Top 100 retry, no overlay activation |
+| This task | Issue #11 / PR #12 approved DeepSeek Top 100 provider run; no retry, no overlay activation |
 | Dictionary plan commit | `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main` |
 | External services touched - GitHub | PR #12 branch push after validation only; PR kept draft/open/unmerged |
 | External services touched - Cloudflare | No settings change; no Production change; no R2/D1 data write. Existing Preview lookup API was read for smoke validation only. |
 | External services touched - Google Cloud Translation | Official Translation API called offline for Top 100 Phase A only; `7,382` input chars; no runtime Google calls |
 | External services touched - Supabase | Not touched |
 | External services touched - Stripe | Not touched |
-| External services touched - DeepSeek | No. This task did not run `--run-provider` or `--probe-provider` without a local sentinel; no DeepSeek API call was made. |
-| Current status | Issue #11 / PR #12 prompt/schema/docs now explicitly prioritize ordinary Japanese/EJU learners. `shouldDisplay` means default visibility, not sense existence; specialized/rare senses such as mahjong, medical, legal, Buddhist, archaic, dialectal, rare-reading, and other domain terms default to `shouldDisplay=false` unless common learner-useful. `specialized` is now an allowed `issueFlags` value. Validation passed: syntax, estimate-only, fixture tests `17/17`, guardrail sentinel matrix, runtime lookup static check. Runtime AI calls `0`, Google Translate no, R2/D1 writes `0`, Production deploy no, overlay activation no, billing prompt seen no. |
-| Current blocker | A future Top 100 DeepSeek run still requires separate user approval. PR #12 must remain draft/open/unmerged until explicitly advanced. Remaining cost risk from earlier failed requests and successful probes remains console-final. |
+| External services touched - DeepSeek | Yes, once, only via `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --run-provider` after pre-run validation passed. No automatic retry. |
+| Current status | Issue #11 / PR #12 approved DeepSeek Top 100 provider run succeeded. Review artifact `docs/review/jmdict-zh-deepseek-pilot-100-review.md` has generated entries `100`, generated senses `209`, provider `deepseek`, model `deepseek-v4-flash`, reviewStatus `ai_generated_unreviewed`. Usage ledger `docs/review/jmdict-zh-deepseek-pilot-100-usage-ledger.json` records request count `5`, estimated input/output/total tokens `29715`/`28035`/`57750`, actual input/output tokens `30544`/`27411`, providerRunStatus `succeeded`, failedRequestCount `0`; cost remains null/not configured locally. Runtime AI calls `0`, Google Translate no, R2/D1 writes `0`, Production deploy no, overlay activation no, billing prompt seen no. |
+| Current blocker | User review is required before any overlay activation, R2/D1 write, Production deploy, PR ready transition, or merge. PR #12 must remain draft/open/unmerged until explicitly advanced. DeepSeek console remains final for billing. |
 
 ## 3. Cloudflare 状态
 
@@ -143,6 +143,7 @@ Update triggers:
 | Issue #11 DeepSeek one-entry probe | Passed | 2026-06-22 23:15 JST: On branch `feat/dictionary-zh-deepseek-pilot-100`, start commit `040fc9af3c47ec4da60517f3a447b1c21ff04de2`; end commit is this closeout commit, exact SHA reported after push. User approved only a 1-entry probe. Pre-run checks passed: repo/branch/PR, `.env.local` ignored/untracked, `DEEPSEEK_API_KEY_length=35`, required env values, syntax, estimator, fixture tests `16/16`, and guardrails before sentinel `fetch`. DeepSeek API called once only via `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --probe-provider --probe-limit 1`. Generated entries `1`, senses `2`, actual input tokens `1328`, actual output tokens `284`, review `docs/review/jmdict-zh-deepseek-probe-review.md`, ledger `docs/review/jmdict-zh-deepseek-probe-usage-ledger.json`; TextEdit open command executed. No 5-entry probe, no Top 100 retry, no automatic next phase. Google Translate no, runtime AI calls `0`, R2/D1 writes `0`, Production deploy no, PR #12 kept draft/open/unmerged, billing prompt seen no. |
 | Issue #11 DeepSeek five-entry probe | Passed | 2026-06-22 23:24 JST: On branch `feat/dictionary-zh-deepseek-pilot-100`, start commit `c831285523c989800760bc2462ab8370e4c3bb93`; end commit is this closeout commit, exact SHA reported after push. User approved only a 5-entry probe after reviewing the 1-entry probe. Pre-run checks passed: repo/branch/PR, `.env.local` ignored/untracked, `DEEPSEEK_API_KEY_length=35`, syntax, estimator, 5-entry probe estimator, fixture tests `16/16`, and guardrails before sentinel `fetch`. DeepSeek API called once only via `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --probe-provider --probe-limit 5`. Generated entries `5`, senses `10`, actual input tokens `2228`, actual output tokens `1300`, review `docs/review/jmdict-zh-deepseek-probe-review.md`, ledger `docs/review/jmdict-zh-deepseek-probe-usage-ledger.json`; TextEdit open command executed. No Top 100 retry, no automatic next phase. Google Translate no, runtime AI calls `0`, R2/D1 writes `0`, Production deploy no, PR #12 kept draft/open/unmerged, billing prompt seen no. |
 | Issue #11 DeepSeek specialized/rare sense rule fix | Passed locally | 2026-06-22 23:35 JST: On branch `feat/dictionary-zh-deepseek-pilot-100`, start commit `78b1085f74369e6b5809ce1f114522301693b6b4`; end commit is this closeout commit, exact SHA reported after push. User accepted 5 probe quality but found `平和 / ピンフ` mahjong sense incorrectly `shouldDisplay=true`. Fixed DeepSeek system/user prompt and docs so ordinary Japanese/EJU learners are prioritized; common learner-useful senses use `shouldDisplay=true`; mahjong, medical, legal, Buddhist, archaic, dialectal, rare-reading, and specialized senses default to `shouldDisplay=false` unless common learner-useful; correct translation alone is not enough; `shouldDisplay` means default visibility, not sense existence. Added `specialized` to allowed `issueFlags` and fixture coverage. No DeepSeek API call, no Google Translate, runtime AI calls `0`, R2/D1 writes `0`, Production deploy no, overlay activation no, no PR ready/merge, `.env.local` not tracked/committed, `RIKA_PLAN.md` left untracked. Validation passed: `node --check`, `--self-test-json-fixtures` `17/17`, `--estimate-only`, guardrail sentinel matrix before external network, runtime lookup static check. Billing prompt seen no. |
+| Issue #11 DeepSeek Top 100 provider run | Passed | 2026-06-22 23:52 JST: On branch `feat/dictionary-zh-deepseek-pilot-100`, start commit `aa85ed2becd9396d955e483f8f6a96f6352c05d1`; end commit is this closeout commit, exact SHA reported after push. User explicitly approved one Top 100 provider run after probe/rule review. Pre-run checks passed: repo path, branch, expected head, PR #12 draft/open/unmerged, `.env.local` ignored/untracked, `DEEPSEEK_API_KEY_length=35`, required env values, syntax, estimator, fixture tests `17/17`, guardrail sentinel matrix, runtime lookup static check. DeepSeek API called once only via `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --run-provider`; no automatic retry. Generated entries `100`, senses `209`, request count `5`, actual input tokens `30544`, actual output tokens `27411`, review `docs/review/jmdict-zh-deepseek-pilot-100-review.md`, ledger `docs/review/jmdict-zh-deepseek-pilot-100-usage-ledger.json`; TextEdit open command executed. Google Translate no, runtime AI calls `0`, R2/D1 writes `0`, Production deploy no, overlay activation no, no PR ready/merge, billing prompt seen no. |
 
 ## 8. 最近事件流水
 
