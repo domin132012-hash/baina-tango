@@ -1660,3 +1660,65 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - Google Cloud Translation was called for `7,382` chars only; this is below the configured `10,000` char task guardrail.
 - Future Phase B must not call Google at runtime; any additional provider use needs a new explicit bounded run approval.
 - Provider billing console remains final truth for charges/free-tier application.
+
+## 2026-06-22 17:42 JST / Codex / Issue #11 DeepSeek scaffold checkpoint
+
+### Task
+- Checkpoint and finalize current DeepSeek scaffolding work only for Issue #11.
+- Do not call DeepSeek, Google Translate, provider mode, deploy, merge, mark PR ready, activate overlay, upload R2, update D1, touch `.env.local`, or read/print API keys.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `950da0a02cb4d88d161f495a3ee031012b8dcd43`
+- End commit: this closeout commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: opened after closeout push; kept draft/open/unmerged.
+
+### Files changed
+- `scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `scripts/dictionary/prompts/jmdict-zh-deepseek-system.md`
+- `docs/design/deepseek-ai-zh-gloss-overlay.md`
+- `docs/review/jmdict-zh-deepseek-pilot-100-review.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not committed.
+- `RIKA_PLAN.md` was untracked and not staged.
+
+### External services touched
+- DeepSeek API: no.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Provider mode: no.
+- Overlay activation: no.
+- GitHub: branch push and draft PR only after validation.
+- Billing prompt seen: no.
+
+### Validation
+- `codex-preflight --task "checkpoint and finalize current DeepSeek scaffolding work only"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Current branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only`
+- Guardrail tests with sentinel `fetch` replacement all failed before any provider/network call:
+  - missing `DEEPSEEK_API_KEY`
+  - missing approval flag
+  - wrong provider
+  - wrong model
+  - max entries too low
+  - max input-token limit too low
+- Runtime dictionary lookup confirmed not to import or call the DeepSeek pilot script; response path still reports `aiCalled=false`.
+- Secret scan found only the literal placeholder `DEEPSEEK_API_KEY=<secret>`, not a key.
+- Artifact scope check found no newly committed full JMdict XML/gz, KANJIDIC, SQLite/DB, R2 shard, or large generated artifact.
+
+### Remaining risks
+- The DeepSeek provider run has not been performed and still requires separate explicit user approval after reviewing guardrails.
+- The review artifact is only a placeholder until a separately approved provider run generates candidates.
+- Runtime zh overlay remains inactive; no user-facing Chinese gloss behavior is enabled by this scaffold.
+
+### Remaining cost risks
+- Estimated cost is intentionally not implemented in this scaffold and is recorded as provider-not-called.
+- Any future DeepSeek usage must be a separately approved bounded run with current provider pricing reviewed before execution.
