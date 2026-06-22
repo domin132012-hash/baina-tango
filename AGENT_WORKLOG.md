@@ -1722,3 +1722,67 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 ### Remaining cost risks
 - Estimated cost is intentionally not implemented in this scaffold and is recorded as provider-not-called.
 - Any future DeepSeek usage must be a separately approved bounded run with current provider pricing reviewed before execution.
+
+## 2026-06-22 19:14 JST / Codex / Issue #11 DeepSeek Phase A provider attempt
+
+### Task
+- Continue PR #12 after the user saved local `.env.local`.
+- If `DEEPSEEK_API_KEY_length > 0`, run DeepSeek Top 100 Phase A only through the offline script.
+- Do not call Google Translate, deploy, merge, mark PR ready, activate overlay, upload R2, update D1, modify runtime lookup, commit `.env.local`, or commit any secret.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `c6b3022829de1abff1e045509a2d685101556ff2`
+- End commit: this status commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Files changed
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+- `docs/review/jmdict-zh-deepseek-pilot-100-review.md` was not changed.
+- `docs/review/jmdict-zh-deepseek-pilot-100-usage-ledger.json` was not generated.
+
+### External services touched
+- DeepSeek API: yes, once, only via `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --run-provider`.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: branch push after status update only.
+- Billing prompt seen: no.
+
+### Validation
+- `codex-preflight --task "continue approved DeepSeek Top 100 provider run for Issue 11 PR 12 after local env key saved"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- `.env.local` verified ignored/untracked; only `DEEPSEEK_API_KEY_length=35` was printed.
+- `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- Estimator passed: entries `100`, senses `209`, request count `5`, estimated input tokens `24870`, estimated output tokens `28035`, estimated total tokens `52905`, runtime AI calls `false`, R2/D1 writes `false`, Production changed `false`.
+- Provider run stopped with `DeepSeek message content was not strict JSON.`
+- No malformed JSON was accepted.
+- No AI review artifact was generated.
+- No usage ledger was written.
+- PR #12 checked after failure: draft/open/unmerged at `c6b3022829de1abff1e045509a2d685101556ff2` before this status commit.
+
+### Result
+- Generated entries: `0`.
+- Review artifact remains the placeholder.
+- Actual input tokens: unknown.
+- Actual output tokens: unknown.
+- Estimated cost: unavailable in scaffold.
+- Actual cost: unknown because no provider usage ledger was produced.
+
+### Remaining risks
+- The strict JSON failure means no user-reviewable DeepSeek Chinese glosses exist yet.
+- Retrying should not happen automatically; it needs a separate fix/approval path, likely prompt/script hardening for strict JSON recovery without accepting malformed output silently.
+- Runtime lookup remains English-first and unchanged.
+
+### Remaining cost risks
+- One failed DeepSeek request may have consumed billable tokens, but actual usage/cost was not recorded by the current script.
+- Any future retry should account for this prior failed attempt and keep the Top 100/run limits explicit.
