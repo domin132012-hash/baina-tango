@@ -7,11 +7,15 @@ const DEFAULT_INPUT = "docs/dictionary/zh-overlay-pilot-100/translation-input.js
 const DEFAULT_PROMPT = "scripts/dictionary/prompts/jmdict-zh-deepseek-system.md";
 const DEFAULT_REVIEW_OUT = "docs/review/jmdict-zh-deepseek-pilot-100-review.md";
 const DEFAULT_LEDGER_OUT = "docs/review/jmdict-zh-deepseek-pilot-100-usage-ledger.json";
+const DEFAULT_PROBE_REVIEW_OUT = "docs/review/jmdict-zh-deepseek-probe-review.md";
+const DEFAULT_PROBE_LEDGER_OUT = "docs/review/jmdict-zh-deepseek-probe-usage-ledger.json";
+const DEFAULT_DEBUG_OUT = "docs/review/jmdict-zh-deepseek-last-failure-debug.json";
 const PROVIDER_NAME = "deepseek";
 const REQUIRED_MODEL = "deepseek-v4-flash";
 const REQUIRED_BASE_URL = "https://api.deepseek.com";
 const REQUIRED_APPROVAL = "YES_DEEPSEEK_TOP_100_ONLY";
 const REQUIRED_MAX_ENTRIES = 100;
+const ALLOWED_PROBE_LIMITS = new Set([1, 5]);
 const DEFAULT_BATCH_ENTRIES = 20;
 const MAX_REVIEW_ARTIFACT_BYTES = 300000;
 const REVIEW_STATUS = "ai_generated_unreviewed";
@@ -41,6 +45,8 @@ function usage() {
   console.log(`Usage:
   node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only
   node scripts/dictionary/jmdict-zh-deepseek-pilot.js --self-test-json-fixtures
+  node scripts/dictionary/jmdict-zh-deepseek-pilot.js --probe-provider --probe-limit 1
+  node scripts/dictionary/jmdict-zh-deepseek-pilot.js --probe-provider --probe-limit 5
   node scripts/dictionary/jmdict-zh-deepseek-pilot.js --run-provider
 
 Defaults:
@@ -48,8 +54,9 @@ Defaults:
   --prompt ${DEFAULT_PROMPT}
   --review-out ${DEFAULT_REVIEW_OUT}
   --ledger-out ${DEFAULT_LEDGER_OUT}
+  --debug-out ${DEFAULT_DEBUG_OUT}
 
-Required env for --run-provider:
+Required env for --run-provider or --probe-provider:
   BAINA_ZH_AI_PROVIDER=deepseek
   DEEPSEEK_API_KEY=<secret>
   DEEPSEEK_BASE_URL=https://api.deepseek.com
@@ -61,7 +68,7 @@ Required env for --run-provider:
   BAINA_ZH_AI_MAX_TOTAL_ESTIMATED_TOKENS=60000
   BAINA_ZH_AI_MAX_REQUESTS=100
 
-Without --run-provider, this script performs no provider call.
+Without --run-provider or --probe-provider, this script performs no provider call.
 Runtime lookup must never import or call this offline batch script.
 `);
 }
@@ -119,6 +126,7 @@ function userPromptForEntries(entries) {
     outputContract: "Return exactly one strict JSON object with a top-level items array. Include exactly one item for every input sense.",
     outputRules: [
       "Output JSON only.",
+      "The word json is intentionally present for DeepSeek JSON Output mode.",
       "Do not output Markdown.",
       "Do not wrap the JSON in a ```json code block.",
       "Do not include explanations, prefaces, or afterwords.",
@@ -138,6 +146,25 @@ function userPromptForEntries(entries) {
       reviewStatus: REVIEW_STATUS,
       provider: PROVIDER_NAME,
       model: REQUIRED_MODEL
+    },
+    outputExample: {
+      items: [
+        {
+          entryId: "jmdict-example-1",
+          writtenForm: "事",
+          reading: "こと",
+          senseIndex: 1,
+          shortGloss: "事情",
+          zhGlosses: ["事情", "事项"],
+          usageNote: "",
+          shouldDisplay: true,
+          confidence: "high",
+          issueFlags: ["none"],
+          reviewStatus: REVIEW_STATUS,
+          provider: PROVIDER_NAME,
+          model: REQUIRED_MODEL
+        }
+      ]
     },
     entries: entries.map(entryForPrompt)
   }, null, 2);
@@ -198,6 +225,25 @@ function estimateCostUsd(inputTokens, outputTokens) {
   void inputTokens;
   void outputTokens;
   return null;
+}
+
+function batchWithEntryLimit(batch, limit) {
+  return {
+    ...batch,
+    entries: (batch.entries || []).slice(0, limit)
+  };
+}
+
+function probeLimitFromArgs() {
+  const value = Number(arg("--probe-limit"));
+  if (!ALLOWED_PROBE_LIMITS.has(value)) {
+    fail({
+      blocked: true,
+      reason: "Probe limit must be 1 or 5.",
+      actual: Number.isFinite(value) ? value : "missing"
+    });
+  }
+  return value;
 }
 
 function assertEstimateLimits({ estimate, maxEntries, maxInputTokens, maxOutputTokens, maxTotalTokens, maxRequests }) {
@@ -335,24 +381,71 @@ function chatCompletionsUrl(baseUrl) {
   return `${normalized}/chat/completions`;
 }
 
-async function callDeepSeek({ config, systemPrompt, entries, maxTokens }) {
+function providerMessageParts(data) {
+  const choice = data?.choices?.[0] || {};
+  const message = choice?.message || {};
+  const content = typeof message.content === "string" ? message.content : "";
+  const reasoningContent = typeof message.reasoning_content === "string" ? message.reasoning_content : "";
+  return { choice, message, content, reasoningContent };
+}
+
+async function writeProviderFailureDebug(filePath, {
+  config,
+  requestCount,
+  batchSize,
+  choice,
+  content,
+  parseErrorMessage,
+  usage,
+  reasoningContent
+}) {
+  if (!filePath) return;
+  const trimmed = String(content || "").trim();
+  await writeJson(filePath, {
+    timestamp: new Date().toISOString(),
+    provider: PROVIDER_NAME,
+    model: config?.model || REQUIRED_MODEL,
+    requestCount,
+    batchSize,
+    finish_reason: choice?.finish_reason ?? null,
+    responseContentLength: String(content || "").length,
+    responseContentFirst500: String(content || "").slice(0, 500),
+    responseContentLast500: String(content || "").slice(-500),
+    responseContentStartsWithBrace: trimmed.startsWith("{"),
+    responseContentEndsWithBrace: trimmed.endsWith("}"),
+    parseErrorMessage,
+    usageTokens: {
+      promptTokens: usage?.prompt_tokens ?? null,
+      completionTokens: usage?.completion_tokens ?? null,
+      totalTokens: usage?.total_tokens ?? null
+    },
+    hasReasoningContent: Boolean(reasoningContent),
+    reasoningContentLength: String(reasoningContent || "").length
+  });
+}
+
+async function callDeepSeek({ config, systemPrompt, entries, maxTokens, debugOut, requestCount, batchSize }) {
+  const requestBody = {
+    model: config.model,
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPromptForEntries(entries) }
+    ],
+    response_format: { type: "json_object" },
+    temperature: 0.2,
+    max_tokens: maxTokens,
+    stream: false,
+    // DeepSeek v4 thinking mode is enabled by default; dictionary JSON generation
+    // uses non-thinking mode to reduce strict JSON failures.
+    thinking: { type: "disabled" }
+  };
   const response = await fetch(chatCompletionsUrl(config.baseUrl), {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${config.apiKey}`,
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({
-      model: config.model,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPromptForEntries(entries) }
-      ],
-      response_format: { type: "json_object" },
-      temperature: 0.2,
-      max_tokens: maxTokens,
-      stream: false
-    })
+    body: JSON.stringify(requestBody)
   });
   const responseText = await response.text();
   let data = {};
@@ -365,11 +458,23 @@ async function callDeepSeek({ config, systemPrompt, entries, maxTokens }) {
     const reason = data?.error?.message || `HTTP ${response.status}`;
     throw new Error(`DeepSeek request failed: ${reason}`);
   }
-  const content = data?.choices?.[0]?.message?.content || "";
-  if (!content) {
-    throw new Error("DeepSeek response did not include message content.");
+  const { choice, content, reasoningContent } = providerMessageParts(data);
+  let parsed = {};
+  try {
+    parsed = parseProviderMessageContent(content);
+  } catch (error) {
+    await writeProviderFailureDebug(debugOut, {
+      config,
+      requestCount,
+      batchSize,
+      choice,
+      content,
+      parseErrorMessage: error?.message || String(error),
+      usage: data?.usage,
+      reasoningContent
+    });
+    throw error;
   }
-  const parsed = parseProviderMessageContent(content);
   return {
     parsed,
     usage: {
@@ -381,11 +486,47 @@ async function callDeepSeek({ config, systemPrompt, entries, maxTokens }) {
 }
 
 function parseProviderMessageContent(content) {
-  try {
-    return JSON.parse(content);
-  } catch {
-    throw new Error("DeepSeek message content was not strict JSON.");
+  const value = String(content || "");
+  if (!value) {
+    throw new Error("empty_content: DeepSeek response message content was empty.");
   }
+  try {
+    return JSON.parse(value);
+  } catch {
+    const trimmed = value.trim();
+    const structure = jsonStructureState(trimmed);
+    const prefix = trimmed.startsWith("{") && structure.possiblyTruncated ? "possible_truncation: " : "";
+    throw new Error(`${prefix}DeepSeek message content was not strict JSON.`);
+  }
+}
+
+function jsonStructureState(value) {
+  let objectDepth = 0;
+  let arrayDepth = 0;
+  let inString = false;
+  let escaped = false;
+  for (const char of value) {
+    if (escaped) {
+      escaped = false;
+      continue;
+    }
+    if (inString && char === "\\") {
+      escaped = true;
+      continue;
+    }
+    if (char === "\"") {
+      inString = !inString;
+      continue;
+    }
+    if (inString) continue;
+    if (char === "{") objectDepth += 1;
+    else if (char === "}") objectDepth -= 1;
+    else if (char === "[") arrayDepth += 1;
+    else if (char === "]") arrayDepth -= 1;
+  }
+  return {
+    possiblyTruncated: inString || objectDepth > 0 || arrayDepth > 0
+  };
 }
 
 function validateSenseOutput(value, expectedKeys) {
@@ -533,7 +674,7 @@ function validFixtureOutput() {
   };
 }
 
-function assertFixture(name, shouldPass, content) {
+function assertFixture(name, shouldPass, content, options = {}) {
   const entries = fixtureEntries();
   let passed = false;
   let reason = "";
@@ -546,7 +687,15 @@ function assertFixture(name, shouldPass, content) {
   if (passed !== shouldPass) {
     throw new Error(`Fixture ${name} expected ${shouldPass ? "pass" : "fail"} but ${passed ? "passed" : `failed: ${reason}`}`);
   }
+  if (!passed && options.reasonIncludes && !reason.includes(options.reasonIncludes)) {
+    throw new Error(`Fixture ${name} failed without expected reason ${options.reasonIncludes}: ${reason}`);
+  }
   return { name, passed: true };
+}
+
+function assertResponseFixture(name, shouldPass, data, options = {}) {
+  const { content } = providerMessageParts(data);
+  return assertFixture(name, shouldPass, content, options);
 }
 
 function runJsonFixtureSelfTests() {
@@ -563,14 +712,31 @@ function runJsonFixtureSelfTests() {
       content: `\`\`\`json\n${JSON.stringify(valid)}\n\`\`\``
     },
     {
+      name: "empty_content",
+      shouldPass: false,
+      content: "",
+      reasonIncludes: "empty_content"
+    },
+    {
       name: "json_array_without_items",
       shouldPass: false,
       content: JSON.stringify(valid.items)
     },
     {
+      name: "json_object_without_items",
+      shouldPass: false,
+      content: JSON.stringify({ senses: valid.items })
+    },
+    {
       name: "json_with_trailing_explanation",
       shouldPass: false,
       content: `${JSON.stringify(valid)}\nHere is the result.`
+    },
+    {
+      name: "truncated_content",
+      shouldPass: false,
+      content: JSON.stringify(valid).slice(0, -2),
+      reasonIncludes: "possible_truncation"
     },
     {
       name: "item_count_mismatch",
@@ -606,9 +772,41 @@ function runJsonFixtureSelfTests() {
       name: "issueFlags_not_array",
       shouldPass: false,
       content: JSON.stringify({ items: valid.items.map((item, index) => index === 0 ? { ...item, issueFlags: "none" } : item) })
+    },
+    {
+      name: "response_reasoning_content_ignored_when_content_is_json",
+      shouldPass: true,
+      response: {
+        choices: [
+          {
+            message: {
+              content: JSON.stringify(valid),
+              reasoning_content: "This reasoning text must not be parsed as the result."
+            }
+          }
+        ]
+      }
+    },
+    {
+      name: "response_reasoning_content_without_content",
+      shouldPass: false,
+      response: {
+        choices: [
+          {
+            message: {
+              content: "",
+              reasoning_content: JSON.stringify(valid)
+            }
+          }
+        ]
+      },
+      reasonIncludes: "empty_content"
     }
   ];
-  const results = fixtures.map((fixture) => assertFixture(fixture.name, fixture.shouldPass, fixture.content));
+  const results = fixtures.map((fixture) => {
+    if (fixture.response) return assertResponseFixture(fixture.name, fixture.shouldPass, fixture.response, fixture);
+    return assertFixture(fixture.name, fixture.shouldPass, fixture.content, fixture);
+  });
   console.log(JSON.stringify({
     mode: "json_fixture_self_test_no_provider_call",
     tests: results.length,
@@ -818,7 +1016,7 @@ async function writeUsageLedger(filePath, value) {
   await writeJson(filePath, ledger);
 }
 
-async function runProvider({ batch, inputPath, systemPrompt, estimate, config, reviewOut, ledgerOut }) {
+async function runProvider({ batch, inputPath, systemPrompt, estimate, config, reviewOut, ledgerOut, debugOut }) {
   const guard = assertRunGuardrails({ config, estimate });
   console.log(`DEEPSEEK_API_KEY_length=${guard.keyLength}`);
 
@@ -831,7 +1029,10 @@ async function runProvider({ batch, inputPath, systemPrompt, estimate, config, r
       config,
       systemPrompt,
       entries: group,
-      maxTokens: Math.min(8192, Math.max(1000, estimatedGroupOutput + 500))
+      maxTokens: Math.min(8192, Math.max(1000, estimatedGroupOutput + 1000)),
+      debugOut,
+      requestCount: estimate.requestCount,
+      batchSize: group.length
     });
     aiSenses.push(...validateProviderOutput(result.parsed, group));
     actualUsage.promptTokens += result.usage.promptTokens || 0;
@@ -887,21 +1088,32 @@ async function main() {
 
   const inputPath = arg("--input") || DEFAULT_INPUT;
   const promptPath = arg("--prompt") || DEFAULT_PROMPT;
-  const reviewOut = arg("--review-out") || DEFAULT_REVIEW_OUT;
-  const ledgerOut = arg("--ledger-out") || DEFAULT_LEDGER_OUT;
+  const probeProvider = hasFlag("--probe-provider");
+  const fullProvider = hasFlag("--run-provider");
+  if (probeProvider && fullProvider) {
+    fail({
+      blocked: true,
+      reason: "Use either --probe-provider or --run-provider, not both."
+    });
+  }
+  const reviewOut = arg("--review-out") || (probeProvider ? DEFAULT_PROBE_REVIEW_OUT : DEFAULT_REVIEW_OUT);
+  const ledgerOut = arg("--ledger-out") || (probeProvider ? DEFAULT_PROBE_LEDGER_OUT : DEFAULT_LEDGER_OUT);
+  const debugOut = arg("--debug-out") || DEFAULT_DEBUG_OUT;
   const batch = await readJson(inputPath);
   const systemPrompt = await fs.readFile(promptPath, "utf8");
-  const estimate = estimateBatch({ batch, systemPrompt });
+  const effectiveBatch = probeProvider ? batchWithEntryLimit(batch, probeLimitFromArgs()) : batch;
+  const estimate = estimateBatch({ batch: effectiveBatch, systemPrompt });
 
-  if (hasFlag("--estimate-only") || !hasFlag("--run-provider")) {
+  if (hasFlag("--estimate-only") || (!fullProvider && !probeProvider)) {
     console.log(JSON.stringify({
       provider: PROVIDER_NAME,
       model: REQUIRED_MODEL,
-      mode: "estimate_only_no_provider_call",
+      mode: probeProvider ? "probe_estimate_only_no_provider_call" : "estimate_only_no_provider_call",
       inputPath,
       promptPath,
       reviewOut,
       ledgerOut,
+      debugOut,
       entries: estimate.entries,
       senses: estimate.senses,
       requestCount: estimate.requestCount,
@@ -921,13 +1133,14 @@ async function main() {
   const config = runConfigFromEnv();
   try {
     await runProvider({
-      batch,
+      batch: effectiveBatch,
       inputPath,
       systemPrompt,
       estimate,
       config,
       reviewOut,
-      ledgerOut
+      ledgerOut,
+      debugOut
     });
   } catch (error) {
     console.error(sanitizeError(error, [config.apiKey]));

@@ -1937,3 +1937,104 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 ### Remaining cost risks
 - This retry may have incurred one failed-request charge.
 - Combined cost risk now includes the earlier failed provider attempt plus this failed retry; exact billing must be checked in the DeepSeek console.
+
+## 2026-06-22 22:59 JST / Codex / Issue #11 PR #12 minimum probe mode
+
+### Task
+- Diagnose the repeated DeepSeek strict JSON failure path without another provider call.
+- Do not run Top 100, do not run provider/probe, do not call Google Translate, deploy, merge, mark PR ready, activate overlay, upload R2, update D1, commit `.env.local`, print/read secrets, or change runtime lookup to call DeepSeek.
+- Add safe failure diagnostics and a separately approved 1-entry / 5-entry probe path before any future Top 100 retry.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `046b5d51f699d34ac34c10ea1dd50ee461ca4d88`
+- End commit: this closeout commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Files changed
+- `scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `scripts/dictionary/prompts/jmdict-zh-deepseek-system.md`
+- `docs/design/deepseek-ai-zh-gloss-overlay.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not read, printed, staged, or committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+
+### External services touched
+- DeepSeek API: no in this round.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: branch push after validation only.
+- Billing prompt seen: no.
+
+### Implementation
+- Kept DeepSeek JSON Output request mode with `response_format: { type: "json_object" }`.
+- Added request body `thinking: { type: "disabled" }` with a code comment noting DeepSeek v4 thinking mode is treated as enabled by default and dictionary JSON generation uses non-thinking mode to reduce strict JSON failures.
+- Reinforced system and user prompts to include the word `json`, forbid Markdown/code blocks/explanations/reasoning text, and include a complete top-level `items` JSON example.
+- Added `--probe-provider --probe-limit 1` and `--probe-provider --probe-limit 5`; probe mode uses the same guardrails and strict schema validation as Top 100 mode, but writes separate probe review/ledger paths.
+- Added safe non-strict JSON failure debug logic for `docs/review/jmdict-zh-deepseek-last-failure-debug.json`; it records limited metadata only and must not include secrets, headers, full raw response, full prompt, or full input data.
+- Strengthened strict parsing diagnostics for empty content and likely truncation while still accepting only strict `JSON.parse` output.
+
+### Validation
+- `codex-preflight --task "PR 12 Issue 11 add DeepSeek probe mode and failure diagnostics without provider call"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only`
+  - entries `100`
+  - senses `209`
+  - request count `5`
+  - estimated input tokens `27255`
+  - estimated output tokens `28035`
+  - estimated total tokens `55290`
+- `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only --probe-provider --probe-limit 1`
+  - entries `1`
+  - senses `2`
+  - request count `1`
+  - estimated total tokens `1555`
+- `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only --probe-provider --probe-limit 5`
+  - entries `5`
+  - senses `10`
+  - request count `1`
+  - estimated total tokens `3491`
+- `node --import <sentinel fetch> scripts/dictionary/jmdict-zh-deepseek-pilot.js --self-test-json-fixtures`
+  - fixture tests `16/16`
+  - legal strict JSON object passed
+  - Markdown fenced JSON failed
+  - array without top-level `items` failed
+  - object without `items` failed
+  - trailing explanation failed
+  - missing `entryId` failed
+  - missing `senseIndex` failed
+  - mismatched `entryId` failed
+  - mismatched `senseIndex` failed
+  - invalid `confidence` failed
+  - non-array `issueFlags` failed
+  - item count mismatch failed
+  - empty content failed with `empty_content`
+  - truncated content failed with `possible_truncation`
+  - `reasoning_content` was ignored when `message.content` contained valid JSON
+  - empty `message.content` with `reasoning_content` failed
+- Guardrail matrix with sentinel `fetch` passed for missing key, missing approval, wrong provider, wrong model, max entries too low, max input tokens too low, max output tokens too low, max total tokens too low, max requests too low, probe missing key, and invalid probe limit; all failed before provider/network call.
+- Missing `--probe-limit` failed before sentinel `fetch`.
+- Runtime dictionary lookup static check found no DeepSeek/provider/probe reference under `functions/api/dictionary` or `index.html`.
+- `git diff --check` passed.
+- Secret pattern scan over changed files found no API key or private-key patterns.
+- `.env.local` is ignored by `.git/info/exclude` and untracked; `git ls-files -s .env.local` returned no tracked entry.
+- No probe review, probe ledger, or last-failure debug artifact was generated because provider/probe was not run.
+- No large generated artifact outside ignored `.wrangler` state was found.
+
+### Remaining risks
+- This round does not prove DeepSeek will return strict JSON on a probe; it only narrows the next safe step to a 1-entry or 5-entry probe.
+- The safe debug file will only be produced on a future approved provider/probe failure.
+- A future probe still requires separate user approval and manual review before any Top 100 retry.
+
+### Remaining cost risks
+- No DeepSeek call was made in this round.
+- The two prior failed DeepSeek Top 100 attempts may have incurred cost; final usage/billing must be checked in the DeepSeek console.

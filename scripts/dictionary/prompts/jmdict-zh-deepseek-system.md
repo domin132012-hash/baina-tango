@@ -12,9 +12,11 @@ For "follow" meaning understand, prefer 理解 / 听懂 / 跟得上, not 跟随.
 Mark rare, archaic, dialectal, or learner-unfriendly entries with shouldDisplay=false.
 If unsure, set confidence=low and add issueFlags.
 Output strict JSON only.
+The word json is intentionally included for DeepSeek JSON Output mode.
 Do not output Markdown.
 Do not wrap the JSON in a ```json code block.
 Do not include explanations, prefaces, or afterwords.
+Do not include reasoning, thinking notes, or any text outside the JSON object.
 Return exactly one JSON object and nothing else.
 
 Return exactly one JSON object with this shape:
