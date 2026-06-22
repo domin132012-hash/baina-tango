@@ -4,7 +4,7 @@
 > do not recheck Supabase / Stripe unless the task touches them, a related fault appears, or the recorded status is older than 30 days and the task depends on that platform.
 > Never record API keys, service role keys, JWT secrets, session tokens, customer data, payment records, card data, or raw secret values.
 
-Last updated: 2026-06-22 09:55 JST by Codex
+Last updated: 2026-06-22 10:00 JST by Codex
 
 ## 1. 当前锁定状态
 
@@ -31,16 +31,16 @@ Last updated: 2026-06-22 09:55 JST by Codex
 | Main latest hash after PR #4 | `c340f75a5f8cf51dac691732a9c66e50cd22af09` |
 | Phase 2 branch | `feat/full-jmdict-import-spike` |
 | Phase 2 PR | `https://github.com/domin132012-hash/baina-tango/pull/6` merged |
-| Latest relevant commit | Start commit `ebc320317e6ef212a38a53a603191c419aca527c`; branch work creates Top 100 input batch and provider skeleton only |
+| Latest relevant commit | Start commit `ebc320317e6ef212a38a53a603191c419aca527c`; implementation commit `d15886ac7fd2d57d3c1a49e77854682a0621aecb`; final branch head recorded in PR #10 / Issue #9 comments after closeout push |
 | PR #2 | `MERGED`; merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` |
 | This task | Cost-safe continuation from PR #6: full JMdict English-only R2 shards generated/uploaded from official JMdict, D1 metadata-only active version written, D1 full import not executed |
 | Dictionary plan commit | `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main` |
-| External services touched - GitHub | Issue #9 created; draft PR to be opened after branch push |
+| External services touched - GitHub | Issue #9 created; draft PR #10 opened and kept draft/unmerged |
 | External services touched - Cloudflare | No settings change; no Production change; no R2/D1 data write. Public Production lookup API was read to build a 100-entry translation input batch. |
 | External services touched - Supabase | Not touched |
 | External services touched - Stripe | Not touched |
 | External services touched - DeepSeek | Not touched |
-| Current status | Chinese overlay pilot is blocked before translation: no dedicated machine translation provider config was found. Generated 100-entry translation input batch and provider adapter skeleton only; translated entries `0`; estimated English characters `7,382`; billing prompt seen: no. |
+| Current status | Chinese overlay pilot is blocked before translation: no dedicated machine translation provider config was found. Generated 100-entry translation input batch and provider adapter skeleton only; draft PR #10 opened; Preview deployment `16357ba6` confirmed existing English lookup still returns R2 shard results with `aiCalled=false`; translated entries `0`; estimated English characters `7,382`; billing prompt seen: no. |
 | Current blocker | Dedicated machine translation provider approval/config needed, e.g. `BAINA_ZH_MT_PROVIDER` plus provider API key; D1 full import remains prohibited. |
 
 ## 3. Cloudflare 状态
@@ -137,7 +137,7 @@ Update triggers:
 | PR #6 final pre-merge check | Passed | 2026-06-22 00:06 JST: title/docs cleanup approved; start commit `5fb2c05322fbe98903eebd61b297e9237d6c14fc`; final head recorded in PR #6 comment after push; PR open/ready/not merged; Preview `r2-shard`; `食べられる` count `1`; all required terms `aiCalled=false`; artifact/secret scan passed; Production unchanged; billing prompt seen: no |
 | PR #6 Production post-merge smoke | Failed | 2026-06-22 00:26 JST: PR #6 merged with commit `c94735925798c604321631e1caa36c2f2c3190be`; Production deployment `9ee954f2` Active at source `c947359`; dictionary page opens; EJU 記述 opens; no console/page errors; all required API terms `aiCalled=false`; blocker: Production returns `dictionarySource=fallback`, and `食べられる` count `0` instead of `1`; billing prompt seen: no |
 | PR #6 Production R2/D1 binding/runtime fix | Passed | 2026-06-22 01:04 JST: Production Pages config updated with `DICTIONARY_R2` and `DICTIONARY_DB`; Git-backed Production rebuild `fe86990e` fixed runtime bindings, then docs-only deployment `7ac71e04` at source `942f1a2` also passed smoke. Production `/api/dictionary/lookup?q=食べられる` returns `dictionarySource=r2-shard`, count `1`; required API terms all `aiCalled=false`; dictionary page and EJU 記述 entry open; console errors `0`, API failures `0`; billing prompt seen: no |
-| Issue #9 Chinese overlay pilot setup | Blocked | 2026-06-22 09:55 JST: Issue #9 created; branch `feat/dictionary-zh-overlay-pilot-100` generated Top 100 translation input batch with required terms fully covered, estimated English chars `7,382`; provider adapter skeleton blocks because no dedicated MT provider is configured; translated entries `0`; no R2/D1 data write; no Production change; billing prompt seen: no |
+| Issue #9 Chinese overlay pilot setup | Blocked | 2026-06-22 10:00 JST: Issue #9 created and draft PR #10 opened on `feat/dictionary-zh-overlay-pilot-100`; generated Top 100 translation input batch with required terms fully covered, estimated English chars `7,382`; provider adapter skeleton blocks because no dedicated MT provider is configured; translated entries `0`; Preview `https://16357ba6.baina-tango.pages.dev` verifies existing English lookup still uses `dictionarySource=r2-shard`, `食べられる` count `1`, required terms `aiCalled=false`, and no obvious console/API errors; no R2/D1 data write; no Production change; billing prompt seen: no |
 
 ## 8. 最近事件流水
 
@@ -167,4 +167,4 @@ Update triggers:
 | 2026-06-22 00:06 JST | PR #6 docs/title cleanup and final pre-merge verification started from `5fb2c05322fbe98903eebd61b297e9237d6c14fc`; docs/status only plus GitHub PR metadata/comment; no app code, manual redeploy, Cloudflare settings, Production, R2/D1 data, D1 full import, `RIKA_PLAN.md`, or generated dictionary artifacts touched. |
 | 2026-06-22 00:26 JST | PR #6 merged to `main` with merge commit `c94735925798c604321631e1caa36c2f2c3190be`; automatic Production deployment `9ee954f2` Active at source `c947359`; Production smoke failed R2/count requirement because lookup still uses fallback and `食べられる` count is `0`; no manual Cloudflare settings change, no R2/D1 write, no D1 full import, no `RIKA_PLAN.md` touch, billing prompt seen: no. |
 | 2026-06-22 01:04 JST | Production R2/D1 binding/runtime fix completed: Cloudflare Pages production config now has `DICTIONARY_R2` -> `baina-dictionary-artifacts` and `DICTIONARY_DB` -> `baina-dictionary`; runtime-fix deployment `fe86990e` and docs-only closeout deployment `7ac71e04` both passed Production smoke with `dictionarySource=r2-shard`, `食べられる` count `1`, required terms `aiCalled=false`; no R2/D1 data write, no D1 full import, no `RIKA_PLAN.md` touch, billing prompt seen: no. |
-| 2026-06-22 09:55 JST | Issue #9 Chinese gloss overlay pilot started on `feat/dictionary-zh-overlay-pilot-100` from `ebc3203`; generated Top 100 translation input batch and provider adapter skeleton; blocked before translation because no dedicated MT provider config exists; no provider call, no R2/D1 data write, no Production change, no `RIKA_PLAN.md` touch, billing prompt seen: no. |
+| 2026-06-22 10:00 JST | Issue #9 Chinese gloss overlay pilot opened draft PR #10 from branch `feat/dictionary-zh-overlay-pilot-100`; Preview deployment `16357ba6` passed existing English lookup smoke with `dictionarySource=r2-shard`, `食べられる` count `1`, required terms `aiCalled=false`, and no obvious console/API errors. Chinese overlay generation remains blocked because no dedicated MT provider is configured; translated entries `0`; no provider call, no R2/D1 data write, no Production change, no `RIKA_PLAN.md` touch, billing prompt seen: no. |

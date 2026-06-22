@@ -1534,14 +1534,15 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 
 ### Task
 - Create and implement the blocked-provider setup path for a Top 100 Chinese gloss overlay pilot.
-- Create Issue #9, create branch `feat/dictionary-zh-overlay-pilot-100`, open a draft PR, and do not merge or mark ready.
+- Create Issue #9, create branch `feat/dictionary-zh-overlay-pilot-100`, open draft PR #10, and do not merge or mark ready.
 - Keep English JMdict data unchanged; do not change existing English R2 shards; do not touch Production, R2/D1 data, Stripe, Supabase, DeepSeek, or `RIKA_PLAN.md`.
 
 ### Branch / commits
 - Branch: `feat/dictionary-zh-overlay-pilot-100`
 - Start commit: `ebc320317e6ef212a38a53a603191c419aca527c`
-- End commit: recorded by the branch push for this entry.
+- End commit: implementation commit `d15886ac7fd2d57d3c1a49e77854682a0621aecb`; final branch head recorded in PR #10 / Issue #9 comments after closeout push.
 - Issue: `#9` `[AGENT-TASK] Chinese gloss overlay pilot: Top 100 machine translation baseline`
+- Draft PR: `#10` `feat(dictionary): scaffold Chinese gloss overlay pilot input`
 
 ### Files changed
 - `scripts/dictionary/zh-overlay-pilot-terms.js`
@@ -1555,7 +1556,7 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - `HANDOVER.md`
 
 ### External services touched
-- GitHub: Issue #9 created; draft PR to be opened after branch push.
+- GitHub: Issue #9 created; draft PR #10 opened and kept draft/unmerged.
 - Cloudflare Production: not changed.
 - Cloudflare Pages config: not changed.
 - Cloudflare R2/D1 data: not touched; no R2 object write and no D1 full import.
@@ -1578,11 +1579,13 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - `node scripts/dictionary/jmdict-zh-overlay-build-input.js --limit 100 --out docs/dictionary/zh-overlay-pilot-100/translation-input.json`
 - Translation input validation: 100 selected entries, required terms missing `0`, estimated English characters `7,382`.
 - Provider adapter validation: exited blocked with no network/provider call because no dedicated MT provider is configured.
-- Preview validation: blocked before deploy because translated entries are `0`; Chinese overlay cannot be validated until provider config/approval exists.
+- Preview validation: deployment `16357ba6-de9a-4670-aa9d-2b5e027d68be`, source `d15886a`, URL `https://16357ba6.baina-tango.pages.dev`, status successful. Existing English lookup still returns `dictionarySource=r2-shard`; `食べられる` count `1`; required API terms all kept `aiCalled=false`; page/browser smoke found no obvious console/API errors.
+- Chinese overlay validation: blocked because translated entries are `0`; Chinese overlay cannot be validated until provider config/approval exists.
 - Billing prompt seen: no.
 
 ### Remaining risks
 - No Chinese overlay runtime behavior exists yet; this branch intentionally stops before translation/provider use.
+- Draft PR #10 must remain draft and unmerged until the user approves the provider path and later Preview validation.
 - The eventual provider output must preserve sense boundaries and mark each translated sense `machine_translated` / `unreviewed`.
 - Runtime integration must still be implemented after a translated overlay artifact exists.
 
