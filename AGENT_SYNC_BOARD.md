@@ -4,13 +4,13 @@
 > do not recheck Supabase / Stripe unless the task touches them, a related fault appears, or the recorded status is older than 30 days and the task depends on that platform.
 > Never record API keys, service role keys, JWT secrets, session tokens, customer data, payment records, card data, or raw secret values.
 
-Last updated: 2026-06-22 01:04 JST by Codex
+Last updated: 2026-06-22 12:58 JST by Codex
 
 ## 1. 当前锁定状态
 
 | Area | Status | Note |
 |---|---|---|
-| Repository docs | Locked for PR #6 Production binding/runtime fix closeout | Recording Production Pages binding fix, active R2 shard smoke, cost guardrail, and D1 full-import prohibition |
+| Repository docs | Active for Issue #9 Chinese overlay pilot branch | Recording Phase A review artifact generation, cost guardrail, and no Production/R2/D1 data changes |
 | Application code | PR #6 R2 shard lookup path + beta fallback | `/api/dictionary/lookup` is binding-ready for `DICTIONARY_R2` + optional `DICTIONARY_DB`; when bindings are absent or fail it keeps the bounded 1,000-entry beta fallback and `aiCalled=false` |
 | Cloudflare | Production R2 shard lookup active | Production Pages config now has `DICTIONARY_R2` -> `baina-dictionary-artifacts` and `DICTIONARY_DB` -> `baina-dictionary`; canonical Production returns `dictionarySource=r2-shard` |
 | Supabase | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
@@ -22,26 +22,27 @@ Last updated: 2026-06-22 01:04 JST by Codex
 | Item | Value |
 |---|---|
 | Repository | `domin132012-hash/baina-tango` |
-| Current branch | `main` |
-| Main latest hash at task start | `7cd4128f998649329e51bc1263e13e8bc60c1621` |
-| Current task | PR #6 Production R2/D1 binding/runtime fix and smoke writeback |
-| Issue | `#8` `[AGENT-TASK] Dictionary full lookup via R2 shards + D1 metadata` |
+| Current branch | `feat/dictionary-zh-overlay-pilot-100` |
+| Main latest hash at task start | `ebc320317e6ef212a38a53a603191c419aca527c` |
+| Current task | Issue #9 Chinese gloss overlay pilot Top 100 Phase A review artifact |
+| Issue | `#9` `[AGENT-TASK] Chinese gloss overlay pilot: Top 100 machine translation baseline` |
 | PR #4 | `MERGED` `https://github.com/domin132012-hash/baina-tango/pull/4` |
 | PR #4 merge commit | `c340f75a5f8cf51dac691732a9c66e50cd22af09` |
 | Main latest hash after PR #4 | `c340f75a5f8cf51dac691732a9c66e50cd22af09` |
 | Phase 2 branch | `feat/full-jmdict-import-spike` |
 | Phase 2 PR | `https://github.com/domin132012-hash/baina-tango/pull/6` merged |
-| Latest relevant commit | Docs/writeback start commit `7cd4128f998649329e51bc1263e13e8bc60c1621`; Production fix used Cloudflare Pages config + redeploy only |
+| Latest relevant commit | Phase A start commit `42f936cc07ad4897b4dfe0b739a39fd580761df7`; final Phase A branch head recorded in PR #10 / Issue #9 comments after closeout push |
 | PR #2 | `MERGED`; merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` |
 | This task | Cost-safe continuation from PR #6: full JMdict English-only R2 shards generated/uploaded from official JMdict, D1 metadata-only active version written, D1 full import not executed |
 | Dictionary plan commit | `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main` |
-| External services touched - GitHub | Issue #8 and PR #6 comments updated with Production binding fix result; status docs pushed in closeout |
-| External services touched - Cloudflare | Pages Project production config updated via Cloudflare API for `DICTIONARY_R2` and `DICTIONARY_DB`; Git-backed Production rebuild `fe86990e-2a04-470a-89ea-c7df55aea313`, source `7cd4128`, succeeded. No R2/D1 data write and no D1 full import. |
+| External services touched - GitHub | Issue #9 and draft PR #10 updated after Phase A; PR kept draft/open/unmerged |
+| External services touched - Cloudflare | No settings change; no Production change; no R2/D1 data write. Existing Preview lookup API was read for smoke validation only. |
+| External services touched - Google Cloud Translation | Official Translation API called offline for Top 100 Phase A only; `7,382` input chars; no runtime Google calls |
 | External services touched - Supabase | Not touched |
 | External services touched - Stripe | Not touched |
 | External services touched - DeepSeek | Not touched |
-| Current status | PR #6 merged to `main`; Production Pages config has R2/D1 dictionary bindings. Browser smoke passed for dictionary page and EJU 記述 entry; console errors `0`, API failures `0`. Production dictionary API returns `dictionarySource=r2-shard`; `食べられる` count `1`; all required terms `aiCalled=false`. |
-| Current blocker | None for Production R2 shard lookup. D1 full import remains prohibited unless a separate cost-safe plan is approved. |
+| Current status | Phase A complete: Google Cloud Translation official API generated local user-review artifact `docs/review/jmdict-zh-pilot-100-review.md` for Top 100 only; translated entries `100`; estimated/actual chars `7,382`; draft PR #10 remains draft/open/unmerged; no runtime overlay activation, no R2/D1 write, no Production change, billing prompt seen: no. |
+| Current blocker | User review is required before any Phase B overlay activation. D1 full import and Production changes remain prohibited without separate explicit approval. |
 
 ## 3. Cloudflare 状态
 
@@ -137,6 +138,7 @@ Update triggers:
 | PR #6 final pre-merge check | Passed | 2026-06-22 00:06 JST: title/docs cleanup approved; start commit `5fb2c05322fbe98903eebd61b297e9237d6c14fc`; final head recorded in PR #6 comment after push; PR open/ready/not merged; Preview `r2-shard`; `食べられる` count `1`; all required terms `aiCalled=false`; artifact/secret scan passed; Production unchanged; billing prompt seen: no |
 | PR #6 Production post-merge smoke | Failed | 2026-06-22 00:26 JST: PR #6 merged with commit `c94735925798c604321631e1caa36c2f2c3190be`; Production deployment `9ee954f2` Active at source `c947359`; dictionary page opens; EJU 記述 opens; no console/page errors; all required API terms `aiCalled=false`; blocker: Production returns `dictionarySource=fallback`, and `食べられる` count `0` instead of `1`; billing prompt seen: no |
 | PR #6 Production R2/D1 binding/runtime fix | Passed | 2026-06-22 01:04 JST: Production Pages config updated with `DICTIONARY_R2` and `DICTIONARY_DB`; Git-backed Production rebuild `fe86990e` fixed runtime bindings, then docs-only deployment `7ac71e04` at source `942f1a2` also passed smoke. Production `/api/dictionary/lookup?q=食べられる` returns `dictionarySource=r2-shard`, count `1`; required API terms all `aiCalled=false`; dictionary page and EJU 記述 entry open; console errors `0`, API failures `0`; billing prompt seen: no |
+| Issue #9 Chinese overlay pilot setup | Phase A review generated | 2026-06-22 12:58 JST: On branch `feat/dictionary-zh-overlay-pilot-100`, generated review artifact `docs/review/jmdict-zh-pilot-100-review.md` using Google Cloud Translation official API for Top 100 only. Translated entries `100`, translated senses `209`, estimated/actual chars `7,382`; usage ledger `docs/review/jmdict-zh-pilot-100-usage-ledger.json`; artifact size `46,686` bytes. Existing Preview `https://44dbffce.baina-tango.pages.dev` still returns `dictionarySource=r2-shard` for `食べられる`, count `1`, and required terms `aiCalled=false`. No runtime Google calls, no active zh overlay upload, no R2/D1 data write, no Production deploy/change, PR #10 kept draft/open/unmerged, `.env.local` ignored/untracked, billing prompt seen: no |
 
 ## 8. 最近事件流水
 
@@ -166,3 +168,5 @@ Update triggers:
 | 2026-06-22 00:06 JST | PR #6 docs/title cleanup and final pre-merge verification started from `5fb2c05322fbe98903eebd61b297e9237d6c14fc`; docs/status only plus GitHub PR metadata/comment; no app code, manual redeploy, Cloudflare settings, Production, R2/D1 data, D1 full import, `RIKA_PLAN.md`, or generated dictionary artifacts touched. |
 | 2026-06-22 00:26 JST | PR #6 merged to `main` with merge commit `c94735925798c604321631e1caa36c2f2c3190be`; automatic Production deployment `9ee954f2` Active at source `c947359`; Production smoke failed R2/count requirement because lookup still uses fallback and `食べられる` count is `0`; no manual Cloudflare settings change, no R2/D1 write, no D1 full import, no `RIKA_PLAN.md` touch, billing prompt seen: no. |
 | 2026-06-22 01:04 JST | Production R2/D1 binding/runtime fix completed: Cloudflare Pages production config now has `DICTIONARY_R2` -> `baina-dictionary-artifacts` and `DICTIONARY_DB` -> `baina-dictionary`; runtime-fix deployment `fe86990e` and docs-only closeout deployment `7ac71e04` both passed Production smoke with `dictionarySource=r2-shard`, `食べられる` count `1`, required terms `aiCalled=false`; no R2/D1 data write, no D1 full import, no `RIKA_PLAN.md` touch, billing prompt seen: no. |
+| 2026-06-22 10:00 JST | Issue #9 Chinese gloss overlay pilot opened draft PR #10 from branch `feat/dictionary-zh-overlay-pilot-100`; Preview deployment `16357ba6` passed existing English lookup smoke with `dictionarySource=r2-shard`, `食べられる` count `1`, required terms `aiCalled=false`, and no obvious console/API errors. Chinese overlay generation remains blocked because no dedicated MT provider is configured; translated entries `0`; no provider call, no R2/D1 data write, no Production change, no `RIKA_PLAN.md` touch, billing prompt seen: no. |
+| 2026-06-22 12:58 JST | Issue #9 / PR #10 Phase A generated a local review artifact only: `docs/review/jmdict-zh-pilot-100-review.md` plus usage ledger. Google Cloud Translation official API was called offline for Top 100 only, translated entries `100`, estimated/actual chars `7,382`; no runtime lookup Google calls, no active zh overlay, no R2/D1 write, no Production deploy/change, PR #10 remains draft/open/unmerged, billing prompt seen: no. |
