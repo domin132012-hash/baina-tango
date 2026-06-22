@@ -2479,3 +2479,79 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 ### Remaining risks
 - Corrected review candidate is not a formal overlay and must not be uploaded to R2/D1 without separate approval.
 - Overlay candidate generation is still pending and must not imply activation.
+
+## 2026-06-23 00:41 JST / Codex / Issue #11 PR #12 local overlay candidate JSON
+
+### Task
+- Generate local/PR-only machine-readable overlay candidate JSON from `docs/review/jmdict-zh-deepseek-pilot-100-review-corrected.md`.
+- Generate validation report `docs/review/jmdict-zh-deepseek-pilot-100-overlay-candidate-validation.md`.
+- Do not call DeepSeek, Google Translate, or any AI provider.
+- Do not deploy Production, merge, mark PR ready, activate Chinese overlay, upload R2, update D1, generate formal R2 shards, modify English JMdict R2 shards, run D1 full import, commit `.env.local`, print secrets, or make runtime lookup call AI.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `5d460603f736cb32fb8e6f5e7ede7da7cf37cd57`
+- End commit: this closeout commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Files changed
+- `docs/review/jmdict-zh-deepseek-pilot-100-overlay-candidate.json`
+- `docs/review/jmdict-zh-deepseek-pilot-100-overlay-candidate-validation.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not staged or committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+
+### Candidate result
+- Overlay version: `jmdict-zh-deepseek-pilot-100-candidate-20260623`
+- Status: `local_review_only_not_active`
+- Source review file: `docs/review/jmdict-zh-deepseek-pilot-100-review-corrected.md`
+- Provider/model metadata: `deepseek` / `deepseek-v4-flash`
+- Source review status: `human_corrected_review_candidate`
+- Runtime AI calls: `0`
+- R2 writes: `0`
+- D1 writes: `0`
+- Production deploy: false
+- Overlay active: false
+
+### Counts
+- Entries: `100`
+- Senses: `209`
+- shouldDisplay=true: `166`
+- shouldDisplay=false: `43`
+- human_corrected: `7`
+- ai_generated_unreviewed: `202`
+- needs_human_review: `3`
+
+### Validation
+- `codex-preflight --task "PR #12 Issue #11 generate local overlay candidate JSON from corrected review only, no provider calls"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- Start head verified: `5d460603f736cb32fb8e6f5e7ede7da7cf37cd57`
+- PR #12 verified draft/open/unmerged before edits.
+- JSON.parse passed.
+- Entries count, senses count, shouldDisplay=false count, and needs_human_review count match the corrected review summary.
+- Each parsed sense has non-empty entryId/senseIndex/shortGloss, array `zhGlosses`, boolean `shouldDisplay`, enum `confidence`, array `issueFlags`, and present `reviewStatus`.
+- Corrected review file diff stayed empty; candidate files were generated separately.
+- Validation file opened with TextEdit.
+- Runtime dictionary lookup static check found no DeepSeek/provider/probe reference under `functions/api/dictionary` or `index.html`.
+- No `.env.local` tracking, no secret-like staged diff, no DB/R2 shard/JMdict XML/gz file in staged changes.
+
+### External services touched
+- DeepSeek API: no.
+- Google Translate: no.
+- Other AI provider: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: branch push after validation only.
+- Billing prompt seen: no.
+
+### Remaining risks
+- Candidate JSON is not a formal active overlay and must not be uploaded to R2/D1 without separate approval.
+- No runtime code consumes this candidate yet.
+- Any formal shard generation, upload, activation, deploy, PR ready transition, or merge requires separate approval.
