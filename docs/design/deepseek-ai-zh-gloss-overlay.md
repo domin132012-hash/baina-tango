@@ -139,9 +139,11 @@ After the first failure, the script added `response_format: { "type": "json_obje
 
 The second approved DeepSeek Top 100 retry still stopped because the provider message content was not strict JSON. No malformed JSON was accepted, no generated review artifact was written, and no automatic retry was run. A safe failure ledger was written with no secrets, but actual token/cost values remained unknown.
 
-Top 100 should no longer be retried directly. The next provider action, if approved by the user separately, should be a 1-entry or 5-entry probe. Probe success should be reviewed before considering another Top 100 run.
+Top 100 should no longer be retried directly. The next provider action had to be a separately approved 1-entry or 5-entry probe.
 
-The two failed DeepSeek requests may already have incurred usage cost; exact usage and billing remain the DeepSeek console's source of truth.
+The separately approved 1-entry probe succeeded on 2026-06-22 JST and generated `docs/review/jmdict-zh-deepseek-probe-review.md` for 1 entry / 2 senses. After user review accepted that probe quality, the separately approved 5-entry probe succeeded on 2026-06-22 JST and updated the same probe review artifact for 5 entries / 10 senses. Neither probe activated runtime overlay lookup, wrote R2/D1, deployed Production, marked the PR ready, merged, or triggered a Top 100 run.
+
+The next provider action, if any, must be separately approved by the user. The two failed DeepSeek requests plus the successful probes may already have incurred usage cost; exact usage and billing remain the DeepSeek console's source of truth.
 
 ## Failure Debug File
 

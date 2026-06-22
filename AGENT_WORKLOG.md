@@ -2123,3 +2123,82 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 ### Remaining cost risks
 - This successful probe used actual input tokens `1328` and actual output tokens `284`; local estimated/actual cost is unavailable because provider pricing is not configured in the scaffold.
 - The two prior failed DeepSeek requests plus this successful probe may have incurred cost; final usage/billing must be checked in the DeepSeek console.
+
+## 2026-06-22 23:24 JST / Codex / Issue #11 PR #12 five-entry DeepSeek probe
+
+### Task
+- Run exactly one user-approved DeepSeek provider probe with `--probe-provider --probe-limit 5` after the user accepted the 1-entry probe quality.
+- Do not run Top 100, do not retry automatically, and do not escalate to any next stage without separate approval.
+- Do not call Google Translate, deploy Production, merge, mark PR ready, activate overlay, upload R2, update D1, modify English JMdict R2 shards, do D1 full import, commit `.env.local`, print/write secrets, or change runtime lookup to call DeepSeek.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `c831285523c989800760bc2462ab8370e4c3bb93`
+- End commit: this closeout commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Files changed
+- `docs/review/jmdict-zh-deepseek-probe-review.md`
+- `docs/review/jmdict-zh-deepseek-probe-usage-ledger.json`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not staged or committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+
+### External services touched
+- DeepSeek API: yes, once, only via `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --probe-provider --probe-limit 5`.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: PR #12 branch push after validation only.
+- Billing prompt seen: no.
+
+### Probe result
+- Provider: `deepseek`
+- Model: `deepseek-v4-flash`
+- Probe limit: `5`
+- Generated entries: `5`
+- Generated senses: `10`
+- Review file: `docs/review/jmdict-zh-deepseek-probe-review.md`
+- Usage ledger: `docs/review/jmdict-zh-deepseek-probe-usage-ledger.json`
+- Actual input tokens: `2228`
+- Actual output tokens: `1300`
+- Actual total tokens: `3528`
+- Estimated cost: `null`; pricing not configured in the scaffold.
+- Actual cost: unknown; DeepSeek console is final.
+- TextEdit open command was executed for the probe review file.
+- No failure debug file was generated because the probe succeeded.
+
+### Validation
+- `codex-preflight --task "PR 12 Issue 11 approved five-entry DeepSeek provider probe"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- PR #12 verified draft/open/unmerged before and after the probe.
+- `.env.local` exists, is ignored by `.git/info/exclude`, and is not tracked by Git.
+- Only `DEEPSEEK_API_KEY_length=35` was printed; required env values were checked without printing secret values.
+- Pre-run:
+  - `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+  - `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only`
+  - `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only --probe-provider --probe-limit 5`
+  - `node --import <sentinel fetch> scripts/dictionary/jmdict-zh-deepseek-pilot.js --self-test-json-fixtures` passed `16/16`
+  - 5-entry probe guardrail sentinel matrix passed before provider/network call
+- Provider:
+  - `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --probe-provider --probe-limit 5` succeeded
+- Post-run:
+  - review and ledger inspected for expected scope and token values
+  - runtime dictionary lookup static check found no DeepSeek/provider/probe reference under `functions/api/dictionary` or `index.html`
+  - no R2/D1 write, no Production deploy, no Google Translate call, no PR ready/merge
+
+### Remaining risks
+- The 5-entry probe succeeded, but this does not prove the full Top 100 run will succeed.
+- User review is required before any Top 100 retry, overlay activation, R2/D1 write, Production deploy, PR ready transition, or merge.
+- The generated AI glosses are `ai_generated_unreviewed`.
+
+### Remaining cost risks
+- This successful 5-entry probe used actual input tokens `2228` and actual output tokens `1300`; local estimated/actual cost is unavailable because provider pricing is not configured in the scaffold.
+- The two prior failed DeepSeek requests plus successful 1-entry and 5-entry probes may have incurred cost; final usage/billing must be checked in the DeepSeek console.
