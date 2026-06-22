@@ -1529,3 +1529,64 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - R2 read volume may increase now that Production uses shards.
 - D1 reads should remain limited to metadata lookup.
 - No new paid/billing prompt was seen, but provider consoles remain final truth for billing.
+
+## 2026-06-22 09:55 JST / Codex / Chinese gloss overlay pilot Top 100 setup
+
+### Task
+- Create and implement the blocked-provider setup path for a Top 100 Chinese gloss overlay pilot.
+- Create Issue #9, create branch `feat/dictionary-zh-overlay-pilot-100`, open a draft PR, and do not merge or mark ready.
+- Keep English JMdict data unchanged; do not change existing English R2 shards; do not touch Production, R2/D1 data, Stripe, Supabase, DeepSeek, or `RIKA_PLAN.md`.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-overlay-pilot-100`
+- Start commit: `ebc320317e6ef212a38a53a603191c419aca527c`
+- End commit: recorded by the branch push for this entry.
+- Issue: `#9` `[AGENT-TASK] Chinese gloss overlay pilot: Top 100 machine translation baseline`
+
+### Files changed
+- `scripts/dictionary/zh-overlay-pilot-terms.js`
+- `scripts/dictionary/jmdict-zh-overlay-build-input.js`
+- `scripts/dictionary/jmdict-zh-overlay-provider-adapter.js`
+- `docs/dictionary/zh-overlay-pilot-100/README.md`
+- `docs/dictionary/zh-overlay-pilot-100/translation-input.json`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+
+### External services touched
+- GitHub: Issue #9 created; draft PR to be opened after branch push.
+- Cloudflare Production: not changed.
+- Cloudflare Pages config: not changed.
+- Cloudflare R2/D1 data: not touched; no R2 object write and no D1 full import.
+- Public Production lookup API: read-only use to collect current JMdict R2 entry IDs and English glosses for the 100-entry translation input batch.
+- Stripe / Supabase / DeepSeek: not touched.
+
+### Provider decision
+- Provider used: none.
+- Blocked reason: no dedicated machine translation provider config was found. Existing local/Cloudflare AI provider configs are not a dedicated MT provider for this dictionary overlay task.
+- Adapter skeleton requires an explicit provider selection such as `BAINA_ZH_MT_PROVIDER=deepl` with `DEEPL_API_KEY` or `BAINA_ZH_MT_PROVIDER=google_cloud_translate` with `GOOGLE_CLOUD_TRANSLATE_API_KEY`, plus user approval of billing/quota guardrails.
+- Translated entries: `0`.
+- Estimated English characters to translate: `7,382`.
+- Estimated cost: unavailable because no provider was selected or called.
+
+### Validation
+- `codex-preflight --task "Chinese gloss overlay pilot Top 100 for JMdict R2 shard dictionary"`
+- `node --check scripts/dictionary/zh-overlay-pilot-terms.js`
+- `node --check scripts/dictionary/jmdict-zh-overlay-build-input.js`
+- `node --check scripts/dictionary/jmdict-zh-overlay-provider-adapter.js`
+- `node scripts/dictionary/jmdict-zh-overlay-build-input.js --limit 100 --out docs/dictionary/zh-overlay-pilot-100/translation-input.json`
+- Translation input validation: 100 selected entries, required terms missing `0`, estimated English characters `7,382`.
+- Provider adapter validation: exited blocked with no network/provider call because no dedicated MT provider is configured.
+- Preview validation: blocked before deploy because translated entries are `0`; Chinese overlay cannot be validated until provider config/approval exists.
+- Billing prompt seen: no.
+
+### Remaining risks
+- No Chinese overlay runtime behavior exists yet; this branch intentionally stops before translation/provider use.
+- The eventual provider output must preserve sense boundaries and mark each translated sense `machine_translated` / `unreviewed`.
+- Runtime integration must still be implemented after a translated overlay artifact exists.
+
+### Remaining cost risks
+- Provider pricing/quota is unknown until the user chooses a dedicated MT provider.
+- R2 read/storage cost may increase only after a translated overlay is uploaded and runtime lookup reads it.
+- D1 should remain metadata-only; D1 full import remains prohibited without a separate cost-safe plan.
