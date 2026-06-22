@@ -19,7 +19,7 @@ const ALLOWED_PROBE_LIMITS = new Set([1, 5]);
 const DEFAULT_BATCH_ENTRIES = 20;
 const MAX_REVIEW_ARTIFACT_BYTES = 300000;
 const REVIEW_STATUS = "ai_generated_unreviewed";
-const ESTIMATED_COST_NOTE = "not_estimated_in_scaffolding_task_provider_not_called";
+const ESTIMATED_COST_NOTE = "not_estimated_provider_pricing_not_configured";
 
 const ALLOWED_CONFIDENCE = new Set(["high", "medium", "low"]);
 const ALLOWED_FLAGS = new Set([
@@ -902,8 +902,11 @@ function buildReviewArtifact({ batch, inputPath, aiSenses, estimate, actualUsage
 }
 
 function reviewMarkdown(artifact) {
+  const title = artifact.counts.selectedEntries < REQUIRED_MAX_ENTRIES
+    ? "JMdict DeepSeek Chinese Probe Review"
+    : "JMdict DeepSeek Chinese Pilot 100 Review";
   const lines = [
-    "# JMdict DeepSeek Chinese Pilot 100 Review",
+    `# ${title}`,
     "",
     `- Phase: ${artifact.phase}`,
     `- Provider: ${artifact.provider}`,
@@ -984,8 +987,11 @@ async function assertSmallArtifact(filePath) {
 }
 
 async function writeUsageLedger(filePath, value) {
+  const type = value.estimate.entries < REQUIRED_MAX_ENTRIES
+    ? "jmdict-zh-deepseek-probe-usage-ledger"
+    : "jmdict-zh-deepseek-pilot-100-usage-ledger";
   const ledger = {
-    type: "jmdict-zh-deepseek-pilot-100-usage-ledger",
+    type,
     generatedAt: new Date().toISOString(),
     provider: PROVIDER_NAME,
     model: REQUIRED_MODEL,

@@ -1,0 +1,31 @@
+{
+  "type": "jmdict-zh-deepseek-probe-usage-ledger",
+  "generatedAt": "2026-06-22T14:14:04.985Z",
+  "provider": "deepseek",
+  "model": "deepseek-v4-flash",
+  "entriesRequested": 1,
+  "sensesRequested": 2,
+  "estimatedInputTokens": 1285,
+  "estimatedOutputTokens": 270,
+  "estimatedTotalTokens": 1555,
+  "actualInputTokens": 1328,
+  "actualOutputTokens": 284,
+  "actualTotalTokens": 1612,
+  "estimatedCostUsd": null,
+  "estimatedCostNote": "not_estimated_provider_pricing_not_configured",
+  "requestCount": 1,
+  "providerRequests": [
+    {
+      "index": 1,
+      "entries": 1,
+      "senses": 2,
+      "estimatedInputTokens": 1285,
+      "estimatedOutputTokens": 270
+    }
+  ],
+  "providerCalled": true,
+  "runtimeAiCalls": false,
+  "r2D1Writes": false,
+  "productionChanged": false,
+  "billingPromptSeen": false
+}
