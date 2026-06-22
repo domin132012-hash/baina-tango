@@ -2342,3 +2342,64 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 ### Remaining risks
 - Top 100 output is `ai_generated_unreviewed`; user review is required before any overlay activation or data write.
 - Local cost values are not configured; DeepSeek console is final for billing.
+
+## 2026-06-23 00:04 JST / Codex / Issue #11 PR #12 manual QA findings for DeepSeek Top 100
+
+### Task
+- Add a human QA findings document based on `docs/review/jmdict-zh-deepseek-pilot-100-review.md`.
+- Do not call DeepSeek or Google Translate.
+- Do not deploy Production, merge, mark PR ready, activate Chinese overlay, upload R2, update D1, commit `.env.local`, print secrets, or make runtime lookup call AI.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `711c1576fe2393789df31db5f3fd3e338d389011`
+- End commit: this closeout commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Files changed
+- `docs/review/jmdict-zh-deepseek-pilot-100-qa-findings.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not staged or committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+
+### QA findings
+- Bad: `物 / もの / sense 2` contains English `belongings`; suggested `所有物；财产；随身物品`.
+- Bad: `言う / いう / sense 3` has unnatural example `警報が言う（警报响）`; suggested usage note `用于声音、警报等“发出某种声音”的表达。`
+- Minor: `小さい / ちいさい / sense 3`; suggested `声音小的；轻声的`.
+- Minor: `終わる / おわる / sense 2`; suggested `完成；结束`.
+- shouldDisplay review: `儂 / わし`, `私 / し`, and `私 / わたくし / sense 3` group needs conservative default-display review for ordinary EJU learners; where needed set `shouldDisplay=false` and add `too_rare` / `needs_human_review`.
+
+### Overall conclusion recorded
+- DeepSeek Top 100 is clearly more suitable than the Google MT baseline.
+- Do not rerun Top 100.
+- Do not directly activate overlay.
+- Next step should be a human-corrected review artifact or overlay candidate.
+- Any R2/D1 write, overlay activation, Production deploy, PR ready transition, or merge requires separate explicit approval.
+
+### External services touched
+- DeepSeek API: no.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: branch push after validation only.
+- Billing prompt seen: no.
+
+### Validation
+- `codex-preflight --task "PR #12 Issue #11 DeepSeek Top 100 manual QA findings only, no provider calls"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- Start head verified: `711c1576fe2393789df31db5f3fd3e338d389011`
+- PR #12 verified draft/open/unmerged before edits.
+- Original evidence checked in `docs/review/jmdict-zh-deepseek-pilot-100-review.md` for the listed rows before writing QA findings.
+- `.env.local` is not tracked by Git.
+- Runtime dictionary lookup static check found no DeepSeek/provider/probe reference under `functions/api/dictionary` or `index.html`.
+
+### Remaining risks
+- QA findings do not yet apply corrections to the review artifact.
+- Human-corrected review or overlay candidate generation is still pending and must not imply activation.
