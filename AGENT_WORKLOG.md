@@ -1593,3 +1593,70 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - Provider pricing/quota is unknown until the user chooses a dedicated MT provider.
 - R2 read/storage cost may increase only after a translated overlay is uploaded and runtime lookup reads it.
 - D1 should remain metadata-only; D1 full import remains prohibited without a separate cost-safe plan.
+
+## 2026-06-22 12:58 JST / Codex / Issue #9 PR #10 Phase A review artifact
+
+### Task
+- Continue Issue #9 / draft PR #10 on `feat/dictionary-zh-overlay-pilot-100`.
+- Run Phase A only: use Google Cloud Translation official API for the Top 100 pilot and generate a local user-review artifact.
+- Do not deploy, merge, mark ready, activate zh overlay, upload active overlay to R2, change D1 active metadata, change Production, modify English JMdict R2 shards, or execute D1 full import.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-overlay-pilot-100`
+- Start commit: `42f936cc07ad4897b4dfe0b739a39fd580761df7`
+- End commit: final Phase A branch head recorded in PR #10 / Issue #9 comments after closeout push.
+- Issue: `#9`
+- Draft PR: `#10` kept draft/open/unmerged.
+
+### Files changed
+- `scripts/dictionary/jmdict-zh-overlay-provider-adapter.js`
+- `docs/review/jmdict-zh-pilot-100-review.md`
+- `docs/review/jmdict-zh-pilot-100-usage-ledger.json`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained local-only, ignored/untracked, and was not committed.
+
+### External services touched
+- Google Cloud Translation official API: called offline by the Top 100 batch script only.
+- Cloudflare Preview API: read-only smoke validation on existing Preview URL.
+- GitHub: draft PR #10 / Issue #9 closeout status updated after push.
+- Cloudflare Production: not touched.
+- Cloudflare Pages deploy/settings: not touched.
+- R2/D1 data: not touched; no active zh overlay upload, no D1 active metadata write, no D1 full import.
+- Stripe / Supabase / DeepSeek: not touched.
+
+### Provider / output
+- Provider: `google_cloud_translate`.
+- Review artifact: `docs/review/jmdict-zh-pilot-100-review.md`.
+- Usage ledger: `docs/review/jmdict-zh-pilot-100-usage-ledger.json`.
+- Translated entries: `100`.
+- Translated senses: `209`.
+- Estimated chars: `7,382`.
+- Actual chars: `7,382`.
+- Review artifact size: `46,686` bytes.
+- Runtime Google calls: `0`.
+- Runtime zh overlay active: no.
+- Billing prompt seen: no.
+
+### Validation
+- `codex-preflight --task "Issue #9 PR #10 Phase A Google Translate Top 100 review artifact only"`
+- `.env.local` exists, chmod `600`, ignored by `.git/info/exclude`, untracked; key values were not printed or committed.
+- Guardrails before provider call: selected entries `100`, estimated chars `7,382`, approval flag `YES_TOP_100_ONLY`, max entries `100`, max chars `10000`.
+- `node --check scripts/dictionary/jmdict-zh-overlay-provider-adapter.js`
+- Phase A script generated review artifact and usage ledger with translated entries `100`.
+- Artifact/secret scan on script + review files passed for Google API-key-like strings and placeholder strings.
+- Existing Preview smoke: `https://44dbffce.baina-tango.pages.dev/api/dictionary/lookup?q=食べられる` returned `dictionarySource=r2-shard`, count `1`, `aiCalled=false`; required terms all kept `aiCalled=false`.
+- PR #10 checked with GitHub CLI: open, draft, unmerged before closeout push.
+
+### Remaining risks
+- Machine translations are unreviewed and must be reviewed by the user before any Phase B activation.
+- The review artifact is not active runtime data; lookup UI remains English-first and unchanged.
+- Old previously pasted/leaked key should remain rotated and unused.
+- PR #10 must remain draft/unmerged until user explicitly approves the next phase.
+
+### Remaining cost risks
+- Google Cloud Translation was called for `7,382` chars only; this is below the configured `10,000` char task guardrail.
+- Future Phase B must not call Google at runtime; any additional provider use needs a new explicit bounded run approval.
+- Provider billing console remains final truth for charges/free-tier application.

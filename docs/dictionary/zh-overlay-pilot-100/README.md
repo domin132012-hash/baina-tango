@@ -1,6 +1,6 @@
 # Chinese Gloss Overlay Pilot 100
 
-Status: blocked before translation provider call.
+Status: Phase A review artifact generated.
 
 This folder contains the Top 100 Chinese gloss overlay pilot input batch for the existing full JMdict R2 shard dictionary. It is not a full JMdict translation and it does not rewrite English shards.
 
@@ -9,32 +9,40 @@ This folder contains the Top 100 Chinese gloss overlay pilot input batch for the
 - Overlay version: `jmdict-zh-machine-pilot-100-2026-06-22`
 - Target R2 prefix after translation/review: `dictionary/zh-overlays/jmdict-zh-machine-pilot-100-2026-06-22/`
 - Translation input: `translation-input.json`
+- Review artifact: `docs/review/jmdict-zh-pilot-100-review.md`
+- Usage ledger: `docs/review/jmdict-zh-pilot-100-usage-ledger.json`
 - Selected entries: `100`
 - Required seed terms missing: `0`
 - Estimated English characters to translate: `7,382`
-- Provider used: none
+- Actual provider input characters: `7,382`
+- Provider used: `google_cloud_translate`
+- Translated entries: `100`
+- Translated senses: `209`
+- Translation status: `machine_translated`
+- Review status: `unreviewed`
 - Billing prompt seen: no
 
-## Blocked Reason
+## Phase A Scope
 
-The repository and local machine have AI/LLM-related keys configured, but no dedicated machine translation provider configuration was found for a dictionary gloss overlay. Per task rules, no unofficial API, guessed provider, runtime AI translation, or LLM teacher explanation was used.
+Phase A generated a local review artifact only. It did not activate Chinese overlay lookup behavior and did not upload an active zh overlay to R2.
 
-The adapter skeleton is available at:
+The provider adapter is available at:
 
 ```sh
-node scripts/dictionary/jmdict-zh-overlay-provider-adapter.js --input docs/dictionary/zh-overlay-pilot-100/translation-input.json
+node scripts/dictionary/jmdict-zh-overlay-provider-adapter.js \
+  --input docs/dictionary/zh-overlay-pilot-100/translation-input.json \
+  --review-out docs/review/jmdict-zh-pilot-100-review.md \
+  --ledger-out docs/review/jmdict-zh-pilot-100-usage-ledger.json
 ```
 
-It currently stops with a blocked report unless a dedicated machine translation provider is explicitly selected and configured.
+Required guardrails:
 
-## Provider Configuration Needed
+- `GOOGLE_TRANSLATE_API_KEY` must be supplied from local secret state.
+- `BAINA_ZH_MT_APPROVE_RUN=YES_TOP_100_ONLY`
+- `BAINA_ZH_MT_MAX_ENTRIES=100`
+- `BAINA_ZH_MT_MAX_CHARS=10000`
 
-Choose and approve one dedicated machine translation provider before generating Chinese glosses:
-
-- `BAINA_ZH_MT_PROVIDER=deepl` with `DEEPL_API_KEY`
-- or `BAINA_ZH_MT_PROVIDER=google_cloud_translate` with `GOOGLE_CLOUD_TRANSLATE_API_KEY`
-
-Before any provider call, confirm billing/quota/cost guardrails. Do not commit provider keys or generated secrets.
+Do not commit provider keys or generated secrets. Runtime lookup must not call Google Translate.
 
 ## Required Output Shape After Provider Translation
 
@@ -53,10 +61,10 @@ Each translated sense must preserve:
 
 Do not overwrite English glosses, merge unrelated senses, invent senses, add examples, or use runtime AI translation during lookup.
 
-## Runtime Plan After Provider Is Approved
+## Runtime Plan After Review Is Approved
 
-1. Translate only the 100 selected entries from `translation-input.json`.
-2. Build a small overlay artifact under `dictionary/zh-overlays/jmdict-zh-machine-pilot-100-2026-06-22/`.
+1. User reviews `docs/review/jmdict-zh-pilot-100-review.md`.
+2. After separate explicit Phase B approval, build a small overlay artifact under `dictionary/zh-overlays/jmdict-zh-machine-pilot-100-2026-06-22/`.
 3. Store only zh overlay metadata/active version in D1 if needed.
 4. Keep English R2 shards unchanged.
 5. Update lookup runtime to merge overlay Chinese glosses when present.
