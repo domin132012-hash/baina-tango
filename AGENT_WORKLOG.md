@@ -1863,3 +1863,77 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 ### Remaining cost risks
 - No DeepSeek call was made in this hardening round.
 - The prior failed DeepSeek request may have incurred cost; final usage/billing must be checked in the DeepSeek console.
+
+## 2026-06-22 20:51 JST / Codex / Issue #11 PR #12 approved DeepSeek retry
+
+### Task
+- Run one approved DeepSeek Top 100 provider retry after strict JSON hardening.
+- Stop immediately on non-strict JSON, schema failure, mismatched `entryId` / `senseIndex`, token/request limit failure, or any provider failure.
+- Do not retry automatically, call Google Translate, deploy, merge, mark PR ready, activate overlay, upload R2, update D1, modify English JMdict R2 shards, perform D1 full import, commit `.env.local`, print/write secrets, or change runtime lookup to call DeepSeek.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `b32d858f522acd0288b358eece6794c08c1d97aa`
+- End commit: this failure-ledger/status commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Files changed
+- `docs/review/jmdict-zh-deepseek-pilot-100-usage-ledger.json`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not staged or committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+- `docs/review/jmdict-zh-deepseek-pilot-100-review.md` remained the existing placeholder; no generated AI review artifact was written.
+
+### External services touched
+- DeepSeek API: yes, once, only via `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --run-provider`.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: branch push after status update only.
+- Billing prompt seen: no.
+
+### Pre-run validation
+- `codex-preflight --task "approved single DeepSeek Top 100 provider retry for Issue 11 PR 12"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- `.env.local` exists, ignored by `.git/info/exclude`, and untracked.
+- Only `DEEPSEEK_API_KEY_length=35` was printed; required env values were checked silently.
+- `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only`
+  - entries `100`
+  - senses `209`
+  - request count `5`
+  - estimated input tokens `26272`
+  - estimated output tokens `28035`
+  - estimated total tokens `54307`
+- `node --import <sentinel fetch> scripts/dictionary/jmdict-zh-deepseek-pilot.js --self-test-json-fixtures`
+  - fixture tests `11/11`
+- Guardrail matrix with sentinel `fetch` passed for missing key, missing approval, wrong provider, wrong model, max entries too low, max input tokens too low, max output tokens too low, max total tokens too low, and max requests too low; all failed before provider/network call and wrote no provider artifact.
+
+### Provider retry result
+- Command: `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --run-provider`
+- Result: failed.
+- Failure reason: `DeepSeek message content was not strict JSON.`
+- Generated entries: `0`.
+- Actual input tokens: unknown.
+- Actual output tokens: unknown.
+- Estimated cost: unavailable in scaffold.
+- Actual cost: unknown; DeepSeek console is final.
+- Failed request count recorded locally: `1`.
+- No automatic retry was run.
+- Safe failure ledger written to `docs/review/jmdict-zh-deepseek-pilot-100-usage-ledger.json`; it contains no API key, no raw response, and no secret-derived content.
+
+### Remaining risks
+- DeepSeek still did not return strict JSON accepted by the parser; no user-reviewable Chinese glosses exist yet.
+- The failure ledger has unknown actual token/cost fields because the current script did not expose provider usage on parse failure.
+- Future retry requires separate user approval and may need deeper request/prompt or response-handling changes, while still refusing malformed JSON.
+
+### Remaining cost risks
+- This retry may have incurred one failed-request charge.
+- Combined cost risk now includes the earlier failed provider attempt plus this failed retry; exact billing must be checked in the DeepSeek console.
