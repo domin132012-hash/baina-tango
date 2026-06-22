@@ -2403,3 +2403,79 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 ### Remaining risks
 - QA findings do not yet apply corrections to the review artifact.
 - Human-corrected review or overlay candidate generation is still pending and must not imply activation.
+
+## 2026-06-23 00:25 JST / Codex / Issue #11 PR #12 human-corrected review candidate
+
+### Task
+- Generate `docs/review/jmdict-zh-deepseek-pilot-100-review-corrected.md` from the original DeepSeek Top 100 review and accepted QA findings.
+- Preserve the original review artifact unchanged.
+- Do not call DeepSeek or Google Translate.
+- Do not deploy Production, merge, mark PR ready, activate Chinese overlay, upload R2, update D1, generate formal R2 shards, commit `.env.local`, print secrets, or make runtime lookup call AI.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `0ee712f4ed4132f711a7838d9e418d2cabb72406`
+- End commit: this closeout commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Files changed
+- `docs/review/jmdict-zh-deepseek-pilot-100-review-corrected.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not staged or committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+
+### Corrected artifact
+- Source: `docs/review/jmdict-zh-deepseek-pilot-100-review.md`
+- QA source: `docs/review/jmdict-zh-deepseek-pilot-100-qa-findings.md`
+- Status: `human_corrected_review_candidate`
+- Provider calls: none
+- Runtime AI calls: `0`
+- R2/D1 writes: `0`
+- Production deploy: no
+- Overlay active: no
+- TextEdit open command executed for the corrected file.
+
+### Applied corrections
+- `物 / もの / sense 2`: changed `zhGlosses` to `所有物; 财产; 随身物品`; `reviewStatus=human_corrected`.
+- `言う / いう / sense 3`: changed `usageNote` to `用于声音、警报等“发出某种声音”的表达。`; `reviewStatus=human_corrected`.
+- `小さい / ちいさい / sense 3`: changed short/zh glosses to `声音小的` / `声音小的; 轻声的`; `reviewStatus=human_corrected`.
+- `終わる / おわる / sense 2`: changed `zhGlosses` to `完成; 结束`; `reviewStatus=human_corrected`.
+- `儂 / わし`, `私 / し`, and `私 / わたくし / sense 3`: changed `shouldDisplay=false`, `confidence=medium`, `issueFlags=too_rare; needs_human_review`; `reviewStatus=human_corrected`.
+- Each human-corrected row includes a `reviewerNote`.
+- Unchanged rows remain `ai_generated_unreviewed`.
+
+### Counts
+- Total entries: `100`
+- Total senses: `209`
+- Human corrected count: `7`
+- Remaining needs_human_review count: `3`
+- shouldDisplay=false count: `43`
+
+### External services touched
+- DeepSeek API: no.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: branch push after validation only.
+- Billing prompt seen: no.
+
+### Validation
+- `codex-preflight --task "PR #12 Issue #11 generate human-corrected DeepSeek Top 100 review artifact only, no provider calls"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- Start head verified: `0ee712f4ed4132f711a7838d9e418d2cabb72406`
+- PR #12 verified draft/open/unmerged before edits.
+- Original review file diff stayed empty; corrected file was generated separately.
+- Corrected file inspected for required metadata, seven human-corrected rows, summary counts, and non-active-overlay warning.
+- Runtime dictionary lookup static check found no DeepSeek/provider/probe reference under `functions/api/dictionary` or `index.html`.
+- `.env.local` is not tracked by Git.
+
+### Remaining risks
+- Corrected review candidate is not a formal overlay and must not be uploaded to R2/D1 without separate approval.
+- Overlay candidate generation is still pending and must not imply activation.

@@ -4,18 +4,18 @@
 > do not recheck Supabase / Stripe unless the task touches them, a related fault appears, or the recorded status is older than 30 days and the task depends on that platform.
 > Never record API keys, service role keys, JWT secrets, session tokens, customer data, payment records, card data, or raw secret values.
 
-Last updated: 2026-06-23 00:04 JST by Codex
+Last updated: 2026-06-23 00:25 JST by Codex
 
 ## 1. 当前锁定状态
 
 | Area | Status | Note |
 |---|---|---|
-| Repository docs | Active for Issue #11 DeepSeek Chinese overlay pilot branch | Recording manual QA findings for DeepSeek Top 100 review and no provider/Production/R2/D1 data changes |
+| Repository docs | Active for Issue #11 DeepSeek Chinese overlay pilot branch | Recording human-corrected review candidate and no provider/Production/R2/D1 data changes |
 | Application code | PR #6 R2 shard lookup path + beta fallback | `/api/dictionary/lookup` is binding-ready for `DICTIONARY_R2` + optional `DICTIONARY_DB`; when bindings are absent or fail it keeps the bounded 1,000-entry beta fallback and `aiCalled=false` |
 | Cloudflare | Production R2 shard lookup active | Production Pages config now has `DICTIONARY_R2` -> `baina-dictionary-artifacts` and `DICTIONARY_DB` -> `baina-dictionary`; canonical Production returns `dictionarySource=r2-shard` |
 | Supabase | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
 | Stripe | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
-| DeepSeek | Not called in this task | Manual QA findings only; normal lookup does not call AI by default |
+| DeepSeek | Not called in this task | Human-corrected review candidate only; normal lookup does not call AI by default |
 
 ## 2. GitHub 状态
 
@@ -24,7 +24,7 @@ Last updated: 2026-06-23 00:04 JST by Codex
 | Repository | `domin132012-hash/baina-tango` |
 | Current branch | `feat/dictionary-zh-deepseek-pilot-100` |
 | Main latest hash at task start | `ebc320317e6ef212a38a53a603191c419aca527c` |
-| Current task | Issue #11 DeepSeek Chinese gloss overlay pilot: manual QA findings |
+| Current task | Issue #11 DeepSeek Chinese gloss overlay pilot: human-corrected review candidate |
 | Issue | `#11` AI-assisted Chinese gloss overlay pilot: DeepSeek Top 100 |
 | PR #4 | `MERGED` `https://github.com/domin132012-hash/baina-tango/pull/4` |
 | PR #4 merge commit | `c340f75a5f8cf51dac691732a9c66e50cd22af09` |
@@ -33,7 +33,7 @@ Last updated: 2026-06-23 00:04 JST by Codex
 | Phase 2 PR | `https://github.com/domin132012-hash/baina-tango/pull/6` merged |
 | Latest relevant commit | Phase A start commit `42f936cc07ad4897b4dfe0b739a39fd580761df7`; final Phase A branch head recorded in PR #10 / Issue #9 comments after closeout push |
 | PR #2 | `MERGED`; merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` |
-| This task | Issue #11 / PR #12 manual QA findings only; no provider call, no overlay activation |
+| This task | Issue #11 / PR #12 human-corrected review candidate only; no provider call, no overlay activation |
 | Dictionary plan commit | `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main` |
 | External services touched - GitHub | PR #12 branch push after validation and PR body status refresh; PR kept draft/open/unmerged |
 | External services touched - Cloudflare | No settings change; no Production change; no R2/D1 data write. Existing Preview lookup API was read for smoke validation only. |
@@ -41,8 +41,8 @@ Last updated: 2026-06-23 00:04 JST by Codex
 | External services touched - Supabase | Not touched |
 | External services touched - Stripe | Not touched |
 | External services touched - DeepSeek | No. This task did not run `--run-provider` or `--probe-provider`; no DeepSeek API call was made. |
-| Current status | User reviewed the DeepSeek Top 100 artifact as broadly acceptable but not directly activatable. Added manual QA findings at `docs/review/jmdict-zh-deepseek-pilot-100-qa-findings.md`: bad fixes for `物 / もの / sense 2` and `言う / いう / sense 3`, minor fixes for `小さい / ちいさい / sense 3` and `終わる / おわる / sense 2`, plus shouldDisplay review for the 私/わし/し/わたくし group. Conclusion: DeepSeek is clearly better than Google MT baseline, do not rerun Top 100, do not directly activate overlay, next step should be a human-corrected review artifact or overlay candidate. Runtime AI calls `0`, Google Translate no, R2/D1 writes `0`, Production deploy no, overlay activation no, billing prompt seen no. |
-| Current blocker | Human-corrected review or overlay candidate generation should happen next, but any overlay activation, R2/D1 write, Production deploy, PR ready transition, or merge still requires separate explicit approval. PR #12 must remain draft/open/unmerged until explicitly advanced. |
+| Current status | Generated `docs/review/jmdict-zh-deepseek-pilot-100-review-corrected.md` from the accepted QA findings without modifying the original review artifact. Corrected candidate status is `human_corrected_review_candidate`; total entries `100`, total senses `209`, human corrected count `7`, remaining `needs_human_review` count `3`, `shouldDisplay=false` count `43`. It explicitly states it is not an active overlay and must not be uploaded to R2/D1 without separate approval. Runtime AI calls `0`, Google Translate no, R2/D1 writes `0`, Production deploy no, overlay activation no, billing prompt seen no. |
+| Current blocker | Corrected review candidate still needs separate approval before any overlay candidate build, overlay activation, R2/D1 write, Production deploy, PR ready transition, or merge. PR #12 must remain draft/open/unmerged until explicitly advanced. |
 
 ## 3. Cloudflare 状态
 
