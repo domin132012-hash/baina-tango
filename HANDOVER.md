@@ -232,3 +232,10 @@
 - Remaining risks: machine triage is a review aid only; ChatGPT/reviewer must decide final after fields before any reviewed-r3 patch
 - Remaining cost risks: none for this docs-only packet; any provider/R2/D1/deploy work requires separate approval
 - Next step: ChatGPT/reviewer fills the Round 3 scaffold decisions, then a later turn can generate reviewed-r3 corrections from those decisions
+
+## 2026-06-23 23:55 JST — Manual acceptance sample packet
+
+- Hermes generated 50-item stratified manual acceptance sample from reviewed-r2 candidate
+- Files: `manual-acceptance-50.md`, `manual-acceptance-50.csv`, `manual-acceptance-50-validation-log.md`
+- No provider calls, no R2/D1, no deploy
+- POS field unavailable in reviewed-r2 JSON; all other fields populated

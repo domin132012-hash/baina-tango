@@ -2805,3 +2805,24 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - Remaining risks: machine triage is a review aid only; ChatGPT/reviewer must decide final after fields before any reviewed-r3 patch
 - Remaining cost risks: none for this docs-only packet; any provider/R2/D1/deploy work requires separate approval
 - Next step: ChatGPT/reviewer fills the Round 3 scaffold decisions, then a later turn can generate reviewed-r3 corrections from those decisions
+
+## Hermes manual acceptance packet (2026-06-23 23:55 JST)
+
+- Branch: feat/dictionary-zh-deepseek-pilot-100
+- Start commit: 8c0ba27
+- Task: Generate 50-item stratified manual acceptance sample from reviewed-r2 candidate
+- Source: reviewed-r2 (`docs/review/jmdict-zh-deepseek-pilot-1000-overlay-candidate-reviewed-r2.json`)
+- Buckets: visible_common=20, hidden_specialized=10, risk_queue=10, low_confidence_or_nhr=5, changed_by_review=5
+- Files generated:
+  - `docs/review/jmdict-zh-deepseek-pilot-1000-manual-acceptance-50.md` (1275 lines)
+  - `docs/review/jmdict-zh-deepseek-pilot-1000-manual-acceptance-50.csv` (51 lines)
+  - `docs/review/jmdict-zh-deepseek-pilot-1000-manual-acceptance-50-validation-log.md`
+- Provider calls: 0 (DeepSeek=0, Google Translate=0, Runtime AI=0)
+- R2/D1: 0
+- Deploy: no
+- Overlay: no
+- PR #12: draft/open/unmerged
+- Secret scan: clean
+- Validation: all 50 unique, bucket counts correct, CSV parseable
+- Remaining risks: POS data not in JSON; low_confidence/nhr padded from issueFlags; changed_by_review mostly QA-tagged
+- Next step: user manual review of 50-item packet
