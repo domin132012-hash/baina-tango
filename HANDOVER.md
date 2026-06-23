@@ -218,3 +218,16 @@
 - Remaining risks: Round 2 is limited to explicit usageNote/common-expression corrections and is not a full 841-sense review; reviewed-r2 remains local review-only and is not active
 - Remaining cost risks: none for this docs-only/local-package task; any provider/R2/D1/deploy work requires separate approval
 - Next step: review そ/こ/あ grammar/pronoun items, sample high-frequency ordinary reviewed-r2 entries, and continue remaining `needs_human_review`
+
+### 2026-06-23 20:32:58 JST - PR #12 ChatGPT review round3 needs-human-review packet
+
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `7f84c73484802ffb670e04174635b1f0545fcfec`
+- End commit: final PR branch head verified after push; exact commit reported in final closeout
+- Files changed: `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round3-needs-human-review.md`, `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round3-needs-human-review.json`, `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round3-correction-scaffold.json`, plus status docs
+- External services touched: GitHub only after push; DeepSeek no; Google Translate no; Runtime AI calls 0; R2/D1 writes 0; Preview deploy no; Production deploy no; overlay activation no
+- Validation completed: `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`; reviewed-r2 candidate parsed; extracted `needs_human_review` count 28 from `issueFlags`; markdown/JSON/scaffold counts all 28; scaffold `after` fields remain null; reviewed-r2 candidate has no diff; no reviewed-r3 candidate or local package exists; `.env.local` untracked; secret and large-artifact scans clean
+- Round 3 packet stats: riskType counts `archaic=3`, `specialized=25`, `religion=7`, `legal=3`, `medical=3`, `dialect=0`, `too_rare=7`, `abbreviation=2`, `possible_duplicate_sense=0`, `possible_bad_gloss=6`, `should_display_review=6`, `usage_note_review=15`; likelyAction counts `keep_hidden_remove_needs_human_review=16`, `keep_hidden_keep_needs_human_review=1`, `rewrite_gloss_keep_hidden=1`, `rewrite_gloss_show=1`, `show_as_common_word=1`, `mark_unresolved=8`
+- Remaining risks: machine triage is a review aid only; ChatGPT/reviewer must decide final after fields before any reviewed-r3 patch
+- Remaining cost risks: none for this docs-only packet; any provider/R2/D1/deploy work requires separate approval
+- Next step: ChatGPT/reviewer fills the Round 3 scaffold decisions, then a later turn can generate reviewed-r3 corrections from those decisions

@@ -1,0 +1,1059 @@
+{
+  "version": "chatgpt-review-round3-correction-scaffold",
+  "generatedAt": "2026-06-23T11:32:29.994Z",
+  "sourceCandidate": "docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json",
+  "status": "scaffold_only_not_applied",
+  "expectedNeedsHumanReviewCount": 28,
+  "actualNeedsHumanReviewCount": 28,
+  "items": [
+    {
+      "entryId": "jmdict-1387990",
+      "senseIndex": 3,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "（亲密或戏谑的称呼）"
+        ],
+        "shortGloss": "亲密称呼",
+        "usageNote": "多用于调侃或亲密关系",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "too_rare",
+          "should_display_review",
+          "usage_note_review"
+        ],
+        "likelyAction": "mark_unresolved",
+        "reason": "This may be common enough or context-dependent enough to need reviewer judgment on default display."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1387990",
+      "senseIndex": 4,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "前辈",
+          "长者"
+        ],
+        "shortGloss": "长辈",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "too_rare",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "too_rare",
+          "should_display_review",
+          "usage_note_review"
+        ],
+        "likelyAction": "mark_unresolved",
+        "reason": "This may be common enough or context-dependent enough to need reviewer judgment on default display."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1536010",
+      "senseIndex": 4,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "争议",
+          "讨论"
+        ],
+        "shortGloss": "争议",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "should_display_review",
+          "usage_note_review"
+        ],
+        "likelyAction": "mark_unresolved",
+        "reason": "This may be common enough or context-dependent enough to need reviewer judgment on default display."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1512670",
+      "senseIndex": 4,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "打折",
+          "减价"
+        ],
+        "shortGloss": "打折",
+        "usageNote": "商业用语",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "should_display_review"
+        ],
+        "likelyAction": "rewrite_gloss_show",
+        "reason": "Discount/price-reduction sense may be ordinary enough to show, but wording and default display need review."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1456360",
+      "senseIndex": 2,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "朗诵",
+          "念诵"
+        ],
+        "shortGloss": "朗诵",
+        "usageNote": "多用于经文等",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "religion",
+          "usage_note_review"
+        ],
+        "likelyAction": "rewrite_gloss_keep_hidden",
+        "reason": "Religious chanting/recitation sense may need clearer wording while likely remaining hidden."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1456360",
+      "senseIndex": 6,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "数",
+          "估算"
+        ],
+        "shortGloss": "数",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "should_display_review",
+          "usage_note_review"
+        ],
+        "likelyAction": "show_as_common_word",
+        "reason": "Counting/estimating can be a normal extension of 読む and may deserve default display after review."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1456360",
+      "senseIndex": 7,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "训读"
+        ],
+        "shortGloss": "训读",
+        "usageNote": "语言学用语",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized"
+        ],
+        "likelyAction": "keep_hidden_remove_needs_human_review",
+        "reason": "Current flags suggest a specialized or rare hidden sense; reviewer should confirm before removing needs_human_review."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1000440",
+      "senseIndex": 2,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "你"
+        ],
+        "shortGloss": "你（指对方）",
+        "usageNote": "有时用于指代对方，略带距离感",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "possible_bad_gloss",
+          "should_display_review"
+        ],
+        "likelyAction": "keep_hidden_keep_needs_human_review",
+        "reason": "Second-person use of あの人 is unusual and may require unresolved reviewer confirmation."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1001980",
+      "senseIndex": 3,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "式神",
+          "使魔"
+        ],
+        "shortGloss": "式神",
+        "usageNote": "指被使役的精灵。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "religion"
+        ],
+        "likelyAction": "keep_hidden_remove_needs_human_review",
+        "reason": "Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1002290",
+      "senseIndex": 2,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "面前",
+          "御前"
+        ],
+        "shortGloss": "面前",
+        "usageNote": "古语，指神佛或贵人面前。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "archaic",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "archaic",
+          "religion"
+        ],
+        "likelyAction": "keep_hidden_remove_needs_human_review",
+        "reason": "Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1002500",
+      "senseIndex": 3,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "不祥之物",
+          "不愉快的东西"
+        ],
+        "shortGloss": "不祥之物",
+        "usageNote": "比喻在旅行中染上疾病等不愉快的事。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "too_rare"
+        ],
+        "likelyAction": "keep_hidden_remove_needs_human_review",
+        "reason": "Current flags suggest a specialized or rare hidden sense; reviewer should confirm before removing needs_human_review."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1002530",
+      "senseIndex": 2,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "凸额头",
+          "额头突出"
+        ],
+        "shortGloss": "凸额头",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "too_rare",
+          "possible_bad_gloss",
+          "usage_note_review"
+        ],
+        "likelyAction": "mark_unresolved",
+        "reason": "Machine triage found a gloss that may be idiomatic, abbreviated, or easy to mistranslate; keep unresolved until reviewer decision."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1002530",
+      "senseIndex": 3,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "一无所获",
+          "空手而归"
+        ],
+        "shortGloss": "一无所获",
+        "usageNote": "钓鱼等活动中什么也没钓到。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "too_rare",
+          "possible_bad_gloss"
+        ],
+        "likelyAction": "mark_unresolved",
+        "reason": "Machine triage found a gloss that may be idiomatic, abbreviated, or easy to mistranslate; keep unresolved until reviewer decision."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1002680",
+      "senseIndex": 3,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "将军署名文书"
+        ],
+        "shortGloss": "将军署名文书",
+        "usageNote": "历史用语。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "archaic",
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "archaic",
+          "specialized"
+        ],
+        "likelyAction": "keep_hidden_remove_needs_human_review",
+        "reason": "Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1150070",
+      "senseIndex": 3,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "帽子后戴"
+        ],
+        "shortGloss": "帽子后戴",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "religion",
+          "too_rare",
+          "usage_note_review"
+        ],
+        "likelyAction": "keep_hidden_remove_needs_human_review",
+        "reason": "Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1150140",
+      "senseIndex": 2,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "欣赏",
+          "品味"
+        ],
+        "shortGloss": "欣赏",
+        "usageNote": "古语用法，指欣赏美。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "archaic",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "archaic"
+        ],
+        "likelyAction": "keep_hidden_remove_needs_human_review",
+        "reason": "Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1150410",
+      "senseIndex": 2,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "执着",
+          "贪爱"
+        ],
+        "shortGloss": "执着",
+        "usageNote": "佛教用语。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "religion",
+          "usage_note_review"
+        ],
+        "likelyAction": "keep_hidden_remove_needs_human_review",
+        "reason": "Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1150410",
+      "senseIndex": 3,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "神爱",
+          "圣爱"
+        ],
+        "shortGloss": "神爱",
+        "usageNote": "基督教用语。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "religion"
+        ],
+        "likelyAction": "keep_hidden_remove_needs_human_review",
+        "reason": "Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1150410",
+      "senseIndex": 4,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "爱尔兰"
+        ],
+        "shortGloss": "爱尔兰",
+        "usageNote": "缩写，如IRA。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "abbreviation",
+          "possible_bad_gloss"
+        ],
+        "likelyAction": "mark_unresolved",
+        "reason": "Machine triage found a gloss that may be idiomatic, abbreviated, or easy to mistranslate; keep unresolved until reviewer decision."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1150710",
+      "senseIndex": 2,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "爱尔兰"
+        ],
+        "shortGloss": "爱尔兰",
+        "usageNote": "缩写，如IRA。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "abbreviation",
+          "possible_bad_gloss"
+        ],
+        "likelyAction": "mark_unresolved",
+        "reason": "Machine triage found a gloss that may be idiomatic, abbreviated, or easy to mistranslate; keep unresolved until reviewer decision."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1151390",
+      "senseIndex": 4,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "恶意（法律）"
+        ],
+        "shortGloss": "恶意（法律）",
+        "usageNote": "法律术语，与sense3重复",
+        "shouldDisplay": false,
+        "confidence": "low",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "legal",
+          "usage_note_review"
+        ],
+        "likelyAction": "keep_hidden_remove_needs_human_review",
+        "reason": "Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1154910",
+      "senseIndex": 4,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "黑市；非法交易；暗中交易"
+        ],
+        "shortGloss": "黑市；非法",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "legal",
+          "usage_note_review"
+        ],
+        "likelyAction": "keep_hidden_remove_needs_human_review",
+        "reason": "Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1156630",
+      "senseIndex": 2,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "意向声明",
+          "意思表示"
+        ],
+        "shortGloss": "意向声明",
+        "usageNote": "法律术语，普通日语学习默认不展示。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "legal",
+          "usage_note_review"
+        ],
+        "likelyAction": "keep_hidden_remove_needs_human_review",
+        "reason": "Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1156640",
+      "senseIndex": 3,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "意识（佛教）",
+          "末那识"
+        ],
+        "shortGloss": "意识（佛教）",
+        "usageNote": "佛教术语，普通日语学习默认不展示。",
+        "shouldDisplay": false,
+        "confidence": "low",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "religion",
+          "usage_note_review"
+        ],
+        "likelyAction": "keep_hidden_remove_needs_human_review",
+        "reason": "Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1159710",
+      "senseIndex": 1,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "医学",
+          "医疗"
+        ],
+        "shortGloss": "医学",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "medical",
+          "usage_note_review"
+        ],
+        "likelyAction": "keep_hidden_remove_needs_human_review",
+        "reason": "Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1159940",
+      "senseIndex": 1,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "医师协会",
+          "医学会"
+        ],
+        "shortGloss": "医师协会",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "medical",
+          "usage_note_review"
+        ],
+        "likelyAction": "keep_hidden_remove_needs_human_review",
+        "reason": "Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1160100",
+      "senseIndex": 1,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "医药",
+          "药品",
+          "医疗"
+        ],
+        "shortGloss": "医药",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "medical",
+          "usage_note_review"
+        ],
+        "likelyAction": "keep_hidden_remove_needs_human_review",
+        "reason": "Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    },
+    {
+      "entryId": "jmdict-1161550",
+      "senseIndex": 2,
+      "action": "pending_chatgpt_review",
+      "before": {
+        "zhGlosses": [
+          "单环的"
+        ],
+        "shortGloss": "单环的",
+        "usageNote": "化学术语",
+        "shouldDisplay": false,
+        "confidence": "low",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": null,
+      "reviewerDecisionNeeded": true,
+      "machineTriage": {
+        "riskType": [
+          "specialized",
+          "too_rare",
+          "possible_bad_gloss"
+        ],
+        "likelyAction": "mark_unresolved",
+        "reason": "Machine triage found a gloss that may be idiomatic, abbreviated, or easy to mistranslate; keep unresolved until reviewer decision."
+      },
+      "machineSuggestedOptions": [
+        "keep_needs_human_review",
+        "remove_needs_human_review_no_content_change",
+        "rewrite_gloss_and_remove_needs_human_review",
+        "set_shouldDisplay_false_and_remove_needs_human_review",
+        "mark_unresolved"
+      ]
+    }
+  ]
+}
