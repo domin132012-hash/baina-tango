@@ -4,7 +4,7 @@
 - task name: Top 1000 approval flag compatibility fix
 - branch: `feat/dictionary-zh-deepseek-pilot-100`
 - start commit: `62a65793a812e0465c06ee0782fd22ef426a1baf`
-- end commit: `c6734919a6c6b503ef3014b71b3dabe20a4aca48`
+- end commit: `c03fd7d575731abcec3ec001723abae5079fed4d`
 - JST time: 2026-06-23 21:18 JST
 
 ---
