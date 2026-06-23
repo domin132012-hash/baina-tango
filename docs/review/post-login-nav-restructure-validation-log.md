@@ -7,8 +7,9 @@
 - start commit: `ebc320317e6ef212a38a53a603191c419aca527c`
 - implementation commit: `1f0759015a701c38c20f0bca8a38e02870b07abd`
 - closeout commit: `eb7f220de2dbcd15223213ad88e1512de9fad22c`
-- draft PR metadata writeback commit: pending
-- JST time: `2026-06-23 21:15 JST`
+- draft PR metadata writeback commit: `a9c1a9de20eb28a328e85c6e0dddb8a664a93a28`
+- current PR #13 head before this validation-log finalization: `a9c1a9de20eb28a328e85c6e0dddb8a664a93a28`
+- JST time: `2026-06-23 21:22 JST`
 
 ## Commands Run
 
@@ -89,7 +90,7 @@ Browser validation used the local static server at `http://localhost:4173/` with
 - Production deploy: no
 - Overlay activation: no
 - GitHub push: yes; branch pushed to `origin/feat/post-login-nav-restructure`
-- Draft PR: `#13` `https://github.com/domin132012-hash/baina-tango/pull/13` (OPEN, draft)
+- Draft PR: `#13` `https://github.com/domin132012-hash/baina-tango/pull/13` (OPEN, draft, unmerged, head `a9c1a9de20eb28a328e85c6e0dddb8a664a93a28`)
 
 ## Secret / Safety Checks
 

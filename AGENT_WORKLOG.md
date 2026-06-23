@@ -1542,6 +1542,7 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - UI branch: `feat/post-login-nav-restructure`
 - Start commit from `main`: `ebc320317e6ef212a38a53a603191c419aca527c`
 - Implementation commit: `1f0759015a701c38c20f0bca8a38e02870b07abd`
+- PR metadata writeback / current PR #13 head before validation-log finalization: `a9c1a9de20eb28a328e85c6e0dddb8a664a93a28`
 - Draft PR: `#13` `https://github.com/domin132012-hash/baina-tango/pull/13` (OPEN, draft)
 - Issue: `#11`
 
