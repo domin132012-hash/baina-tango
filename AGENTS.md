@@ -11,6 +11,20 @@ For every non-trivial task in this repository, start by reading:
 7. `docs/ops/CHATGPT_TASK_WRITING_PREFERENCE.md` — manager-side default for writing task instructions directly into GitHub when the user asks
 8. Relevant plan files, such as `RIKA_PLAN.md`, `SOGO_PLAN.md`, or task-specific notes if present
 
+## Hermes Deep Review Protocol
+
+For dictionary review, long-run, and evidence-based tasks, agents MUST follow:
+
+- `docs/agents/hermes-deep-review-protocol.md` — per-item review, evidence requirements, validation gates
+- `docs/agents/hermes-task-template-long-run.md` — long-run phase template
+
+Key rules:
+- `no_action` requires evidence, not default
+- Cannot PASS review without per-item rationale
+- P0 all no_action → spot-check 20%
+- P2 all no_action → `PASS_WITH_LIMITED_REVIEW`, not `PASS`
+- Content corrections and flag-only corrections must be counted separately
+
 ## Closeout Rules
 
 Before finishing any non-trivial task:
