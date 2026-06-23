@@ -34,6 +34,7 @@ var ejuRikaSubjectId = '';   // 当前理科科目 physics/chemistry/biology
 var ejuRikaPage = 1;         // 当前科目内页索引（1-based）
 var ejuRikaAnswers = {};     // 本套理科作答：{ '科目id:解答番号': 选项号 }
 var ejuRikaGraded = false;   // 是否已採点
+var ejuEssayModulePromise = null;
 
 var EJU_PHASE_DURATIONS = { structure: 20, questionRead: 5, locate: 20, answer: 30 };
 var EJU_STRUCTURE_TYPES = ['主张型', '说明型', '对比型', '事例型', '原因结果型', '其他'];
@@ -827,6 +828,38 @@ function ejuIsLocalStaticHost() {
   return location.protocol === 'file:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname === '::1';
 }
 
+function ejuFriendlyLoadMessage(raw, status) {
+  var text = String(raw || '');
+  var html404 = /<!DOCTYPE|<html|Error response|Error code:\s*404|File not found|Nothing matches the given URI/i.test(text);
+  if (status === 404 || html404) {
+    return '本地题库文件或接口未找到。请确认是否已部署后端，或该模块是否仍在建设中。';
+  }
+  if (/Failed to fetch|NetworkError|Load failed/i.test(text)) {
+    return '题库接口暂时无法连接。请稍后重试，或确认当前环境是否已接入后端。';
+  }
+  return text.slice(0, 180) || '加载失败，请稍后重试。';
+}
+
+function ejuRenderUnavailableCard(mount, title, body, badge) {
+  mount.innerHTML = ''
+    + '<div class="eju-question-card">'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px">'
+    + '<h3 style="margin:0;color:#30294d">' + ejuEsc(title) + '</h3>'
+    + '<span class="eju-cat-badge soon">' + ejuEsc(badge || '建设中') + '</span>'
+    + '</div>'
+    + '<p style="margin:0;color:#756c9d;font-weight:800;line-height:1.7">' + ejuEsc(body) + '</p>'
+    + '</div>';
+}
+
+function ejuRenderReadingNeedsBackend(mount) {
+  ejuRenderUnavailableCard(
+    mount,
+    '読解训练暂不可用',
+    '读解训练需要题库接口或本地题库数据，当前本地静态预览未接入。',
+    '需要后端'
+  );
+}
+
 function ejuFallbackCategories() {
   return [
     { id: 'japanese', label: '日本語', labelZh: '日语', available: true },
@@ -874,7 +907,8 @@ async function ejuFetch(path, opts) {
     var errText = await res.text().catch(function() { return 'unknown error'; });
     var errObj;
     try { errObj = JSON.parse(errText); } catch(e) { errObj = { error: errText }; }
-    throw Object.assign(new Error(errObj.error || ('HTTP ' + res.status)), { code: errObj.code, status: res.status });
+    var rawMessage = errObj.error || errObj.message || errText || ('HTTP ' + res.status);
+    throw Object.assign(new Error(ejuFriendlyLoadMessage(rawMessage, res.status)), { code: errObj.code, status: res.status });
   }
   return res.json();
 }
@@ -1056,12 +1090,47 @@ function ejuSetSubjectTitle(text) {
   if (title) title.textContent = text;
 }
 
+function ejuLoadEssayModule() {
+  if (typeof window.ejuEssayRenderHome === 'function') {
+    return Promise.resolve(window.ejuEssayRenderHome);
+  }
+  if (ejuEssayModulePromise) return ejuEssayModulePromise;
+  if (typeof document === 'undefined') {
+    return Promise.reject(new Error('EJU 記述作文批改功能建设中。'));
+  }
+
+  ejuEssayModulePromise = new Promise(function(resolve, reject) {
+    var script = document.createElement('script');
+    script.src = './assets/eju-essay.js?v=20260623-pr13-eju-deep-link-fix';
+    script.async = true;
+    script.onload = function() {
+      if (typeof window.ejuEssayRenderHome === 'function') {
+        resolve(window.ejuEssayRenderHome);
+      } else {
+        reject(new Error('EJU 記述作文批改功能建设中。'));
+      }
+    };
+    script.onerror = function() {
+      reject(new Error('EJU 記述作文批改功能建设中。'));
+    };
+    document.head.appendChild(script);
+  }).catch(function(err) {
+    ejuEssayModulePromise = null;
+    throw err;
+  });
+  return ejuEssayModulePromise;
+}
+
 function ejuOpenEssayEntry() {
   if (typeof window.ejuEssayRenderHome === 'function') {
     window.ejuEssayRenderHome();
     return;
   }
-  if (typeof toast === 'function') toast('作文批改模块加载中，请刷新后重试');
+  ejuLoadEssayModule()
+    .then(function(renderHome) { renderHome(); })
+    .catch(function(e) {
+      if (typeof toast === 'function') toast(e.message || 'EJU 記述作文批改功能建设中。');
+    });
 }
 
 function renderEjuJapanese() {
@@ -1070,15 +1139,16 @@ function renderEjuJapanese() {
   var mount = el.querySelector('#ejuJapaneseMount');
   if (!mount) return;
   ejuSetSubjectTitle('日本語');
+  var readingNeedsBackend = ejuIsLocalStaticHost();
   mount.innerHTML = ''
     + '<div class="eju-skill-grid">'
     + '<button class="eju-skill-card" id="ejuReadingSkillBtn" onclick="loadEjuReadingSets()">'
     + '<div class="eju-skill-icon">📖</div>'
     + '<div class="eju-skill-info">'
     + '<div class="eju-skill-title">読解</div>'
-    + '<div class="eju-skill-desc">日语阅读四阶段训练</div>'
+    + '<div class="eju-skill-desc">' + (readingNeedsBackend ? '本地静态预览未接入题库接口' : '日语阅读四阶段训练') + '</div>'
     + '</div>'
-    + '<span class="eju-cat-badge">开放中</span>'
+    + '<span class="eju-cat-badge' + (readingNeedsBackend ? ' soon' : '') + '">' + (readingNeedsBackend ? '需要后端' : '开放中') + '</span>'
     + '</button>'
     + '<button class="eju-skill-card disabled" disabled>'
     + '<div class="eju-skill-icon">🎧</div>'
@@ -1618,6 +1688,10 @@ async function loadEjuReadingSets() {
   if (!el) return;
   var mount = el.querySelector('#ejuReadingSelectMount');
   if (!mount) return;
+  if (ejuIsLocalStaticHost()) {
+    ejuRenderReadingNeedsBackend(mount);
+    return;
+  }
   mount.innerHTML = '<p style="color:#8b86a3;padding:16px 0">加载年份列表…</p>';
   try {
     var data = await ejuFetch('/api/eju-reading-sets');
