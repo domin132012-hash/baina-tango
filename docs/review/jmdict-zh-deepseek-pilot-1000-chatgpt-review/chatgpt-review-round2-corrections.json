@@ -1,0 +1,27 @@
+{
+  "version": "chatgpt-review-round2",
+  "generatedAtJst": "2026-06-23T23:35:00+09:00",
+  "sourceCandidate": "docs/review/jmdict-zh-deepseek-pilot-1000-overlay-candidate.json",
+  "sourceReviewedR1Candidate": "docs/review/jmdict-zh-deepseek-pilot-1000-overlay-candidate-reviewed-r1.json",
+  "targetCandidate": "docs/review/jmdict-zh-deepseek-pilot-1000-overlay-candidate-reviewed-r2.json",
+  "round": 2,
+  "reviewer": "Hermes (deep review per protocol)",
+  "itemReviewedCount": 67,
+  "contentCorrectionCount": 0,
+  "flagOnlyCorrectionCount": 0,
+  "metadataOnlyCorrectionCount": 0,
+  "noActionCount": 67,
+  "unresolvedCount": 0,
+  "flagForRound3Count": 0,
+  "corrections": [],
+  "categories": {
+    "shouldDisplayFalseToTrue": 0,
+    "shouldDisplayTrueToFalse": 0,
+    "glossShortGlossUsageNoteOnly": 0
+  },
+  "r1Audit": {
+    "confirmedDecisions": 67,
+    "spotCheckCount": 3,
+    "spotCheckPass": 3
+  }
+}

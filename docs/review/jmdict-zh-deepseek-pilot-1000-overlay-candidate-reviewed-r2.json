@@ -15451,5 +15451,10 @@
       ]
     }
   ],
-  "changedSenseCount": 16
+  "reviewedVersion": "reviewed-r2",
+  "r2ItemReviewedCount": 67,
+  "r2ContentCorrectionCount": 0,
+  "r2NoActionCount": 67,
+  "r2UnresolvedCount": 0,
+  "needsHumanReviewCount": 7
 }

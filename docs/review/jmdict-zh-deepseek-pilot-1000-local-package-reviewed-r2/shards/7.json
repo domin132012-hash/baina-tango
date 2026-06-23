@@ -1,0 +1,1187 @@
+{
+  "schemaVersion": 1,
+  "overlayVersion": "jmdict-zh-deepseek-pilot-500-candidate-20260623",
+  "status": "local_review_only_not_active",
+  "shardKey": "7",
+  "entries": [
+    {
+      "entryId": "jmdict-1163270",
+      "writtenForm": "一週間",
+      "reading": "いっしゅうかん",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "一周",
+          "zhGlosses": [
+            "一周",
+            "一个星期"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1163340",
+      "writtenForm": "一瞬",
+      "reading": "いっしゅん",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "一瞬间",
+          "zhGlosses": [
+            "一瞬间",
+            "刹那",
+            "片刻"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1163450",
+      "writtenForm": "一助",
+      "reading": "いちじょ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "一点帮助",
+          "zhGlosses": [
+            "一点帮助",
+            "些许帮助",
+            "辅助"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1163520",
+      "writtenForm": "一条",
+      "reading": "いちじょう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "一条",
+          "zhGlosses": [
+            "一条",
+            "一道",
+            "一缕"
+          ],
+          "usageNote": "用于细长物，如光线、烟雾等。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "一项",
+          "zhGlosses": [
+            "一项",
+            "一条（条款）",
+            "一节"
+          ],
+          "usageNote": "用于条款、项目等。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 3,
+          "shortGloss": "一件事",
+          "zhGlosses": [
+            "一件事",
+            "一个事件"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1164680",
+      "writtenForm": "一団",
+      "reading": "いちだん",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "一群",
+          "zhGlosses": [
+            "一群",
+            "一团",
+            "一伙"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1165580",
+      "writtenForm": "１年生",
+      "reading": "いちねんせい",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "一年级学生",
+          "zhGlosses": [
+            "一年级学生",
+            "新生"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "新手",
+          "zhGlosses": [
+            "新手",
+            "初学者"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 3,
+          "shortGloss": "一年生的",
+          "zhGlosses": [
+            "一年生的"
+          ],
+          "usageNote": "用于植物",
+          "shouldDisplay": false,
+          "confidence": "medium",
+          "issueFlags": [
+            "specialized"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 4,
+          "shortGloss": "一年生植物",
+          "zhGlosses": [
+            "一年生植物"
+          ],
+          "usageNote": "植物学用语",
+          "shouldDisplay": false,
+          "confidence": "medium",
+          "issueFlags": [
+            "specialized"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1165650",
+      "writtenForm": "一派",
+      "reading": "いっぱ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "一派",
+          "zhGlosses": [
+            "一派",
+            "一个流派",
+            "一个宗派"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "一个派系",
+          "zhGlosses": [
+            "一个派系",
+            "一个集团"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1167410",
+      "writtenForm": "一例",
+      "reading": "いちれい",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "一例",
+          "zhGlosses": [
+            "一例",
+            "一个例子"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1169180",
+      "writtenForm": "引き戻す",
+      "reading": "ひきもどす",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "拉回",
+          "zhGlosses": [
+            "拉回",
+            "带回",
+            "恢复"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1169320",
+      "writtenForm": "ひっくり返る",
+      "reading": "ひっくりかえる",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "翻倒",
+          "zhGlosses": [
+            "翻倒",
+            "翻转",
+            "倾覆"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "摔倒",
+          "zhGlosses": [
+            "摔倒",
+            "倒下",
+            "仰面朝天"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1169610",
+      "writtenForm": "引退",
+      "reading": "いんたい",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "引退",
+          "zhGlosses": [
+            "引退",
+            "退休",
+            "退役"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1169900",
+      "writtenForm": "飲酒",
+      "reading": "いんしゅ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "饮酒",
+          "zhGlosses": [
+            "饮酒",
+            "喝酒"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1171400",
+      "writtenForm": "宇宙飛行士",
+      "reading": "うちゅうひこうし",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "宇航员",
+          "zhGlosses": [
+            "宇航员",
+            "航天员"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1171970",
+      "writtenForm": "雨戸",
+      "reading": "あまど",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "防雨滑门",
+          "zhGlosses": [
+            "防雨滑门",
+            "雨窗"
+          ],
+          "usageNote": "日本传统房屋的防雨装置，滑动式。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1172140",
+      "writtenForm": "雨量",
+      "reading": "うりょう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "降雨量",
+          "zhGlosses": [
+            "降雨量"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1173420",
+      "writtenForm": "営む",
+      "reading": "いとなむ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "经营",
+          "zhGlosses": [
+            "经营；从事（事业）"
+          ],
+          "usageNote": "",
+          "shouldDisplay": false,
+          "confidence": "medium",
+          "issueFlags": [
+            "specialized",
+            "needs_human_review"
+          ],
+          "reviewStatus": "human_corrected",
+          "reviewerNote": "possible_specialized_shouldDisplay_true"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "度过（生活）",
+          "zhGlosses": [
+            "度过（生活）"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 3,
+          "shortGloss": "举行（宗教仪式）",
+          "zhGlosses": [
+            "举行（宗教仪式）"
+          ],
+          "usageNote": "主要指佛教或神道仪式。",
+          "shouldDisplay": false,
+          "confidence": "medium",
+          "issueFlags": [
+            "religion"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1173550",
+      "writtenForm": "営団",
+      "reading": "えいだん",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "公团",
+          "zhGlosses": [
+            "公团；公共企业体"
+          ],
+          "usageNote": "指日本特殊法人，如帝都高速度交通営団。",
+          "shouldDisplay": false,
+          "confidence": "medium",
+          "issueFlags": [
+            "specialized"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1173680",
+      "writtenForm": "影響力",
+      "reading": "えいきょうりょく",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "影响力",
+          "zhGlosses": [
+            "影响力；势力"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1173860",
+      "writtenForm": "栄える",
+      "reading": "さかえる",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "繁荣",
+          "zhGlosses": [
+            "繁荣；兴旺；昌盛"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1173990",
+      "writtenForm": "栄養",
+      "reading": "えいよう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "营养",
+          "zhGlosses": [
+            "营养；养分"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1174340",
+      "writtenForm": "泳ぐ",
+      "reading": "およぐ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "游泳",
+          "zhGlosses": [
+            "游泳"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "挤过",
+          "zhGlosses": [
+            "挤过（人群）"
+          ],
+          "usageNote": "如「人混みを泳ぐ」。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "human_corrected",
+          "reviewerNote": "possible_unreviewed_japanese_example"
+        },
+        {
+          "senseIndex": 3,
+          "shortGloss": "处世",
+          "zhGlosses": [
+            "处世",
+            "谋生"
+          ],
+          "usageNote": "如「世の中を泳ぐ」。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "human_corrected",
+          "reviewerNote": "possible_unreviewed_japanese_example"
+        },
+        {
+          "senseIndex": 4,
+          "shortGloss": "踉跄",
+          "zhGlosses": [
+            "踉跄",
+            "失去平衡"
+          ],
+          "usageNote": "古语或方言用法，现代日语中罕见。",
+          "shouldDisplay": false,
+          "confidence": "low",
+          "issueFlags": [
+            "archaic",
+            "needs_human_review"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1174450",
+      "writtenForm": "英国",
+      "reading": "えいこく",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "英国",
+          "zhGlosses": [
+            "英国",
+            "联合王国"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1174890",
+      "writtenForm": "鋭い",
+      "reading": "するどい",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "锋利",
+          "zhGlosses": [
+            "锋利",
+            "尖锐"
+          ],
+          "usageNote": "用于刀、爪等。",
+          "shouldDisplay": false,
+          "confidence": "medium",
+          "issueFlags": [
+            "specialized",
+            "needs_human_review"
+          ],
+          "reviewStatus": "human_corrected",
+          "reviewerNote": "possible_specialized_shouldDisplay_true"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "剧烈",
+          "zhGlosses": [
+            "剧烈",
+            "刺耳",
+            "尖锐"
+          ],
+          "usageNote": "用于疼痛、声音、批评等。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 3,
+          "shortGloss": "敏锐",
+          "zhGlosses": [
+            "敏锐",
+            "精明"
+          ],
+          "usageNote": "用于直觉、眼光、头脑等。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1175350",
+      "writtenForm": "越年",
+      "reading": "えつねん",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "过年",
+          "zhGlosses": [
+            "过年",
+            "跨年",
+            "越冬"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "加赛",
+          "zhGlosses": [
+            "加赛"
+          ],
+          "usageNote": "高尔夫等运动中超过标准轮数的比赛，专业术语。",
+          "shouldDisplay": false,
+          "confidence": "low",
+          "issueFlags": [
+            "specialized",
+            "needs_human_review"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1175570",
+      "writtenForm": "円",
+      "reading": "えん",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "日元",
+          "zhGlosses": [
+            "日元",
+            "日圆"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "圆",
+          "zhGlosses": [
+            "圆",
+            "圆形"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1176760",
+      "writtenForm": "沿道",
+      "reading": "えんどう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "路边",
+          "zhGlosses": [
+            "路边",
+            "沿途",
+            "道路旁"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1177200",
+      "writtenForm": "煙たい",
+      "reading": "けむたい",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "烟雾弥漫的",
+          "zhGlosses": [
+            "烟雾弥漫的",
+            "呛人的"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "不自在的",
+          "zhGlosses": [
+            "不自在的",
+            "尴尬的"
+          ],
+          "usageNote": "形容人际关系或气氛令人不舒服。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1177820",
+      "writtenForm": "遠く",
+      "reading": "とおく",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "远处",
+          "zhGlosses": [
+            "远处",
+            "远方"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "很久以前",
+          "zhGlosses": [
+            "很久以前",
+            "久远"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 3,
+          "shortGloss": "远远",
+          "zhGlosses": [
+            "远远",
+            "……得多"
+          ],
+          "usageNote": "用于比较，如「遠く及ばない」远远不及。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "human_corrected",
+          "reviewerNote": "possible_unreviewed_japanese_example"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1177950",
+      "writtenForm": "遠隔",
+      "reading": "えんかく",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "远程",
+          "zhGlosses": [
+            "远程",
+            "遥远"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1179040",
+      "writtenForm": "汚染",
+      "reading": "おせん",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "污染",
+          "zhGlosses": [
+            "污染"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1179480",
+      "writtenForm": "奥行き",
+      "reading": "おくゆき",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "纵深",
+          "zhGlosses": [
+            "纵深",
+            "深度"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1179750",
+      "writtenForm": "往年",
+      "reading": "おうねん",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "往年",
+          "zhGlosses": [
+            "往年",
+            "昔日"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1180040",
+      "writtenForm": "応募者",
+      "reading": "おうぼしゃ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "应征者",
+          "zhGlosses": [
+            "应征者；报名者；申请人"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1180750",
+      "writtenForm": "横行",
+      "reading": "おうこう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "横行",
+          "zhGlosses": [
+            "横行",
+            "猖獗",
+            "泛滥"
+          ],
+          "usageNote": "多用于负面语境，如犯罪、疾病等。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "横着走",
+          "zhGlosses": [
+            "横着走",
+            "横行"
+          ],
+          "usageNote": "字面义，指螃蟹等横向移动。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1181490",
+      "writtenForm": "王座",
+      "reading": "おうざ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "王座",
+          "zhGlosses": [
+            "王座；王位"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "冠军",
+          "zhGlosses": [
+            "冠军；第一名"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1181560",
+      "writtenForm": "王女",
+      "reading": "おうじょ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "公主",
+          "zhGlosses": [
+            "公主"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1182730",
+      "writtenForm": "屋内",
+      "reading": "おくない",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "室内",
+          "zhGlosses": [
+            "室内",
+            "屋里"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1184000",
+      "writtenForm": "音読み",
+      "reading": "おんよみ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "音读",
+          "zhGlosses": [
+            "音读",
+            "汉字音读"
+          ],
+          "usageNote": "汉字的音读（中国式发音）。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1186510",
+      "writtenForm": "下落",
+      "reading": "げらく",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "下跌",
+          "zhGlosses": [
+            "下跌",
+            "下降",
+            "贬值"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    }
+  ]
+}
