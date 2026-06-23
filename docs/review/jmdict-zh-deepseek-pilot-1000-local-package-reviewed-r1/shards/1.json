@@ -1,0 +1,852 @@
+{
+  "schemaVersion": 1,
+  "overlayVersion": "jmdict-zh-deepseek-pilot-500-candidate-20260623",
+  "status": "local_review_only_not_active",
+  "shardKey": "1",
+  "entries": [
+    {
+      "entryId": "jmdict-1162680",
+      "writtenForm": "一冊",
+      "reading": "いっさつ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "一册",
+          "zhGlosses": [
+            "一册",
+            "一本"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1164170",
+      "writtenForm": "一切",
+      "reading": "いっさい",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "一切",
+          "zhGlosses": [
+            "一切",
+            "全部"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "完全（不）",
+          "zhGlosses": [
+            "完全（不）",
+            "丝毫（不）"
+          ],
+          "usageNote": "后接否定。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1164440",
+      "writtenForm": "一族",
+      "reading": "いちぞく",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "家族",
+          "zhGlosses": [
+            "家族",
+            "亲属",
+            "家人"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "一家",
+          "zhGlosses": [
+            "一家",
+            "一户"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1166200",
+      "writtenForm": "一部分",
+      "reading": "いちぶぶん",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "一部分",
+          "zhGlosses": [
+            "一部分",
+            "部分"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1166460",
+      "writtenForm": "一歩",
+      "reading": "いっぽ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "一步",
+          "zhGlosses": [
+            "一步"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "阶段",
+          "zhGlosses": [
+            "阶段",
+            "步骤"
+          ],
+          "usageNote": "比喻进展的程度。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 3,
+          "shortGloss": "少许",
+          "zhGlosses": [
+            "少许",
+            "一点点"
+          ],
+          "usageNote": "常以「一歩譲る」等形式使用。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "human_corrected",
+          "reviewerNote": "possible_unreviewed_japanese_example"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1166550",
+      "writtenForm": "一方通行",
+      "reading": "いっぽうつうこう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "单向通行",
+          "zhGlosses": [
+            "单向通行",
+            "单行道"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "单向（沟通）",
+          "zhGlosses": [
+            "单向（沟通）",
+            "单方面"
+          ],
+          "usageNote": "比喻缺乏双向交流。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1167610",
+      "writtenForm": "溢れる",
+      "reading": "あふれる",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "溢出",
+          "zhGlosses": [
+            "溢出",
+            "充满"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1167720",
+      "writtenForm": "いち早く",
+      "reading": "いちはやく",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "迅速",
+          "zhGlosses": [
+            "迅速",
+            "立刻"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "抢先",
+          "zhGlosses": [
+            "抢先",
+            "最先"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1169340",
+      "writtenForm": "引っ越す",
+      "reading": "ひっこす",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "搬家",
+          "zhGlosses": [
+            "搬家",
+            "迁居"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1171820",
+      "writtenForm": "羽目",
+      "reading": "はめ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "护墙板",
+          "zhGlosses": [
+            "护墙板",
+            "壁板"
+          ],
+          "usageNote": "建筑装饰材料。",
+          "shouldDisplay": false,
+          "confidence": "medium",
+          "issueFlags": [
+            "specialized"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "困境",
+          "zhGlosses": [
+            "困境",
+            "窘境"
+          ],
+          "usageNote": "常用于「羽目になる」表示陷入困境。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "human_corrected",
+          "reviewerNote": "possible_unreviewed_japanese_example"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1172740",
+      "writtenForm": "運航",
+      "reading": "うんこう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "航行",
+          "zhGlosses": [
+            "航行",
+            "航运"
+          ],
+          "usageNote": "指船舶或飞机的航行运营。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1173800",
+      "writtenForm": "映像",
+      "reading": "えいぞう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "影像",
+          "zhGlosses": [
+            "影像；画面"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "视频",
+          "zhGlosses": [
+            "视频；影片；录像"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 3,
+          "shortGloss": "反射影像",
+          "zhGlosses": [
+            "反射影像；倒影"
+          ],
+          "usageNote": "",
+          "shouldDisplay": false,
+          "confidence": "medium",
+          "issueFlags": [
+            "too_rare"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 4,
+          "shortGloss": "印象",
+          "zhGlosses": [
+            "印象；脑海中的图像"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1174070",
+      "writtenForm": "永遠",
+      "reading": "えいえん",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "永远",
+          "zhGlosses": [
+            "永远；永恒；永久"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1175240",
+      "writtenForm": "駅弁",
+      "reading": "えきべん",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "车站便当",
+          "zhGlosses": [
+            "车站便当",
+            "站台便当"
+          ],
+          "usageNote": "在车站购买的盒饭，常为当地特色。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "站立式性交体位",
+          "zhGlosses": [
+            "站立式性交体位"
+          ],
+          "usageNote": "俚语，普通日语学习默认不展示。",
+          "shouldDisplay": false,
+          "confidence": "low",
+          "issueFlags": [
+            "specialized",
+            "needs_human_review"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1175860",
+      "writtenForm": "円周",
+      "reading": "えんしゅう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "圆周",
+          "zhGlosses": [
+            "圆周"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1176490",
+      "writtenForm": "延滞",
+      "reading": "えんたい",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "拖欠",
+          "zhGlosses": [
+            "拖欠",
+            "逾期",
+            "延迟"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1176700",
+      "writtenForm": "沿う",
+      "reading": "そう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "沿着",
+          "zhGlosses": [
+            "沿着",
+            "顺着"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "遵循",
+          "zhGlosses": [
+            "遵循",
+            "按照",
+            "符合"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 3,
+          "shortGloss": "满足",
+          "zhGlosses": [
+            "满足",
+            "符合",
+            "达到"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1177350",
+      "writtenForm": "燕",
+      "reading": "つばめ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "燕子",
+          "zhGlosses": [
+            "燕子",
+            "燕科鸟类"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "家燕",
+          "zhGlosses": [
+            "家燕"
+          ],
+          "usageNote": "",
+          "shouldDisplay": false,
+          "confidence": "medium",
+          "issueFlags": [
+            "too_rare"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 3,
+          "shortGloss": "小白脸",
+          "zhGlosses": [
+            "小白脸",
+            "小男友"
+          ],
+          "usageNote": "指与年长女性交往的年轻男性。",
+          "shouldDisplay": false,
+          "confidence": "medium",
+          "issueFlags": [
+            "specialized"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1178500",
+      "writtenForm": "鉛",
+      "reading": "なまり",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "铅",
+          "zhGlosses": [
+            "铅"
+          ],
+          "usageNote": "化学元素。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1180020",
+      "writtenForm": "応分",
+      "reading": "おうぶん",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "相应的",
+          "zhGlosses": [
+            "相应的；适当的；力所能及的"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1181500",
+      "writtenForm": "王子",
+      "reading": "おうじ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "王子",
+          "zhGlosses": [
+            "王子"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "熊野神社的末社",
+          "zhGlosses": [
+            "熊野神社的末社"
+          ],
+          "usageNote": "神道教术语，普通日语学习默认不展示。",
+          "shouldDisplay": false,
+          "confidence": "low",
+          "issueFlags": [
+            "religion",
+            "needs_human_review"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1183090",
+      "writtenForm": "恩",
+      "reading": "おん",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "恩情",
+          "zhGlosses": [
+            "恩情",
+            "恩惠"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "好意",
+          "zhGlosses": [
+            "好意",
+            "仁慈"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1183300",
+      "writtenForm": "温い",
+      "reading": "ぬるい",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "温的",
+          "zhGlosses": [
+            "温的",
+            "微温的"
+          ],
+          "usageNote": "多指液体不冷不热。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "宽松",
+          "zhGlosses": [
+            "宽松",
+            "不严厉"
+          ],
+          "usageNote": "多指态度、措施等不够严格。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1183450",
+      "writtenForm": "温泉",
+      "reading": "おんせん",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "温泉",
+          "zhGlosses": [
+            "温泉"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "温泉地",
+          "zhGlosses": [
+            "温泉地",
+            "温泉度假村"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1185290",
+      "writtenForm": "下宿",
+      "reading": "げしゅく",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "寄宿",
+          "zhGlosses": [
+            "寄宿",
+            "租房住宿"
+          ],
+          "usageNote": "指在别人家租房并提供伙食的住宿方式。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "寄宿处",
+          "zhGlosses": [
+            "寄宿处",
+            "出租房"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    }
+  ]
+}

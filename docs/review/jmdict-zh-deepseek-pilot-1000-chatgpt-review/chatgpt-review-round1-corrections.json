@@ -1,0 +1,47 @@
+{
+  "version": "chatgpt-review-round1",
+  "generatedAtJst": "2026-06-23T23:20:00+09:00",
+  "sourceCandidate": "docs/review/jmdict-zh-deepseek-pilot-1000-overlay-candidate.json",
+  "targetCandidate": "docs/review/jmdict-zh-deepseek-pilot-1000-overlay-candidate-reviewed-r1.json",
+  "round": 1,
+  "reviewer": "Hermes",
+  "correctionCount": 1,
+  "categories": {
+    "shouldDisplayFalseToTrue": 0,
+    "shouldDisplayTrueToFalse": 0,
+    "glossShortGlossUsageNoteOnly": 1
+  },
+  "corrections": [
+    {
+      "entryId": "jmdict-1184280",
+      "written": "下さる",
+      "reading": "くださる",
+      "senseIndex": 2,
+      "pos": "Godan verb - -aru special class; transitive verb",
+      "action": "rewrite_gloss",
+      "before": {
+        "shortGloss": "为我做",
+        "zhGlosses": [
+          "为我做",
+          "承蒙"
+        ],
+        "usageNote": "敬语，用于对方为自己做某事时，接在动词て形后。"
+      },
+      "after": {
+        "shortGloss": "为我（做）",
+        "zhGlosses": [
+          "为我做",
+          "承蒙"
+        ],
+        "usageNote": "敬语，用于对方为自己做某事时，接在动词て形后。"
+      },
+      "changedFields": [
+        "shortGloss"
+      ],
+      "rationale": "shortGloss 不够自然，改为「为我（做）」更符合敬语语境",
+      "reviewerConfidence": "high",
+      "riskLevel": "none",
+      "needsFollowup": false
+    }
+  ]
+}

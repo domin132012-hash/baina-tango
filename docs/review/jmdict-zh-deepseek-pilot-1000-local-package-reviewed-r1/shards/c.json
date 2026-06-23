@@ -1,0 +1,953 @@
+{
+  "schemaVersion": 1,
+  "overlayVersion": "jmdict-zh-deepseek-pilot-500-candidate-20260623",
+  "status": "local_review_only_not_active",
+  "shardKey": "c",
+  "entries": [
+    {
+      "entryId": "jmdict-1162900",
+      "writtenForm": "一字",
+      "reading": "いちじ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "一个字",
+          "zhGlosses": [
+            "一个字",
+            "一个字母"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1164340",
+      "writtenForm": "一層",
+      "reading": "いっそう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "更加",
+          "zhGlosses": [
+            "更加",
+            "越发"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "一层",
+          "zhGlosses": [
+            "一层"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 3,
+          "shortGloss": "一楼",
+          "zhGlosses": [
+            "一楼",
+            "底层"
+          ],
+          "usageNote": "指建筑物的最下层。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 4,
+          "shortGloss": "宁可",
+          "zhGlosses": [
+            "宁可",
+            "宁愿"
+          ],
+          "usageNote": "表示选择。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1164410",
+      "writtenForm": "一足",
+      "reading": "ひとあし",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "一步",
+          "zhGlosses": [
+            "一步"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "短距离",
+          "zhGlosses": [
+            "短距离",
+            "短时间"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1164560",
+      "writtenForm": "１対１",
+      "reading": "いちたいいち",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "一对一",
+          "zhGlosses": [
+            "一对一",
+            "一对一的"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1165220",
+      "writtenForm": "一等",
+      "reading": "いっとう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "一等",
+          "zhGlosses": [
+            "一等",
+            "一级",
+            "第一名"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "一个等级",
+          "zhGlosses": [
+            "一个等级",
+            "一级"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 3,
+          "shortGloss": "最",
+          "zhGlosses": [
+            "最",
+            "最好"
+          ],
+          "usageNote": "副词用法",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1165660",
+      "writtenForm": "一敗",
+      "reading": "いっぱい",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "一次失败",
+          "zhGlosses": [
+            "一次失败",
+            "一败"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1168670",
+      "writtenForm": "因縁",
+      "reading": "いんねん",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "缘分",
+          "zhGlosses": [
+            "缘分",
+            "命运"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "关联",
+          "zhGlosses": [
+            "关联",
+            "关系",
+            "渊源"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 3,
+          "shortGloss": "借口",
+          "zhGlosses": [
+            "借口",
+            "理由"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 4,
+          "shortGloss": "因缘（佛教术语）",
+          "zhGlosses": [
+            "因缘（佛教术语）"
+          ],
+          "usageNote": "佛教哲学概念，指直接原因和间接条件。",
+          "shouldDisplay": false,
+          "confidence": "medium",
+          "issueFlags": [
+            "religion",
+            "specialized"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1169310",
+      "writtenForm": "引け目",
+      "reading": "ひけめ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "自卑感",
+          "zhGlosses": [
+            "自卑感",
+            "弱点"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1170280",
+      "writtenForm": "陰気",
+      "reading": "いんき",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "阴郁",
+          "zhGlosses": [
+            "阴郁",
+            "阴沉",
+            "忧郁"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "阴气",
+          "zhGlosses": [
+            "阴气"
+          ],
+          "usageNote": "阴阳五行中的概念。",
+          "shouldDisplay": false,
+          "confidence": "medium",
+          "issueFlags": [
+            "specialized"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1171940",
+      "writtenForm": "雨具",
+      "reading": "あまぐ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "雨具",
+          "zhGlosses": [
+            "雨具"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1172040",
+      "writtenForm": "雨宿り",
+      "reading": "あまやどり",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "避雨",
+          "zhGlosses": [
+            "避雨"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1172710",
+      "writtenForm": "運河",
+      "reading": "うんが",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "运河",
+          "zhGlosses": [
+            "运河"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1173340",
+      "writtenForm": "餌",
+      "reading": "えさ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "饲料",
+          "zhGlosses": [
+            "饲料",
+            "饵料"
+          ],
+          "usageNote": "指动物饲料或宠物食品。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "诱饵",
+          "zhGlosses": [
+            "诱饵",
+            "诱惑"
+          ],
+          "usageNote": "比喻引诱人的事物。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1173410",
+      "writtenForm": "営み",
+      "reading": "いとなみ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "活动",
+          "zhGlosses": [
+            "活动",
+            "行为"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "工作",
+          "zhGlosses": [
+            "工作",
+            "营生"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 3,
+          "shortGloss": "性交",
+          "zhGlosses": [
+            "性交",
+            "交合"
+          ],
+          "usageNote": "委婉说法。",
+          "shouldDisplay": false,
+          "confidence": "medium",
+          "issueFlags": [
+            "specialized"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 4,
+          "shortGloss": "准备",
+          "zhGlosses": [
+            "准备",
+            "筹备"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "medium",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1174020",
+      "writtenForm": "栄養士",
+      "reading": "えいようし",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "营养师",
+          "zhGlosses": [
+            "营养师；膳食专家"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1174680",
+      "writtenForm": "英雄",
+      "reading": "えいゆう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "英雄",
+          "zhGlosses": [
+            "英雄",
+            "伟人"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "英雄交响曲",
+          "zhGlosses": [
+            "英雄交响曲（贝多芬）"
+          ],
+          "usageNote": "专指贝多芬第三交响曲。",
+          "shouldDisplay": false,
+          "confidence": "medium",
+          "issueFlags": [
+            "specialized"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 3,
+          "shortGloss": "英雄波兰舞曲",
+          "zhGlosses": [
+            "英雄波兰舞曲（肖邦）"
+          ],
+          "usageNote": "专指肖邦的波兰舞曲。",
+          "shouldDisplay": false,
+          "confidence": "medium",
+          "issueFlags": [
+            "specialized"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1176750",
+      "writtenForm": "沿線",
+      "reading": "えんせん",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "沿线",
+          "zhGlosses": [
+            "沿线",
+            "铁路沿线",
+            "道路沿线"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1179005",
+      "writtenForm": "汚れる",
+      "reading": "よごれる",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "变脏",
+          "zhGlosses": [
+            "变脏",
+            "弄脏"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "堕落",
+          "zhGlosses": [
+            "堕落",
+            "失贞"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1179140",
+      "writtenForm": "甥",
+      "reading": "おい",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "侄子",
+          "zhGlosses": [
+            "侄子",
+            "外甥"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1179320",
+      "writtenForm": "奥",
+      "reading": "おく",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "内部",
+          "zhGlosses": [
+            "内部",
+            "深处",
+            "尽头"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "里屋",
+          "zhGlosses": [
+            "里屋",
+            "内室"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 3,
+          "shortGloss": "内心",
+          "zhGlosses": [
+            "内心",
+            "深处",
+            "奥秘"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1179760",
+      "writtenForm": "往復",
+      "reading": "おうふく",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "往返",
+          "zhGlosses": [
+            "往返",
+            "来回"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "往返票",
+          "zhGlosses": [
+            "往返票",
+            "来回票"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 3,
+          "shortGloss": "通信",
+          "zhGlosses": [
+            "通信",
+            "书信往来"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 4,
+          "shortGloss": "交往",
+          "zhGlosses": [
+            "交往",
+            "来往"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1181190",
+      "writtenForm": "欧州",
+      "reading": "おうしゅう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "欧洲",
+          "zhGlosses": [
+            "欧洲"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1181550",
+      "writtenForm": "王手",
+      "reading": "おうて",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "将军",
+          "zhGlosses": [
+            "将军（将棋）"
+          ],
+          "usageNote": "将棋术语。",
+          "shouldDisplay": false,
+          "confidence": "medium",
+          "issueFlags": [
+            "specialized"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1181860",
+      "writtenForm": "黄金",
+      "reading": "おうごん",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "黄金",
+          "zhGlosses": [
+            "黄金；金子"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "金色的",
+          "zhGlosses": [
+            "金色的；黄金般的；极好的"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 3,
+          "shortGloss": "金钱",
+          "zhGlosses": [
+            "金钱；货币"
+          ],
+          "usageNote": "古时指大判金币等。",
+          "shouldDisplay": false,
+          "confidence": "medium",
+          "issueFlags": [
+            "archaic"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1182700",
+      "writtenForm": "屋根",
+      "reading": "やね",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "屋顶",
+          "zhGlosses": [
+            "屋顶"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1182920",
+      "writtenForm": "牡蠣",
+      "reading": "かき",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "牡蛎",
+          "zhGlosses": [
+            "牡蛎",
+            "生蚝"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1186380",
+      "writtenForm": "下方",
+      "reading": "かほう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "下方",
+          "zhGlosses": [
+            "下方",
+            "下部"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    }
+  ]
+}
