@@ -2686,3 +2686,16 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - Remaining risks: Round 1 is obvious-corrections only; P1 usageNote and high-frequency sampling remain before any activation.
 - Remaining cost risks: none for this docs-only/local-package task; any provider/R2/D1/deploy work requires separate approval.
 - Next step: continue ChatGPT review of P1 usageNote and ordinary high-frequency samples, then generate reviewed-r2 if needed.
+
+### 2026-06-23 19:29:22 JST - PR #12 ChatGPT review round2 corrections
+
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `b78f24b7a61e8e78a7835324c64110d99d1d6714`
+- End commit: final PR branch head verified after push; exact commit reported in final closeout
+- Files changed: `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round2.md`, `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round2-corrections.json`, `docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json`, `docs/review/jmdict-zh-deepseek-pilot-500-local-package-reviewed-r2/`, plus status docs
+- External services touched: GitHub only after push; DeepSeek no; Google Translate no; Runtime AI calls 0; R2/D1 writes 0; Preview deploy no; Production deploy no; overlay activation no
+- Validation completed: `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`; reviewed-r2 candidate parsed; entries/senses unchanged (500/841); only 16 listed entryId/senseIndex targets changed; Round 2 changed sense count 16; cumulative changed sense count 37; checksum validation passed for manifest and 16 shards; `.env.local` untracked; secret scan and large artifact scan clean
+- reviewed-r2 stats: shouldDisplay true/false 761/80, needs_human_review 28, Round 2 no action records 19, checksum `f70db8b59f0bf12f6c196089dbb9ea8158a3080e2fbb64c322f1d8d17e1ff2ad  manifest.json`
+- Remaining risks: Round 2 is limited to explicit usageNote/common-expression corrections and is not a full 841-sense review; reviewed-r2 remains local review-only and is not active
+- Remaining cost risks: none for this docs-only/local-package task; any provider/R2/D1/deploy work requires separate approval
+- Next step: review そ/こ/あ grammar/pronoun items, sample high-frequency ordinary reviewed-r2 entries, and continue remaining `needs_human_review`

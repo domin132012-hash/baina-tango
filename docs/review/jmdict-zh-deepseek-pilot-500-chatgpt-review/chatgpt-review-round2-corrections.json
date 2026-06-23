@@ -1,0 +1,616 @@
+{
+  "version": "chatgpt-review-round2",
+  "generatedAt": "2026-06-23T10:28:23.200Z",
+  "sourceCandidate": "docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r1.json",
+  "reviewPacket": "docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/",
+  "reviewer": "ChatGPT",
+  "scope": "round2 usageNote and common-expression cleanup only",
+  "correctionCount": 16,
+  "categories": {
+    "shouldDisplayFalseToTrue": 0,
+    "shouldDisplayTrueToFalse": 1,
+    "glossShortGlossUsageNoteOnly": 15
+  },
+  "corrections": [
+    {
+      "entryId": "jmdict-1000620",
+      "senseIndex": 1,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "不不",
+          "哪里哪里"
+        ],
+        "shortGloss": "不不",
+        "usageNote": "表示否定或谦虚",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [
+          "none"
+        ],
+        "needs_human_review": false
+      },
+      "after": {
+        "zhGlosses": [
+          "不，不是；哪里哪里"
+        ],
+        "shortGloss": "不，不是",
+        "usageNote": "表示否定、否认或谦让。",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "否々 should use a natural Chinese denial/humility expression rather than the literal 不不."
+    },
+    {
+      "entryId": "jmdict-1001390",
+      "senseIndex": 1,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "关东煮"
+        ],
+        "shortGloss": "关东煮",
+        "usageNote": "日本料理，用酱油高汤炖煮各种食材",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [
+          "none"
+        ],
+        "needs_human_review": false
+      },
+      "after": {
+        "zhGlosses": [
+          "关东煮"
+        ],
+        "shortGloss": "关东煮",
+        "usageNote": "日本料理，把萝卜、鸡蛋等食材放入高汤中炖煮。",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "おでん should be explained as simmered ingredients in dashi without over-narrowing it to soy-sauce broth."
+    },
+    {
+      "entryId": "jmdict-1001730",
+      "senseIndex": 1,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "拜托",
+          "请"
+        ],
+        "shortGloss": "拜托",
+        "usageNote": "比「お願いします」更礼貌",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [
+          "none"
+        ],
+        "needs_human_review": false
+      },
+      "after": {
+        "zhGlosses": [
+          "请您；拜托您了"
+        ],
+        "shortGloss": "请您",
+        "usageNote": "比「お願いします」更礼貌。",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "お願いいたします is more polite than 拜托, so the short gloss should preserve the respectful tone."
+    },
+    {
+      "entryId": "jmdict-1001890",
+      "senseIndex": 1,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "御好烧",
+          "大阪烧"
+        ],
+        "shortGloss": "御好烧",
+        "usageNote": "日本煎饼，配料多样",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [
+          "none"
+        ],
+        "needs_human_review": false
+      },
+      "after": {
+        "zhGlosses": [
+          "御好烧；日式煎饼；大阪烧"
+        ],
+        "shortGloss": "御好烧",
+        "usageNote": "日本料理，把面糊、蔬菜、肉类等煎成饼状。",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "Add 日式煎饼 so ordinary Chinese users can understand 御好烧 more directly."
+    },
+    {
+      "entryId": "jmdict-1002050",
+      "senseIndex": 1,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "打扰了",
+          "失陪了"
+        ],
+        "shortGloss": "打扰了",
+        "usageNote": "进入别人家或房间时的礼貌用语。",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [
+          "none"
+        ],
+        "needs_human_review": false
+      },
+      "after": {
+        "zhGlosses": [
+          "打扰了；不好意思打扰了"
+        ],
+        "shortGloss": "打扰了",
+        "usageNote": "进入别人家、办公室或房间时的礼貌用语。",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "お邪魔します primarily means 打扰了 when entering someone else's place, not 失陪了."
+    },
+    {
+      "entryId": "jmdict-1002110",
+      "senseIndex": 1,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "女佣",
+          "保姆"
+        ],
+        "shortGloss": "女佣",
+        "usageNote": "",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [
+          "none"
+        ],
+        "needs_human_review": false
+      },
+      "after": {
+        "zhGlosses": [
+          "家政人员；帮佣；保姆"
+        ],
+        "shortGloss": "家政人员",
+        "usageNote": "",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "家政人员/帮佣/保姆 is more modern and neutral than 女佣 for ordinary dictionary display."
+    },
+    {
+      "entryId": "jmdict-1002170",
+      "senseIndex": 2,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "小姐",
+          "年轻女子"
+        ],
+        "shortGloss": "小姐",
+        "usageNote": "对年轻女性的礼貌称呼。",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [
+          "none"
+        ],
+        "needs_human_review": false
+      },
+      "after": {
+        "zhGlosses": [
+          "年轻女性；小姐"
+        ],
+        "shortGloss": "年轻女性",
+        "usageNote": "对年轻女性的礼貌称呼。",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "年轻女性 avoids the ambiguity of 小姐 while preserving it as a secondary gloss."
+    },
+    {
+      "entryId": "jmdict-1002330",
+      "senseIndex": 2,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "老奶奶",
+          "老大娘"
+        ],
+        "shortGloss": "老奶奶",
+        "usageNote": "对老年女性的礼貌称呼。",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [
+          "none"
+        ],
+        "needs_human_review": false
+      },
+      "after": {
+        "zhGlosses": [
+          "老奶奶；老妇人"
+        ],
+        "shortGloss": "老奶奶",
+        "usageNote": "对老年女性的礼貌称呼。",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "老奶奶/老妇人 is more standard for learners than the regional-colloquial 老大娘."
+    },
+    {
+      "entryId": "jmdict-1002400",
+      "senseIndex": 2,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "您丈夫"
+        ],
+        "shortGloss": "您丈夫",
+        "usageNote": "敬称，指对方的丈夫。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": {
+        "zhGlosses": [
+          "您先生；您丈夫"
+        ],
+        "shortGloss": "您先生",
+        "usageNote": "敬称，指对方的丈夫。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized"
+        ],
+        "needs_human_review": false
+      },
+      "reason": "您先生 is more natural than 您丈夫 while the specialized hidden status remains appropriate."
+    },
+    {
+      "entryId": "jmdict-1002570",
+      "senseIndex": 2,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "再见",
+          "晚安"
+        ],
+        "shortGloss": "再见",
+        "usageNote": "用于告别时。",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [
+          "none"
+        ],
+        "needs_human_review": false
+      },
+      "after": {
+        "zhGlosses": [
+          "辛苦了；先走了；回见"
+        ],
+        "shortGloss": "先走了",
+        "usageNote": "用于工作、学校等场合告别时。",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "晚安 is misleading for お疲れ様 in farewell contexts; 辛苦了/先走了/回见 is closer."
+    },
+    {
+      "entryId": "jmdict-1002750",
+      "senseIndex": 1,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "通话中",
+          "占线"
+        ],
+        "shortGloss": "通话中",
+        "usageNote": "电话用语。",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [
+          "none"
+        ],
+        "needs_human_review": false
+      },
+      "after": {
+        "zhGlosses": [
+          "正在通话；占线"
+        ],
+        "shortGloss": "正在通话",
+        "usageNote": "多用于电话语境，表示对方正在通话或线路占线。",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "お話中 is usually telephone-related, meaning currently on a call or busy."
+    },
+    {
+      "entryId": "jmdict-1002790",
+      "senseIndex": 1,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "遵命",
+          "明白了",
+          "好的"
+        ],
+        "shortGloss": "遵命",
+        "usageNote": "敬语，用于正式场合。",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [
+          "none"
+        ],
+        "needs_human_review": false
+      },
+      "after": {
+        "zhGlosses": [
+          "明白了；好的；遵命"
+        ],
+        "shortGloss": "明白了（敬语）",
+        "usageNote": "敬语，用于服务业或正式场合回应对方。",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "明白了（敬语） better reflects service/formal contexts than the overly stiff 遵命."
+    },
+    {
+      "entryId": "jmdict-1003660",
+      "senseIndex": 1,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "极限",
+          "勉强",
+          "刚好"
+        ],
+        "shortGloss": "极限",
+        "usageNote": "",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [
+          "none"
+        ],
+        "needs_human_review": false
+      },
+      "after": {
+        "zhGlosses": [
+          "勉强刚好；刚刚好；极限"
+        ],
+        "shortGloss": "勉强刚好",
+        "usageNote": "",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "ぎりぎり is better captured by 勉强刚好/刚刚好 than by the abstract 极限."
+    },
+    {
+      "entryId": "jmdict-1003710",
+      "senseIndex": 2,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "打喷嚏时的咒语（说两次以防早死）"
+        ],
+        "shortGloss": "打喷嚏时的咒语",
+        "usageNote": "日本习俗，有人打喷嚏时说两次以辟邪。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": {
+        "zhGlosses": [
+          "打喷嚏后的俗信用语；喷嚏咒语"
+        ],
+        "shortGloss": "喷嚏咒语",
+        "usageNote": "与打喷嚏相关的民俗性说法。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "too_rare"
+        ],
+        "needs_human_review": false
+      },
+      "reason": "The sneeze-related folk expression should be neutral and hidden, without keeping human-review status."
+    },
+    {
+      "entryId": "jmdict-1004040",
+      "senseIndex": 3,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "不稳定",
+          "阴晴不定"
+        ],
+        "shortGloss": "不稳定",
+        "usageNote": "多指天气。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "too_rare"
+        ],
+        "needs_human_review": false
+      },
+      "after": {
+        "zhGlosses": [
+          "阴沉不定；阴晴不定"
+        ],
+        "shortGloss": "阴沉不定",
+        "usageNote": "多指天气。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "too_rare"
+        ],
+        "needs_human_review": false
+      },
+      "reason": "For weather, 阴沉不定/阴晴不定 is clearer than the broad 不稳定."
+    },
+    {
+      "entryId": "jmdict-1004310",
+      "senseIndex": 3,
+      "action": "replaceSenseOverlayFields",
+      "category": "shouldDisplay true->false",
+      "before": {
+        "zhGlosses": [
+          "嗯",
+          "那个"
+        ],
+        "shortGloss": "嗯",
+        "usageNote": "感叹词，表示犹豫或思考。",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [
+          "none"
+        ],
+        "needs_human_review": false
+      },
+      "after": {
+        "zhGlosses": [
+          "嗯；那个"
+        ],
+        "shortGloss": "嗯",
+        "usageNote": "感叹词用法，表示犹豫或思考。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "too_rare"
+        ],
+        "needs_human_review": false
+      },
+      "reason": "The filler/interjection use is narrow and should not be shown by default to ordinary learners."
+    }
+  ],
+  "noAction": [
+    {
+      "action": "noAction",
+      "note": "jmdict-1000940 居らっしゃる sense 1：敬语说明自然，保持。"
+    },
+    {
+      "action": "noAction",
+      "note": "jmdict-1000940 居らっしゃる sense 2：敬语说明自然，保持。"
+    },
+    {
+      "action": "noAction",
+      "note": "jmdict-1001620 お握り sense 1：usageNote 正常，保持。"
+    },
+    {
+      "action": "noAction",
+      "note": "jmdict-1001830 お兄さん sense 2：称呼年轻男性，保持。"
+    },
+    {
+      "action": "noAction",
+      "note": "jmdict-1001950 お参り sense 1：常见文化生活词，保持。"
+    },
+    {
+      "action": "noAction",
+      "note": "jmdict-1002010 お子様 sense 1：礼貌称呼说明可接受，保持。"
+    },
+    {
+      "action": "noAction",
+      "note": "jmdict-1002010 お子様 sense 2：礼貌泛称说明可接受，保持。"
+    },
+    {
+      "action": "noAction",
+      "note": "jmdict-1002260 お世話になる sense 1：常见表达，保持。"
+    },
+    {
+      "action": "noAction",
+      "note": "jmdict-1002280 お先に sense 3：告别用法说明自然，保持。"
+    },
+    {
+      "action": "noAction",
+      "note": "jmdict-1002290 お前 sense 1：粗鲁称呼说明必要，保持。"
+    },
+    {
+      "action": "noAction",
+      "note": "jmdict-1002320 お祖父さん sense 2：老年男性称呼可接受，保持。"
+    },
+    {
+      "action": "noAction",
+      "note": "jmdict-1002390 お大事に sense 1：祝福语说明自然，保持。"
+    },
+    {
+      "action": "noAction",
+      "note": "jmdict-1002500 お土産 sense 1：Round 1 已修正，保持。"
+    },
+    {
+      "action": "noAction",
+      "note": "jmdict-1002590 お父さん sense 2：Round 1 已修正，保持。"
+    },
+    {
+      "action": "noAction",
+      "note": "jmdict-1002590 お父さん sense 3：Round 1 已修正，保持。"
+    },
+    {
+      "action": "noAction",
+      "note": "jmdict-1002650 お母さん sense 2：Round 1 已修正，保持。"
+    },
+    {
+      "action": "noAction",
+      "note": "jmdict-1002650 お母さん sense 3：Round 1 已修正，保持。"
+    },
+    {
+      "action": "noAction",
+      "note": "jmdict-1002950 敵わない sense 1-3：普通词义，保持。"
+    },
+    {
+      "action": "noAction",
+      "note": "jmdict-1002975 かも知れません sense 1：礼貌说明自然，保持。"
+    }
+  ]
+}
