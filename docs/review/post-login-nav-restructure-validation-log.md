@@ -6,8 +6,9 @@
 - branch: `feat/post-login-nav-restructure`
 - start commit: `ebc320317e6ef212a38a53a603191c419aca527c`
 - implementation commit: `1f0759015a701c38c20f0bca8a38e02870b07abd`
-- closeout commit: pending
-- JST time: `2026-06-23 21:11 JST`
+- closeout commit: `eb7f220de2dbcd15223213ad88e1512de9fad22c`
+- draft PR metadata writeback commit: pending
+- JST time: `2026-06-23 21:15 JST`
 
 ## Commands Run
 
@@ -87,7 +88,8 @@ Browser validation used the local static server at `http://localhost:4173/` with
 - Preview deploy: no
 - Production deploy: no
 - Overlay activation: no
-- GitHub push: pending before closeout push
+- GitHub push: yes; branch pushed to `origin/feat/post-login-nav-restructure`
+- Draft PR: `#13` `https://github.com/domin132012-hash/baina-tango/pull/13` (OPEN, draft)
 
 ## Secret / Safety Checks
 
@@ -128,4 +130,4 @@ PASS with one expected non-blocking command failure: `scripts/dictionary/jmdict-
 
 ## Next Step
 
-Push `feat/post-login-nav-restructure`, create a draft PR, keep it draft, and wait for user review. Do not deploy, mark ready, merge, or touch dictionary overlay PR #12.
+Wait for user review on draft PR #13. Do not deploy, mark ready, merge, or touch dictionary overlay PR #12.

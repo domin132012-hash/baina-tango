@@ -1542,7 +1542,7 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - UI branch: `feat/post-login-nav-restructure`
 - Start commit from `main`: `ebc320317e6ef212a38a53a603191c419aca527c`
 - Implementation commit: `1f0759015a701c38c20f0bca8a38e02870b07abd`
-- Draft PR: pending before closeout push
+- Draft PR: `#13` `https://github.com/domin132012-hash/baina-tango/pull/13` (OPEN, draft)
 - Issue: `#11`
 
 ### Files changed
@@ -1569,7 +1569,7 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - `我的` keeps profile/auth/sync/stat/purchase/redeem/settings/help/contact flows and adds 邀请制度 plus 给开发者建议 as `建设中`.
 
 ### External services touched
-- GitHub: pending branch push and draft PR only.
+- GitHub: branch pushed and draft PR #13 created only; not marked ready and not merged.
 - Cloudflare: not touched.
 - Cloudflare R2/D1: not touched; no R2 upload/write, no D1 write, no D1 full import.
 - Supabase / Stripe / DeepSeek / Google Translate / other AI providers: not touched.
@@ -1595,4 +1595,4 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - None from this task: no provider calls, no R2/D1 writes, no deployment, and no Cloudflare configuration change.
 
 ### Next step
-- Push `feat/post-login-nav-restructure`, create a draft PR, keep it draft, and wait for user review. Do not mark ready, merge, deploy, or touch dictionary overlay PR #12.
+- Wait for user review on draft PR #13. Do not mark ready, merge, deploy, or touch dictionary overlay PR #12.

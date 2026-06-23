@@ -4,7 +4,7 @@
 > do not recheck Supabase / Stripe unless the task touches them, a related fault appears, or the recorded status is older than 30 days and the task depends on that platform.
 > Never record API keys, service role keys, JWT secrets, session tokens, customer data, payment records, card data, or raw secret values.
 
-Last updated: 2026-06-23 21:11 JST by Codex
+Last updated: 2026-06-23 21:15 JST by Codex
 
 ## 1. 当前锁定状态
 
@@ -31,17 +31,18 @@ Last updated: 2026-06-23 21:11 JST by Codex
 | Main latest hash after PR #4 | `c340f75a5f8cf51dac691732a9c66e50cd22af09` |
 | Phase 2 branch | `feat/full-jmdict-import-spike` |
 | Phase 2 PR | `https://github.com/domin132012-hash/baina-tango/pull/6` merged |
-| Latest relevant commit | UI implementation commit `1f0759015a701c38c20f0bca8a38e02870b07abd`; closeout docs and draft PR pending |
+| Latest relevant commit | UI implementation commit `1f0759015a701c38c20f0bca8a38e02870b07abd`; draft PR closeout commit `eb7f220de2dbcd15223213ad88e1512de9fad22c` |
+| UI PR | `#13` `https://github.com/domin132012-hash/baina-tango/pull/13` draft/open |
 | PR #2 | `MERGED`; merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` |
 | This task | Cost-safe continuation from PR #6: full JMdict English-only R2 shards generated/uploaded from official JMdict, D1 metadata-only active version written, D1 full import not executed |
 | Dictionary plan commit | `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main` |
-| External services touched - GitHub | Pending: branch push and draft PR creation only; do not mark ready or merge |
+| External services touched - GitHub | Branch pushed and draft PR #13 created only; do not mark ready or merge |
 | External services touched - Cloudflare | Not touched; no Preview deploy, no Production deploy, no R2/D1 write, no config/metadata change |
 | External services touched - Supabase | Not touched |
 | External services touched - Stripe | Not touched |
 | External services touched - DeepSeek | Not touched |
-| Current status | Local UI branch implementation validated: bottom nav has 5 tabs, EJU and existing vocab/profile flows remain reachable, construction entries are clearly marked and toast-only, browser console errors `0`. |
-| Current blocker | None for local UI implementation; next step is draft PR only. D1 full import and dictionary overlay work remain out of scope. |
+| Current status | Draft PR #13 is open and draft. Local UI branch implementation validated: bottom nav has 5 tabs, EJU and existing vocab/profile flows remain reachable, construction entries are clearly marked and toast-only, browser console errors `0`. |
+| Current blocker | None for local UI implementation; next step is user review. D1 full import and dictionary overlay work remain out of scope. |
 
 ## 3. Cloudflare 状态
 
@@ -168,3 +169,4 @@ Update triggers:
 | 2026-06-22 00:26 JST | PR #6 merged to `main` with merge commit `c94735925798c604321631e1caa36c2f2c3190be`; automatic Production deployment `9ee954f2` Active at source `c947359`; Production smoke failed R2/count requirement because lookup still uses fallback and `食べられる` count is `0`; no manual Cloudflare settings change, no R2/D1 write, no D1 full import, no `RIKA_PLAN.md` touch, billing prompt seen: no. |
 | 2026-06-22 01:04 JST | Production R2/D1 binding/runtime fix completed: Cloudflare Pages production config now has `DICTIONARY_R2` -> `baina-dictionary-artifacts` and `DICTIONARY_DB` -> `baina-dictionary`; runtime-fix deployment `fe86990e` and docs-only closeout deployment `7ac71e04` both passed Production smoke with `dictionarySource=r2-shard`, `食べられる` count `1`, required terms `aiCalled=false`; no R2/D1 data write, no D1 full import, no `RIKA_PLAN.md` touch, billing prompt seen: no. |
 | 2026-06-23 21:11 JST | Issue #11 post-login nav IA implementation committed on `feat/post-login-nav-restructure` from `main` at `ebc3203`; `RIKA_PLAN.md` moved out of repo to Desktop backup before branch work; implementation commit `1f07590`; local UI/browser validation passed; no provider call, R2/D1 write, deploy, Cloudflare config change, or dictionary overlay artifact change. |
+| 2026-06-23 21:15 JST | Branch `feat/post-login-nav-restructure` pushed and draft PR #13 created: `https://github.com/domin132012-hash/baina-tango/pull/13`; PR is OPEN and draft; no mark-ready, merge, deploy, provider call, R2/D1 write, or Cloudflare config change. |

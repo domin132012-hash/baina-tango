@@ -6,7 +6,7 @@
 > ✅ EJU 記述作文批改 PR #2 已在用户完成真实 Preview 验收后合并并部署 Production。
 > ✅ 词典优先查词 PR #4 已合并并部署 Production；当前仍是 JMdict 小样本 MVP。
 > ✅ PR #6 已按用户显式批准 merge 到 `main`，merge commit `c94735925798c604321631e1caa36c2f2c3190be`。Production R2/D1 binding/runtime fix 已完成：Cloudflare Production Pages config 已绑定 `DICTIONARY_R2` 和 `DICTIONARY_DB`，canonical Production lookup 返回 `dictionarySource=r2-shard`，`食べられる` count `1`，全部 required terms `aiCalled=false`。D1 full import 仍禁止，除非另有 cost-safe plan。
-> 🟡 登录后主界面五栏导航重构已在 UI 专用分支 `feat/post-login-nav-restructure` 完成本地实现和验证：底部为 `学习 / 词库 / 首页 / 社区 / 我的`，未上线入口统一显示 `建设中`。本任务未触碰词典 overlay PR #12、R2/D1、Cloudflare 配置或任何外部 AI provider；draft PR 待创建/保持 draft。
+> 🟡 登录后主界面五栏导航重构已在 UI 专用分支 `feat/post-login-nav-restructure` 完成本地实现和验证：底部为 `学习 / 词库 / 首页 / 社区 / 我的`，未上线入口统一显示 `建设中`。Draft PR #13 已创建并保持 draft。本任务未触碰词典 overlay PR #12、R2/D1、Cloudflare 配置或任何外部 AI provider。
 
 ## 最近完成（EJU 記述作文批改）— 2026-06-17
 
@@ -64,7 +64,7 @@ PR #2 `feat(eju-essay): add EJU writing critique integration` 已从 draft 改 r
 | 完整 JMdict R2 sharded lookup | ✅ Production active | 官方 JMdict `2026-06-18` 已生成并上传 R2 shards：512 shard objects，约 `632,040,903` bytes，active version `jmdict-english-r2-shards-2026-06-18`。D1 `baina-dictionary` 只写入 metadata schema 和 active version，不做 full import。Production Pages config 已绑定 `DICTIONARY_R2` -> `baina-dictionary-artifacts`、`DICTIONARY_DB` -> `baina-dictionary`；canonical Production `/api/dictionary/lookup?q=食べられる` 返回 `dictionarySource=r2-shard`、count `1`，全部要求测试词 `aiCalled=false`。不得提交完整 JMdict/XML/大型 JSON/SQLite/DB artifact，不做 AI 词条生成或翻译；D1 full import 仍禁止，除非另有 cost-safe plan。 |
 | 代理 closeout 回写机制 | ✅ 已制度化 | 新增 `docs/ops/AGENT_CLOSEOUT_CHECKLIST.md`，并要求所有时间使用 JST、收尾必须 commit + push + 远端校验 |
 | Cloudflare 通知配置 | ✅ 线上配置已解决（用户确认） | 本轮未处理通知系统 |
-| 登录后五栏导航 IA | 🟡 Draft PR 准备中 | 分支 `feat/post-login-nav-restructure`；实现 commit `1f0759015a701c38c20f0bca8a38e02870b07abd`；新增 `docs/design/post-login-nav-restructure.md` 和 `docs/review/post-login-nav-restructure-validation-log.md`；本地浏览器验证通过，未部署 |
+| 登录后五栏导航 IA | 🟡 Draft PR #13 | 分支 `feat/post-login-nav-restructure`；PR `https://github.com/domin132012-hash/baina-tango/pull/13` 保持 draft/open；实现 commit `1f0759015a701c38c20f0bca8a38e02870b07abd`；新增 `docs/design/post-login-nav-restructure.md` 和 `docs/review/post-login-nav-restructure-validation-log.md`；本地浏览器验证通过，未部署 |
 | 未部署年份灰色建设中 UI | 📝 待做 | 可后续让 Codex 做，但避免与 Claude 同时改 `assets/eju.js` 撞车 |
 
 ---
