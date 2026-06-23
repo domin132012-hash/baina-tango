@@ -4,7 +4,7 @@
 > do not recheck Supabase / Stripe unless the task touches them, a related fault appears, or the recorded status is older than 30 days and the task depends on that platform.
 > Never record API keys, service role keys, JWT secrets, session tokens, customer data, payment records, card data, or raw secret values.
 
-Last updated: 2026-06-23 13:41:22 JST by Codex
+Last updated: 2026-06-23 14:00:31 JST by Codex
 
 ## 1. 当前锁定状态
 
@@ -33,16 +33,16 @@ Last updated: 2026-06-23 13:41:22 JST by Codex
 | Phase 2 PR | `https://github.com/domin132012-hash/baina-tango/pull/6` merged |
 | Latest relevant commit | Phase A start commit `42f936cc07ad4897b4dfe0b739a39fd580761df7`; final Phase A branch head recorded in PR #10 / Issue #9 comments after closeout push |
 | PR #2 | `MERGED`; merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` |
-| This task | Issue #11 / PR #12 Top 500 local artifacts only; DeepSeek offline batch retry succeeded; no R2/D1 write, no deploy, no overlay activation |
+| This task | Issue #11 / PR #12 reviewed-r1 ChatGPT corrections generated locally; no R2/D1 write, no deploy, no overlay activation |
 | Dictionary plan commit | `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main` |
 | External services touched - GitHub | PR #12 branch push after local validation; PR kept draft/open/unmerged. |
 | External services touched - Cloudflare | No settings change; no Preview deploy; no Production change; no R2/D1 data write. Earlier Preview/Production binding ambiguity remains a blocker for any Cloudflare write. |
 | External services touched - Google Cloud Translation | Official Translation API called offline for Top 100 Phase A only; `7,382` input chars; no runtime Google calls |
 | External services touched - Supabase | Not touched |
 | External services touched - Stripe | Not touched |
-| External services touched - DeepSeek | No new DeepSeek call in this packet-generation task; existing Top 500 retry usage remains the prior recorded provider event. |
-| Current status | Top 500 temporary ChatGPT review packet generated under `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/`: entries `500`, senses `841`, chunks `10`, P0/P1/P2 `84/335/422`, needs_human_review `46`, confidence=low `4`, shouldDisplay risk `28`, usageNote risk `158`, specialized visible `28`. It is review-only, not production overlay, not uploaded to R2/D1, not deployed, not activated. |
-| Current blocker | ChatGPT/reviewer still needs to review the Top 500 packet before any reviewed correction patch. Any R2/D1 write, upload, deploy, overlay activation, PR ready transition, or merge still requires separate explicit approval. PR #12 must remain draft/open/unmerged until explicitly advanced. |
+| External services touched - DeepSeek | No new DeepSeek call in this reviewed-r1 correction task; existing Top 500 retry usage remains the prior recorded provider event. |
+| Current status | ChatGPT Round 1 reviewed-r1 artifacts generated locally: correction patch `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round1-corrections.json`, candidate `docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r1.json`, package `docs/review/jmdict-zh-deepseek-pilot-500-local-package-reviewed-r1/`. Counts: entries `500`, senses `841`, corrections `21`, false->true `9`, true->false `4`, gloss-only `8`, no action `19`, shouldDisplay true/false `762/79`, needs_human_review `30`, checksum `220e8a1276befa5524c51cb5dee9c2ff9b3713678d5fc19b683036a553b9d1d7`. Review-only, not production overlay, not uploaded to R2/D1, not deployed, not activated. |
+| Current blocker | reviewed-r1 still needs further ChatGPT/reviewer review for P1 usageNote and high-frequency sampling before any activation decision. Any R2/D1 write, upload, deploy, overlay activation, PR ready transition, or merge still requires separate explicit approval. PR #12 must remain draft/open/unmerged until explicitly advanced. |
 
 ## 3. Cloudflare 状态
 

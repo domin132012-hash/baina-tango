@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "overlayVersion": "jmdict-zh-deepseek-pilot-500-reviewed-r1-20260623",
+  "status": "local_review_only_not_active",
+  "generatedAt": "2026-06-23T05:00:31.662Z",
+  "source": {
+    "reviewFile": "docs/review/jmdict-zh-deepseek-pilot-500-review-corrected.md",
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "reviewStatus": "chatgpt_reviewed_round1_candidate",
+    "sourceCandidate": "docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate.json",
+    "reviewPacket": "docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/",
+    "reviewDoc": "docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round1.md",
+    "correctionPatch": "docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round1-corrections.json",
+    "reviewer": "ChatGPT",
+    "scope": "round1 obvious corrections only"
+  },
+  "safety": {
+    "runtimeAiCalls": 0,
+    "googleTranslateCalls": 0,
+    "r2Writes": 0,
+    "d1Writes": 0,
+    "previewDeploy": false,
+    "productionDeploy": false,
+    "overlayActive": false
+  },
+  "counts": {
+    "entries": 500,
+    "senses": 841,
+    "shouldDisplayTrue": 762,
+    "shouldDisplayFalse": 79,
+    "humanCorrected": 21,
+    "aiGeneratedUnreviewed": 820,
+    "chatgptReviewed": 21,
+    "changedSenses": 21,
+    "needsHumanReview": 30,
+    "confidenceLow": 3
+  },
+  "changedTargets": [
+    "jmdict-1002500:1",
+    "jmdict-1002590:2",
+    "jmdict-1002590:3",
+    "jmdict-1002650:2",
+    "jmdict-1002650:3",
+    "jmdict-1009290:2",
+    "jmdict-1077750:4",
+    "jmdict-1150070:1",
+    "jmdict-1153740:3",
+    "jmdict-1154830:2",
+    "jmdict-1158960:1",
+    "jmdict-1159770:1",
+    "jmdict-1159810:1",
+    "jmdict-1159880:1",
+    "jmdict-1159920:1",
+    "jmdict-1160030:1",
+    "jmdict-1160040:1",
+    "jmdict-1160110:1",
+    "jmdict-1160140:1",
+    "jmdict-1387990:2",
+    "jmdict-1512670:3"
+  ],
+  "shardStrategy": "fnv1a-entryId-low-4-bit-local-preview",
+  "shardIndex": [
+    {
+      "shardKey": "0",
+      "path": "shards/0.json",
+      "entries": 30,
+      "bytes": 23161,
+      "sha256": "298ee8b9bca8e3e461d344f9106a3e1a3440eb45d24a2c680ecded6e990657d6"
+    },
+    {
+      "shardKey": "1",
+      "path": "shards/1.json",
+      "entries": 20,
+      "bytes": 16704,
+      "sha256": "fc8ad6893e205a5369db450f71847ff0532f65482861f860c7fb6669d4042e47"
+    },
+    {
+      "shardKey": "2",
+      "path": "shards/2.json",
+      "entries": 35,
+      "bytes": 30030,
+      "sha256": "2c5ba019a4da5e4ec8cdf12bd864e2bf38289af64b68b211d03dd49769a3fdf0"
+    },
+    {
+      "shardKey": "3",
+      "path": "shards/3.json",
+      "entries": 24,
+      "bytes": 17460,
+      "sha256": "6b49d62daaa2fa334abb3dfd5e02264fc5adce3814a1c52dee500d4d16a80df0"
+    },
+    {
+      "shardKey": "4",
+      "path": "shards/4.json",
+      "entries": 35,
+      "bytes": 28188,
+      "sha256": "7cae1d1ac173152efcfa9ecc06b0e05e19d2e454ee099668637f91a7c9c2e4a8"
+    },
+    {
+      "shardKey": "5",
+      "path": "shards/5.json",
+      "entries": 29,
+      "bytes": 23277,
+      "sha256": "4b13f20ab76ed5f6f06e591ec775ab42b86fd9a93c46ad564026b52497afa60b"
+    },
+    {
+      "shardKey": "6",
+      "path": "shards/6.json",
+      "entries": 39,
+      "bytes": 31276,
+      "sha256": "1bf27013ccc18e132ae9ebfe524f837dd7864ad0a81f0272c45dcb81af52b0b3"
+    },
+    {
+      "shardKey": "7",
+      "path": "shards/7.json",
+      "entries": 34,
+      "bytes": 25145,
+      "sha256": "77a0530b293a4d6e9b8a2e9d3f2f8cbba87d5834b9cab3e468bf0206f96f81ca"
+    },
+    {
+      "shardKey": "8",
+      "path": "shards/8.json",
+      "entries": 29,
+      "bytes": 27657,
+      "sha256": "49b405eccff01e22c584654b3b8d4a8603399565dde2eda64f5c0c33ce71faf0"
+    },
+    {
+      "shardKey": "9",
+      "path": "shards/9.json",
+      "entries": 31,
+      "bytes": 21650,
+      "sha256": "785212e4ac528be74ecc5bcb9c7578119266203e12c3e32ee6e42e90e6b324c3"
+    },
+    {
+      "shardKey": "a",
+      "path": "shards/a.json",
+      "entries": 39,
+      "bytes": 30209,
+      "sha256": "2451702f373e49c7c0d15aa029824fad2fd057cd0205c38ceeb2282566f10c34"
+    },
+    {
+      "shardKey": "b",
+      "path": "shards/b.json",
+      "entries": 31,
+      "bytes": 25355,
+      "sha256": "f35db84f4d80b06570c86ca249bb3813cbe4373675e6716bc1d45a96444e4848"
+    },
+    {
+      "shardKey": "c",
+      "path": "shards/c.json",
+      "entries": 36,
+      "bytes": 29727,
+      "sha256": "a847e11afb761e54f54f72a0ce456ca65a0d7baa03918f65b9399708bafe46ff"
+    },
+    {
+      "shardKey": "d",
+      "path": "shards/d.json",
+      "entries": 24,
+      "bytes": 16961,
+      "sha256": "4e99606bdb321dab003e8487d38a721eee575158471e233de0b72bf0236f23d2"
+    },
+    {
+      "shardKey": "e",
+      "path": "shards/e.json",
+      "entries": 27,
+      "bytes": 20360,
+      "sha256": "be7765a71b8d7a49af9eb3bf55454b72218763dd62ca99f3c58820f31ecdd993"
+    },
+    {
+      "shardKey": "f",
+      "path": "shards/f.json",
+      "entries": 37,
+      "bytes": 26817,
+      "sha256": "7c31bb8edf054f9eae6df37f80b0f5e6d7673627094ffd20b7ba3418226dadf0"
+    }
+  ],
+  "notice": "This reviewed-r1 local package is not active and must not be uploaded to R2/D1 without separate approval."
+}

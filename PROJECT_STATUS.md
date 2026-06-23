@@ -100,3 +100,16 @@ PR #2 `feat(eju-essay): add EJU writing critique integration` 已从 draft 改 r
 - Remaining risks: machine heuristics are not human review; ChatGPT/reviewer must inspect P0/P1 before any correction patch or activation.
 - Remaining cost risks: none for this docs-only packet; future provider/R2/D1/deploy work requires separate approval.
 - Next step: ChatGPT review of Top 500 packet, then generate a reviewed correction patch in a later turn.
+
+### 2026-06-23 14:00:31 JST - PR #12 ChatGPT review round1 corrections
+
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `0bb3c278d87d4fabd1066c063f10b81adf6aa68d`
+- End commit: final PR branch head verified after push; exact commit reported in final closeout
+- Files changed: `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round1.md`, `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round1-corrections.json`, `docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r1.json`, `docs/review/jmdict-zh-deepseek-pilot-500-local-package-reviewed-r1/`, plus status docs
+- External services touched: GitHub only after push; DeepSeek no; Google Translate no; Runtime AI calls 0; R2/D1 writes 0; Preview deploy no; Production deploy no
+- Validation completed by generation script: entries/senses unchanged (500/841), changed sense count 21, changed targets matched corrections exactly, checksum 220e8a1276befa5524c51cb5dee9c2ff9b3713678d5fc19b683036a553b9d1d7
+- reviewed-r1 stats: shouldDisplay true/false 762/79, needs_human_review 30, chatgpt_reviewed 21
+- Remaining risks: Round 1 is obvious-corrections only; P1 usageNote and high-frequency sampling remain before any activation.
+- Remaining cost risks: none for this docs-only/local-package task; any provider/R2/D1/deploy work requires separate approval.
+- Next step: continue ChatGPT review of P1 usageNote and ordinary high-frequency samples, then generate reviewed-r2 if needed.
