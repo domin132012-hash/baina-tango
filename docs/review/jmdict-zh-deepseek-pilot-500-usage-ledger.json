@@ -1,0 +1,209 @@
+{
+  "type": "jmdict-zh-deepseek-pilot-500-usage-ledger",
+  "generatedAt": "2026-06-23T04:23:13.167Z",
+  "timestamp": "2026-06-23T04:23:13.167Z",
+  "provider": "deepseek",
+  "model": "deepseek-v4-flash",
+  "entriesRequested": 500,
+  "selectedEntries": 500,
+  "sensesRequested": 841,
+  "generatedEntries": 500,
+  "generatedSenses": 841,
+  "normalizationCount": 0,
+  "normalizations": [],
+  "estimatedInputTokens": 139905,
+  "estimatedOutputTokens": 116715,
+  "estimatedTotalTokens": 256620,
+  "actualInputTokens": 144483,
+  "actualOutputTokens": 112063,
+  "actualTotalTokens": 256546,
+  "estimatedCostUsd": null,
+  "estimatedCostNote": "not_estimated_provider_pricing_not_configured",
+  "actualCostUsd": null,
+  "actualCostNote": "not_estimated_provider_pricing_not_configured",
+  "requestCount": 25,
+  "providerRequests": [
+    {
+      "index": 1,
+      "entries": 20,
+      "senses": 53,
+      "estimatedInputTokens": 7139,
+      "estimatedOutputTokens": 6895
+    },
+    {
+      "index": 2,
+      "entries": 20,
+      "senses": 28,
+      "estimatedInputTokens": 4977,
+      "estimatedOutputTokens": 4020
+    },
+    {
+      "index": 3,
+      "entries": 20,
+      "senses": 30,
+      "estimatedInputTokens": 4996,
+      "estimatedOutputTokens": 4250
+    },
+    {
+      "index": 4,
+      "entries": 20,
+      "senses": 44,
+      "estimatedInputTokens": 6329,
+      "estimatedOutputTokens": 5860
+    },
+    {
+      "index": 5,
+      "entries": 20,
+      "senses": 45,
+      "estimatedInputTokens": 6703,
+      "estimatedOutputTokens": 5975
+    },
+    {
+      "index": 6,
+      "entries": 20,
+      "senses": 33,
+      "estimatedInputTokens": 5512,
+      "estimatedOutputTokens": 4595
+    },
+    {
+      "index": 7,
+      "entries": 20,
+      "senses": 37,
+      "estimatedInputTokens": 5748,
+      "estimatedOutputTokens": 5055
+    },
+    {
+      "index": 8,
+      "entries": 20,
+      "senses": 34,
+      "estimatedInputTokens": 5508,
+      "estimatedOutputTokens": 4710
+    },
+    {
+      "index": 9,
+      "entries": 20,
+      "senses": 26,
+      "estimatedInputTokens": 5080,
+      "estimatedOutputTokens": 3790
+    },
+    {
+      "index": 10,
+      "entries": 20,
+      "senses": 33,
+      "estimatedInputTokens": 5606,
+      "estimatedOutputTokens": 4595
+    },
+    {
+      "index": 11,
+      "entries": 20,
+      "senses": 35,
+      "estimatedInputTokens": 5618,
+      "estimatedOutputTokens": 4825
+    },
+    {
+      "index": 12,
+      "entries": 20,
+      "senses": 32,
+      "estimatedInputTokens": 5432,
+      "estimatedOutputTokens": 4480
+    },
+    {
+      "index": 13,
+      "entries": 20,
+      "senses": 28,
+      "estimatedInputTokens": 5079,
+      "estimatedOutputTokens": 4020
+    },
+    {
+      "index": 14,
+      "entries": 20,
+      "senses": 38,
+      "estimatedInputTokens": 6236,
+      "estimatedOutputTokens": 5170
+    },
+    {
+      "index": 15,
+      "entries": 20,
+      "senses": 30,
+      "estimatedInputTokens": 5682,
+      "estimatedOutputTokens": 4250
+    },
+    {
+      "index": 16,
+      "entries": 20,
+      "senses": 40,
+      "estimatedInputTokens": 6024,
+      "estimatedOutputTokens": 5400
+    },
+    {
+      "index": 17,
+      "entries": 20,
+      "senses": 27,
+      "estimatedInputTokens": 5173,
+      "estimatedOutputTokens": 3905
+    },
+    {
+      "index": 18,
+      "entries": 20,
+      "senses": 26,
+      "estimatedInputTokens": 5236,
+      "estimatedOutputTokens": 3790
+    },
+    {
+      "index": 19,
+      "entries": 20,
+      "senses": 29,
+      "estimatedInputTokens": 5190,
+      "estimatedOutputTokens": 4135
+    },
+    {
+      "index": 20,
+      "entries": 20,
+      "senses": 32,
+      "estimatedInputTokens": 6065,
+      "estimatedOutputTokens": 4480
+    },
+    {
+      "index": 21,
+      "entries": 20,
+      "senses": 33,
+      "estimatedInputTokens": 5428,
+      "estimatedOutputTokens": 4595
+    },
+    {
+      "index": 22,
+      "entries": 20,
+      "senses": 25,
+      "estimatedInputTokens": 4607,
+      "estimatedOutputTokens": 3675
+    },
+    {
+      "index": 23,
+      "entries": 20,
+      "senses": 27,
+      "estimatedInputTokens": 4955,
+      "estimatedOutputTokens": 3905
+    },
+    {
+      "index": 24,
+      "entries": 20,
+      "senses": 36,
+      "estimatedInputTokens": 5650,
+      "estimatedOutputTokens": 4940
+    },
+    {
+      "index": 25,
+      "entries": 20,
+      "senses": 40,
+      "estimatedInputTokens": 5932,
+      "estimatedOutputTokens": 5400
+    }
+  ],
+  "providerCalled": true,
+  "providerRunStatus": "succeeded",
+  "failedRequestCount": 0,
+  "runtimeAiCalls": false,
+  "r2D1Writes": false,
+  "productionChanged": false,
+  "billingPromptSeen": false
+}

@@ -1,0 +1,220 @@
+{
+  "schemaVersion": 1,
+  "overlayVersion": "jmdict-zh-deepseek-pilot-500-reviewed-r2-20260623",
+  "status": "local_review_only_not_active",
+  "generatedAt": "2026-06-23T10:28:23.200Z",
+  "source": {
+    "reviewFile": "docs/review/jmdict-zh-deepseek-pilot-500-review-corrected.md",
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "reviewStatus": "chatgpt_reviewed_round2_candidate",
+    "sourceCandidate": "docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r1.json",
+    "reviewPacket": "docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/",
+    "reviewDoc": "docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round2.md",
+    "correctionPatch": "docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round2-corrections.json",
+    "reviewer": "ChatGPT",
+    "scope": "round2 usageNote and common-expression cleanup only"
+  },
+  "safety": {
+    "runtimeAiCalls": 0,
+    "googleTranslateCalls": 0,
+    "r2Writes": 0,
+    "d1Writes": 0,
+    "previewDeploy": false,
+    "productionDeploy": false,
+    "overlayActive": false
+  },
+  "counts": {
+    "entries": 500,
+    "senses": 841,
+    "shouldDisplayTrue": 761,
+    "shouldDisplayFalse": 80,
+    "humanCorrected": 37,
+    "aiGeneratedUnreviewed": 804,
+    "chatgptReviewed": 37,
+    "changedSenses": 16,
+    "round2ChangedSenses": 16,
+    "cumulativeChangedSenses": 37,
+    "needsHumanReview": 28,
+    "confidenceLow": 3
+  },
+  "changedTargets": [
+    "jmdict-1000620:1",
+    "jmdict-1001390:1",
+    "jmdict-1001730:1",
+    "jmdict-1001890:1",
+    "jmdict-1002050:1",
+    "jmdict-1002110:1",
+    "jmdict-1002170:2",
+    "jmdict-1002330:2",
+    "jmdict-1002400:2",
+    "jmdict-1002570:2",
+    "jmdict-1002750:1",
+    "jmdict-1002790:1",
+    "jmdict-1003660:1",
+    "jmdict-1003710:2",
+    "jmdict-1004040:3",
+    "jmdict-1004310:3"
+  ],
+  "cumulativeChangedTargets": [
+    "jmdict-1002500:1",
+    "jmdict-1002590:2",
+    "jmdict-1002590:3",
+    "jmdict-1002650:2",
+    "jmdict-1002650:3",
+    "jmdict-1009290:2",
+    "jmdict-1077750:4",
+    "jmdict-1150070:1",
+    "jmdict-1153740:3",
+    "jmdict-1154830:2",
+    "jmdict-1158960:1",
+    "jmdict-1159770:1",
+    "jmdict-1159810:1",
+    "jmdict-1159880:1",
+    "jmdict-1159920:1",
+    "jmdict-1160030:1",
+    "jmdict-1160040:1",
+    "jmdict-1160110:1",
+    "jmdict-1160140:1",
+    "jmdict-1387990:2",
+    "jmdict-1512670:3",
+    "jmdict-1000620:1",
+    "jmdict-1001390:1",
+    "jmdict-1001730:1",
+    "jmdict-1001890:1",
+    "jmdict-1002050:1",
+    "jmdict-1002110:1",
+    "jmdict-1002170:2",
+    "jmdict-1002330:2",
+    "jmdict-1002400:2",
+    "jmdict-1002570:2",
+    "jmdict-1002750:1",
+    "jmdict-1002790:1",
+    "jmdict-1003660:1",
+    "jmdict-1003710:2",
+    "jmdict-1004040:3",
+    "jmdict-1004310:3"
+  ],
+  "categories": {
+    "shouldDisplayFalseToTrue": 0,
+    "shouldDisplayTrueToFalse": 1,
+    "glossShortGlossUsageNoteOnly": 15
+  },
+  "noActionCount": 19,
+  "shardStrategy": "fnv1a-entryId-low-4-bit-local-preview",
+  "shardIndex": [
+    {
+      "shardKey": "0",
+      "path": "shards/0.json",
+      "entries": 30,
+      "bytes": 23175,
+      "sha256": "d28ebaa7878aa574497cae8d1ded61385b00d202a2f886fcd70708aec69f85c9"
+    },
+    {
+      "shardKey": "1",
+      "path": "shards/1.json",
+      "entries": 20,
+      "bytes": 16632,
+      "sha256": "e2f6cde4cadf5fac8c4d0a5b15fea62e37620658fbc7ea60144d8f232e12d047"
+    },
+    {
+      "shardKey": "2",
+      "path": "shards/2.json",
+      "entries": 35,
+      "bytes": 29982,
+      "sha256": "a23ff2300694e4d463dc8e352990a50d8d3a6cb06f8d4efe9230e8be23127ae7"
+    },
+    {
+      "shardKey": "3",
+      "path": "shards/3.json",
+      "entries": 24,
+      "bytes": 17460,
+      "sha256": "b9c40bc166b8f988dc2c7c3dc7eea2f87012df7e94d61768fd43d6b25a9456aa"
+    },
+    {
+      "shardKey": "4",
+      "path": "shards/4.json",
+      "entries": 35,
+      "bytes": 28151,
+      "sha256": "43d8abd1be2809c038e7ea7e65ea8f51c40714c2947e51f8c2e215595c77d52f"
+    },
+    {
+      "shardKey": "5",
+      "path": "shards/5.json",
+      "entries": 29,
+      "bytes": 23237,
+      "sha256": "84ca264598c29b6b69bb70ea800cf1d23533d36d6df3677bb4ee4c564ff11e11"
+    },
+    {
+      "shardKey": "6",
+      "path": "shards/6.json",
+      "entries": 39,
+      "bytes": 31276,
+      "sha256": "5b5027a0329f0bcfb59279f21bf6c11062c9d29492e495caf1331400705ccdb6"
+    },
+    {
+      "shardKey": "7",
+      "path": "shards/7.json",
+      "entries": 34,
+      "bytes": 25145,
+      "sha256": "1cf0a3adad4ad55821ef2f3dbd787d986a8474ee418862d5bb82a3d53608fe59"
+    },
+    {
+      "shardKey": "8",
+      "path": "shards/8.json",
+      "entries": 29,
+      "bytes": 27656,
+      "sha256": "717dd605c5f705e1fa3f87f71419c1637278f20636a877f081c2a2519e40866c"
+    },
+    {
+      "shardKey": "9",
+      "path": "shards/9.json",
+      "entries": 31,
+      "bytes": 21650,
+      "sha256": "3e0d471f965ebe7055ab9098b25da89185a83b3f97251e750bfb51cdda12bc56"
+    },
+    {
+      "shardKey": "a",
+      "path": "shards/a.json",
+      "entries": 39,
+      "bytes": 30171,
+      "sha256": "de5de0d3be8b20c61badb985ccede86703918fc9932cd56d4ca5bf81a3b62f19"
+    },
+    {
+      "shardKey": "b",
+      "path": "shards/b.json",
+      "entries": 31,
+      "bytes": 25355,
+      "sha256": "4adf44ce4d2342f0ec48d77a19c8505116c8791c05983700086ce1655041342b"
+    },
+    {
+      "shardKey": "c",
+      "path": "shards/c.json",
+      "entries": 36,
+      "bytes": 29688,
+      "sha256": "49876d7141502db0b3d71af7752671302ca7d21fc4dfec1efcbaf0f51eb94add"
+    },
+    {
+      "shardKey": "d",
+      "path": "shards/d.json",
+      "entries": 24,
+      "bytes": 16942,
+      "sha256": "24ee55a6b4319c520f2d462e6fb94f99f8e0e7d5274191057095ed9114e3e148"
+    },
+    {
+      "shardKey": "e",
+      "path": "shards/e.json",
+      "entries": 27,
+      "bytes": 20360,
+      "sha256": "a4cb026d77fc0cdec8b59d2a573e7b33a08ba59c98884d1aa600e5f28124208c"
+    },
+    {
+      "shardKey": "f",
+      "path": "shards/f.json",
+      "entries": 37,
+      "bytes": 26805,
+      "sha256": "56fe6c2d4fa69286c7c3f55823369694fbac96587fc4dfc4458490ed1bc7aad3"
+    }
+  ],
+  "notice": "This reviewed-r2 local package is not active and must not be uploaded to R2/D1 without separate approval."
+}

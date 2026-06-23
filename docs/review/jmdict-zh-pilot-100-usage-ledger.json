@@ -1,0 +1,38 @@
+{
+  "type": "jmdict-zh-pilot-100-usage-ledger",
+  "generatedAt": "2026-06-22T03:50:45.582Z",
+  "provider": "google_cloud_translate",
+  "targetLanguage": "zh-CN",
+  "inputPath": "docs/dictionary/zh-overlay-pilot-100/translation-input.json",
+  "reviewOut": "docs/review/jmdict-zh-pilot-100-review.md",
+  "entries": 100,
+  "translatedEntries": 100,
+  "translatedSenses": 209,
+  "estimatedChars": 7382,
+  "actualChars": 7382,
+  "maxEntries": 100,
+  "maxChars": 10000,
+  "approvalFlag": "YES_TOP_100_ONLY",
+  "providerRequests": [
+    {
+      "index": 1,
+      "items": 100,
+      "chars": 3623
+    },
+    {
+      "index": 2,
+      "items": 100,
+      "chars": 3534
+    },
+    {
+      "index": 3,
+      "items": 9,
+      "chars": 225
+    }
+  ],
+  "runtimeGoogleCalls": false,
+  "runtimeOverlayActive": false,
+  "productionChanged": false,
+  "billingPromptSeen": false,
+  "reviewArtifactBytes": 46686
+}

@@ -1,0 +1,1207 @@
+# ChatGPT Review Round 3 - Needs Human Review Packet
+
+Round 3 target:
+- reviewed-r2 remaining needs_human_review count: 28
+- extracted count: 28
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+- this file is review input only: yes
+- no provider calls: yes
+- no R2/D1: yes
+- no deployment: yes
+- no candidate mutation: yes
+
+This packet extracts only senses whose current reviewed-r2 `issueFlags` include `needs_human_review`. The reviewed-r2 candidate does not carry a separate boolean field, so `needs_human_review: true` below is derived from that flag. No reviewed-r3 candidate or reviewed-r3 local package was generated.
+
+riskType counts:
+- archaic: 3
+- specialized: 25
+- religion: 7
+- legal: 3
+- medical: 3
+- dialect: 0
+- too_rare: 7
+- abbreviation: 2
+- possible_duplicate_sense: 0
+- possible_bad_gloss: 6
+- should_display_review: 6
+- usage_note_review: 15
+
+likelyAction counts:
+- keep_hidden_remove_needs_human_review: 16
+- keep_hidden_keep_needs_human_review: 1
+- rewrite_gloss_keep_hidden: 1
+- rewrite_gloss_show: 1
+- show_as_common_word: 1
+- mark_unresolved: 8
+
+## 1. jmdict-1387990 先生 sense 3
+
+- entryId: jmdict-1387990
+- written: 先生
+- reading: せんせい
+- senseIndex: 3
+- pos:
+  - noun (common) (futsuumeishi)
+- original English glosses:
+  - intimate or teasing form of address
+- zhGlosses:
+  - （亲密或戏谑的称呼）
+- shortGloss: 亲密称呼
+- usageNote: 多用于调侃或亲密关系
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, too_rare, should_display_review, usage_note_review
+- likelyAction: mark_unresolved
+- reason: This may be common enough or context-dependent enough to need reviewer judgment on default display.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 2. jmdict-1387990 先生 sense 4
+
+- entryId: jmdict-1387990
+- written: 先生
+- reading: せんせい
+- senseIndex: 4
+- pos:
+  - noun (common) (futsuumeishi)
+- original English glosses:
+  - one's elder
+- zhGlosses:
+  - 前辈
+  - 长者
+- shortGloss: 长辈
+- usageNote:
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - too_rare
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: too_rare, should_display_review, usage_note_review
+- likelyAction: mark_unresolved
+- reason: This may be common enough or context-dependent enough to need reviewer judgment on default display.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 3. jmdict-1536010 問題 sense 4
+
+- entryId: jmdict-1536010
+- written: 問題
+- reading: もんだい
+- senseIndex: 4
+- pos:
+  - noun (common) (futsuumeishi)
+- original English glosses:
+  - public discussion
+  - controversy
+- zhGlosses:
+  - 争议
+  - 讨论
+- shortGloss: 争议
+- usageNote:
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, should_display_review, usage_note_review
+- likelyAction: mark_unresolved
+- reason: This may be common enough or context-dependent enough to need reviewer judgment on default display.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 4. jmdict-1512670 勉強 sense 4
+
+- entryId: jmdict-1512670
+- written: 勉強
+- reading: べんきょう
+- senseIndex: 4
+- pos:
+  - noun (common) (futsuumeishi)
+  - noun or participle which takes the aux. verb suru
+  - transitive verb
+  - intransitive verb
+- original English glosses:
+  - discount
+  - price reduction
+- zhGlosses:
+  - 打折
+  - 减价
+- shortGloss: 打折
+- usageNote: 商业用语
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, should_display_review
+- likelyAction: rewrite_gloss_show
+- reason: Discount/price-reduction sense may be ordinary enough to show, but wording and default display need review.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 5. jmdict-1456360 読む sense 2
+
+- entryId: jmdict-1456360
+- written: 読む
+- reading: よむ
+- senseIndex: 2
+- pos:
+  - Godan verb with 'mu' ending
+  - transitive verb
+- original English glosses:
+  - to recite (e.g. a sutra)
+  - to chant
+- zhGlosses:
+  - 朗诵
+  - 念诵
+- shortGloss: 朗诵
+- usageNote: 多用于经文等
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, religion, usage_note_review
+- likelyAction: rewrite_gloss_keep_hidden
+- reason: Religious chanting/recitation sense may need clearer wording while likely remaining hidden.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 6. jmdict-1456360 読む sense 6
+
+- entryId: jmdict-1456360
+- written: 読む
+- reading: よむ
+- senseIndex: 6
+- pos:
+  - Godan verb with 'mu' ending
+  - transitive verb
+- original English glosses:
+  - to count
+  - to estimate
+- zhGlosses:
+  - 数
+  - 估算
+- shortGloss: 数
+- usageNote:
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, should_display_review, usage_note_review
+- likelyAction: show_as_common_word
+- reason: Counting/estimating can be a normal extension of 読む and may deserve default display after review.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 7. jmdict-1456360 読む sense 7
+
+- entryId: jmdict-1456360
+- written: 読む
+- reading: よむ
+- senseIndex: 7
+- pos:
+  - Godan verb with 'mu' ending
+  - transitive verb
+- original English glosses:
+  - to read (a kanji) with its native Japanese reading
+- zhGlosses:
+  - 训读
+- shortGloss: 训读
+- usageNote: 语言学用语
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized
+- likelyAction: keep_hidden_remove_needs_human_review
+- reason: Current flags suggest a specialized or rare hidden sense; reviewer should confirm before removing needs_human_review.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 8. jmdict-1000440 あの人 sense 2
+
+- entryId: jmdict-1000440
+- written: あの人
+- reading: あのひと
+- senseIndex: 2
+- pos:
+  - pronoun
+- original English glosses:
+  - you
+- zhGlosses:
+  - 你
+- shortGloss: 你（指对方）
+- usageNote: 有时用于指代对方，略带距离感
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, possible_bad_gloss, should_display_review
+- likelyAction: keep_hidden_keep_needs_human_review
+- reason: Second-person use of あの人 is unusual and may require unresolved reviewer confirmation.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 9. jmdict-1001980 お使い sense 3
+
+- entryId: jmdict-1001980
+- written: お使い
+- reading: おつかい
+- senseIndex: 3
+- pos:
+  - noun (common) (futsuumeishi)
+- original English glosses:
+  - familiar spirit
+- zhGlosses:
+  - 式神
+  - 使魔
+- shortGloss: 式神
+- usageNote: 指被使役的精灵。
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, religion
+- likelyAction: keep_hidden_remove_needs_human_review
+- reason: Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 10. jmdict-1002290 お前 sense 2
+
+- entryId: jmdict-1002290
+- written: お前
+- reading: おまえ
+- senseIndex: 2
+- pos:
+  - noun (common) (futsuumeishi)
+- original English glosses:
+  - before (a god, nobleman, etc.)
+  - in front of
+- zhGlosses:
+  - 面前
+  - 御前
+- shortGloss: 面前
+- usageNote: 古语，指神佛或贵人面前。
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - archaic
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: archaic, religion
+- likelyAction: keep_hidden_remove_needs_human_review
+- reason: Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 11. jmdict-1002500 お土産 sense 3
+
+- entryId: jmdict-1002500
+- written: お土産
+- reading: おみやげ
+- senseIndex: 3
+- pos:
+  - noun (common) (futsuumeishi)
+- original English glosses:
+  - something unpleasant that one is given (e.g. an illness while on vacation)
+  - unwelcome gift
+  - disservice
+- zhGlosses:
+  - 不祥之物
+  - 不愉快的东西
+- shortGloss: 不祥之物
+- usageNote: 比喻在旅行中染上疾病等不愉快的事。
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, too_rare
+- likelyAction: keep_hidden_remove_needs_human_review
+- reason: Current flags suggest a specialized or rare hidden sense; reviewer should confirm before removing needs_human_review.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 12. jmdict-1002530 お凸 sense 2
+
+- entryId: jmdict-1002530
+- written: お凸
+- reading: おでこ
+- senseIndex: 2
+- pos:
+  - noun (common) (futsuumeishi)
+- original English glosses:
+  - prominent forehead
+  - beetle brow
+- zhGlosses:
+  - 凸额头
+  - 额头突出
+- shortGloss: 凸额头
+- usageNote:
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, too_rare, possible_bad_gloss, usage_note_review
+- likelyAction: mark_unresolved
+- reason: Machine triage found a gloss that may be idiomatic, abbreviated, or easy to mistranslate; keep unresolved until reviewer decision.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 13. jmdict-1002530 お凸 sense 3
+
+- entryId: jmdict-1002530
+- written: お凸
+- reading: おでこ
+- senseIndex: 3
+- pos:
+  - noun (common) (futsuumeishi)
+- original English glosses:
+  - not catching anything
+- zhGlosses:
+  - 一无所获
+  - 空手而归
+- shortGloss: 一无所获
+- usageNote: 钓鱼等活动中什么也没钓到。
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, too_rare, possible_bad_gloss
+- likelyAction: mark_unresolved
+- reason: Machine triage found a gloss that may be idiomatic, abbreviated, or easy to mistranslate; keep unresolved until reviewer decision.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 14. jmdict-1002680 お墨付き sense 3
+
+- entryId: jmdict-1002680
+- written: お墨付き
+- reading: おすみつき
+- senseIndex: 3
+- pos:
+  - noun (common) (futsuumeishi)
+- original English glosses:
+  - paper with signature of the shogun or lord
+- zhGlosses:
+  - 将军署名文书
+- shortGloss: 将军署名文书
+- usageNote: 历史用语。
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - archaic
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: archaic, specialized
+- likelyAction: keep_hidden_remove_needs_human_review
+- reason: Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 15. jmdict-1150070 阿弥陀 sense 3
+
+- entryId: jmdict-1150070
+- written: 阿弥陀
+- reading: あみだ
+- senseIndex: 3
+- pos:
+  - noun (common) (futsuumeishi)
+- original English glosses:
+  - wearing a hat pushed back on one's head
+- zhGlosses:
+  - 帽子后戴
+- shortGloss: 帽子后戴
+- usageNote:
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, religion, too_rare, usage_note_review
+- likelyAction: keep_hidden_remove_needs_human_review
+- reason: Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 16. jmdict-1150140 哀れむ sense 2
+
+- entryId: jmdict-1150140
+- written: 哀れむ
+- reading: あわれむ
+- senseIndex: 2
+- pos:
+  - Godan verb with 'mu' ending
+  - transitive verb
+- original English glosses:
+  - to enjoy the beauty of
+  - to appreciate
+  - to admire
+- zhGlosses:
+  - 欣赏
+  - 品味
+- shortGloss: 欣赏
+- usageNote: 古语用法，指欣赏美。
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - archaic
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: archaic
+- likelyAction: keep_hidden_remove_needs_human_review
+- reason: Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 17. jmdict-1150410 愛 sense 2
+
+- entryId: jmdict-1150410
+- written: 愛
+- reading: あい
+- senseIndex: 2
+- pos:
+  - noun (common) (futsuumeishi)
+- original English glosses:
+  - attachment
+  - craving
+  - desire
+- zhGlosses:
+  - 执着
+  - 贪爱
+- shortGloss: 执着
+- usageNote: 佛教用语。
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, religion, usage_note_review
+- likelyAction: keep_hidden_remove_needs_human_review
+- reason: Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 18. jmdict-1150410 愛 sense 3
+
+- entryId: jmdict-1150410
+- written: 愛
+- reading: あい
+- senseIndex: 3
+- pos:
+  - noun (common) (futsuumeishi)
+- original English glosses:
+  - agape
+- zhGlosses:
+  - 神爱
+  - 圣爱
+- shortGloss: 神爱
+- usageNote: 基督教用语。
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, religion
+- likelyAction: keep_hidden_remove_needs_human_review
+- reason: Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 19. jmdict-1150410 愛 sense 4
+
+- entryId: jmdict-1150410
+- written: 愛
+- reading: あい
+- senseIndex: 4
+- pos:
+  - noun (common) (futsuumeishi)
+- original English glosses:
+  - Ireland
+- zhGlosses:
+  - 爱尔兰
+- shortGloss: 爱尔兰
+- usageNote: 缩写，如IRA。
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, abbreviation, possible_bad_gloss
+- likelyAction: mark_unresolved
+- reason: Machine triage found a gloss that may be idiomatic, abbreviated, or easy to mistranslate; keep unresolved until reviewer decision.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 20. jmdict-1150710 愛国 sense 2
+
+- entryId: jmdict-1150710
+- written: 愛国
+- reading: あいこく
+- senseIndex: 2
+- pos:
+  - noun (common) (futsuumeishi)
+- original English glosses:
+  - Ireland
+- zhGlosses:
+  - 爱尔兰
+- shortGloss: 爱尔兰
+- usageNote: 缩写，如IRA。
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, abbreviation, possible_bad_gloss
+- likelyAction: mark_unresolved
+- reason: Machine triage found a gloss that may be idiomatic, abbreviated, or easy to mistranslate; keep unresolved until reviewer decision.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 21. jmdict-1151390 悪意 sense 4
+
+- entryId: jmdict-1151390
+- written: 悪意
+- reading: あくい
+- senseIndex: 4
+- pos:
+  - noun (common) (futsuumeishi)
+- original English glosses:
+  - malice
+- zhGlosses:
+  - 恶意（法律）
+- shortGloss: 恶意（法律）
+- usageNote: 法律术语，与sense3重复
+- shouldDisplay: false
+- confidence: low
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, legal, usage_note_review
+- likelyAction: keep_hidden_remove_needs_human_review
+- reason: Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 22. jmdict-1154910 闇 sense 4
+
+- entryId: jmdict-1154910
+- written: 闇
+- reading: やみ
+- senseIndex: 4
+- pos:
+  - noun (common) (futsuumeishi)
+  - nouns which may take the genitive case particle 'no'
+- original English glosses:
+  - black market
+  - shady trading
+  - underhand transactions
+  - illegal channels
+- zhGlosses:
+  - 黑市；非法交易；暗中交易
+- shortGloss: 黑市；非法
+- usageNote:
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, legal, usage_note_review
+- likelyAction: keep_hidden_remove_needs_human_review
+- reason: Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 23. jmdict-1156630 意思表示 sense 2
+
+- entryId: jmdict-1156630
+- written: 意思表示
+- reading: いしひょうじ
+- senseIndex: 2
+- pos:
+  - noun (common) (futsuumeishi)
+  - noun or participle which takes the aux. verb suru
+- original English glosses:
+  - declaration of intent
+- zhGlosses:
+  - 意向声明
+  - 意思表示
+- shortGloss: 意向声明
+- usageNote: 法律术语，普通日语学习默认不展示。
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, legal, usage_note_review
+- likelyAction: keep_hidden_remove_needs_human_review
+- reason: Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 24. jmdict-1156640 意識 sense 3
+
+- entryId: jmdict-1156640
+- written: 意識
+- reading: いしき
+- senseIndex: 3
+- pos:
+  - noun (common) (futsuumeishi)
+  - noun or participle which takes the aux. verb suru
+  - transitive verb
+  - intransitive verb
+- original English glosses:
+  - mano-vijnana (mental consciousness, cognizer of sensory information)
+- zhGlosses:
+  - 意识（佛教）
+  - 末那识
+- shortGloss: 意识（佛教）
+- usageNote: 佛教术语，普通日语学习默认不展示。
+- shouldDisplay: false
+- confidence: low
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, religion, usage_note_review
+- likelyAction: keep_hidden_remove_needs_human_review
+- reason: Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 25. jmdict-1159710 医 sense 1
+
+- entryId: jmdict-1159710
+- written: 医
+- reading: い
+- senseIndex: 1
+- pos:
+  - noun (common) (futsuumeishi)
+- original English glosses:
+  - medicine
+  - the healing art
+  - healing
+  - curing
+- zhGlosses:
+  - 医学
+  - 医疗
+- shortGloss: 医学
+- usageNote:
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, medical, usage_note_review
+- likelyAction: keep_hidden_remove_needs_human_review
+- reason: Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 26. jmdict-1159940 医師会 sense 1
+
+- entryId: jmdict-1159940
+- written: 医師会
+- reading: いしかい
+- senseIndex: 1
+- pos:
+  - noun (common) (futsuumeishi)
+- original English glosses:
+  - medical association
+- zhGlosses:
+  - 医师协会
+  - 医学会
+- shortGloss: 医师协会
+- usageNote:
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, medical, usage_note_review
+- likelyAction: keep_hidden_remove_needs_human_review
+- reason: Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 27. jmdict-1160100 医薬 sense 1
+
+- entryId: jmdict-1160100
+- written: 医薬
+- reading: いやく
+- senseIndex: 1
+- pos:
+  - noun (common) (futsuumeishi)
+- original English glosses:
+  - medicine
+  - (pharmaceutical) drug
+  - medical treatment
+- zhGlosses:
+  - 医药
+  - 药品
+  - 医疗
+- shortGloss: 医药
+- usageNote:
+- shouldDisplay: false
+- confidence: medium
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, medical, usage_note_review
+- likelyAction: keep_hidden_remove_needs_human_review
+- reason: Domain/archaic sense appears intentionally hidden; reviewer may remove needs_human_review if wording is acceptable.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:
+
+## 28. jmdict-1161550 一環 sense 2
+
+- entryId: jmdict-1161550
+- written: 一環
+- reading: いっかん
+- senseIndex: 2
+- pos:
+  - nouns which may take the genitive case particle 'no'
+- original English glosses:
+  - monocyclic
+- zhGlosses:
+  - 单环的
+- shortGloss: 单环的
+- usageNote: 化学术语
+- shouldDisplay: false
+- confidence: low
+- issueFlags:
+  - specialized
+  - needs_human_review
+- needs_human_review: true
+- source candidate: docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json
+
+Machine triage:
+- riskType: specialized, too_rare, possible_bad_gloss
+- likelyAction: mark_unresolved
+- reason: Machine triage found a gloss that may be idiomatic, abbreviated, or easy to mistranslate; keep unresolved until reviewer decision.
+
+ChatGPT R3 review:
+- verdict:
+- issue:
+- recommended action:
+- after.zhGlosses:
+- after.shortGloss:
+- after.usageNote:
+- after.shouldDisplay:
+- after.confidence:
+- after.issueFlags:
+- after.needs_human_review:
+- reason:

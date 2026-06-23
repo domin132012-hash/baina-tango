@@ -1,0 +1,855 @@
+{
+  "version": "chatgpt-review-round1",
+  "generatedAt": "2026-06-23T05:00:31.662Z",
+  "sourceCandidate": "docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate.json",
+  "reviewPacket": "docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/",
+  "reviewer": "ChatGPT",
+  "scope": "round1 obvious corrections only",
+  "correctionCount": 21,
+  "categories": {
+    "shouldDisplayFalseToTrue": 9,
+    "shouldDisplayTrueToFalse": 4,
+    "glossShortGlossUsageNoteOnly": 8
+  },
+  "corrections": [
+    {
+      "entryId": "jmdict-1387990",
+      "senseIndex": 2,
+      "action": "replaceSenseOverlayFields",
+      "category": "shouldDisplay false->true",
+      "before": {
+        "zhGlosses": [
+          "先生（对老师、医生、律师等的敬称）"
+        ],
+        "shortGloss": "先生（敬称）",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": {
+        "zhGlosses": [
+          "先生（对老师、医生、律师等的敬称）"
+        ],
+        "shortGloss": "先生（敬称）",
+        "usageNote": "用于老师、医生、律师等称呼，也可接在人名后。",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "先生 as a title for teachers, doctors, lawyers, etc. is useful for ordinary learners."
+    },
+    {
+      "entryId": "jmdict-1158960",
+      "senseIndex": 1,
+      "action": "replaceSenseOverlayFields",
+      "category": "shouldDisplay false->true",
+      "before": {
+        "zhGlosses": [
+          "违法",
+          "非法"
+        ],
+        "shortGloss": "违法",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": {
+        "zhGlosses": [
+          "违法；非法"
+        ],
+        "shortGloss": "违法",
+        "usageNote": "",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "違法 is a common modern word and should not be hidden only because it is legal-domain related."
+    },
+    {
+      "entryId": "jmdict-1159810",
+      "senseIndex": 1,
+      "action": "replaceSenseOverlayFields",
+      "category": "shouldDisplay false->true",
+      "before": {
+        "zhGlosses": [
+          "医学"
+        ],
+        "shortGloss": "医学",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": {
+        "zhGlosses": [
+          "医学"
+        ],
+        "shortGloss": "医学",
+        "usageNote": "",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "医学 is common enough for ordinary learners."
+    },
+    {
+      "entryId": "jmdict-1159880",
+      "senseIndex": 1,
+      "action": "replaceSenseOverlayFields",
+      "category": "shouldDisplay false->true",
+      "before": {
+        "zhGlosses": [
+          "医学院",
+          "医学部"
+        ],
+        "shortGloss": "医学院",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": {
+        "zhGlosses": [
+          "医学部；医学院；医学院系"
+        ],
+        "shortGloss": "医学部",
+        "usageNote": "日本大学中的医学相关学部。",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "医学部 is common in school and university contexts."
+    },
+    {
+      "entryId": "jmdict-1159770",
+      "senseIndex": 1,
+      "action": "replaceSenseOverlayFields",
+      "category": "shouldDisplay false->true",
+      "before": {
+        "zhGlosses": [
+          "医科",
+          "医学"
+        ],
+        "shortGloss": "医科",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": {
+        "zhGlosses": [
+          "医科；医学专业"
+        ],
+        "shortGloss": "医科",
+        "usageNote": "",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "医科 is a common education/medical category word."
+    },
+    {
+      "entryId": "jmdict-1160030",
+      "senseIndex": 1,
+      "action": "replaceSenseOverlayFields",
+      "category": "shouldDisplay false->true",
+      "before": {
+        "zhGlosses": [
+          "医科大学",
+          "医学院"
+        ],
+        "shortGloss": "医科大学",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": {
+        "zhGlosses": [
+          "医科大学；医学院"
+        ],
+        "shortGloss": "医科大学",
+        "usageNote": "「医科大学」的缩略说法。",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "医大 is a common abbreviation for medical university."
+    },
+    {
+      "entryId": "jmdict-1160110",
+      "senseIndex": 1,
+      "action": "replaceSenseOverlayFields",
+      "category": "shouldDisplay false->true",
+      "before": {
+        "zhGlosses": [
+          "医药品",
+          "药品",
+          "药物"
+        ],
+        "shortGloss": "医药品",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": {
+        "zhGlosses": [
+          "药品；医药品；药物"
+        ],
+        "shortGloss": "药品",
+        "usageNote": "",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "医薬品 is common on medicine labels and in daily contexts."
+    },
+    {
+      "entryId": "jmdict-1160140",
+      "senseIndex": 1,
+      "action": "replaceSenseOverlayFields",
+      "category": "shouldDisplay false->true",
+      "before": {
+        "zhGlosses": [
+          "医疗",
+          "治疗"
+        ],
+        "shortGloss": "医疗",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": {
+        "zhGlosses": [
+          "医疗；医疗护理"
+        ],
+        "shortGloss": "医疗",
+        "usageNote": "",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "医療 is a common modern word and should not be hidden only because it is medical-domain related."
+    },
+    {
+      "entryId": "jmdict-1512670",
+      "senseIndex": 3,
+      "action": "replaceSenseOverlayFields",
+      "category": "shouldDisplay false->true",
+      "before": {
+        "zhGlosses": [
+          "经验",
+          "教训"
+        ],
+        "shortGloss": "经验教训",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": {
+        "zhGlosses": [
+          "经验；教训；学习到的东西"
+        ],
+        "shortGloss": "经验教训",
+        "usageNote": "常见于「勉強になる」，表示从中学到东西。",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "勉強になる experience/lesson sense is useful to learners."
+    },
+    {
+      "entryId": "jmdict-1009290",
+      "senseIndex": 2,
+      "action": "replaceSenseOverlayFields",
+      "category": "shouldDisplay true->false",
+      "before": {
+        "zhGlosses": [
+          "喂；那么；来吧"
+        ],
+        "shortGloss": "喂；那么",
+        "usageNote": "感叹词用法，用于引起注意或催促。",
+        "shouldDisplay": true,
+        "confidence": "medium",
+        "issueFlags": [
+          "none"
+        ],
+        "needs_human_review": false
+      },
+      "after": {
+        "zhGlosses": [
+          "喂；那么；来吧"
+        ],
+        "shortGloss": "那么",
+        "usageNote": "较旧或较少见的感叹词用法。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "too_rare"
+        ],
+        "needs_human_review": false
+      },
+      "reason": "Older/interjectional 何れ sense is not suitable for default display."
+    },
+    {
+      "entryId": "jmdict-1077750",
+      "senseIndex": 4,
+      "action": "replaceSenseOverlayFields",
+      "category": "shouldDisplay true->false",
+      "before": {
+        "zhGlosses": [
+          "磨短",
+          "用秃"
+        ],
+        "shortGloss": "磨短",
+        "usageNote": "前缀用法，如ちび鉛筆",
+        "shouldDisplay": true,
+        "confidence": "medium",
+        "issueFlags": [
+          "none"
+        ],
+        "needs_human_review": false
+      },
+      "after": {
+        "zhGlosses": [
+          "磨短的；用秃的"
+        ],
+        "shortGloss": "磨短的",
+        "usageNote": "前缀用法，如短小或磨短的物品。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "too_rare"
+        ],
+        "needs_human_review": false
+      },
+      "reason": "ちび prefix sense such as ちび鉛筆 is narrow and should not default-display."
+    },
+    {
+      "entryId": "jmdict-1150070",
+      "senseIndex": 1,
+      "action": "replaceSenseOverlayFields",
+      "category": "shouldDisplay true->false",
+      "before": {
+        "zhGlosses": [
+          "阿弥陀佛"
+        ],
+        "shortGloss": "阿弥陀佛",
+        "usageNote": "",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [
+          "none"
+        ],
+        "needs_human_review": false
+      },
+      "after": {
+        "zhGlosses": [
+          "阿弥陀佛"
+        ],
+        "shortGloss": "阿弥陀佛",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized"
+        ],
+        "needs_human_review": false
+      },
+      "reason": "Amitabha Buddhist proper-name sense has low default value for ordinary learners."
+    },
+    {
+      "entryId": "jmdict-1154830",
+      "senseIndex": 2,
+      "action": "replaceSenseOverlayFields",
+      "category": "shouldDisplay true->false",
+      "before": {
+        "zhGlosses": [
+          "诉讼案件；法庭案件"
+        ],
+        "shortGloss": "诉讼案件",
+        "usageNote": "",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [
+          "none"
+        ],
+        "needs_human_review": false
+      },
+      "after": {
+        "zhGlosses": [
+          "诉讼案件；法庭案件"
+        ],
+        "shortGloss": "诉讼案件",
+        "usageNote": "法律语境中的案件。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized"
+        ],
+        "needs_human_review": false
+      },
+      "reason": "Legal/court 案件 sense should be hidden by default."
+    },
+    {
+      "entryId": "jmdict-1002500",
+      "senseIndex": 1,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "特产",
+          "伴手礼",
+          "旅游纪念品"
+        ],
+        "shortGloss": "特产",
+        "usageNote": "",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [
+          "none"
+        ],
+        "needs_human_review": false
+      },
+      "after": {
+        "zhGlosses": [
+          "伴手礼；土特产；旅游纪念品"
+        ],
+        "shortGloss": "伴手礼",
+        "usageNote": "",
+        "shouldDisplay": true,
+        "confidence": "high",
+        "issueFlags": [],
+        "needs_human_review": false
+      },
+      "reason": "お土産 shortGloss should prioritize 伴手礼."
+    },
+    {
+      "entryId": "jmdict-1002590",
+      "senseIndex": 2,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "丈夫"
+        ],
+        "shortGloss": "丈夫",
+        "usageNote": "妻子称呼自己的丈夫。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": {
+        "zhGlosses": [
+          "孩子他爸；丈夫"
+        ],
+        "shortGloss": "孩子他爸",
+        "usageNote": "妻子称呼自己的丈夫，尤指孩子的父亲。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized"
+        ],
+        "needs_human_review": false
+      },
+      "reason": "お父さん wife-to-husband sense should be clearer than bare 丈夫."
+    },
+    {
+      "entryId": "jmdict-1002590",
+      "senseIndex": 3,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "您",
+          "他"
+        ],
+        "shortGloss": "您",
+        "usageNote": "用于称呼年长男性。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": {
+        "zhGlosses": [
+          "大叔；年长男性"
+        ],
+        "shortGloss": "大叔",
+        "usageNote": "用于称呼年长男性。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized"
+        ],
+        "needs_human_review": false
+      },
+      "reason": "お父さん older-male address sense should be explicit."
+    },
+    {
+      "entryId": "jmdict-1002650",
+      "senseIndex": 2,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "妻子"
+        ],
+        "shortGloss": "妻子",
+        "usageNote": "丈夫称呼自己的妻子。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": {
+        "zhGlosses": [
+          "孩子他妈；妻子"
+        ],
+        "shortGloss": "孩子他妈",
+        "usageNote": "丈夫称呼自己的妻子，尤指孩子的母亲。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized"
+        ],
+        "needs_human_review": false
+      },
+      "reason": "お母さん husband-to-wife sense should be clearer than bare 妻子."
+    },
+    {
+      "entryId": "jmdict-1002650",
+      "senseIndex": 3,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "您",
+          "她"
+        ],
+        "shortGloss": "您",
+        "usageNote": "用于称呼年长女性。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": {
+        "zhGlosses": [
+          "阿姨；年长女性"
+        ],
+        "shortGloss": "阿姨",
+        "usageNote": "用于称呼年长女性。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized"
+        ],
+        "needs_human_review": false
+      },
+      "reason": "お母さん older-female address sense should be explicit."
+    },
+    {
+      "entryId": "jmdict-1153740",
+      "senseIndex": 3,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "回帖链接"
+        ],
+        "shortGloss": "回帖链接",
+        "usageNote": "网络用语，指论坛回帖时附带的原文链接。",
+        "shouldDisplay": false,
+        "confidence": "low",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": {
+        "zhGlosses": [
+          "回复编号；楼层链接；引用编号"
+        ],
+        "shortGloss": "回复编号",
+        "usageNote": "网络论坛用语，指用回复编号指定或引用某条回复。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized"
+        ],
+        "needs_human_review": false
+      },
+      "reason": "安価 internet slang should refer to reply number/thread reference."
+    },
+    {
+      "entryId": "jmdict-1159920",
+      "senseIndex": 1,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "医务室",
+          "医生办公室"
+        ],
+        "shortGloss": "医务室",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": {
+        "zhGlosses": [
+          "医局；医院内医生办公室；医务科室"
+        ],
+        "shortGloss": "医局",
+        "usageNote": "多指医院内医生所属的办公室或科室。",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized"
+        ],
+        "needs_human_review": false
+      },
+      "reason": "医局 should read like a dictionary definition rather than literal doctor office."
+    },
+    {
+      "entryId": "jmdict-1160040",
+      "senseIndex": 1,
+      "action": "replaceSenseOverlayFields",
+      "category": "gloss/shortGloss/usageNote-only",
+      "before": {
+        "zhGlosses": [
+          "医务主任",
+          "主任医师"
+        ],
+        "shortGloss": "医务主任",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized",
+          "needs_human_review"
+        ],
+        "needs_human_review": true
+      },
+      "after": {
+        "zhGlosses": [
+          "主任医师；医疗主任"
+        ],
+        "shortGloss": "主任医师",
+        "usageNote": "",
+        "shouldDisplay": false,
+        "confidence": "medium",
+        "issueFlags": [
+          "specialized"
+        ],
+        "needs_human_review": false
+      },
+      "reason": "医長 shortGloss should prefer 主任医师."
+    }
+  ],
+  "noAction": [
+    {
+      "entryId": "jmdict-1002390",
+      "senseIndex": 1,
+      "written": "お大事に",
+      "decision": "no action",
+      "reason": "普通问候/祝福语，保持 shouldDisplay=true。"
+    },
+    {
+      "entryId": "jmdict-1001950",
+      "senseIndex": 1,
+      "written": "お参り",
+      "decision": "no action",
+      "reason": "常见文化生活词，保持 shouldDisplay=true。"
+    },
+    {
+      "entryId": "jmdict-1002950",
+      "senseIndex": 2,
+      "written": "敵わない",
+      "decision": "no action",
+      "reason": "普通表达“受不了”，保持 shouldDisplay=true。"
+    },
+    {
+      "entryId": "jmdict-1005870",
+      "senseIndex": 2,
+      "written": "凝乎と",
+      "decision": "no action",
+      "reason": "普通副词义，保持 shouldDisplay=true。"
+    },
+    {
+      "entryId": "jmdict-1008570",
+      "senseIndex": 1,
+      "written": "所が",
+      "decision": "no action",
+      "reason": "转折连词，保持 shouldDisplay=true。"
+    },
+    {
+      "entryId": "jmdict-1009550",
+      "senseIndex": 2,
+      "written": "に於いて",
+      "decision": "no action",
+      "reason": "常见表达，保持 shouldDisplay=true。"
+    },
+    {
+      "entryId": "jmdict-1009670",
+      "senseIndex": 1,
+      "written": "に依ると",
+      "decision": "no action",
+      "reason": "常见表达，保持 shouldDisplay=true。"
+    },
+    {
+      "entryId": "jmdict-1012930",
+      "senseIndex": 1,
+      "written": "やり繰り",
+      "decision": "no action",
+      "reason": "普通生活/财务表达，保持 shouldDisplay=true。"
+    },
+    {
+      "entryId": "jmdict-1012960",
+      "senseIndex": 1,
+      "written": "やり方",
+      "decision": "no action",
+      "reason": "普通词，保持 shouldDisplay=true。"
+    },
+    {
+      "entryId": "jmdict-1013120",
+      "senseIndex": 1,
+      "written": "様にする",
+      "decision": "no action",
+      "reason": "普通语法表达，保持 shouldDisplay=true。"
+    },
+    {
+      "entryId": "jmdict-1152070",
+      "senseIndex": 1,
+      "written": "悪性",
+      "decision": "no action",
+      "reason": "常见词，保持 shouldDisplay=true。"
+    },
+    {
+      "entryId": "jmdict-1156430",
+      "senseIndex": 1,
+      "written": "意気",
+      "decision": "no action",
+      "reason": "普通词，保持 shouldDisplay=true。"
+    },
+    {
+      "entryId": "jmdict-1156530",
+      "senseIndex": 1,
+      "written": "意見",
+      "decision": "no action",
+      "reason": "普通词，保持 shouldDisplay=true。"
+    },
+    {
+      "entryId": "jmdict-1156610",
+      "senseIndex": 1,
+      "written": "意思",
+      "decision": "no action",
+      "reason": "普通词，保持 shouldDisplay=true。"
+    },
+    {
+      "entryId": "jmdict-1157800",
+      "senseIndex": 1,
+      "written": "異状",
+      "decision": "no action",
+      "reason": "普通词，保持 shouldDisplay=true。"
+    },
+    {
+      "entryId": "jmdict-1158400",
+      "senseIndex": 2,
+      "written": "移動",
+      "decision": "no action",
+      "reason": "可移动/移动式义项可保留 shouldDisplay=true。"
+    },
+    {
+      "entryId": "jmdict-1456360",
+      "senseIndex": 4,
+      "written": "読む",
+      "decision": "no action",
+      "reason": "汉字读法义项对学习者有用，保持 shouldDisplay=true。"
+    },
+    {
+      "entryId": "jmdict-1606560",
+      "senseIndex": 1,
+      "written": "分かる",
+      "decision": "no action",
+      "reason": "高风险词误报，翻译正确，保持 shouldDisplay=true。"
+    },
+    {
+      "entryId": "jmdict-1606560",
+      "senseIndex": 3,
+      "written": "分かる",
+      "decision": "no action",
+      "reason": "口语感叹用法可保留 shouldDisplay=true。"
+    }
+  ]
+}

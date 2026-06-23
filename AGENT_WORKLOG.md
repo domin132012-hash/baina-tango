@@ -27,6 +27,99 @@ Entry template:
 
 ---
 
+## 2026-06-23 20:50 JST / Hermes (dry-run) / DeepSeek Top 500 lessons learned & Top 1000 editorial rules
+
+### Task
+- Hermes first sandbox trial in baina-tango project.
+- Read Top 500 R1/R2/R3 ChatGPT review files and generated editorial rules, lessons learned, dry-run plan, preflight checklist, and risk rules draft for Top 1000.
+- Updated prompt with fixed greeting expressions, Chinese naturalness rules, and usageNote rules.
+- No provider calls, no R2/D1 write, no deploy, no overlay activation.
+- Commit + push to PR #12 draft branch.
+
+### Files changed
+- `docs/design/jmdict-zh-gloss-editorial-rules.md` — new: product positioning, shouldDisplay rules, fixed greeting table, Chinese naturalness rules, usageNote rules, QA rules.
+- `docs/review/jmdict-zh-deepseek-top500-lessons-learned.md` — new: R1/R2/R3 summary, common error types, prompt/QA rules, shouldDisplay/usageNote/shortGloss experience.
+- `docs/review/jmdict-zh-deepseek-pilot-1000-dry-run-plan.md` — new: phases, failure handling, scope boundaries.
+- `docs/review/jmdict-zh-deepseek-pilot-1000-preflight-checklist.md` — new: 20+ checkbox items covering PR/branch/.env.local/R2/D1/deploy/DeepSeek scope/retry/artifact protection.
+- `docs/review/jmdict-zh-deepseek-pilot-1000-risk-rules-draft.md` — new: 8 risk categories with rules and mitigation.
+- `scripts/dictionary/prompts/jmdict-zh-deepseek-system.md` — updated: added editorial rules section (fixed greetings table, Chinese naturalness rules, usageNote rules); kept JSON-only output format unchanged.
+- `AGENT_SYNC_BOARD.md` — updated for Hermes dry-run.
+- `AGENT_WORKLOG.md` — appended this entry.
+
+### Validation
+- `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js` PASS
+- Secret scan (grep) on new docs + prompt: clean
+- `.env.local` not tracked by git
+- No Top 1000 artifacts generated (only dry-run docs)
+- No reviewed-r3 candidate generated
+- Top 500 reviewed-r1/r2 timestamps unchanged (not overwritten)
+- Large artifact scan: only pre-existing project assets (PNG, JSON); no new large files
+- DeepSeek calls: 0
+- Google Translate calls: 0
+- Runtime AI calls: 0
+- R2/D1 writes: 0
+- Preview deploy: no
+- Production deploy: no
+- Overlay activation: no
+- PR #12: draft/open/unmerged
+- Start commit: `53dcd903f2fe80f7a6e8c63cc211b6629393d6e2`
+
+### Risks / next steps
+- Top 500 Round 3 still has 28 needs_human_review unresolved; 8 mark_unresolved require human reviewer decision.
+- Top 1000 provider run requires: preflight checklist full PASS, estimate-only, user explicit approval, updated editorial rules/prompt applied.
+- Preview/Production R2/D1 binding isolation remains unsolved; any Cloudflare write blocked.
+- Remaining cost risk: zero for this dry-run; future provider run may incur DeepSeek cost.
+
+### Commit
+- `005f4e81b59ed59681b6bef77c1b4504921cc45a`
+
+---
+
+## 2026-06-23 21:00 JST / Hermes (second trial) / Top 1000 estimate-only preflight
+
+### Task
+- Hermes second sandbox trial. Executed Top 1000 estimate-only, generated preflight materials and validation log.
+- Created dry-run estimate helper script (`jmdict-zh-deepseek-estimate-top1000.js`) — reads BETA_ENTRIES entries 500-999 only, no provider call.
+- Generated estimate report, provider approval packet, validation log. Updated preflight checklist with guardrail upgrade warning.
+- Key finding: current Top 500 guardrails insufficient for Top 1000; must update before provider run.
+- No provider calls, no R2/D1 write, no deploy, no overlay activation.
+
+### Files changed
+- `scripts/dictionary/jmdict-zh-deepseek-estimate-top1000.js` — new dry-run helper
+- `docs/review/jmdict-zh-deepseek-pilot-1000-estimate.md` — new: estimate report
+- `docs/review/jmdict-zh-deepseek-pilot-1000-provider-approval-packet.md` — new: approval packet with 14-item user checklist
+- `docs/review/jmdict-zh-deepseek-pilot-1000-estimate-validation-log.md` — new: validation log
+- `docs/review/jmdict-zh-deepseek-pilot-1000-preflight-checklist.md` — updated: guardrail upgrade warning
+- `AGENT_SYNC_BOARD.md` — updated
+- `AGENT_WORKLOG.md` — appended this entry
+- `PROJECT_STATUS.md` — updated
+- `HANDOVER.md` — updated
+
+### Validation
+- `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js` PASS
+- `node scripts/dictionary/jmdict-zh-deepseek-estimate-top1000.js` PASS (500 entries, 799 senses, 25 requests)
+- secret scan: clean
+- `.env.local` not tracked
+- Top 500 reviewed-r1/r2: not overwritten
+- No Top 1000 candidate/local package/overlay generated
+- No reviewed-r3 generated
+- DeepSeek calls: 0
+- Google Translate calls: 0
+- Runtime AI calls: 0
+- R2/D1 writes: 0
+- Preview/Production deploy: no
+- Start commit: `005f4e81b59ed59681b6bef77c1b4504921cc45a`
+
+### Risks / next steps
+- Top 500 R3 28 needs_human_review still unresolved
+- Guardrail MUST be updated for Top 1000 (estimated total tokens 192,284 >> current max 60,000)
+- User must approve via checklist before provider run
+- DeepSeek console billing/quota must be checked before run
+- Remaining cost risk: zero for this dry-run
+
+### Commit
+- pending; final hash reported after push.
+
 ## 2026-06-17 / Codex / External platform baseline + delta sync rules
 
 ### Task
@@ -1529,3 +1622,1186 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - R2 read volume may increase now that Production uses shards.
 - D1 reads should remain limited to metadata lookup.
 - No new paid/billing prompt was seen, but provider consoles remain final truth for billing.
+
+## 2026-06-22 09:55 JST / Codex / Chinese gloss overlay pilot Top 100 setup
+
+### Task
+- Create and implement the blocked-provider setup path for a Top 100 Chinese gloss overlay pilot.
+- Create Issue #9, create branch `feat/dictionary-zh-overlay-pilot-100`, open draft PR #10, and do not merge or mark ready.
+- Keep English JMdict data unchanged; do not change existing English R2 shards; do not touch Production, R2/D1 data, Stripe, Supabase, DeepSeek, or `RIKA_PLAN.md`.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-overlay-pilot-100`
+- Start commit: `ebc320317e6ef212a38a53a603191c419aca527c`
+- End commit: implementation commit `d15886ac7fd2d57d3c1a49e77854682a0621aecb`; final branch head recorded in PR #10 / Issue #9 comments after closeout push.
+- Issue: `#9` `[AGENT-TASK] Chinese gloss overlay pilot: Top 100 machine translation baseline`
+- Draft PR: `#10` `feat(dictionary): scaffold Chinese gloss overlay pilot input`
+
+### Files changed
+- `scripts/dictionary/zh-overlay-pilot-terms.js`
+- `scripts/dictionary/jmdict-zh-overlay-build-input.js`
+- `scripts/dictionary/jmdict-zh-overlay-provider-adapter.js`
+- `docs/dictionary/zh-overlay-pilot-100/README.md`
+- `docs/dictionary/zh-overlay-pilot-100/translation-input.json`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+
+### External services touched
+- GitHub: Issue #9 created; draft PR #10 opened and kept draft/unmerged.
+- Cloudflare Production: not changed.
+- Cloudflare Pages config: not changed.
+- Cloudflare R2/D1 data: not touched; no R2 object write and no D1 full import.
+- Public Production lookup API: read-only use to collect current JMdict R2 entry IDs and English glosses for the 100-entry translation input batch.
+- Stripe / Supabase / DeepSeek: not touched.
+
+### Provider decision
+- Provider used: none.
+- Blocked reason: no dedicated machine translation provider config was found. Existing local/Cloudflare AI provider configs are not a dedicated MT provider for this dictionary overlay task.
+- Adapter skeleton requires an explicit provider selection such as `BAINA_ZH_MT_PROVIDER=deepl` with `DEEPL_API_KEY` or `BAINA_ZH_MT_PROVIDER=google_cloud_translate` with `GOOGLE_CLOUD_TRANSLATE_API_KEY`, plus user approval of billing/quota guardrails.
+- Translated entries: `0`.
+- Estimated English characters to translate: `7,382`.
+- Estimated cost: unavailable because no provider was selected or called.
+
+### Validation
+- `codex-preflight --task "Chinese gloss overlay pilot Top 100 for JMdict R2 shard dictionary"`
+- `node --check scripts/dictionary/zh-overlay-pilot-terms.js`
+- `node --check scripts/dictionary/jmdict-zh-overlay-build-input.js`
+- `node --check scripts/dictionary/jmdict-zh-overlay-provider-adapter.js`
+- `node scripts/dictionary/jmdict-zh-overlay-build-input.js --limit 100 --out docs/dictionary/zh-overlay-pilot-100/translation-input.json`
+- Translation input validation: 100 selected entries, required terms missing `0`, estimated English characters `7,382`.
+- Provider adapter validation: exited blocked with no network/provider call because no dedicated MT provider is configured.
+- Preview validation: deployment `16357ba6-de9a-4670-aa9d-2b5e027d68be`, source `d15886a`, URL `https://16357ba6.baina-tango.pages.dev`, status successful. Existing English lookup still returns `dictionarySource=r2-shard`; `食べられる` count `1`; required API terms all kept `aiCalled=false`; page/browser smoke found no obvious console/API errors.
+- Chinese overlay validation: blocked because translated entries are `0`; Chinese overlay cannot be validated until provider config/approval exists.
+- Billing prompt seen: no.
+
+### Remaining risks
+- No Chinese overlay runtime behavior exists yet; this branch intentionally stops before translation/provider use.
+- Draft PR #10 must remain draft and unmerged until the user approves the provider path and later Preview validation.
+- The eventual provider output must preserve sense boundaries and mark each translated sense `machine_translated` / `unreviewed`.
+- Runtime integration must still be implemented after a translated overlay artifact exists.
+
+### Remaining cost risks
+- Provider pricing/quota is unknown until the user chooses a dedicated MT provider.
+- R2 read/storage cost may increase only after a translated overlay is uploaded and runtime lookup reads it.
+- D1 should remain metadata-only; D1 full import remains prohibited without a separate cost-safe plan.
+
+## 2026-06-22 12:58 JST / Codex / Issue #9 PR #10 Phase A review artifact
+
+### Task
+- Continue Issue #9 / draft PR #10 on `feat/dictionary-zh-overlay-pilot-100`.
+- Run Phase A only: use Google Cloud Translation official API for the Top 100 pilot and generate a local user-review artifact.
+- Do not deploy, merge, mark ready, activate zh overlay, upload active overlay to R2, change D1 active metadata, change Production, modify English JMdict R2 shards, or execute D1 full import.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-overlay-pilot-100`
+- Start commit: `42f936cc07ad4897b4dfe0b739a39fd580761df7`
+- End commit: final Phase A branch head recorded in PR #10 / Issue #9 comments after closeout push.
+- Issue: `#9`
+- Draft PR: `#10` kept draft/open/unmerged.
+
+### Files changed
+- `scripts/dictionary/jmdict-zh-overlay-provider-adapter.js`
+- `docs/review/jmdict-zh-pilot-100-review.md`
+- `docs/review/jmdict-zh-pilot-100-usage-ledger.json`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained local-only, ignored/untracked, and was not committed.
+
+### External services touched
+- Google Cloud Translation official API: called offline by the Top 100 batch script only.
+- Cloudflare Preview API: read-only smoke validation on existing Preview URL.
+- GitHub: draft PR #10 / Issue #9 closeout status updated after push.
+- Cloudflare Production: not touched.
+- Cloudflare Pages deploy/settings: not touched.
+- R2/D1 data: not touched; no active zh overlay upload, no D1 active metadata write, no D1 full import.
+- Stripe / Supabase / DeepSeek: not touched.
+
+### Provider / output
+- Provider: `google_cloud_translate`.
+- Review artifact: `docs/review/jmdict-zh-pilot-100-review.md`.
+- Usage ledger: `docs/review/jmdict-zh-pilot-100-usage-ledger.json`.
+- Translated entries: `100`.
+- Translated senses: `209`.
+- Estimated chars: `7,382`.
+- Actual chars: `7,382`.
+- Review artifact size: `46,686` bytes.
+- Runtime Google calls: `0`.
+- Runtime zh overlay active: no.
+- Billing prompt seen: no.
+
+### Validation
+- `codex-preflight --task "Issue #9 PR #10 Phase A Google Translate Top 100 review artifact only"`
+- `.env.local` exists, chmod `600`, ignored by `.git/info/exclude`, untracked; key values were not printed or committed.
+- Guardrails before provider call: selected entries `100`, estimated chars `7,382`, approval flag `YES_TOP_100_ONLY`, max entries `100`, max chars `10000`.
+- `node --check scripts/dictionary/jmdict-zh-overlay-provider-adapter.js`
+- Phase A script generated review artifact and usage ledger with translated entries `100`.
+- Artifact/secret scan on script + review files passed for Google API-key-like strings and placeholder strings.
+- Existing Preview smoke: `https://44dbffce.baina-tango.pages.dev/api/dictionary/lookup?q=食べられる` returned `dictionarySource=r2-shard`, count `1`, `aiCalled=false`; required terms all kept `aiCalled=false`.
+- PR #10 checked with GitHub CLI: open, draft, unmerged before closeout push.
+
+### Remaining risks
+- Machine translations are unreviewed and must be reviewed by the user before any Phase B activation.
+- The review artifact is not active runtime data; lookup UI remains English-first and unchanged.
+- Old previously pasted/leaked key should remain rotated and unused.
+- PR #10 must remain draft/unmerged until user explicitly approves the next phase.
+
+### Remaining cost risks
+- Google Cloud Translation was called for `7,382` chars only; this is below the configured `10,000` char task guardrail.
+- Future Phase B must not call Google at runtime; any additional provider use needs a new explicit bounded run approval.
+- Provider billing console remains final truth for charges/free-tier application.
+
+## 2026-06-22 17:42 JST / Codex / Issue #11 DeepSeek scaffold checkpoint
+
+### Task
+- Checkpoint and finalize current DeepSeek scaffolding work only for Issue #11.
+- Do not call DeepSeek, Google Translate, provider mode, deploy, merge, mark PR ready, activate overlay, upload R2, update D1, touch `.env.local`, or read/print API keys.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `950da0a02cb4d88d161f495a3ee031012b8dcd43`
+- End commit: this closeout commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: opened after closeout push; kept draft/open/unmerged.
+
+### Files changed
+- `scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `scripts/dictionary/prompts/jmdict-zh-deepseek-system.md`
+- `docs/design/deepseek-ai-zh-gloss-overlay.md`
+- `docs/review/jmdict-zh-deepseek-pilot-100-review.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not committed.
+- `RIKA_PLAN.md` was untracked and not staged.
+
+### External services touched
+- DeepSeek API: no.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Provider mode: no.
+- Overlay activation: no.
+- GitHub: branch push and draft PR only after validation.
+- Billing prompt seen: no.
+
+### Validation
+- `codex-preflight --task "checkpoint and finalize current DeepSeek scaffolding work only"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Current branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only`
+- Guardrail tests with sentinel `fetch` replacement all failed before any provider/network call:
+  - missing `DEEPSEEK_API_KEY`
+  - missing approval flag
+  - wrong provider
+  - wrong model
+  - max entries too low
+  - max input-token limit too low
+- Runtime dictionary lookup confirmed not to import or call the DeepSeek pilot script; response path still reports `aiCalled=false`.
+- Secret scan found only the literal placeholder `DEEPSEEK_API_KEY=<secret>`, not a key.
+- Artifact scope check found no newly committed full JMdict XML/gz, KANJIDIC, SQLite/DB, R2 shard, or large generated artifact.
+
+### Remaining risks
+- The DeepSeek provider run has not been performed and still requires separate explicit user approval after reviewing guardrails.
+- The review artifact is only a placeholder until a separately approved provider run generates candidates.
+- Runtime zh overlay remains inactive; no user-facing Chinese gloss behavior is enabled by this scaffold.
+
+### Remaining cost risks
+- Estimated cost is intentionally not implemented in this scaffold and is recorded as provider-not-called.
+- Any future DeepSeek usage must be a separately approved bounded run with current provider pricing reviewed before execution.
+
+## 2026-06-22 19:14 JST / Codex / Issue #11 DeepSeek Phase A provider attempt
+
+### Task
+- Continue PR #12 after the user saved local `.env.local`.
+- If `DEEPSEEK_API_KEY_length > 0`, run DeepSeek Top 100 Phase A only through the offline script.
+- Do not call Google Translate, deploy, merge, mark PR ready, activate overlay, upload R2, update D1, modify runtime lookup, commit `.env.local`, or commit any secret.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `c6b3022829de1abff1e045509a2d685101556ff2`
+- End commit: this status commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Files changed
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+- `docs/review/jmdict-zh-deepseek-pilot-100-review.md` was not changed.
+- `docs/review/jmdict-zh-deepseek-pilot-100-usage-ledger.json` was not generated.
+
+### External services touched
+- DeepSeek API: yes, once, only via `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --run-provider`.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: branch push after status update only.
+- Billing prompt seen: no.
+
+### Validation
+- `codex-preflight --task "continue approved DeepSeek Top 100 provider run for Issue 11 PR 12 after local env key saved"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- `.env.local` verified ignored/untracked; only `DEEPSEEK_API_KEY_length=35` was printed.
+- `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- Estimator passed: entries `100`, senses `209`, request count `5`, estimated input tokens `24870`, estimated output tokens `28035`, estimated total tokens `52905`, runtime AI calls `false`, R2/D1 writes `false`, Production changed `false`.
+- Provider run stopped with `DeepSeek message content was not strict JSON.`
+- No malformed JSON was accepted.
+- No AI review artifact was generated.
+- No usage ledger was written.
+- PR #12 checked after failure: draft/open/unmerged at `c6b3022829de1abff1e045509a2d685101556ff2` before this status commit.
+
+### Result
+- Generated entries: `0`.
+- Review artifact remains the placeholder.
+- Actual input tokens: unknown.
+- Actual output tokens: unknown.
+- Estimated cost: unavailable in scaffold.
+- Actual cost: unknown because no provider usage ledger was produced.
+
+### Remaining risks
+- The strict JSON failure means no user-reviewable DeepSeek Chinese glosses exist yet.
+- Retrying should not happen automatically; it needs a separate fix/approval path, likely prompt/script hardening for strict JSON recovery without accepting malformed output silently.
+- Runtime lookup remains English-first and unchanged.
+
+### Remaining cost risks
+- One failed DeepSeek request may have consumed billable tokens, but actual usage/cost was not recorded by the current script.
+- Any future retry should account for this prior failed attempt and keep the Top 100/run limits explicit.
+
+## 2026-06-22 19:22 JST / Codex / Issue #11 PR #12 strict JSON hardening
+
+### Task
+- Fix strict JSON output, parsing, schema validation, prompt instructions, and local no-network fixture tests after the first DeepSeek provider attempt failed with non-strict JSON.
+- Do not call DeepSeek, do not run provider mode, do not call Google Translate, do not deploy, do not merge or mark PR ready, do not activate overlay, do not upload R2, do not update D1, do not read or commit `.env.local`, and do not change runtime lookup to call DeepSeek.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `0b507ccb470855e8e5bcba0499e4a4f4de99560a`
+- End commit: this hardening commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Files changed
+- `scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `scripts/dictionary/prompts/jmdict-zh-deepseek-system.md`
+- `docs/design/deepseek-ai-zh-gloss-overlay.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not read, printed, staged, or committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+
+### External services touched
+- DeepSeek API: no in this round.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: branch push after validation and PR body status refresh only.
+- Billing prompt seen: no.
+
+### Implementation
+- Kept provider request JSON mode: `response_format: { type: "json_object" }`.
+- Updated system and user prompts to require exactly one JSON object with top-level `items`, no Markdown, no fenced code block, no preface/explanation/afterword.
+- Unified provider schema from top-level `senses` to top-level `items`.
+- Kept strict `JSON.parse`; Markdown wrappers, trailing explanation text, arrays, missing fields, invalid enum values, mismatched `entryId`, mismatched `senseIndex`, duplicate/omitted/extra senses all fail.
+- Added `--self-test-json-fixtures`, a local fixture test mode that does not call provider/network.
+
+### Validation
+- `codex-preflight --task "fix PR 12 DeepSeek strict JSON parsing prompt schema and offline fixtures without provider call"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only`
+  - entries `100`
+  - senses `209`
+  - request count `5`
+  - estimated input tokens `26272`
+  - estimated output tokens `28035`
+  - estimated total tokens `54307`
+- `node --import <sentinel fetch> scripts/dictionary/jmdict-zh-deepseek-pilot.js --self-test-json-fixtures`
+  - fixture tests `11/11`
+  - legal strict JSON object passed
+  - Markdown fenced JSON failed
+  - JSON array without top-level `items` failed
+  - JSON with trailing explanation failed
+  - missing `entryId` failed
+  - missing `senseIndex` failed
+  - mismatched `entryId` failed
+  - mismatched `senseIndex` failed
+  - invalid `confidence` failed
+  - non-array `issueFlags` failed
+- Guardrail matrix with sentinel `fetch` passed for missing key, missing approval, wrong provider, wrong model, max entries too low, max input tokens too low, max output tokens too low, max total tokens too low, and max requests too low; all failed before provider/network call and wrote no provider artifact.
+- Runtime lookup static check found no DeepSeek/provider reference.
+
+### Remaining risks
+- This improves the next approved provider run's strict JSON success odds, but it does not prove DeepSeek will comply on retry.
+- Next provider run still requires separate user approval.
+- If DeepSeek returns strict JSON with wrong/missing fields, validation will still stop and no artifact should be accepted.
+
+### Remaining cost risks
+- No DeepSeek call was made in this hardening round.
+- The prior failed DeepSeek request may have incurred cost; final usage/billing must be checked in the DeepSeek console.
+
+## 2026-06-22 20:51 JST / Codex / Issue #11 PR #12 approved DeepSeek retry
+
+### Task
+- Run one approved DeepSeek Top 100 provider retry after strict JSON hardening.
+- Stop immediately on non-strict JSON, schema failure, mismatched `entryId` / `senseIndex`, token/request limit failure, or any provider failure.
+- Do not retry automatically, call Google Translate, deploy, merge, mark PR ready, activate overlay, upload R2, update D1, modify English JMdict R2 shards, perform D1 full import, commit `.env.local`, print/write secrets, or change runtime lookup to call DeepSeek.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `b32d858f522acd0288b358eece6794c08c1d97aa`
+- End commit: this failure-ledger/status commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Files changed
+- `docs/review/jmdict-zh-deepseek-pilot-100-usage-ledger.json`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not staged or committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+- `docs/review/jmdict-zh-deepseek-pilot-100-review.md` remained the existing placeholder; no generated AI review artifact was written.
+
+### External services touched
+- DeepSeek API: yes, once, only via `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --run-provider`.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: branch push after status update only.
+- Billing prompt seen: no.
+
+### Pre-run validation
+- `codex-preflight --task "approved single DeepSeek Top 100 provider retry for Issue 11 PR 12"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- `.env.local` exists, ignored by `.git/info/exclude`, and untracked.
+- Only `DEEPSEEK_API_KEY_length=35` was printed; required env values were checked silently.
+- `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only`
+  - entries `100`
+  - senses `209`
+  - request count `5`
+  - estimated input tokens `26272`
+  - estimated output tokens `28035`
+  - estimated total tokens `54307`
+- `node --import <sentinel fetch> scripts/dictionary/jmdict-zh-deepseek-pilot.js --self-test-json-fixtures`
+  - fixture tests `11/11`
+- Guardrail matrix with sentinel `fetch` passed for missing key, missing approval, wrong provider, wrong model, max entries too low, max input tokens too low, max output tokens too low, max total tokens too low, and max requests too low; all failed before provider/network call and wrote no provider artifact.
+
+### Provider retry result
+- Command: `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --run-provider`
+- Result: failed.
+- Failure reason: `DeepSeek message content was not strict JSON.`
+- Generated entries: `0`.
+- Actual input tokens: unknown.
+- Actual output tokens: unknown.
+- Estimated cost: unavailable in scaffold.
+- Actual cost: unknown; DeepSeek console is final.
+- Failed request count recorded locally: `1`.
+- No automatic retry was run.
+- Safe failure ledger written to `docs/review/jmdict-zh-deepseek-pilot-100-usage-ledger.json`; it contains no API key, no raw response, and no secret-derived content.
+
+### Remaining risks
+- DeepSeek still did not return strict JSON accepted by the parser; no user-reviewable Chinese glosses exist yet.
+- The failure ledger has unknown actual token/cost fields because the current script did not expose provider usage on parse failure.
+- Future retry requires separate user approval and may need deeper request/prompt or response-handling changes, while still refusing malformed JSON.
+
+### Remaining cost risks
+- This retry may have incurred one failed-request charge.
+- Combined cost risk now includes the earlier failed provider attempt plus this failed retry; exact billing must be checked in the DeepSeek console.
+
+## 2026-06-22 22:59 JST / Codex / Issue #11 PR #12 minimum probe mode
+
+### Task
+- Diagnose the repeated DeepSeek strict JSON failure path without another provider call.
+- Do not run Top 100, do not run provider/probe, do not call Google Translate, deploy, merge, mark PR ready, activate overlay, upload R2, update D1, commit `.env.local`, print/read secrets, or change runtime lookup to call DeepSeek.
+- Add safe failure diagnostics and a separately approved 1-entry / 5-entry probe path before any future Top 100 retry.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `046b5d51f699d34ac34c10ea1dd50ee461ca4d88`
+- End commit: this closeout commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Files changed
+- `scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `scripts/dictionary/prompts/jmdict-zh-deepseek-system.md`
+- `docs/design/deepseek-ai-zh-gloss-overlay.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not read, printed, staged, or committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+
+### External services touched
+- DeepSeek API: no in this round.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: branch push after validation only.
+- Billing prompt seen: no.
+
+### Implementation
+- Kept DeepSeek JSON Output request mode with `response_format: { type: "json_object" }`.
+- Added request body `thinking: { type: "disabled" }` with a code comment noting DeepSeek v4 thinking mode is treated as enabled by default and dictionary JSON generation uses non-thinking mode to reduce strict JSON failures.
+- Reinforced system and user prompts to include the word `json`, forbid Markdown/code blocks/explanations/reasoning text, and include a complete top-level `items` JSON example.
+- Added `--probe-provider --probe-limit 1` and `--probe-provider --probe-limit 5`; probe mode uses the same guardrails and strict schema validation as Top 100 mode, but writes separate probe review/ledger paths.
+- Added safe non-strict JSON failure debug logic for `docs/review/jmdict-zh-deepseek-last-failure-debug.json`; it records limited metadata only and must not include secrets, headers, full raw response, full prompt, or full input data.
+- Strengthened strict parsing diagnostics for empty content and likely truncation while still accepting only strict `JSON.parse` output.
+
+### Validation
+- `codex-preflight --task "PR 12 Issue 11 add DeepSeek probe mode and failure diagnostics without provider call"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only`
+  - entries `100`
+  - senses `209`
+  - request count `5`
+  - estimated input tokens `27255`
+  - estimated output tokens `28035`
+  - estimated total tokens `55290`
+- `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only --probe-provider --probe-limit 1`
+  - entries `1`
+  - senses `2`
+  - request count `1`
+  - estimated total tokens `1555`
+- `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only --probe-provider --probe-limit 5`
+  - entries `5`
+  - senses `10`
+  - request count `1`
+  - estimated total tokens `3491`
+- `node --import <sentinel fetch> scripts/dictionary/jmdict-zh-deepseek-pilot.js --self-test-json-fixtures`
+  - fixture tests `16/16`
+  - legal strict JSON object passed
+  - Markdown fenced JSON failed
+  - array without top-level `items` failed
+  - object without `items` failed
+  - trailing explanation failed
+  - missing `entryId` failed
+  - missing `senseIndex` failed
+  - mismatched `entryId` failed
+  - mismatched `senseIndex` failed
+  - invalid `confidence` failed
+  - non-array `issueFlags` failed
+  - item count mismatch failed
+  - empty content failed with `empty_content`
+  - truncated content failed with `possible_truncation`
+  - `reasoning_content` was ignored when `message.content` contained valid JSON
+  - empty `message.content` with `reasoning_content` failed
+- Guardrail matrix with sentinel `fetch` passed for missing key, missing approval, wrong provider, wrong model, max entries too low, max input tokens too low, max output tokens too low, max total tokens too low, max requests too low, probe missing key, and invalid probe limit; all failed before provider/network call.
+- Missing `--probe-limit` failed before sentinel `fetch`.
+- Runtime dictionary lookup static check found no DeepSeek/provider/probe reference under `functions/api/dictionary` or `index.html`.
+- `git diff --check` passed.
+- Secret pattern scan over changed files found no API key or private-key patterns.
+- `.env.local` is ignored by `.git/info/exclude` and untracked; `git ls-files -s .env.local` returned no tracked entry.
+- No probe review, probe ledger, or last-failure debug artifact was generated because provider/probe was not run.
+- No large generated artifact outside ignored `.wrangler` state was found.
+
+### Remaining risks
+- This round does not prove DeepSeek will return strict JSON on a probe; it only narrows the next safe step to a 1-entry or 5-entry probe.
+- The safe debug file will only be produced on a future approved provider/probe failure.
+- A future probe still requires separate user approval and manual review before any Top 100 retry.
+
+### Remaining cost risks
+- No DeepSeek call was made in this round.
+- The two prior failed DeepSeek Top 100 attempts may have incurred cost; final usage/billing must be checked in the DeepSeek console.
+
+## 2026-06-22 23:15 JST / Codex / Issue #11 PR #12 one-entry DeepSeek probe
+
+### Task
+- Run exactly one user-approved DeepSeek provider probe with `--probe-provider --probe-limit 1`.
+- Do not run 5 entries, do not run Top 100, do not retry automatically, and do not escalate to any next stage without separate approval.
+- Do not call Google Translate, deploy Production, merge, mark PR ready, activate overlay, upload R2, update D1, modify English JMdict R2 shards, do D1 full import, commit `.env.local`, print/write secrets, or change runtime lookup to call DeepSeek.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `040fc9af3c47ec4da60517f3a447b1c21ff04de2`
+- End commit: this closeout commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Files changed
+- `docs/review/jmdict-zh-deepseek-probe-review.md`
+- `docs/review/jmdict-zh-deepseek-probe-usage-ledger.json`
+- `scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not staged or committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+
+### External services touched
+- DeepSeek API: yes, once, only via `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --probe-provider --probe-limit 1`.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: PR #12 branch push after validation only.
+- Billing prompt seen: no.
+
+### Probe result
+- Provider: `deepseek`
+- Model: `deepseek-v4-flash`
+- Probe limit: `1`
+- Generated entries: `1`
+- Generated senses: `2`
+- Review file: `docs/review/jmdict-zh-deepseek-probe-review.md`
+- Usage ledger: `docs/review/jmdict-zh-deepseek-probe-usage-ledger.json`
+- Actual input tokens: `1328`
+- Actual output tokens: `284`
+- Actual total tokens: `1612`
+- Estimated cost: `null`; pricing not configured in the scaffold.
+- Actual cost: unknown; DeepSeek console is final.
+- TextEdit open command was executed for the probe review file.
+- No failure debug file was generated because the probe succeeded.
+
+### Validation
+- `codex-preflight --task "PR 12 Issue 11 approved one-entry DeepSeek provider probe"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- PR #12 verified draft/open/unmerged before and after the probe.
+- `.env.local` exists, is ignored by `.git/info/exclude`, and is not tracked by Git.
+- Only `DEEPSEEK_API_KEY_length=35` was printed; required env values were checked without printing secret values.
+- Pre-run:
+  - `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+  - `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only`
+  - `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only --probe-provider --probe-limit 1`
+  - `node --import <sentinel fetch> scripts/dictionary/jmdict-zh-deepseek-pilot.js --self-test-json-fixtures` passed `16/16`
+  - probe guardrail sentinel matrix passed before provider/network call
+- Provider:
+  - `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --probe-provider --probe-limit 1` succeeded
+- Post-run:
+  - review and ledger inspected for expected scope and token values
+  - runtime dictionary lookup static check found no DeepSeek/provider/probe reference under `functions/api/dictionary` or `index.html`
+  - no R2/D1 write, no Production deploy, no Google Translate call, no PR ready/merge
+- After a script metadata-label fix, reran:
+  - `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+  - full and probe estimators
+  - fixture tests `16/16`
+  - guardrail sentinel matrix
+
+### Remaining risks
+- The 1-entry probe succeeded, but this does not prove 5-entry or Top 100 runs will succeed.
+- User review is required before any 5-entry probe, Top 100 retry, overlay activation, R2/D1 write, Production deploy, PR ready transition, or merge.
+- The generated AI glosses are `ai_generated_unreviewed`.
+
+### Remaining cost risks
+- This successful probe used actual input tokens `1328` and actual output tokens `284`; local estimated/actual cost is unavailable because provider pricing is not configured in the scaffold.
+- The two prior failed DeepSeek requests plus this successful probe may have incurred cost; final usage/billing must be checked in the DeepSeek console.
+
+## 2026-06-22 23:24 JST / Codex / Issue #11 PR #12 five-entry DeepSeek probe
+
+### Task
+- Run exactly one user-approved DeepSeek provider probe with `--probe-provider --probe-limit 5` after the user accepted the 1-entry probe quality.
+- Do not run Top 100, do not retry automatically, and do not escalate to any next stage without separate approval.
+- Do not call Google Translate, deploy Production, merge, mark PR ready, activate overlay, upload R2, update D1, modify English JMdict R2 shards, do D1 full import, commit `.env.local`, print/write secrets, or change runtime lookup to call DeepSeek.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `c831285523c989800760bc2462ab8370e4c3bb93`
+- End commit: this closeout commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Files changed
+- `docs/review/jmdict-zh-deepseek-probe-review.md`
+- `docs/review/jmdict-zh-deepseek-probe-usage-ledger.json`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not staged or committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+
+### External services touched
+- DeepSeek API: yes, once, only via `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --probe-provider --probe-limit 5`.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: PR #12 branch push after validation only.
+- Billing prompt seen: no.
+
+### Probe result
+- Provider: `deepseek`
+- Model: `deepseek-v4-flash`
+- Probe limit: `5`
+- Generated entries: `5`
+- Generated senses: `10`
+- Review file: `docs/review/jmdict-zh-deepseek-probe-review.md`
+- Usage ledger: `docs/review/jmdict-zh-deepseek-probe-usage-ledger.json`
+- Actual input tokens: `2228`
+- Actual output tokens: `1300`
+- Actual total tokens: `3528`
+- Estimated cost: `null`; pricing not configured in the scaffold.
+- Actual cost: unknown; DeepSeek console is final.
+- TextEdit open command was executed for the probe review file.
+- No failure debug file was generated because the probe succeeded.
+
+### Validation
+- `codex-preflight --task "PR 12 Issue 11 approved five-entry DeepSeek provider probe"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- PR #12 verified draft/open/unmerged before and after the probe.
+- `.env.local` exists, is ignored by `.git/info/exclude`, and is not tracked by Git.
+- Only `DEEPSEEK_API_KEY_length=35` was printed; required env values were checked without printing secret values.
+- Pre-run:
+  - `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+  - `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only`
+  - `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only --probe-provider --probe-limit 5`
+  - `node --import <sentinel fetch> scripts/dictionary/jmdict-zh-deepseek-pilot.js --self-test-json-fixtures` passed `16/16`
+  - 5-entry probe guardrail sentinel matrix passed before provider/network call
+- Provider:
+  - `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --probe-provider --probe-limit 5` succeeded
+- Post-run:
+  - review and ledger inspected for expected scope and token values
+  - runtime dictionary lookup static check found no DeepSeek/provider/probe reference under `functions/api/dictionary` or `index.html`
+  - no R2/D1 write, no Production deploy, no Google Translate call, no PR ready/merge
+
+### Remaining risks
+- The 5-entry probe succeeded, but this does not prove the full Top 100 run will succeed.
+- User review is required before any Top 100 retry, overlay activation, R2/D1 write, Production deploy, PR ready transition, or merge.
+- The generated AI glosses are `ai_generated_unreviewed`.
+
+### Remaining cost risks
+- This successful 5-entry probe used actual input tokens `2228` and actual output tokens `1300`; local estimated/actual cost is unavailable because provider pricing is not configured in the scaffold.
+- The two prior failed DeepSeek requests plus successful 1-entry and 5-entry probes may have incurred cost; final usage/billing must be checked in the DeepSeek console.
+
+## 2026-06-22 23:35 JST / Codex / Issue #11 PR #12 specialized and rare sense display-rule fix
+
+### Task
+- Fix DeepSeek prompt/schema/docs after user review found `平和 / ピンフ` mahjong sense marked `shouldDisplay=true`.
+- Do not call DeepSeek or Google Translate.
+- Do not deploy, merge, mark PR ready, activate overlay, upload R2, update D1, commit `.env.local`, print secrets, or make runtime lookup call AI.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `78b1085f74369e6b5809ce1f114522301693b6b4`
+- End commit: this closeout commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Files changed
+- `scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `scripts/dictionary/prompts/jmdict-zh-deepseek-system.md`
+- `docs/design/deepseek-ai-zh-gloss-overlay.md`
+- `docs/dictionary/zh-overlay-pilot-100/README.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained untracked/not committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+
+### Prompt/schema result
+- DeepSeek prompt now prioritizes ordinary Japanese learners and EJU learners.
+- Common learner-useful senses should use `shouldDisplay=true`.
+- Mahjong, medical, legal, Buddhist, archaic, dialectal, rare-reading, and other specialized senses default to `shouldDisplay=false` unless common learner-useful.
+- Correct translation alone is not enough for `shouldDisplay=true`.
+- `shouldDisplay` means default learner visibility, not whether the sense exists.
+- Added `specialized` to allowed `issueFlags`.
+- Fixture self-test now covers `specialized` as an allowed non-`none` flag.
+
+### External services touched
+- DeepSeek API: no.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: branch push after validation only.
+- Billing prompt seen: no.
+
+### Validation
+- `codex-preflight --task "continue PR #12 / Issue #11: update DeepSeek prompt/schema/docs for specialized rare senses guardrails without provider calls"`
+- `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --self-test-json-fixtures` passed `17/17`, with `deepseekApiCalled=false`, `runtimeAiCalls=false`, `r2D1Writes=false`, `productionChanged=false`.
+- `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only` passed with `deepseekApiCalled=false`, `runtimeAiCalls=false`, `r2D1Writes=false`, `productionChanged=false`.
+- Guardrail sentinel matrix covered missing provider, wrong provider, wrong model, wrong approval, wrong base URL, invalid probe limit, max input tokens too low, and Top 100 max entries too low before external network.
+- Runtime dictionary lookup static check found no DeepSeek/provider/probe reference under `functions/api/dictionary`; `index.html` dictionary lookup still calls `/api/dictionary/lookup` and did not gain DeepSeek references.
+- `.env.local` is not tracked by Git.
+
+### Remaining risks
+- This was a prompt/schema/docs fix only; no new provider output was generated.
+- Future Top 100 DeepSeek run still requires separate user approval and may incur cost.
+- Earlier failed DeepSeek attempts plus successful probes may have cost; DeepSeek console remains final.
+
+## 2026-06-22 23:52 JST / Codex / Issue #11 PR #12 approved DeepSeek Top 100 provider run
+
+### Task
+- Run exactly one user-approved DeepSeek Top 100 provider run after the user accepted the 5-entry probe and prompt/schema rule fix.
+- Do not automatically retry if the run fails.
+- Do not call Google Translate, deploy Production, merge, mark PR ready, activate Chinese overlay, upload R2, update D1, modify English JMdict R2 shards, run D1 full import, commit `.env.local`, print/write secrets, or make runtime lookup call DeepSeek.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `aa85ed2becd9396d955e483f8f6a96f6352c05d1`
+- End commit: this closeout commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Files changed
+- `docs/review/jmdict-zh-deepseek-pilot-100-review.md`
+- `docs/review/jmdict-zh-deepseek-pilot-100-usage-ledger.json`
+- `scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not staged or committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+
+### External services touched
+- DeepSeek API: yes, once, only via `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --run-provider`.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: branch push after validation only.
+- Billing prompt seen: no.
+
+### Provider result
+- Provider: `deepseek`
+- Model: `deepseek-v4-flash`
+- Selected entries: `100`
+- Generated entries: `100`
+- Generated senses: `209`
+- Request count: `5`
+- Review file: `docs/review/jmdict-zh-deepseek-pilot-100-review.md`
+- Usage ledger: `docs/review/jmdict-zh-deepseek-pilot-100-usage-ledger.json`
+- Estimated input tokens: `29715`
+- Estimated output tokens: `28035`
+- Estimated total tokens: `57750`
+- Actual input tokens: `30544`
+- Actual output tokens: `27411`
+- Actual total tokens: `57955`
+- Estimated cost: `null`; pricing not configured in the scaffold.
+- Actual cost: `null`; pricing not configured locally. DeepSeek console is final.
+- Provider run status: `succeeded`
+- Failed request count: `0`
+- TextEdit open command was executed for the Top 100 review file.
+
+### Validation
+- `codex-preflight --task "PR #12 Issue #11 approved DeepSeek Top 100 provider run exactly once"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- Start head verified: `aa85ed2becd9396d955e483f8f6a96f6352c05d1`
+- PR #12 verified draft/open/unmerged before provider run.
+- `.env.local` exists, is ignored by `.git/info/exclude`, and is not tracked by Git.
+- Only `DEEPSEEK_API_KEY_length=35` was printed for the real key; required env values were checked without printing secret values.
+- Pre-run:
+  - `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+  - `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --estimate-only`
+  - `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --self-test-json-fixtures` passed `17/17`
+  - guardrail sentinel matrix passed before provider/network call
+  - runtime dictionary lookup static check found no DeepSeek/provider/probe reference under `functions/api/dictionary` or `index.html`
+- Provider:
+  - `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --run-provider` succeeded once.
+- Post-run:
+  - review file inspected: `100` unique entry IDs and `209` table rows
+  - usage ledger inspected and includes timestamp, provider/model, request count, selected/generated counts, estimated/actual tokens, cost fields, providerRunStatus, and failedRequestCount
+  - no R2/D1 write, no Production deploy, no Google Translate call, no overlay activation, no PR ready/merge
+
+### Remaining risks
+- Top 100 output is `ai_generated_unreviewed`; user review is required before any overlay activation or data write.
+- Local cost values are not configured; DeepSeek console is final for billing.
+
+## 2026-06-23 00:04 JST / Codex / Issue #11 PR #12 manual QA findings for DeepSeek Top 100
+
+### Task
+- Add a human QA findings document based on `docs/review/jmdict-zh-deepseek-pilot-100-review.md`.
+- Do not call DeepSeek or Google Translate.
+- Do not deploy Production, merge, mark PR ready, activate Chinese overlay, upload R2, update D1, commit `.env.local`, print secrets, or make runtime lookup call AI.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `711c1576fe2393789df31db5f3fd3e338d389011`
+- End commit: this closeout commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Files changed
+- `docs/review/jmdict-zh-deepseek-pilot-100-qa-findings.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not staged or committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+
+### QA findings
+- Bad: `物 / もの / sense 2` contains English `belongings`; suggested `所有物；财产；随身物品`.
+- Bad: `言う / いう / sense 3` has unnatural example `警報が言う（警报响）`; suggested usage note `用于声音、警报等“发出某种声音”的表达。`
+- Minor: `小さい / ちいさい / sense 3`; suggested `声音小的；轻声的`.
+- Minor: `終わる / おわる / sense 2`; suggested `完成；结束`.
+- shouldDisplay review: `儂 / わし`, `私 / し`, and `私 / わたくし / sense 3` group needs conservative default-display review for ordinary EJU learners; where needed set `shouldDisplay=false` and add `too_rare` / `needs_human_review`.
+
+### Overall conclusion recorded
+- DeepSeek Top 100 is clearly more suitable than the Google MT baseline.
+- Do not rerun Top 100.
+- Do not directly activate overlay.
+- Next step should be a human-corrected review artifact or overlay candidate.
+- Any R2/D1 write, overlay activation, Production deploy, PR ready transition, or merge requires separate explicit approval.
+
+### External services touched
+- DeepSeek API: no.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: branch push after validation only.
+- Billing prompt seen: no.
+
+### Validation
+- `codex-preflight --task "PR #12 Issue #11 DeepSeek Top 100 manual QA findings only, no provider calls"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- Start head verified: `711c1576fe2393789df31db5f3fd3e338d389011`
+- PR #12 verified draft/open/unmerged before edits.
+- Original evidence checked in `docs/review/jmdict-zh-deepseek-pilot-100-review.md` for the listed rows before writing QA findings.
+- `.env.local` is not tracked by Git.
+- Runtime dictionary lookup static check found no DeepSeek/provider/probe reference under `functions/api/dictionary` or `index.html`.
+
+### Remaining risks
+- QA findings do not yet apply corrections to the review artifact.
+- Human-corrected review or overlay candidate generation is still pending and must not imply activation.
+
+## 2026-06-23 00:25 JST / Codex / Issue #11 PR #12 human-corrected review candidate
+
+### Task
+- Generate `docs/review/jmdict-zh-deepseek-pilot-100-review-corrected.md` from the original DeepSeek Top 100 review and accepted QA findings.
+- Preserve the original review artifact unchanged.
+- Do not call DeepSeek or Google Translate.
+- Do not deploy Production, merge, mark PR ready, activate Chinese overlay, upload R2, update D1, generate formal R2 shards, commit `.env.local`, print secrets, or make runtime lookup call AI.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `0ee712f4ed4132f711a7838d9e418d2cabb72406`
+- End commit: this closeout commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Files changed
+- `docs/review/jmdict-zh-deepseek-pilot-100-review-corrected.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not staged or committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+
+### Corrected artifact
+- Source: `docs/review/jmdict-zh-deepseek-pilot-100-review.md`
+- QA source: `docs/review/jmdict-zh-deepseek-pilot-100-qa-findings.md`
+- Status: `human_corrected_review_candidate`
+- Provider calls: none
+- Runtime AI calls: `0`
+- R2/D1 writes: `0`
+- Production deploy: no
+- Overlay active: no
+- TextEdit open command executed for the corrected file.
+
+### Applied corrections
+- `物 / もの / sense 2`: changed `zhGlosses` to `所有物; 财产; 随身物品`; `reviewStatus=human_corrected`.
+- `言う / いう / sense 3`: changed `usageNote` to `用于声音、警报等“发出某种声音”的表达。`; `reviewStatus=human_corrected`.
+- `小さい / ちいさい / sense 3`: changed short/zh glosses to `声音小的` / `声音小的; 轻声的`; `reviewStatus=human_corrected`.
+- `終わる / おわる / sense 2`: changed `zhGlosses` to `完成; 结束`; `reviewStatus=human_corrected`.
+- `儂 / わし`, `私 / し`, and `私 / わたくし / sense 3`: changed `shouldDisplay=false`, `confidence=medium`, `issueFlags=too_rare; needs_human_review`; `reviewStatus=human_corrected`.
+- Each human-corrected row includes a `reviewerNote`.
+- Unchanged rows remain `ai_generated_unreviewed`.
+
+### Counts
+- Total entries: `100`
+- Total senses: `209`
+- Human corrected count: `7`
+- Remaining needs_human_review count: `3`
+- shouldDisplay=false count: `43`
+
+### External services touched
+- DeepSeek API: no.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: branch push after validation only.
+- Billing prompt seen: no.
+
+### Validation
+- `codex-preflight --task "PR #12 Issue #11 generate human-corrected DeepSeek Top 100 review artifact only, no provider calls"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- Start head verified: `0ee712f4ed4132f711a7838d9e418d2cabb72406`
+- PR #12 verified draft/open/unmerged before edits.
+- Original review file diff stayed empty; corrected file was generated separately.
+- Corrected file inspected for required metadata, seven human-corrected rows, summary counts, and non-active-overlay warning.
+- Runtime dictionary lookup static check found no DeepSeek/provider/probe reference under `functions/api/dictionary` or `index.html`.
+- `.env.local` is not tracked by Git.
+
+### Remaining risks
+- Corrected review candidate is not a formal overlay and must not be uploaded to R2/D1 without separate approval.
+- Overlay candidate generation is still pending and must not imply activation.
+
+## 2026-06-23 00:41 JST / Codex / Issue #11 PR #12 local overlay candidate JSON
+
+### Task
+- Generate local/PR-only machine-readable overlay candidate JSON from `docs/review/jmdict-zh-deepseek-pilot-100-review-corrected.md`.
+- Generate validation report `docs/review/jmdict-zh-deepseek-pilot-100-overlay-candidate-validation.md`.
+- Do not call DeepSeek, Google Translate, or any AI provider.
+- Do not deploy Production, merge, mark PR ready, activate Chinese overlay, upload R2, update D1, generate formal R2 shards, modify English JMdict R2 shards, run D1 full import, commit `.env.local`, print secrets, or make runtime lookup call AI.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `5d460603f736cb32fb8e6f5e7ede7da7cf37cd57`
+- End commit: this closeout commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Files changed
+- `docs/review/jmdict-zh-deepseek-pilot-100-overlay-candidate.json`
+- `docs/review/jmdict-zh-deepseek-pilot-100-overlay-candidate-validation.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not staged or committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+
+### Candidate result
+- Overlay version: `jmdict-zh-deepseek-pilot-100-candidate-20260623`
+- Status: `local_review_only_not_active`
+- Source review file: `docs/review/jmdict-zh-deepseek-pilot-100-review-corrected.md`
+- Provider/model metadata: `deepseek` / `deepseek-v4-flash`
+- Source review status: `human_corrected_review_candidate`
+- Runtime AI calls: `0`
+- R2 writes: `0`
+- D1 writes: `0`
+- Production deploy: false
+- Overlay active: false
+
+### Counts
+- Entries: `100`
+- Senses: `209`
+- shouldDisplay=true: `166`
+- shouldDisplay=false: `43`
+- human_corrected: `7`
+- ai_generated_unreviewed: `202`
+- needs_human_review: `3`
+
+### Validation
+- `codex-preflight --task "PR #12 Issue #11 generate local overlay candidate JSON from corrected review only, no provider calls"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- Start head verified: `5d460603f736cb32fb8e6f5e7ede7da7cf37cd57`
+- PR #12 verified draft/open/unmerged before edits.
+- JSON.parse passed.
+- Entries count, senses count, shouldDisplay=false count, and needs_human_review count match the corrected review summary.
+- Each parsed sense has non-empty entryId/senseIndex/shortGloss, array `zhGlosses`, boolean `shouldDisplay`, enum `confidence`, array `issueFlags`, and present `reviewStatus`.
+- Corrected review file diff stayed empty; candidate files were generated separately.
+- Validation file opened with TextEdit.
+- Runtime dictionary lookup static check found no DeepSeek/provider/probe reference under `functions/api/dictionary` or `index.html`.
+- No `.env.local` tracking, no secret-like staged diff, no DB/R2 shard/JMdict XML/gz file in staged changes.
+
+### External services touched
+- DeepSeek API: no.
+- Google Translate: no.
+- Other AI provider: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: branch push after validation only.
+- Billing prompt seen: no.
+
+### Remaining risks
+- Candidate JSON is not a formal active overlay and must not be uploaded to R2/D1 without separate approval.
+- No runtime code consumes this candidate yet.
+- Any formal shard generation, upload, activation, deploy, PR ready transition, or merge requires separate approval.
+
+## 2026-06-23 13:24 JST / Codex / Issue #11 PR #12 DeepSeek Top 500 local artifacts
+
+### Task
+- Apply the user's yellow-light error policy for the Top 500 DeepSeek run.
+- Fix prompt/validator so safe `zhGlosses` format issues can be deterministically normalized.
+- Retry Top 500 provider run at most once.
+- If successful, generate local/PR-only Top 500 review, QA summary, corrected review candidate, overlay candidate JSON, and local package.
+- Do not call Google Translate, upload R2, write D1, deploy Preview, deploy Production, activate overlay, merge PR, mark PR ready, commit `.env.local`, print secrets, or connect runtime lookup to DeepSeek.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `251de3ca745c903ada63bfd5ad7746163e021976`
+- End commit: this closeout commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Automatic fix
+- Strengthened prompt: `zhGlosses` must be 1-3 Chinese strings; if there are more than three close synonyms, merge into one Chinese-semicolon string.
+- Added deterministic validator normalization:
+  - remove empty `zhGlosses` strings;
+  - dedupe duplicate `zhGlosses`;
+  - merge overlong all-Chinese `zhGlosses` arrays into one Chinese-semicolon string;
+  - fail nested arrays, objects, English residual text, empty arrays, or still-invalid arrays.
+- Added normalization records to review artifacts and usage ledger: entryId, senseIndex, field, before type/array length, action, after type/array length.
+- Added fixtures for overlong Chinese `zhGlosses`, nested arrays, objects, English residual text, empty arrays, and empty/duplicate normalization.
+
+### Provider result
+- Previous Top 500 attempt failed on yellow-light schema issue: `jmdict-1387990` sense 2 had overlong `zhGlosses`.
+- After local fix and validation, exactly one automatic retry was run.
+- DeepSeek retry succeeded via offline batch only.
+- Provider: `deepseek`
+- Model: `deepseek-v4-flash`
+- Requests: `25`
+- Entries: `500`
+- Senses: `841`
+- Estimated tokens: input `139905`, output `116715`, total `256620`
+- Actual tokens: input `144483`, output `112063`, total `256546`
+- Normalization records in successful retry: `0`
+- Billing prompt seen: no
+
+### Files changed
+- `scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `scripts/dictionary/prompts/jmdict-zh-deepseek-system.md`
+- `scripts/dictionary/jmdict-zh-deepseek-build-top500-input.js`
+- `scripts/dictionary/jmdict-zh-deepseek-top500-postprocess.js`
+- `docs/dictionary/zh-overlay-pilot-500/translation-input.json`
+- `docs/review/jmdict-zh-deepseek-pilot-500-review.md`
+- `docs/review/jmdict-zh-deepseek-pilot-500-usage-ledger.json`
+- `docs/review/jmdict-zh-deepseek-pilot-500-qa-summary.md`
+- `docs/review/jmdict-zh-deepseek-pilot-500-review-corrected.md`
+- `docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate.json`
+- `docs/review/jmdict-zh-deepseek-pilot-500-local-package/`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not staged or committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+
+### QA / local package
+- QA summary: `docs/review/jmdict-zh-deepseek-pilot-500-qa-summary.md`
+- QA result: `PASS_WITH_REVIEW`
+- Bad findings: `0`
+- Minor findings: `7`
+- shouldDisplay review findings: `14`
+- Corrected candidate counts: shouldDisplay true/false `757`/`84`, human_corrected `21`, needs_human_review `46`
+- Overlay candidate JSON: `docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate.json`
+- Local package: `docs/review/jmdict-zh-deepseek-pilot-500-local-package/`
+- Local package validation: PASS
+
+### Validation
+- `codex-preflight --task "PR #12 Issue #11 Top 500 yellow-light zhGlosses normalization and one retry local artifacts only"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- PR #12 verified draft/open/unmerged before and after local generation.
+- `.env.local` verified untracked/ignored.
+- `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `node --check scripts/dictionary/jmdict-zh-deepseek-build-top500-input.js`
+- `node --check scripts/dictionary/jmdict-zh-deepseek-top500-postprocess.js`
+- `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --self-test-json-fixtures`: `23/23`
+- Top 500 estimate-only passed: `500` entries, `841` senses, `25` requests, estimated total tokens `256620`
+- Guardrails passed before sentinel `fetch` for wrong Top 100 approval and `BAINA_ZH_AI_MAX_ENTRIES=499`.
+- Runtime dictionary static check found no DeepSeek/provider/probe reference under `functions/api/dictionary` or `index.html`.
+- Secret scan found no raw DeepSeek key pattern; `.env.local` not tracked.
+- Candidate JSON parsed successfully.
+- Local package validation file reports PASS.
+
+### External services touched
+- DeepSeek API: yes, one automatic retry after local yellow-light fix.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Preview deploy: no.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: branch push after validation only.
+- Billing prompt seen: no.
+
+### Remaining risks
+- DeepSeek usage may incur cost; actual billing must be checked in the DeepSeek console.
+- Deterministic QA is not a substitute for human review; Top 500 corrected candidate still needs manual review before activation.
+- Local package is not active and must not be uploaded to R2/D1 without separate approval.
+- Preview/Production bindings still point at the same R2/D1 resources, so Cloudflare write/upload/deploy remains blocked until safe Preview isolation is confirmed.
+- PR #12 remains draft/open/unmerged; PR ready/merge require separate explicit approval.
+
+### 2026-06-23 13:41:22 JST - PR #12 Top 500 ChatGPT review packet
+
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `31942bf08c54200e05ba5409d6264dd937495850`
+- End commit: final PR branch head verified after push; exact commit reported in final closeout
+- Files changed: `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/` plus status docs
+- External services touched: GitHub only after push; DeepSeek no; Google Translate no; Runtime AI calls 0; R2/D1 writes 0; Preview deploy no; Production deploy no
+- Validation completed: node --check, secret scan on added diff and packet files, git scope checks, packet readability/size checks, PR draft/open/unmerged recheck
+- Packet stats: entries 500, senses 841, chunks 10, P0 84, P1 335, P2 422, needs_human_review 46, confidence_low 4
+- Remaining risks: machine heuristics are not human review; ChatGPT/reviewer must inspect P0/P1 before any correction patch or activation.
+- Remaining cost risks: none for this docs-only packet; future provider/R2/D1/deploy work requires separate approval.
+- Next step: ChatGPT review of Top 500 packet, then generate a reviewed correction patch in a later turn.
+
+### 2026-06-23 14:00:31 JST - PR #12 ChatGPT review round1 corrections
+
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `0bb3c278d87d4fabd1066c063f10b81adf6aa68d`
+- End commit: final PR branch head verified after push; exact commit reported in final closeout
+- Files changed: `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round1.md`, `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round1-corrections.json`, `docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r1.json`, `docs/review/jmdict-zh-deepseek-pilot-500-local-package-reviewed-r1/`, plus status docs
+- External services touched: GitHub only after push; DeepSeek no; Google Translate no; Runtime AI calls 0; R2/D1 writes 0; Preview deploy no; Production deploy no
+- Validation completed by generation script: entries/senses unchanged (500/841), changed sense count 21, changed targets matched corrections exactly, checksum 220e8a1276befa5524c51cb5dee9c2ff9b3713678d5fc19b683036a553b9d1d7
+- reviewed-r1 stats: shouldDisplay true/false 762/79, needs_human_review 30, chatgpt_reviewed 21
+- Remaining risks: Round 1 is obvious-corrections only; P1 usageNote and high-frequency sampling remain before any activation.
+- Remaining cost risks: none for this docs-only/local-package task; any provider/R2/D1/deploy work requires separate approval.
+- Next step: continue ChatGPT review of P1 usageNote and ordinary high-frequency samples, then generate reviewed-r2 if needed.
+
+### 2026-06-23 19:29:22 JST - PR #12 ChatGPT review round2 corrections
+
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `b78f24b7a61e8e78a7835324c64110d99d1d6714`
+- End commit: final PR branch head verified after push; exact commit reported in final closeout
+- Files changed: `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round2.md`, `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round2-corrections.json`, `docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json`, `docs/review/jmdict-zh-deepseek-pilot-500-local-package-reviewed-r2/`, plus status docs
+- External services touched: GitHub only after push; DeepSeek no; Google Translate no; Runtime AI calls 0; R2/D1 writes 0; Preview deploy no; Production deploy no; overlay activation no
+- Validation completed: `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`; reviewed-r2 candidate parsed; entries/senses unchanged (500/841); only 16 listed entryId/senseIndex targets changed; Round 2 changed sense count 16; cumulative changed sense count 37; checksum validation passed for manifest and 16 shards; `.env.local` untracked; secret scan and large artifact scan clean
+- reviewed-r2 stats: shouldDisplay true/false 761/80, needs_human_review 28, Round 2 no action records 19, checksum `f70db8b59f0bf12f6c196089dbb9ea8158a3080e2fbb64c322f1d8d17e1ff2ad  manifest.json`
+- Remaining risks: Round 2 is limited to explicit usageNote/common-expression corrections and is not a full 841-sense review; reviewed-r2 remains local review-only and is not active
+- Remaining cost risks: none for this docs-only/local-package task; any provider/R2/D1/deploy work requires separate approval
+- Next step: review そ/こ/あ grammar/pronoun items, sample high-frequency ordinary reviewed-r2 entries, and continue remaining `needs_human_review`
+
+### 2026-06-23 20:32:58 JST - PR #12 ChatGPT review round3 needs-human-review packet
+
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `7f84c73484802ffb670e04174635b1f0545fcfec`
+- End commit: final PR branch head verified after push; exact commit reported in final closeout
+- Files changed: `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round3-needs-human-review.md`, `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round3-needs-human-review.json`, `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round3-correction-scaffold.json`, plus status docs
+- External services touched: GitHub only after push; DeepSeek no; Google Translate no; Runtime AI calls 0; R2/D1 writes 0; Preview deploy no; Production deploy no; overlay activation no
+- Validation completed: `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`; reviewed-r2 candidate parsed; extracted `needs_human_review` count 28 from `issueFlags`; markdown/JSON/scaffold counts all 28; scaffold `after` fields remain null; reviewed-r2 candidate has no diff; no reviewed-r3 candidate or local package exists; `.env.local` untracked; secret and large-artifact scans clean
+- Round 3 packet stats: riskType counts `archaic=3`, `specialized=25`, `religion=7`, `legal=3`, `medical=3`, `dialect=0`, `too_rare=7`, `abbreviation=2`, `possible_duplicate_sense=0`, `possible_bad_gloss=6`, `should_display_review=6`, `usage_note_review=15`; likelyAction counts `keep_hidden_remove_needs_human_review=16`, `keep_hidden_keep_needs_human_review=1`, `rewrite_gloss_keep_hidden=1`, `rewrite_gloss_show=1`, `show_as_common_word=1`, `mark_unresolved=8`
+- Remaining risks: machine triage is a review aid only; ChatGPT/reviewer must decide final after fields before any reviewed-r3 patch
+- Remaining cost risks: none for this docs-only packet; any provider/R2/D1/deploy work requires separate approval
+- Next step: ChatGPT/reviewer fills the Round 3 scaffold decisions, then a later turn can generate reviewed-r3 corrections from those decisions

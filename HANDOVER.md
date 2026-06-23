@@ -20,6 +20,10 @@
 - 词典优先查词：架构计划在 `docs/architecture/DICTIONARY_LOOKUP_PLAN.md`，执行计划在 `docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md`。PR #4 已合并到 `main`，merge commit `c340f75a5f8cf51dac691732a9c66e50cd22af09`，当时上线的是 JMdict 小型 fixture MVP。当前 Production 已由 PR #6 R2 shard lookup 接管：命中词典不默认调用 AI，未命中只提示可尝试 AI 解释。
 - JMdict 1,000-entry beta：Issue #5 / PR #6 已 merge 到 `main`，数据在 `functions/api/dictionary/_beta-data.js`，由官方 `JMdict_e.gz` 通过 `scripts/dictionary/jmdict-import-spike.js` 抽取生成，约 1,000 条、约 500 KiB。英文 gloss 来自 JMdict 原始数据，中文释义为 `null`，不使用 AI 生成/翻译/改写词条。Production 当前使用 R2 shard lookup；beta fallback 仅保留为 binding 缺失/失败时的安全降级路径。
 - 完整 JMdict R2 sharded lookup：Issue #8 已用官方 `JMdict_e.gz` `2026-06-18` 生成 English-only R2 shards 并上传到 R2 bucket `baina-dictionary-artifacts`：active prefix `dictionary/shards/jmdict/jmdict-english-r2-shards-2026-06-18/`，source SHA-256 `77cc98c43209d56e2ad44438a61ca02ce081ff083c58c5e87e4bc288cd860610`，512 shard objects，约 `632,040,903` bytes，最大 shard `1,768,374` bytes。D1 database `baina-dictionary`（id `5e8eeeda-0029-4c2e-958e-845ea0020c6e`）只写入 metadata schema 和 active version，不写 full entries/forms/senses；D1 full import 仍禁止，除非另有 cost-safe plan。Preview 已验证 `dictionarySource=r2-shard`，`食べられる` count `1`，全部要求测试词 `aiCalled=false`。PR #6 merge commit `c94735925798c604321631e1caa36c2f2c3190be` 已合并；Production Pages config 已绑定 `DICTIONARY_R2` -> `baina-dictionary-artifacts`、`DICTIONARY_DB` -> `baina-dictionary`，canonical Production smoke 已通过：`dictionarySource=r2-shard`、`食べられる` count `1`、required terms 全部 `aiCalled=false`。完整 JMdict/XML/大型 JSON/SQLite/DB artifact 不得提交 GitHub；不得使用 AI 生成、翻译、改写、编造词条；不要执行 D1 full import。
+- 中文释义 overlay pilot：Issue #9 / draft PR #10 / branch `feat/dictionary-zh-overlay-pilot-100` 是 Top 100 pilot，不是全量中文翻译。Phase A 已生成仅供用户审核的 review artifact：`docs/review/jmdict-zh-pilot-100-review.md`，usage ledger：`docs/review/jmdict-zh-pilot-100-usage-ledger.json`。Google Cloud Translation official API 仅通过离线 batch 调用 Top 100，translated entries `100`、translated senses `209`、estimated/actual chars `7,382`、reviewStatus `unreviewed`。未激活中文 overlay，runtime lookup 不调用 Google，未上传 active zh overlay 到 R2，未写 D1 active metadata，未改 Production，未部署，PR #10 仍 draft/open/unmerged。现有 Preview `https://44dbffce.baina-tango.pages.dev` smoke 仍确认 English R2 lookup：`食べられる` 为 `dictionarySource=r2-shard`、count `1`、required terms 全部 `aiCalled=false`。下一步是用户审核 review artifact；Phase B 需另行明确批准。
+- DeepSeek 中文释义 overlay pilot：Issue #11 / PR #12 / branch `feat/dictionary-zh-deepseek-pilot-100` 当前为 local overlay candidate generated。2026-06-22 17:42 JST 完成 scaffold checkpoint；2026-06-22 19:14 JST 用户批准后第一次 Top 100 provider attempt 因 message content 不是 strict JSON 停止；2026-06-22 19:22 JST 已加固 strict JSON：provider schema 统一为 top-level `items`，保留 `response_format: { type: "json_object" }`，prompt 明确禁止 Markdown/code block/解释文字，新增本地 fixture 自测；2026-06-22 20:51 JST 用户批准后仅通过 `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --run-provider` retry 一次，仍因 `DeepSeek message content was not strict JSON.` 停止。没有接受 malformed JSON；已写安全失败 ledger `docs/review/jmdict-zh-deepseek-pilot-100-usage-ledger.json`，实际 tokens/cost unknown。2026-06-22 22:59 JST 未调用 DeepSeek，只加入 `thinking: { type: "disabled" }`、safe last-failure debug 文件逻辑、empty/truncated/reasoning-content fixture 覆盖，以及 `--probe-provider --probe-limit 1` / `--probe-provider --probe-limit 5`。2026-06-22 23:15 JST 用户只批准 1 条 probe 后成功；2026-06-22 23:24 JST 用户只批准 5 条 probe 后成功；2026-06-22 23:35 JST 未调用 DeepSeek，仅修正 prompt/schema/docs。2026-06-22 23:52 JST 用户批准后只执行一次 Top 100 DeepSeek provider run。2026-06-23 00:04 JST 未调用 provider，新增 QA findings。2026-06-23 00:25 JST 未调用 provider，保留原 review 不覆盖，新增 corrected review candidate，应用 7 条人工修正。2026-06-23 00:41 JST 未调用任何 provider，从 corrected review 生成 local/PR-only `docs/review/jmdict-zh-deepseek-pilot-100-overlay-candidate.json` 和 validation 文件，status `local_review_only_not_active`，entries `100`、senses `209`、shouldDisplay true/false `166`/`43`、human_corrected `7`、ai_generated_unreviewed `202`、needs_human_review `3`，validation PASS，TextEdit open command 已执行；candidate 明确不是 active overlay，不得无单独批准上传 R2/D1。`.env.local` ignored/untracked 且未提交。没有调用 Google Translate，没有 runtime AI call，没有 R2/D1 write，没有 deploy，没有 overlay activation，没有 formal R2 shards，没有 merge/ready。任何 formal shard generation / overlay activation / R2/D1 write / Production deploy / PR ready / merge 都需另行明确批准。DeepSeek billing 以控制台为准。
+- DeepSeek Top 500 local artifacts：2026-06-23 JST 先确认 Cloudflare Preview/Production R2/D1 绑定共用同一 bucket/database，因此任何 Cloudflare 写入、上传、Preview/Production deploy、overlay activation 均停止。随后仅做本地/PR artifacts。第一次 Top 500 run 因 `zhGlosses` 长度黄灯 schema 问题停止；按新错误策略补强 prompt/validator/fixtures，允许安全 deterministic normalization，并只自动重试一次。重试成功，生成 Top 500 review、usage ledger、QA summary、corrected review candidate、overlay candidate JSON、local package。Counts：entries `500`、senses `841`、shouldDisplay true/false `757`/`84`、human_corrected `21`、needs_human_review `46`。QA `PASS_WITH_REVIEW`：Bad `0`、Minor `7`、shouldDisplay review `14`。Local package validation PASS。DeepSeek retry actual tokens input/output `144483`/`112063`，normalization records `0`。Google Translate no，runtime AI calls `0`，R2/D1 writes `0`，Preview deploy no，Production deploy no，PR #12 draft/open/unmerged。Top 500 local package is not active and must not be uploaded to R2/D1 without separate approval.
+- Hermes 沙盒试跑 editorial rules：2026-06-23 20:50 JST Hermes 首次在 baina-tango 项目中执行 dry-run 试跑。基于 Top 500 R1/R2/R3 ChatGPT review 生成：editorial rules (`docs/design/jmdict-zh-gloss-editorial-rules.md`)、lessons learned、Top 1000 dry-run plan、preflight checklist、risk rules draft，以及 updated prompt。DeepSeek no; Google Translate no; Runtime AI calls `0`; R2/D1 writes `0`; Preview/Production deploy no; overlay activation no; PR #12 draft/open/unmerged。验证 PASS：`node --check`、secret scan、.env.local untracked、大文件检查、Top 500 R1/R2 未覆盖。
 - 代理 closeout 机制：`docs/ops/AGENT_CLOSEOUT_CHECKLIST.md` 是非平凡任务收尾必读文件。任务完成前必须更新 GitHub 文档、commit + push、远端校验，并用 JST 记录时间。
 
 ### EJU 記述作文双知识库现状（2026-06-17）
@@ -176,3 +180,55 @@
 - 点击某套 → `renderEjuScannedSet(subject,setId)`（`assets/eju.js`）→ 按 key=`subject/setId` 路由：
   - 命中 `EJU_MATH_PAPER_PROTOTYPES` → 数学卷视图（填空答案框）。
   - 命中 `EJU_RIKA_PROTOTYPES` 或 `EJU_SOGO_PROTOTYPES` → 理科/综合卷视图（单选 + 判分）。
+
+### 2026-06-23 13:41:22 JST - PR #12 Top 500 ChatGPT review packet
+
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `31942bf08c54200e05ba5409d6264dd937495850`
+- End commit: final PR branch head verified after push; exact commit reported in final closeout
+- Files changed: `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/` plus status docs
+- External services touched: GitHub only after push; DeepSeek no; Google Translate no; Runtime AI calls 0; R2/D1 writes 0; Preview deploy no; Production deploy no
+- Validation completed: node --check, secret scan on added diff and packet files, git scope checks, packet readability/size checks, PR draft/open/unmerged recheck
+- Packet stats: entries 500, senses 841, chunks 10, P0 84, P1 335, P2 422, needs_human_review 46, confidence_low 4
+- Remaining risks: machine heuristics are not human review; ChatGPT/reviewer must inspect P0/P1 before any correction patch or activation.
+- Remaining cost risks: none for this docs-only packet; future provider/R2/D1/deploy work requires separate approval.
+- Next step: ChatGPT review of Top 500 packet, then generate a reviewed correction patch in a later turn.
+
+### 2026-06-23 14:00:31 JST - PR #12 ChatGPT review round1 corrections
+
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `0bb3c278d87d4fabd1066c063f10b81adf6aa68d`
+- End commit: final PR branch head verified after push; exact commit reported in final closeout
+- Files changed: `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round1.md`, `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round1-corrections.json`, `docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r1.json`, `docs/review/jmdict-zh-deepseek-pilot-500-local-package-reviewed-r1/`, plus status docs
+- External services touched: GitHub only after push; DeepSeek no; Google Translate no; Runtime AI calls 0; R2/D1 writes 0; Preview deploy no; Production deploy no
+- Validation completed by generation script: entries/senses unchanged (500/841), changed sense count 21, changed targets matched corrections exactly, checksum 220e8a1276befa5524c51cb5dee9c2ff9b3713678d5fc19b683036a553b9d1d7
+- reviewed-r1 stats: shouldDisplay true/false 762/79, needs_human_review 30, chatgpt_reviewed 21
+- Remaining risks: Round 1 is obvious-corrections only; P1 usageNote and high-frequency sampling remain before any activation.
+- Remaining cost risks: none for this docs-only/local-package task; any provider/R2/D1/deploy work requires separate approval.
+- Next step: continue ChatGPT review of P1 usageNote and ordinary high-frequency samples, then generate reviewed-r2 if needed.
+
+### 2026-06-23 19:29:22 JST - PR #12 ChatGPT review round2 corrections
+
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `b78f24b7a61e8e78a7835324c64110d99d1d6714`
+- End commit: final PR branch head verified after push; exact commit reported in final closeout
+- Files changed: `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round2.md`, `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round2-corrections.json`, `docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json`, `docs/review/jmdict-zh-deepseek-pilot-500-local-package-reviewed-r2/`, plus status docs
+- External services touched: GitHub only after push; DeepSeek no; Google Translate no; Runtime AI calls 0; R2/D1 writes 0; Preview deploy no; Production deploy no; overlay activation no
+- Validation completed: `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`; reviewed-r2 candidate parsed; entries/senses unchanged (500/841); only 16 listed entryId/senseIndex targets changed; Round 2 changed sense count 16; cumulative changed sense count 37; checksum validation passed for manifest and 16 shards; `.env.local` untracked; secret scan and large artifact scan clean
+- reviewed-r2 stats: shouldDisplay true/false 761/80, needs_human_review 28, Round 2 no action records 19, checksum `f70db8b59f0bf12f6c196089dbb9ea8158a3080e2fbb64c322f1d8d17e1ff2ad  manifest.json`
+- Remaining risks: Round 2 is limited to explicit usageNote/common-expression corrections and is not a full 841-sense review; reviewed-r2 remains local review-only and is not active
+- Remaining cost risks: none for this docs-only/local-package task; any provider/R2/D1/deploy work requires separate approval
+- Next step: review そ/こ/あ grammar/pronoun items, sample high-frequency ordinary reviewed-r2 entries, and continue remaining `needs_human_review`
+
+### 2026-06-23 20:32:58 JST - PR #12 ChatGPT review round3 needs-human-review packet
+
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `7f84c73484802ffb670e04174635b1f0545fcfec`
+- End commit: final PR branch head verified after push; exact commit reported in final closeout
+- Files changed: `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round3-needs-human-review.md`, `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round3-needs-human-review.json`, `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round3-correction-scaffold.json`, plus status docs
+- External services touched: GitHub only after push; DeepSeek no; Google Translate no; Runtime AI calls 0; R2/D1 writes 0; Preview deploy no; Production deploy no; overlay activation no
+- Validation completed: `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`; reviewed-r2 candidate parsed; extracted `needs_human_review` count 28 from `issueFlags`; markdown/JSON/scaffold counts all 28; scaffold `after` fields remain null; reviewed-r2 candidate has no diff; no reviewed-r3 candidate or local package exists; `.env.local` untracked; secret and large-artifact scans clean
+- Round 3 packet stats: riskType counts `archaic=3`, `specialized=25`, `religion=7`, `legal=3`, `medical=3`, `dialect=0`, `too_rare=7`, `abbreviation=2`, `possible_duplicate_sense=0`, `possible_bad_gloss=6`, `should_display_review=6`, `usage_note_review=15`; likelyAction counts `keep_hidden_remove_needs_human_review=16`, `keep_hidden_keep_needs_human_review=1`, `rewrite_gloss_keep_hidden=1`, `rewrite_gloss_show=1`, `show_as_common_word=1`, `mark_unresolved=8`
+- Remaining risks: machine triage is a review aid only; ChatGPT/reviewer must decide final after fields before any reviewed-r3 patch
+- Remaining cost risks: none for this docs-only packet; any provider/R2/D1/deploy work requires separate approval
+- Next step: ChatGPT/reviewer fills the Round 3 scaffold decisions, then a later turn can generate reviewed-r3 corrections from those decisions
