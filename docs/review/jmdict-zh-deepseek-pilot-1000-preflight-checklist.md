@@ -38,12 +38,12 @@
 - [ ] No Google Translate call
 - [ ] `estimate-only` completed before provider run
 - [ ] **Guardrail values updated for Top 1000** (current Top 500 guardrail is insufficient — see `jmdict-zh-deepseek-pilot-1000-estimate.md`)
-- [ ] `BAINA_ZH_AI_APPROVE_RUN=YES_DEEPSEEK_TOP_1000_ONLY` set
+- [ ] `BAINA_ZH_AI_APPROVE_RUN` set (⚠️ 脚本兼容问题：`runApprovalForEstimate` 对 500 entries 返回 `TOP_500_APPROVAL`，见 approval packet)
 - [ ] Estimated tokens stay within **updated** guardrails:
-  - [ ] estimated input tokens ≤ `BAINA_ZH_AI_MAX_INPUT_TOKENS` (建议 ≥ 92,459)
-  - [ ] estimated output tokens ≤ `BAINA_ZH_AI_MAX_OUTPUT_TOKENS` (建议 ≥ 123,074)
-  - [ ] estimated total tokens ≤ `BAINA_ZH_AI_MAX_TOTAL_ESTIMATED_TOKENS` (建议 ≥ 221,127)
-  - [ ] estimated requests ≤ `BAINA_ZH_AI_MAX_REQUESTS` (建议 ≥ 25)
+  - [ ] estimated input tokens (80,399) ≤ `BAINA_ZH_AI_MAX_INPUT_TOKENS` (推荐 **150,000**)
+  - [ ] estimated output tokens (111,885) ≤ `BAINA_ZH_AI_MAX_OUTPUT_TOKENS` (推荐 **220,000**)
+  - [ ] estimated total tokens (192,284) ≤ `BAINA_ZH_AI_MAX_TOTAL_ESTIMATED_TOKENS` (推荐 **350,000**)
+  - [ ] estimated requests (25) ≤ `BAINA_ZH_AI_MAX_REQUESTS` (推荐 **25**)
 
 ### 成本/账单检查
 

@@ -55,16 +55,16 @@
 
 ### 🚨 结论：当前 guardrail 不适用于 Top 1000。必须先更新 guardrail，再批准 provider run。
 
-### 建议 Top 1000 guardrail
+### 推荐 Top 1000 guardrail
 
-| 参数 | 建议值 | 说明 |
+| 参数 | 推荐值 | 说明 |
 |------|--------|------|
-| `BAINA_ZH_AI_APPROVE_RUN` | `YES_DEEPSEEK_TOP_1000_ONLY` | 新增批准标记 |
+| `BAINA_ZH_AI_APPROVE_RUN` | `YES_DEEPSEEK_TOP_1000_ONLY` | 新增批准标记（⚠️ 脚本兼容问题见 approval packet） |
 | `BAINA_ZH_AI_MAX_ENTRIES` | 500 | 不变（500 条目 = entries 500-999） |
-| `BAINA_ZH_AI_MAX_INPUT_TOKENS` | 92,459 | 预估值 × 1.15 |
-| `BAINA_ZH_AI_MAX_OUTPUT_TOKENS` | 123,074 | 预估值 × 1.1 |
-| `BAINA_ZH_AI_MAX_TOTAL_ESTIMATED_TOKENS` | 221,127 | 预估总额 × 1.15 |
-| `BAINA_ZH_AI_MAX_REQUESTS` | 25 | 无需更多 |
+| `BAINA_ZH_AI_MAX_INPUT_TOKENS` | **150,000** | 预估 80K；Top 500 actual 144K；150K 覆盖合理场景 |
+| `BAINA_ZH_AI_MAX_OUTPUT_TOKENS` | **220,000** | 预估 112K；Top 500 actual 112K；799 senses ≈ 841；220K 充足 |
+| `BAINA_ZH_AI_MAX_TOTAL_ESTIMATED_TOKENS` | **350,000** | 预估 192K；Top 500 actual 256K；350K 给 30%-80% 余量 |
+| `BAINA_ZH_AI_MAX_REQUESTS` | 25 | 预估 25 batch；无需更多 |
 
 ---
 
