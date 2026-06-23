@@ -71,6 +71,53 @@ Entry template:
 - Remaining cost risk: zero for this dry-run; future provider run may incur DeepSeek cost.
 
 ### Commit
+- `005f4e81b59ed59681b6bef77c1b4504921cc45a`
+
+---
+
+## 2026-06-23 21:00 JST / Hermes (second trial) / Top 1000 estimate-only preflight
+
+### Task
+- Hermes second sandbox trial. Executed Top 1000 estimate-only, generated preflight materials and validation log.
+- Created dry-run estimate helper script (`jmdict-zh-deepseek-estimate-top1000.js`) — reads BETA_ENTRIES entries 500-999 only, no provider call.
+- Generated estimate report, provider approval packet, validation log. Updated preflight checklist with guardrail upgrade warning.
+- Key finding: current Top 500 guardrails insufficient for Top 1000; must update before provider run.
+- No provider calls, no R2/D1 write, no deploy, no overlay activation.
+
+### Files changed
+- `scripts/dictionary/jmdict-zh-deepseek-estimate-top1000.js` — new dry-run helper
+- `docs/review/jmdict-zh-deepseek-pilot-1000-estimate.md` — new: estimate report
+- `docs/review/jmdict-zh-deepseek-pilot-1000-provider-approval-packet.md` — new: approval packet with 14-item user checklist
+- `docs/review/jmdict-zh-deepseek-pilot-1000-estimate-validation-log.md` — new: validation log
+- `docs/review/jmdict-zh-deepseek-pilot-1000-preflight-checklist.md` — updated: guardrail upgrade warning
+- `AGENT_SYNC_BOARD.md` — updated
+- `AGENT_WORKLOG.md` — appended this entry
+- `PROJECT_STATUS.md` — updated
+- `HANDOVER.md` — updated
+
+### Validation
+- `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js` PASS
+- `node scripts/dictionary/jmdict-zh-deepseek-estimate-top1000.js` PASS (500 entries, 799 senses, 25 requests)
+- secret scan: clean
+- `.env.local` not tracked
+- Top 500 reviewed-r1/r2: not overwritten
+- No Top 1000 candidate/local package/overlay generated
+- No reviewed-r3 generated
+- DeepSeek calls: 0
+- Google Translate calls: 0
+- Runtime AI calls: 0
+- R2/D1 writes: 0
+- Preview/Production deploy: no
+- Start commit: `005f4e81b59ed59681b6bef77c1b4504921cc45a`
+
+### Risks / next steps
+- Top 500 R3 28 needs_human_review still unresolved
+- Guardrail MUST be updated for Top 1000 (estimated total tokens 192,284 >> current max 60,000)
+- User must approve via checklist before provider run
+- DeepSeek console billing/quota must be checked before run
+- Remaining cost risk: zero for this dry-run
+
+### Commit
 - pending; final hash reported after push.
 
 ## 2026-06-17 / Codex / External platform baseline + delta sync rules
