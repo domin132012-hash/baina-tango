@@ -1,6 +1,6 @@
 # Review Index
 
-- Chunks: 16
+- Chunks: 16 (50 entries each)
 - Total: 799
 
 | Chunk | File | Entries |

@@ -1341,6 +1341,37 @@ async function writeUsageLedger(filePath, value) {
   await writeJson(filePath, ledger);
 }
 
+function checkActualVsGuardrail(actualUsage, config) {
+  const inputOk = actualUsage.promptTokens <= config.maxInputTokens.value;
+  const outputOk = actualUsage.completionTokens <= config.maxOutputTokens.value;
+  const totalOk = (actualUsage.promptTokens + actualUsage.completionTokens) <= config.maxTotalTokens.value;
+  const allOk = inputOk && outputOk && totalOk;
+  const details = {
+    actualInputTokens: actualUsage.promptTokens,
+    guardrailInputTokens: config.maxInputTokens.value,
+    actualOutputTokens: actualUsage.completionTokens,
+    guardrailOutputTokens: config.maxOutputTokens.value,
+    actualTotalTokens: actualUsage.promptTokens + actualUsage.completionTokens,
+    guardrailTotalTokens: config.maxTotalTokens.value,
+    inputOk,
+    outputOk,
+    totalOk
+  };
+  if (!allOk) {
+    return {
+      status: "FAIL_GUARDRAIL_EXCEEDED",
+      note: "Actual tokens exceeded guardrail. Provider output was accepted but this must be flagged for review.",
+      details
+    };
+  }
+  // All within guardrail — note if actual significantly exceeded estimate
+  return {
+    status: "PASS",
+    note: "Actual tokens within guardrail limits.",
+    details
+  };
+}
+
 async function runProvider({ batch, inputPath, systemPrompt, estimate, config, reviewOut, ledgerOut, debugOut }) {
   const guard = assertRunGuardrails({ config, estimate });
   console.log(`DEEPSEEK_API_KEY_length=${guard.keyLength}`);
@@ -1384,6 +1415,8 @@ async function runProvider({ batch, inputPath, systemPrompt, estimate, config, r
   const reviewBytes = await assertSmallArtifact(reviewOut);
   await writeUsageLedger(ledgerOut, { estimate, actualUsage, providerCalled: true, reviewArtifact, normalizations });
 
+  const guardrailCheck = checkActualVsGuardrail(actualUsage, config);
+
   console.log(JSON.stringify({
     provider: PROVIDER_NAME,
     model: REQUIRED_MODEL,
@@ -1399,6 +1432,8 @@ async function runProvider({ batch, inputPath, systemPrompt, estimate, config, r
     requestCount: estimate.requestCount,
     normalizationCount: normalizations.length,
     reviewArtifactBytes: reviewBytes,
+    guardrailCheck: guardrailCheck.status,
+    guardrailNote: guardrailCheck.note,
     runtimeAiCalls: false,
     r2D1Writes: false,
     productionChanged: false,
