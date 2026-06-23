@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "overlayVersion": "jmdict-zh-deepseek-pilot-500-candidate-20260623",
+  "status": "local_review_only_not_active",
+  "generatedAt": "2026-06-23T13:34:06.066Z",
+  "source": {
+    "reviewFile": "docs/review/jmdict-zh-deepseek-pilot-500-review-corrected.md",
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "reviewStatus": "human_corrected_review_candidate"
+  },
+  "safety": {
+    "runtimeAiCalls": 0,
+    "googleTranslateCalls": 0,
+    "r2Writes": 0,
+    "d1Writes": 0,
+    "previewDeploy": false,
+    "productionDeploy": false,
+    "overlayActive": false
+  },
+  "counts": {
+    "entries": 500,
+    "senses": 799,
+    "shouldDisplayTrue": 726,
+    "shouldDisplayFalse": 73,
+    "humanCorrected": 30,
+    "aiGeneratedUnreviewed": 769,
+    "needsHumanReview": 22,
+    "confidenceLow": 18
+  },
+  "shardStrategy": "fnv1a-entryId-low-4-bit-local-preview",
+  "shardIndex": [
+    {
+      "shardKey": "0",
+      "path": "shards/0.json",
+      "entries": 35,
+      "bytes": 26641,
+      "sha256": "60709706d516aceb25fceef3d654e9f4a81ac6df1f20c19ca477621048eaef71"
+    },
+    {
+      "shardKey": "1",
+      "path": "shards/1.json",
+      "entries": 25,
+      "bytes": 20910,
+      "sha256": "206145f62bd5ae332c84c8dce416b62d893f263aae319db476c6ec7d97fbc536"
+    },
+    {
+      "shardKey": "2",
+      "path": "shards/2.json",
+      "entries": 34,
+      "bytes": 28761,
+      "sha256": "c418a317c1deb6cae6f0c474e1dbce879af45cfd79d92eb8bd0ba7b7d2f69942"
+    },
+    {
+      "shardKey": "3",
+      "path": "shards/3.json",
+      "entries": 26,
+      "bytes": 19309,
+      "sha256": "cfeb87df37de54e4fcc6bf311a0119eea56bdbacc79008b4592772f9048f7f77"
+    },
+    {
+      "shardKey": "4",
+      "path": "shards/4.json",
+      "entries": 36,
+      "bytes": 27951,
+      "sha256": "eb160b3f4f3f1154ce980ece6af6da42cee118bea65644ebf4a4bd7b27509c13"
+    },
+    {
+      "shardKey": "5",
+      "path": "shards/5.json",
+      "entries": 39,
+      "bytes": 31210,
+      "sha256": "3f34a0f606bf6e9e84463f6b69d0ffd1165f08f907e15875faf6612a83495ee9"
+    },
+    {
+      "shardKey": "6",
+      "path": "shards/6.json",
+      "entries": 30,
+      "bytes": 20706,
+      "sha256": "4d8eeb0d4e9ef5c21a0e50b7303b306d113336e8781e0bcdfe9ef4f4062918ed"
+    },
+    {
+      "shardKey": "7",
+      "path": "shards/7.json",
+      "entries": 39,
+      "bytes": 29117,
+      "sha256": "e29da1fb77ab33769ec47e40a349e41fcff8b45377f961dd4c9635ade6f58cde"
+    },
+    {
+      "shardKey": "8",
+      "path": "shards/8.json",
+      "entries": 25,
+      "bytes": 17774,
+      "sha256": "d2411dda2bfd0cb7316c5475a2c33f667b5cd915058ee2716d68666fee3eedc2"
+    },
+    {
+      "shardKey": "9",
+      "path": "shards/9.json",
+      "entries": 25,
+      "bytes": 17995,
+      "sha256": "5f9b7d09a36f5fd89c53eccfa823c2092dad92ced4d484f5ae07953a216d7d58"
+    },
+    {
+      "shardKey": "a",
+      "path": "shards/a.json",
+      "entries": 28,
+      "bytes": 18369,
+      "sha256": "21b84c3f20ed47825514b26e760e0fa9e7be802bffc2f4fcd68b0ff068d690a9"
+    },
+    {
+      "shardKey": "b",
+      "path": "shards/b.json",
+      "entries": 38,
+      "bytes": 32439,
+      "sha256": "7b4a3477a48627e7bbb21063fda89a3df28a31a776a728f60f3722cd0649820a"
+    },
+    {
+      "shardKey": "c",
+      "path": "shards/c.json",
+      "entries": 27,
+      "bytes": 22925,
+      "sha256": "6c6e6d28ddab7fbf69177136aa26674023238ed012f85d48be97052c77719e2b"
+    },
+    {
+      "shardKey": "d",
+      "path": "shards/d.json",
+      "entries": 35,
+      "bytes": 24593,
+      "sha256": "0e58ebf12e69ef66c2be7d9ced443202d1e4056a15ae8b053fe3cd230abdcf41"
+    },
+    {
+      "shardKey": "e",
+      "path": "shards/e.json",
+      "entries": 31,
+      "bytes": 22138,
+      "sha256": "57581f15a8ae201adbe57c13967a0232168f3e80118f7577f34014927c3fa575"
+    },
+    {
+      "shardKey": "f",
+      "path": "shards/f.json",
+      "entries": 27,
+      "bytes": 18646,
+      "sha256": "7cfdaa11c7c103fef84cacff2d722e016e6f00db1851eac8ae66b0d4fd6090e0"
+    }
+  ],
+  "notice": "This local package is not active and must not be uploaded to R2/D1 without separate approval."
+}

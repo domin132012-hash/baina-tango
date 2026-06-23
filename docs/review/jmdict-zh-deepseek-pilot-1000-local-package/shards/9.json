@@ -1,0 +1,743 @@
+{
+  "schemaVersion": 1,
+  "overlayVersion": "jmdict-zh-deepseek-pilot-500-candidate-20260623",
+  "status": "local_review_only_not_active",
+  "shardKey": "9",
+  "entries": [
+    {
+      "entryId": "jmdict-1163870",
+      "writtenForm": "一人娘",
+      "reading": "ひとりむすめ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "独生女",
+          "zhGlosses": [
+            "独生女"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1164660",
+      "writtenForm": "一端",
+      "reading": "いったん",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "一端",
+          "zhGlosses": [
+            "一端",
+            "一头"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "一部分",
+          "zhGlosses": [
+            "一部分",
+            "片段"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1166110",
+      "writtenForm": "一票",
+      "reading": "いっぴょう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "一票",
+          "zhGlosses": [
+            "一票",
+            "一张选票"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1167250",
+      "writtenForm": "一律",
+      "reading": "いちりつ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "一律",
+          "zhGlosses": [
+            "一律",
+            "统一",
+            "同样"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1170500",
+      "writtenForm": "陰謀",
+      "reading": "いんぼう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "阴谋",
+          "zhGlosses": [
+            "阴谋",
+            "诡计"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "合谋",
+          "zhGlosses": [
+            "合谋",
+            "共谋"
+          ],
+          "usageNote": "法律语境，指两人以上共谋非法行为。",
+          "shouldDisplay": false,
+          "confidence": "medium",
+          "issueFlags": [
+            "specialized"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1173660",
+      "writtenForm": "影響",
+      "reading": "えいきょう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "影响",
+          "zhGlosses": [
+            "影响；效果"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1173750",
+      "writtenForm": "映画館",
+      "reading": "えいがかん",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "电影院",
+          "zhGlosses": [
+            "电影院；影院"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1173970",
+      "writtenForm": "栄誉",
+      "reading": "えいよ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "荣誉",
+          "zhGlosses": [
+            "荣誉；名誉"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1174760",
+      "writtenForm": "衛星",
+      "reading": "えいせい",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "天然卫星",
+          "zhGlosses": [
+            "天然卫星",
+            "卫星"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "人造卫星",
+          "zhGlosses": [
+            "人造卫星"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1174980",
+      "writtenForm": "液化",
+      "reading": "えきか",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "液化",
+          "zhGlosses": [
+            "液化"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1175150",
+      "writtenForm": "駅員",
+      "reading": "えきいん",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "车站工作人员",
+          "zhGlosses": [
+            "车站工作人员",
+            "站员"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1176780",
+      "writtenForm": "演じる",
+      "reading": "えんじる",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "扮演（角色）",
+          "zhGlosses": [
+            "扮演",
+            "饰演"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "上演（戏剧等）",
+          "zhGlosses": [
+            "上演",
+            "演出"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 3,
+          "shortGloss": "犯（错误等）",
+          "zhGlosses": [
+            "犯（错误）",
+            "出丑"
+          ],
+          "usageNote": "常与「失敗」「失態」等搭配。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 4,
+          "shortGloss": "假装",
+          "zhGlosses": [
+            "假装",
+            "装出"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1176850",
+      "writtenForm": "演芸",
+      "reading": "えんげい",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "演艺",
+          "zhGlosses": [
+            "演艺",
+            "表演"
+          ],
+          "usageNote": "指舞台表演、杂技等娱乐节目。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1176960",
+      "writtenForm": "演説",
+      "reading": "えんぜつ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "演说",
+          "zhGlosses": [
+            "演说",
+            "演讲"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1177040",
+      "writtenForm": "演目",
+      "reading": "えんもく",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "节目",
+          "zhGlosses": [
+            "节目",
+            "剧目"
+          ],
+          "usageNote": "指音乐会、戏剧等的节目单上的项目。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1179200",
+      "writtenForm": "凹む",
+      "reading": "へこむ",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "凹陷",
+          "zhGlosses": [
+            "凹陷",
+            "塌陷"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "认输",
+          "zhGlosses": [
+            "认输",
+            "屈服"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 3,
+          "shortGloss": "沮丧",
+          "zhGlosses": [
+            "沮丧",
+            "消沉"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 4,
+          "shortGloss": "亏损",
+          "zhGlosses": [
+            "亏损",
+            "赔钱"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1179910",
+      "writtenForm": "応酬",
+      "reading": "おうしゅう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "互相交换",
+          "zhGlosses": [
+            "互相交换（言语、拳脚等）"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "回敬",
+          "zhGlosses": [
+            "回敬；反驳；以牙还牙"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1180550",
+      "writtenForm": "旺盛",
+      "reading": "おうせい",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "旺盛",
+          "zhGlosses": [
+            "旺盛；充沛；活跃"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "充满",
+          "zhGlosses": [
+            "充满（精力、好奇心等）"
+          ],
+          "usageNote": "常以「～旺盛」形式使用，如「食欲旺盛」。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1180910",
+      "writtenForm": "横断歩道",
+      "reading": "おうだんほどう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "人行横道",
+          "zhGlosses": [
+            "人行横道",
+            "斑马线"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1181720",
+      "writtenForm": "襖",
+      "reading": "ふすま",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "日式拉门",
+          "zhGlosses": [
+            "日式拉门；隔扇"
+          ],
+          "usageNote": "日本传统房屋中用于分隔房间的纸糊木框拉门。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1183380",
+      "writtenForm": "温厚",
+      "reading": "おんこう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "温和",
+          "zhGlosses": [
+            "温和",
+            "温厚"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1184510",
+      "writtenForm": "下院",
+      "reading": "かいん",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "下议院",
+          "zhGlosses": [
+            "下议院",
+            "众议院"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1184680",
+      "writtenForm": "下期",
+      "reading": "しもき",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "下半期",
+          "zhGlosses": [
+            "下半期",
+            "下半年"
+          ],
+          "usageNote": "通常指会计年度或财政年度的后半期。",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1185540",
+      "writtenForm": "下水道",
+      "reading": "げすいどう",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "下水道",
+          "zhGlosses": [
+            "下水道",
+            "排水系统"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    },
+    {
+      "entryId": "jmdict-1186260",
+      "writtenForm": "下敷き",
+      "reading": "したじき",
+      "senses": [
+        {
+          "senseIndex": 1,
+          "shortGloss": "垫板",
+          "zhGlosses": [
+            "垫板",
+            "书写垫"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 2,
+          "shortGloss": "被压在下面",
+          "zhGlosses": [
+            "被压在下面",
+            "被埋住"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        },
+        {
+          "senseIndex": 3,
+          "shortGloss": "典范",
+          "zhGlosses": [
+            "典范",
+            "榜样"
+          ],
+          "usageNote": "",
+          "shouldDisplay": true,
+          "confidence": "high",
+          "issueFlags": [
+            "none"
+          ],
+          "reviewStatus": "ai_generated_unreviewed"
+        }
+      ]
+    }
+  ]
+}

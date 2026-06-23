@@ -91,7 +91,7 @@ Rules for JSON fields:
 - `usageNote` should be empty unless a short learner note prevents a likely misunderstanding.
 - `confidence` must be one of `high`, `medium`, or `low`.
 - `shouldDisplay` means "show by default to ordinary learners"; it does not mean "this sense exists".
-- `issueFlags` must contain only values from `none`, `wrong_sense_risk`, `specialized`, `too_rare`, `archaic`, `dialect`, `ambiguous`, and `needs_human_review`.
+- `issueFlags` must contain only values from `none`, `wrong_sense_risk`, `specialized`, `too_rare`, `archaic`, `dialect`, `ambiguous`, `religion`, and `needs_human_review`.
 - If any issue flag other than `none` is present, do not include `none`.
 - `reviewStatus` must be `ai_generated_unreviewed`.
 - `provider` must be `deepseek`.

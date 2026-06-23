@@ -32,6 +32,7 @@ const ALLOWED_FLAGS = new Set([
   "archaic",
   "dialect",
   "ambiguous",
+  "religion",
   "needs_human_review"
 ]);
 
