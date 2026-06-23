@@ -4,8 +4,8 @@
 - task name: Top 1000 approval flag compatibility fix
 - branch: `feat/dictionary-zh-deepseek-pilot-100`
 - start commit: `62a65793a812e0465c06ee0782fd22ef426a1baf`
-- end commit: `c03fd7d575731abcec3ec001723abae5079fed4d`
-- JST time: 2026-06-23 21:18 JST
+- end commit: `f71109a874377bcd7f5ee722123242cda4525b95`
+- JST time: 2026-06-23 21:22 JST
 
 ---
 
@@ -106,7 +106,7 @@ stat -f "%m %N" docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-revie
 | Preview deploy | no |
 | Production deploy | no |
 | Overlay activation | no |
-| GitHub push | pending (after validation) |
+| GitHub push | completed (`f71109a874377bcd7f5ee722123242cda4525b95`) |
 
 ---
 
