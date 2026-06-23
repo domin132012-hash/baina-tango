@@ -52,7 +52,9 @@ Rules for JSON fields:
 - Top-level key must be `items`; do not use `senses`.
 - Include exactly one `items` object for every input sense. Do not omit, duplicate, or add senses.
 - `shortGloss` must be a compact Chinese dictionary-style label.
-- `zhGlosses` should contain one to three concise Chinese glosses.
+- `zhGlosses` must contain one to three concise Chinese strings.
+- If there are more than three close synonyms or related Chinese glosses, merge them into one string separated with Chinese semicolons, e.g. `["事情；事项；情况；问题"]`.
+- Do not put empty strings, nested arrays, objects, English words, or Markdown in `zhGlosses`.
 - `usageNote` should be empty unless a short learner note prevents a likely misunderstanding.
 - `confidence` must be one of `high`, `medium`, or `low`.
 - `shouldDisplay` means "show by default to ordinary learners"; it does not mean "this sense exists".

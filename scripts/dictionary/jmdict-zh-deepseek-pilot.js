@@ -14,10 +14,11 @@ const PROVIDER_NAME = "deepseek";
 const REQUIRED_MODEL = "deepseek-v4-flash";
 const REQUIRED_BASE_URL = "https://api.deepseek.com";
 const REQUIRED_APPROVAL = "YES_DEEPSEEK_TOP_100_ONLY";
+const TOP_500_APPROVAL = "YES_DEEPSEEK_TOP_500_ONLY";
 const REQUIRED_MAX_ENTRIES = 100;
 const ALLOWED_PROBE_LIMITS = new Set([1, 5]);
 const DEFAULT_BATCH_ENTRIES = 20;
-const MAX_REVIEW_ARTIFACT_BYTES = 300000;
+const MAX_REVIEW_ARTIFACT_BYTES = 1500000;
 const REVIEW_STATUS = "ai_generated_unreviewed";
 const ESTIMATED_COST_NOTE = "not_estimated_provider_pricing_not_configured";
 
@@ -32,6 +33,12 @@ const ALLOWED_FLAGS = new Set([
   "ambiguous",
   "needs_human_review"
 ]);
+
+function valueType(value) {
+  if (Array.isArray(value)) return "array";
+  if (value === null) return "null";
+  return typeof value;
+}
 
 function arg(name) {
   const index = process.argv.indexOf(name);
@@ -68,6 +75,10 @@ Required env for --run-provider or --probe-provider:
   BAINA_ZH_AI_MAX_OUTPUT_TOKENS=30000
   BAINA_ZH_AI_MAX_TOTAL_ESTIMATED_TOKENS=60000
   BAINA_ZH_AI_MAX_REQUESTS=100
+
+Top 500 local-artifact-only mode must use an explicit input/review/ledger path and:
+  BAINA_ZH_AI_APPROVE_RUN=YES_DEEPSEEK_TOP_500_ONLY
+  BAINA_ZH_AI_MAX_ENTRIES=500
 
 Without --run-provider or --probe-provider, this script performs no provider call.
 Runtime lookup must never import or call this offline batch script.
@@ -210,6 +221,97 @@ function estimateOutputTokens(entries) {
   return (entries.length * 40) + (senseCount * 115);
 }
 
+function isChineseGlossString(value) {
+  const text = String(value || "").trim();
+  return Boolean(text) && /[\u3400-\u9fff]/.test(text) && !/[A-Za-z]/.test(text);
+}
+
+function hasEnglishResidual(value) {
+  return /[A-Za-z]{2,}/.test(String(value || ""));
+}
+
+function normalizeZhGlosses(value, entryId, senseIndex) {
+  const beforeType = valueType(value);
+  const beforeArrayLength = Array.isArray(value) ? value.length : null;
+  const normalizations = [];
+  if (!Array.isArray(value)) {
+    return { value, normalizations };
+  }
+
+  if (value.some((item) => Array.isArray(item) || (item && typeof item === "object"))) {
+    return { value, normalizations };
+  }
+  if (value.some((item) => typeof item !== "string")) {
+    return { value, normalizations };
+  }
+  if (value.some((item) => hasEnglishResidual(item))) {
+    return { value, normalizations };
+  }
+
+  let current = value.map((item) => item.trim());
+  const withoutEmpty = current.filter(Boolean);
+  if (withoutEmpty.length !== current.length) {
+    current = withoutEmpty;
+    normalizations.push({
+      entryId,
+      senseIndex,
+      field: "zhGlosses",
+      beforeType,
+      beforeArrayLength,
+      action: "remove_empty_strings",
+      afterType: "array",
+      afterArrayLength: current.length
+    });
+  }
+
+  const deduped = [];
+  for (const item of current) {
+    if (!deduped.includes(item)) deduped.push(item);
+  }
+  if (deduped.length !== current.length) {
+    current = deduped;
+    normalizations.push({
+      entryId,
+      senseIndex,
+      field: "zhGlosses",
+      beforeType,
+      beforeArrayLength,
+      action: "dedupe_strings",
+      afterType: "array",
+      afterArrayLength: current.length
+    });
+  }
+
+  if (current.length > 3 && current.every(isChineseGlossString)) {
+    current = [current.join("；")];
+    normalizations.push({
+      entryId,
+      senseIndex,
+      field: "zhGlosses",
+      beforeType,
+      beforeArrayLength,
+      action: "merge_overlong_chinese_array_with_semicolons",
+      afterType: "array",
+      afterArrayLength: current.length
+    });
+  }
+
+  return { value: current, normalizations };
+}
+
+function normalizeSenseOutput(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return { value, normalizations: [] };
+  }
+  const normalized = { ...value };
+  const result = normalizeZhGlosses(value.zhGlosses, value.entryId, value.senseIndex);
+  normalized.zhGlosses = result.value;
+  if (result.normalizations.length) {
+    normalized._normalizationRecords = result.normalizations;
+  }
+  return { value: normalized, normalizations: result.normalizations };
+}
+
 function estimateBatch({ batch, systemPrompt, batchSize = DEFAULT_BATCH_ENTRIES }) {
   const entries = batch.entries || [];
   const groups = chunkEntries(entries, batchSize);
@@ -310,6 +412,18 @@ function assertEstimateLimits({ estimate, maxEntries, maxInputTokens, maxOutputT
   }
 }
 
+function runApprovalForEstimate(estimate) {
+  if (estimate.entries === 500) return TOP_500_APPROVAL;
+  if (estimate.entries === REQUIRED_MAX_ENTRIES) return REQUIRED_APPROVAL;
+  return REQUIRED_APPROVAL;
+}
+
+function pilotLabelForEntryCount(count) {
+  if (count === 500) return "500";
+  if (count === REQUIRED_MAX_ENTRIES) return "100";
+  return "probe";
+}
+
 function runConfigFromEnv() {
   return {
     provider: process.env.BAINA_ZH_AI_PROVIDER || "",
@@ -342,11 +456,12 @@ function assertRunGuardrails({ config, estimate }) {
       actual: { DEEPSEEK_MODEL: config.model || "missing" }
     });
   }
-  if (config.approvalFlag !== REQUIRED_APPROVAL) {
+  const requiredApproval = runApprovalForEstimate(estimate);
+  if (config.approvalFlag !== requiredApproval) {
     fail({
       blocked: true,
       reason: "Approval flag missing or incorrect.",
-      required: { BAINA_ZH_AI_APPROVE_RUN: REQUIRED_APPROVAL },
+      required: { BAINA_ZH_AI_APPROVE_RUN: requiredApproval },
       actual: { BAINA_ZH_AI_APPROVE_RUN: config.approvalFlag || "missing" }
     });
   }
@@ -575,6 +690,8 @@ function validateSenseOutput(value, expectedKeys) {
     errors.push("zhGlosses must contain one to three strings.");
   } else if (value.zhGlosses.some((item) => typeof item !== "string" || !item.trim())) {
     errors.push("zhGlosses must contain non-empty strings.");
+  } else if (value.zhGlosses.some((item) => hasEnglishResidual(item))) {
+    errors.push("zhGlosses must not contain English residual text.");
   }
   if (typeof value.shouldDisplay !== "boolean") {
     errors.push("shouldDisplay must be a boolean.");
@@ -618,15 +735,24 @@ function validateProviderOutput(parsed, entries) {
   const expectedKeys = expectedSenseKeys(entries);
   const seenKeys = new Set();
   const errors = [];
+  const items = [];
+  const normalizations = [];
   if (parsed.items.length !== expectedKeys.size) {
     errors.push(`Provider output item count ${parsed.items.length} does not match expected sense count ${expectedKeys.size}.`);
   }
-  for (const sense of parsed.items) {
+  for (const rawSense of parsed.items) {
+    const normalized = normalizeSenseOutput(rawSense);
+    const sense = normalized.value;
+    normalizations.push(...normalized.normalizations);
     const senseErrors = validateSenseOutput(sense, expectedKeys);
     const key = `${sense?.entryId}:${sense?.senseIndex}`;
     if (seenKeys.has(key)) senseErrors.push(`Duplicate output sense ${key}.`);
     seenKeys.add(key);
     errors.push(...senseErrors.map((error) => `${key}: ${error}`));
+    if (sense && typeof sense === "object" && !Array.isArray(sense)) {
+      delete sense._normalizationRecords;
+    }
+    items.push(sense);
   }
   for (const key of expectedKeys) {
     if (!seenKeys.has(key)) errors.push(`Missing output sense ${key}.`);
@@ -634,7 +760,7 @@ function validateProviderOutput(parsed, entries) {
   if (errors.length) {
     throw new Error(`Provider output schema validation failed:\n${errors.join("\n")}`);
   }
-  return parsed.items;
+  return { items, normalizations };
 }
 
 function fixtureEntries() {
@@ -807,6 +933,70 @@ function runJsonFixtureSelfTests() {
       })
     },
     {
+      name: "zhGlosses_four_chinese_strings_auto_merge",
+      shouldPass: true,
+      content: JSON.stringify({
+        items: valid.items.map((item, index) => index === 0 ? {
+          ...item,
+          zhGlosses: ["事情", "事项", "情况", "问题"]
+        } : item)
+      })
+    },
+    {
+      name: "zhGlosses_nested_array_fails",
+      shouldPass: false,
+      content: JSON.stringify({
+        items: valid.items.map((item, index) => index === 0 ? {
+          ...item,
+          zhGlosses: [["事情"], "事项"]
+        } : item)
+      }),
+      reasonIncludes: "zhGlosses must contain non-empty strings"
+    },
+    {
+      name: "zhGlosses_object_fails",
+      shouldPass: false,
+      content: JSON.stringify({
+        items: valid.items.map((item, index) => index === 0 ? {
+          ...item,
+          zhGlosses: [{ value: "事情" }, "事项"]
+        } : item)
+      }),
+      reasonIncludes: "zhGlosses must contain non-empty strings"
+    },
+    {
+      name: "zhGlosses_english_residual_fails",
+      shouldPass: false,
+      content: JSON.stringify({
+        items: valid.items.map((item, index) => index === 0 ? {
+          ...item,
+          zhGlosses: ["matter", "事情"]
+        } : item)
+      }),
+      reasonIncludes: "zhGlosses must not contain English residual text"
+    },
+    {
+      name: "zhGlosses_empty_array_fails",
+      shouldPass: false,
+      content: JSON.stringify({
+        items: valid.items.map((item, index) => index === 0 ? {
+          ...item,
+          zhGlosses: []
+        } : item)
+      }),
+      reasonIncludes: "zhGlosses must contain one to three strings"
+    },
+    {
+      name: "zhGlosses_empty_and_duplicate_strings_normalize",
+      shouldPass: true,
+      content: JSON.stringify({
+        items: valid.items.map((item, index) => index === 0 ? {
+          ...item,
+          zhGlosses: ["事情", "", "事情", "事项"]
+        } : item)
+      })
+    },
+    {
       name: "response_reasoning_content_ignored_when_content_is_json",
       shouldPass: true,
       response: {
@@ -871,7 +1061,7 @@ function markdownCell(value) {
     .replace(/\|/g, "\\|");
 }
 
-function buildReviewArtifact({ batch, inputPath, aiSenses, estimate, actualUsage }) {
+function buildReviewArtifact({ batch, inputPath, aiSenses, estimate, actualUsage, normalizations = [] }) {
   const generatedAt = new Date().toISOString();
   const byKey = indexEnglishSenses(batch.entries || []);
   const outputByKey = new Map(aiSenses.map((sense) => [`${sense.entryId}:${sense.senseIndex}`, sense]));
@@ -904,7 +1094,7 @@ function buildReviewArtifact({ batch, inputPath, aiSenses, estimate, actualUsage
     };
   });
   return {
-    type: "jmdict-zh-deepseek-pilot-100-review",
+    type: `jmdict-zh-deepseek-pilot-${pilotLabelForEntryCount(estimate.entries)}-review`,
     phase: "AI_review_artifact_only",
     overlayVersion: batch.overlayVersion,
     provider: PROVIDER_NAME,
@@ -922,6 +1112,7 @@ function buildReviewArtifact({ batch, inputPath, aiSenses, estimate, actualUsage
       selectedEntries: entries.length,
       generatedEntries: entries.filter((entry) => entry.senses.some((sense) => sense.zhGlosses.length)).length,
       generatedSenses: aiSenses.length,
+      normalizationCount: normalizations.length,
       estimatedInputTokens: estimate.estimatedInputTokens,
       estimatedOutputTokens: estimate.estimatedOutputTokens,
       estimatedTotalTokens: estimate.estimatedTotalTokens,
@@ -929,15 +1120,17 @@ function buildReviewArtifact({ batch, inputPath, aiSenses, estimate, actualUsage
       actualOutputTokens: actualUsage.completionTokens,
       requestCount: estimate.requestCount
     },
+    normalizations,
     entries,
     _byKeySize: byKey.size
   };
 }
 
 function reviewMarkdown(artifact) {
-  const title = artifact.counts.selectedEntries < REQUIRED_MAX_ENTRIES
+  const label = pilotLabelForEntryCount(artifact.counts.selectedEntries);
+  const title = label === "probe"
     ? "JMdict DeepSeek Chinese Probe Review"
-    : "JMdict DeepSeek Chinese Pilot 100 Review";
+    : `JMdict DeepSeek Chinese Pilot ${label} Review`;
   const lines = [
     `# ${title}`,
     "",
@@ -950,6 +1143,7 @@ function reviewMarkdown(artifact) {
     `- Selected entries: ${artifact.counts.selectedEntries}`,
     `- Generated entries: ${artifact.counts.generatedEntries}`,
     `- Generated senses: ${artifact.counts.generatedSenses}`,
+    `- Normalization records: ${artifact.counts.normalizationCount || 0}`,
     `- Estimated input tokens: ${artifact.counts.estimatedInputTokens}`,
     `- Estimated output tokens: ${artifact.counts.estimatedOutputTokens}`,
     `- Estimated total tokens: ${artifact.counts.estimatedTotalTokens}`,
@@ -987,6 +1181,27 @@ function reviewMarkdown(artifact) {
       ].join(" | ").replace(/^/, "| ").replace(/$/, " |"));
     }
   }
+  if ((artifact.normalizations || []).length) {
+    lines.push(
+      "",
+      "## Normalization Records",
+      "",
+      "| entryId | senseIndex | field | beforeType | beforeArrayLength | action | afterType | afterArrayLength |",
+      "|---|---:|---|---|---:|---|---|---:|"
+    );
+    for (const item of artifact.normalizations) {
+      lines.push([
+        markdownCell(item.entryId),
+        item.senseIndex,
+        markdownCell(item.field),
+        markdownCell(item.beforeType),
+        item.beforeArrayLength ?? "",
+        markdownCell(item.action),
+        markdownCell(item.afterType),
+        item.afterArrayLength ?? ""
+      ].join(" | ").replace(/^/, "| ").replace(/$/, " |"));
+    }
+  }
   return `${lines.join("\n")}\n`;
 }
 
@@ -1020,9 +1235,10 @@ async function assertSmallArtifact(filePath) {
 }
 
 async function writeUsageLedger(filePath, value) {
-  const type = value.estimate.entries < REQUIRED_MAX_ENTRIES
+  const label = pilotLabelForEntryCount(value.estimate.entries);
+  const type = label === "probe"
     ? "jmdict-zh-deepseek-probe-usage-ledger"
-    : "jmdict-zh-deepseek-pilot-100-usage-ledger";
+    : `jmdict-zh-deepseek-pilot-${label}-usage-ledger`;
   const ledger = {
     type,
     generatedAt: new Date().toISOString(),
@@ -1034,6 +1250,17 @@ async function writeUsageLedger(filePath, value) {
     sensesRequested: value.estimate.senses,
     generatedEntries: value.reviewArtifact?.counts?.generatedEntries ?? null,
     generatedSenses: value.reviewArtifact?.counts?.generatedSenses ?? null,
+    normalizationCount: value.normalizations?.length ?? value.reviewArtifact?.counts?.normalizationCount ?? 0,
+    normalizations: (value.normalizations || value.reviewArtifact?.normalizations || []).map((item) => ({
+      entryId: item.entryId,
+      senseIndex: item.senseIndex,
+      field: item.field,
+      beforeType: item.beforeType,
+      beforeArrayLength: item.beforeArrayLength,
+      action: item.action,
+      afterType: item.afterType,
+      afterArrayLength: item.afterArrayLength
+    })),
     estimatedInputTokens: value.estimate.estimatedInputTokens,
     estimatedOutputTokens: value.estimate.estimatedOutputTokens,
     estimatedTotalTokens: value.estimate.estimatedTotalTokens,
@@ -1068,6 +1295,7 @@ async function runProvider({ batch, inputPath, systemPrompt, estimate, config, r
   console.log(`DEEPSEEK_API_KEY_length=${guard.keyLength}`);
 
   const aiSenses = [];
+  const normalizations = [];
   const actualUsage = { promptTokens: 0, completionTokens: 0, totalTokens: 0 };
   const groups = chunkEntries(batch.entries || [], estimate.batchSize);
   for (const group of groups) {
@@ -1081,25 +1309,29 @@ async function runProvider({ batch, inputPath, systemPrompt, estimate, config, r
       requestCount: estimate.requestCount,
       batchSize: group.length
     });
-    aiSenses.push(...validateProviderOutput(result.parsed, group));
+    const validated = validateProviderOutput(result.parsed, group);
+    aiSenses.push(...validated.items);
+    normalizations.push(...validated.normalizations);
     actualUsage.promptTokens += result.usage.promptTokens || 0;
     actualUsage.completionTokens += result.usage.completionTokens || 0;
     actualUsage.totalTokens += result.usage.totalTokens || 0;
   }
 
-  validateProviderOutput({ items: aiSenses }, batch.entries || []);
+  const finalValidation = validateProviderOutput({ items: aiSenses }, batch.entries || []);
+  normalizations.push(...finalValidation.normalizations);
 
   const reviewArtifact = buildReviewArtifact({
     batch,
     inputPath,
     aiSenses,
     estimate,
-    actualUsage
+    actualUsage,
+    normalizations
   });
   delete reviewArtifact._byKeySize;
   await writeReviewArtifact(reviewOut, reviewArtifact);
   const reviewBytes = await assertSmallArtifact(reviewOut);
-  await writeUsageLedger(ledgerOut, { estimate, actualUsage, providerCalled: true, reviewArtifact });
+  await writeUsageLedger(ledgerOut, { estimate, actualUsage, providerCalled: true, reviewArtifact, normalizations });
 
   console.log(JSON.stringify({
     provider: PROVIDER_NAME,
@@ -1114,6 +1346,7 @@ async function runProvider({ batch, inputPath, systemPrompt, estimate, config, r
     actualInputTokens: actualUsage.promptTokens,
     actualOutputTokens: actualUsage.completionTokens,
     requestCount: estimate.requestCount,
+    normalizationCount: normalizations.length,
     reviewArtifactBytes: reviewBytes,
     runtimeAiCalls: false,
     r2D1Writes: false,

@@ -4,18 +4,18 @@
 > do not recheck Supabase / Stripe unless the task touches them, a related fault appears, or the recorded status is older than 30 days and the task depends on that platform.
 > Never record API keys, service role keys, JWT secrets, session tokens, customer data, payment records, card data, or raw secret values.
 
-Last updated: 2026-06-23 00:41 JST by Codex
+Last updated: 2026-06-23 13:24 JST by Codex
 
 ## 1. 当前锁定状态
 
 | Area | Status | Note |
 |---|---|---|
-| Repository docs | Active for Issue #11 DeepSeek Chinese overlay pilot branch | Recording local overlay candidate JSON and no provider/Production/R2/D1 data changes |
+| Repository docs | Active for Issue #11 DeepSeek Chinese overlay pilot branch | Recording DeepSeek Top 500 local artifacts/package and no Production/R2/D1/Preview deploy changes |
 | Application code | PR #6 R2 shard lookup path + beta fallback | `/api/dictionary/lookup` is binding-ready for `DICTIONARY_R2` + optional `DICTIONARY_DB`; when bindings are absent or fail it keeps the bounded 1,000-entry beta fallback and `aiCalled=false` |
 | Cloudflare | Production R2 shard lookup active | Production Pages config now has `DICTIONARY_R2` -> `baina-dictionary-artifacts` and `DICTIONARY_DB` -> `baina-dictionary`; canonical Production returns `dictionarySource=r2-shard` |
 | Supabase | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
 | Stripe | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
-| DeepSeek | Not called in this task | Local overlay candidate conversion only; normal lookup does not call AI by default |
+| DeepSeek | Called once for approved Top 500 retry | Offline batch only; first Top 500 attempt failed on yellow-light `zhGlosses` length, validator/prompt were fixed, one retry succeeded; normal lookup does not call AI by default |
 
 ## 2. GitHub 状态
 
@@ -24,7 +24,7 @@ Last updated: 2026-06-23 00:41 JST by Codex
 | Repository | `domin132012-hash/baina-tango` |
 | Current branch | `feat/dictionary-zh-deepseek-pilot-100` |
 | Main latest hash at task start | `ebc320317e6ef212a38a53a603191c419aca527c` |
-| Current task | Issue #11 DeepSeek Chinese gloss overlay pilot: local overlay candidate JSON |
+| Current task | Issue #11 DeepSeek Chinese gloss overlay pilot: Top 500 local artifacts only |
 | Issue | `#11` AI-assisted Chinese gloss overlay pilot: DeepSeek Top 100 |
 | PR #4 | `MERGED` `https://github.com/domin132012-hash/baina-tango/pull/4` |
 | PR #4 merge commit | `c340f75a5f8cf51dac691732a9c66e50cd22af09` |
@@ -33,16 +33,16 @@ Last updated: 2026-06-23 00:41 JST by Codex
 | Phase 2 PR | `https://github.com/domin132012-hash/baina-tango/pull/6` merged |
 | Latest relevant commit | Phase A start commit `42f936cc07ad4897b4dfe0b739a39fd580761df7`; final Phase A branch head recorded in PR #10 / Issue #9 comments after closeout push |
 | PR #2 | `MERGED`; merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` |
-| This task | Issue #11 / PR #12 local overlay candidate JSON only; no provider call, no R2/D1 write, no overlay activation |
+| This task | Issue #11 / PR #12 Top 500 local artifacts only; DeepSeek offline batch retry succeeded; no R2/D1 write, no deploy, no overlay activation |
 | Dictionary plan commit | `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main` |
-| External services touched - GitHub | PR #12 branch push after validation and PR body status refresh; PR kept draft/open/unmerged |
-| External services touched - Cloudflare | No settings change; no Production change; no R2/D1 data write. Existing Preview lookup API was read for smoke validation only. |
+| External services touched - GitHub | PR #12 branch push after validation; PR kept draft/open/unmerged |
+| External services touched - Cloudflare | No settings change; no Preview deploy; no Production change; no R2/D1 data write. Earlier Preview/Production binding ambiguity remains a blocker for any Cloudflare write. |
 | External services touched - Google Cloud Translation | Official Translation API called offline for Top 100 Phase A only; `7,382` input chars; no runtime Google calls |
 | External services touched - Supabase | Not touched |
 | External services touched - Stripe | Not touched |
-| External services touched - DeepSeek | No. This task did not run `--run-provider` or `--probe-provider`; no DeepSeek API call was made. |
-| Current status | Generated local/PR-only overlay candidate JSON `docs/review/jmdict-zh-deepseek-pilot-100-overlay-candidate.json` from `docs/review/jmdict-zh-deepseek-pilot-100-review-corrected.md`, plus validation file `docs/review/jmdict-zh-deepseek-pilot-100-overlay-candidate-validation.md`. Candidate status is `local_review_only_not_active`; entries `100`, senses `209`, shouldDisplay true/false `166`/`43`, human_corrected `7`, ai_generated_unreviewed `202`, needs_human_review `3`. Validation PASS and explicitly states the candidate is not active and must not be uploaded to R2/D1 without separate approval. Runtime AI calls `0`, Google Translate no, R2/D1 writes `0`, Production deploy no, overlay activation no, billing prompt seen no. |
-| Current blocker | Overlay candidate is local/PR-only. Any R2/D1 write, formal shard generation, overlay activation, Production deploy, PR ready transition, or merge still requires separate explicit approval. PR #12 must remain draft/open/unmerged until explicitly advanced. |
+| External services touched - DeepSeek | Yes, exactly one automatic retry after yellow-light format fix. Top 500 retry used `deepseek-v4-flash`, request count `25`, actual input/output tokens `144483`/`112063`; billing prompt seen no. |
+| Current status | Generated Top 500 local artifacts only: review `docs/review/jmdict-zh-deepseek-pilot-500-review.md`, QA summary, corrected review candidate, overlay candidate JSON, local package under `docs/review/jmdict-zh-deepseek-pilot-500-local-package/`, and usage ledger. Counts: entries `500`, senses `841`, shouldDisplay true/false `757`/`84`, human_corrected `21`, ai_generated_unreviewed `820`, needs_human_review `46`. QA found `0` Bad, `7` Minor, `14` shouldDisplay review findings; local package validation PASS. Runtime AI calls `0`, Google Translate no, R2/D1 writes `0`, Preview deploy no, Production deploy no, overlay activation no. |
+| Current blocker | Top 500 candidate/package is local/PR-only. Preview/Production R2/D1 bindings point to the same resources, so Cloudflare writes remain blocked until safe Preview isolation is confirmed. Any R2/D1 write, upload, deploy, overlay activation, PR ready transition, or merge still requires separate explicit approval. PR #12 must remain draft/open/unmerged until explicitly advanced. |
 
 ## 3. Cloudflare 状态
 

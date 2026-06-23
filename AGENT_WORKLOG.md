@@ -2555,3 +2555,108 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - Candidate JSON is not a formal active overlay and must not be uploaded to R2/D1 without separate approval.
 - No runtime code consumes this candidate yet.
 - Any formal shard generation, upload, activation, deploy, PR ready transition, or merge requires separate approval.
+
+## 2026-06-23 13:24 JST / Codex / Issue #11 PR #12 DeepSeek Top 500 local artifacts
+
+### Task
+- Apply the user's yellow-light error policy for the Top 500 DeepSeek run.
+- Fix prompt/validator so safe `zhGlosses` format issues can be deterministically normalized.
+- Retry Top 500 provider run at most once.
+- If successful, generate local/PR-only Top 500 review, QA summary, corrected review candidate, overlay candidate JSON, and local package.
+- Do not call Google Translate, upload R2, write D1, deploy Preview, deploy Production, activate overlay, merge PR, mark PR ready, commit `.env.local`, print secrets, or connect runtime lookup to DeepSeek.
+
+### Branch / commits
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `251de3ca745c903ada63bfd5ad7746163e021976`
+- End commit: this closeout commit; exact SHA reported after commit/push.
+- Issue: `#11`
+- Draft PR: `#12`, kept draft/open/unmerged.
+
+### Automatic fix
+- Strengthened prompt: `zhGlosses` must be 1-3 Chinese strings; if there are more than three close synonyms, merge into one Chinese-semicolon string.
+- Added deterministic validator normalization:
+  - remove empty `zhGlosses` strings;
+  - dedupe duplicate `zhGlosses`;
+  - merge overlong all-Chinese `zhGlosses` arrays into one Chinese-semicolon string;
+  - fail nested arrays, objects, English residual text, empty arrays, or still-invalid arrays.
+- Added normalization records to review artifacts and usage ledger: entryId, senseIndex, field, before type/array length, action, after type/array length.
+- Added fixtures for overlong Chinese `zhGlosses`, nested arrays, objects, English residual text, empty arrays, and empty/duplicate normalization.
+
+### Provider result
+- Previous Top 500 attempt failed on yellow-light schema issue: `jmdict-1387990` sense 2 had overlong `zhGlosses`.
+- After local fix and validation, exactly one automatic retry was run.
+- DeepSeek retry succeeded via offline batch only.
+- Provider: `deepseek`
+- Model: `deepseek-v4-flash`
+- Requests: `25`
+- Entries: `500`
+- Senses: `841`
+- Estimated tokens: input `139905`, output `116715`, total `256620`
+- Actual tokens: input `144483`, output `112063`, total `256546`
+- Normalization records in successful retry: `0`
+- Billing prompt seen: no
+
+### Files changed
+- `scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `scripts/dictionary/prompts/jmdict-zh-deepseek-system.md`
+- `scripts/dictionary/jmdict-zh-deepseek-build-top500-input.js`
+- `scripts/dictionary/jmdict-zh-deepseek-top500-postprocess.js`
+- `docs/dictionary/zh-overlay-pilot-500/translation-input.json`
+- `docs/review/jmdict-zh-deepseek-pilot-500-review.md`
+- `docs/review/jmdict-zh-deepseek-pilot-500-usage-ledger.json`
+- `docs/review/jmdict-zh-deepseek-pilot-500-qa-summary.md`
+- `docs/review/jmdict-zh-deepseek-pilot-500-review-corrected.md`
+- `docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate.json`
+- `docs/review/jmdict-zh-deepseek-pilot-500-local-package/`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+- `.env.local` remained ignored/untracked and was not staged or committed.
+- `RIKA_PLAN.md` remained untracked and was not staged.
+
+### QA / local package
+- QA summary: `docs/review/jmdict-zh-deepseek-pilot-500-qa-summary.md`
+- QA result: `PASS_WITH_REVIEW`
+- Bad findings: `0`
+- Minor findings: `7`
+- shouldDisplay review findings: `14`
+- Corrected candidate counts: shouldDisplay true/false `757`/`84`, human_corrected `21`, needs_human_review `46`
+- Overlay candidate JSON: `docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate.json`
+- Local package: `docs/review/jmdict-zh-deepseek-pilot-500-local-package/`
+- Local package validation: PASS
+
+### Validation
+- `codex-preflight --task "PR #12 Issue #11 Top 500 yellow-light zhGlosses normalization and one retry local artifacts only"`
+- Repository path verified: `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango`
+- Branch verified: `feat/dictionary-zh-deepseek-pilot-100`
+- PR #12 verified draft/open/unmerged before and after local generation.
+- `.env.local` verified untracked/ignored.
+- `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`
+- `node --check scripts/dictionary/jmdict-zh-deepseek-build-top500-input.js`
+- `node --check scripts/dictionary/jmdict-zh-deepseek-top500-postprocess.js`
+- `node scripts/dictionary/jmdict-zh-deepseek-pilot.js --self-test-json-fixtures`: `23/23`
+- Top 500 estimate-only passed: `500` entries, `841` senses, `25` requests, estimated total tokens `256620`
+- Guardrails passed before sentinel `fetch` for wrong Top 100 approval and `BAINA_ZH_AI_MAX_ENTRIES=499`.
+- Runtime dictionary static check found no DeepSeek/provider/probe reference under `functions/api/dictionary` or `index.html`.
+- Secret scan found no raw DeepSeek key pattern; `.env.local` not tracked.
+- Candidate JSON parsed successfully.
+- Local package validation file reports PASS.
+
+### External services touched
+- DeepSeek API: yes, one automatic retry after local yellow-light fix.
+- Google Translate: no.
+- Runtime AI calls: `0`.
+- R2/D1 writes: `0`.
+- Preview deploy: no.
+- Production deploy: no.
+- Overlay activation: no.
+- GitHub: branch push after validation only.
+- Billing prompt seen: no.
+
+### Remaining risks
+- DeepSeek usage may incur cost; actual billing must be checked in the DeepSeek console.
+- Deterministic QA is not a substitute for human review; Top 500 corrected candidate still needs manual review before activation.
+- Local package is not active and must not be uploaded to R2/D1 without separate approval.
+- Preview/Production bindings still point at the same R2/D1 resources, so Cloudflare write/upload/deploy remains blocked until safe Preview isolation is confirmed.
+- PR #12 remains draft/open/unmerged; PR ready/merge require separate explicit approval.
