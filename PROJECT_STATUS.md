@@ -87,3 +87,16 @@ PR #2 `feat(eju-essay): add EJU writing critique integration` 已从 draft 改 r
 ```text
 开工前必读：先读 AGENTS.md、PROJECT_STATUS.md、HANDOVER.md、AGENT_WORKLOG.md，再读本任务相关计划文件。做完后必须更新 PROJECT_STATUS/HANDOVER/AGENT_WORKLOG，commit + push，并汇报 commit hash、验证结果、剩余风险。
 ```
+
+### 2026-06-23 13:41:22 JST - PR #12 Top 500 ChatGPT review packet
+
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `31942bf08c54200e05ba5409d6264dd937495850`
+- End commit: final PR branch head verified after push; exact commit reported in final closeout
+- Files changed: `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/` plus status docs
+- External services touched: GitHub only after push; DeepSeek no; Google Translate no; Runtime AI calls 0; R2/D1 writes 0; Preview deploy no; Production deploy no
+- Validation completed: node --check, secret scan on added diff and packet files, git scope checks, packet readability/size checks, PR draft/open/unmerged recheck
+- Packet stats: entries 500, senses 841, chunks 10, P0 84, P1 335, P2 422, needs_human_review 46, confidence_low 4
+- Remaining risks: machine heuristics are not human review; ChatGPT/reviewer must inspect P0/P1 before any correction patch or activation.
+- Remaining cost risks: none for this docs-only packet; future provider/R2/D1/deploy work requires separate approval.
+- Next step: ChatGPT review of Top 500 packet, then generate a reviewed correction patch in a later turn.

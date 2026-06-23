@@ -179,3 +179,16 @@
 - 点击某套 → `renderEjuScannedSet(subject,setId)`（`assets/eju.js`）→ 按 key=`subject/setId` 路由：
   - 命中 `EJU_MATH_PAPER_PROTOTYPES` → 数学卷视图（填空答案框）。
   - 命中 `EJU_RIKA_PROTOTYPES` 或 `EJU_SOGO_PROTOTYPES` → 理科/综合卷视图（单选 + 判分）。
+
+### 2026-06-23 13:41:22 JST - PR #12 Top 500 ChatGPT review packet
+
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`
+- Start commit: `31942bf08c54200e05ba5409d6264dd937495850`
+- End commit: final PR branch head verified after push; exact commit reported in final closeout
+- Files changed: `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/` plus status docs
+- External services touched: GitHub only after push; DeepSeek no; Google Translate no; Runtime AI calls 0; R2/D1 writes 0; Preview deploy no; Production deploy no
+- Validation completed: node --check, secret scan on added diff and packet files, git scope checks, packet readability/size checks, PR draft/open/unmerged recheck
+- Packet stats: entries 500, senses 841, chunks 10, P0 84, P1 335, P2 422, needs_human_review 46, confidence_low 4
+- Remaining risks: machine heuristics are not human review; ChatGPT/reviewer must inspect P0/P1 before any correction patch or activation.
+- Remaining cost risks: none for this docs-only packet; future provider/R2/D1/deploy work requires separate approval.
+- Next step: ChatGPT review of Top 500 packet, then generate a reviewed correction patch in a later turn.
