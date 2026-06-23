@@ -1597,3 +1597,61 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 
 ### Next step
 - Wait for user review on draft PR #13. Do not mark ready, merge, deploy, or touch dictionary overlay PR #12.
+
+## 2026-06-23 21:57 JST / Codex / PR #13 EJU deep-link bugfix
+
+### Task
+- Fix user-reported PR #13 local validation bugs in EJU deep entries.
+- Scope: EJU deep-link behavior and validation/status docs only.
+- Strict prohibitions honored: no DeepSeek, Google Translate, external AI provider, R2 upload/write, D1 write, Preview deploy, Production deploy, Production metadata change, mark-ready, merge, PR #12 overlay touch, `.env.local` commit, or `RIKA_PLAN.md` commit.
+
+### Branch / commits
+- Branch: `feat/post-login-nav-restructure`
+- Start commit: `7d995556dcfa27ebdb61953235de0133a464f418`
+- End commit: final pushed branch head for commit subject `Fix EJU deep links in post-login navigation`; exact SHA reported after commit/push.
+- PR: `#13` `https://github.com/domin132012-hash/baina-tango/pull/13` (must remain OPEN, draft, unmerged)
+- Issue: `#11`
+
+### Files changed
+- `assets/eju.js`
+- `index.html`
+- `docs/design/post-login-nav-restructure.md`
+- `docs/review/post-login-nav-restructure-eju-deep-link-validation-log.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+
+### Implementation
+- Added local-static host fallback for `日本語 -> 読解`; `localhost:4173` now shows `需要后端` and a friendly unavailable card instead of requesting `/api/eju-reading-sets`.
+- Sanitized EJU fetch errors so raw Python/HTML 404 text is not displayed in UI.
+- Added on-demand loading for `assets/eju-essay.js` from `ejuOpenEssayEntry()` so `日本語 -> 記述` opens the existing essay home in local static validation.
+- Updated `index.html` EJU script cache key to `20260623-pr13-eju-deep-link-fix2`.
+
+### Validation
+- `node --check assets/eju.js`: PASS.
+- `git diff --check`: PASS.
+- `package.json` scripts: `{}`; no build/test/lint scripts available.
+- Local server: `python3 -m http.server 4173`.
+- Browser validation target: `http://localhost:4173/?pr13_final=20260623b`.
+- `学习 -> EJU`: PASS.
+- `日本語`: PASS.
+- `読解`: PASS, shows `読解训练暂不可用` / `需要后端`; raw 404 HTML not visible.
+- `記述`: PASS, essay home opens with `题目 / テーマ`, `作文本文`, and `提交批改`; submit was not clicked.
+- `综合科目 / 扫描卷`: PASS, scan list opens and 2024 第 1 回 renders visible image `assets/eju-media/humanities/2024-1/page-003.png`.
+- Bottom nav: PASS for `学习 / 词库 / 首页 / 社区 / 我的`, 5 tabs visible.
+- Browser console errors: `0`.
+- Clean final server log network 404: `0`.
+- Screenshots saved outside repo under `/Users/domin/Documents/Codex/2026-06-23/files-mentioned-by-the-user-pr-2/outputs/`.
+- Validation log: `docs/review/post-login-nav-restructure-eju-deep-link-validation-log.md`.
+
+### Remaining risks
+- Local static validation does not exercise the Cloudflare backend `/api/eju-reading-sets` path.
+- Essay submit/analyze path was intentionally not tested because that could call an external AI provider.
+- PR #13 is still draft/open/unmerged and was not deployed to Preview/Production in this task.
+
+### Remaining cost risks
+- None from this task: no provider calls, no R2/D1 writes, no deployments, and no Cloudflare config changes.
+
+### Next step
+- Push the bugfix commit to `feat/post-login-nav-restructure` and keep PR #13 draft/open/unmerged for review.

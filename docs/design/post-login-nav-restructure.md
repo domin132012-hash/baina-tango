@@ -55,6 +55,19 @@ These entries only show a construction toast. They do not call a backend and do 
 - Folder overview, word search, edit, and delete.
 - Profile, cloud sync, avatar, nickname, purchase, purchase history, redemption, speech settings, account settings, data settings, help, and contact.
 
+## EJU Deep Entry Status
+
+PR #13 keeps EJU under `学习 -> EJU`, but the local static preview must not pretend every deep entry is fully backed by data.
+
+| Entry | Current status | Local static preview behavior |
+|---|---|---|
+| `日本語 -> 読解` | Needs backend or local reading-set data | Shows `需要后端` and a friendly unavailable card instead of requesting `/api/eju-reading-sets` on `localhost:4173` |
+| `日本語 -> 記述` | Available entry | Loads the existing `assets/eju-essay.js` module on demand and opens the essay home |
+| `综合科目 -> 2024 第 1 回` | Available scanned paper | Shows the scan set list and opens the local `humanities/2024-1` question image |
+| Other scanned-paper sets without local prototype/images | Construction/future data | Remain visible as `建设中` / unavailable instead of exposing raw missing-file errors |
+
+The local UI must not display raw Python/HTML 404 text such as `DOCTYPE`, `Error response`, `Error code: 404`, `File not found`, or `Nothing matches the given URI`.
+
 ## Backend Work Deferred
 
 These features need future backend or policy work before they can become real:
