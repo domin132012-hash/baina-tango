@@ -15,6 +15,7 @@ const REQUIRED_MODEL = "deepseek-v4-flash";
 const REQUIRED_BASE_URL = "https://api.deepseek.com";
 const REQUIRED_APPROVAL = "YES_DEEPSEEK_TOP_100_ONLY";
 const TOP_500_APPROVAL = "YES_DEEPSEEK_TOP_500_ONLY";
+const TOP_1000_APPROVAL = "YES_DEEPSEEK_TOP_1000_ONLY";
 const REQUIRED_MAX_ENTRIES = 100;
 const ALLOWED_PROBE_LIMITS = new Set([1, 5]);
 const DEFAULT_BATCH_ENTRIES = 20;
@@ -78,6 +79,10 @@ Required env for --run-provider or --probe-provider:
 
 Top 500 local-artifact-only mode must use an explicit input/review/ledger path and:
   BAINA_ZH_AI_APPROVE_RUN=YES_DEEPSEEK_TOP_500_ONLY
+  BAINA_ZH_AI_MAX_ENTRIES=500
+
+Top 1000 local-artifact-only mode must use an explicit input/review/ledger path with scope 'top1000' and:
+  BAINA_ZH_AI_APPROVE_RUN=YES_DEEPSEEK_TOP_1000_ONLY
   BAINA_ZH_AI_MAX_ENTRIES=500
 
 Without --run-provider or --probe-provider, this script performs no provider call.
@@ -312,8 +317,39 @@ function normalizeSenseOutput(value) {
   return { value: normalized, normalizations: result.normalizations };
 }
 
+function detectPilotScope(inputPath, batch) {
+  // Detect pilot scope from input path or entry metadata.
+  // Returns 'top100' | 'top500' | 'top1000' | 'probe' | 'unknown'.
+  const input = String(inputPath || "").toLowerCase();
+  if (input.includes("pilot-1000")) return "top1000";
+  if (input.includes("pilot-500")) return "top500";
+  if (input.includes("pilot-100")) return "top100";
+  if (input.includes("probe")) return "probe";
+
+  // Fallback: detect from entry content (entryId range or count pattern)
+  const entries = batch.entries || [];
+  if (entries.length === 0) return "unknown";
+
+  // Top 500 has exactly 500 entries from beta-data header entries
+  // Top 1000 has exactly 500 entries from beta-data entries 500-999
+  if (entries.length === 500) {
+    // Check if these are Top 500 (entries 0-499) or Top 1000 (entries 500-999)
+    // by checking the first entry's headword against known Top 500 headwords
+    // Actually, we can't distinguish reliably by content alone with 500 entries
+    // without knowing the source. Default to requiring explicit --input path.
+    // If no path clue and 500 entries, conservatively report 'unknown'.
+    return "unknown";
+  }
+  if (entries.length === 100) return "top100";
+  // If it's a probe (small entry count), return probe
+  if (entries.length <= 5) return "probe";
+
+  return "unknown";
+}
+
 function estimateBatch({ batch, systemPrompt, batchSize = DEFAULT_BATCH_ENTRIES }) {
   const entries = batch.entries || [];
+  const scope = batch.scope || detectPilotScope(batch.inputPath || batch.type || "", batch);
   const groups = chunkEntries(entries, batchSize);
   const requests = groups.map((group, index) => {
     const userPrompt = userPromptForEntries(group);
@@ -334,6 +370,7 @@ function estimateBatch({ batch, systemPrompt, batchSize = DEFAULT_BATCH_ENTRIES 
   return {
     entries: entries.length,
     senses: entries.reduce((sum, entry) => sum + (entry.senses || []).length, 0),
+    scope,
     requestCount: requests.length,
     batchSize,
     estimatedInputTokens,
@@ -413,12 +450,25 @@ function assertEstimateLimits({ estimate, maxEntries, maxInputTokens, maxOutputT
 }
 
 function runApprovalForEstimate(estimate) {
+  // Use explicit scope when available; fall back to entry-count heuristic.
+  if (estimate.scope === "top1000") return TOP_1000_APPROVAL;
+  if (estimate.scope === "top500") return TOP_500_APPROVAL;
+  if (estimate.scope === "top100") return REQUIRED_APPROVAL;
+  if (estimate.scope === "probe") return REQUIRED_APPROVAL;
+  // Legacy heuristic for batches without explicit scope:
   if (estimate.entries === 500) return TOP_500_APPROVAL;
   if (estimate.entries === REQUIRED_MAX_ENTRIES) return REQUIRED_APPROVAL;
   return REQUIRED_APPROVAL;
 }
 
-function pilotLabelForEntryCount(count) {
+function pilotLabelForEntryCount(estimate) {
+  // Accept either a number (legacy) or an estimate object.
+  const scope = estimate && typeof estimate === "object" ? estimate.scope : null;
+  const count = typeof estimate === "number" ? estimate : estimate.entries;
+  if (scope === "top1000") return "1000";
+  if (scope === "top500") return "500";
+  if (scope === "top100") return "100";
+  if (scope === "probe") return "probe";
   if (count === 500) return "500";
   if (count === REQUIRED_MAX_ENTRIES) return "100";
   return "probe";
@@ -1380,15 +1430,20 @@ async function main() {
   const ledgerOut = arg("--ledger-out") || (probeProvider ? DEFAULT_PROBE_LEDGER_OUT : DEFAULT_LEDGER_OUT);
   const debugOut = arg("--debug-out") || DEFAULT_DEBUG_OUT;
   const batch = await readJson(inputPath);
+  batch.inputPath = inputPath;
   const systemPrompt = await fs.readFile(promptPath, "utf8");
   const effectiveBatch = probeProvider ? batchWithEntryLimit(batch, probeLimitFromArgs()) : batch;
+  effectiveBatch.inputPath = inputPath;
   const estimate = estimateBatch({ batch: effectiveBatch, systemPrompt });
 
   if (hasFlag("--estimate-only") || (!fullProvider && !probeProvider)) {
+    const requiredApproval = runApprovalForEstimate(estimate);
     console.log(JSON.stringify({
       provider: PROVIDER_NAME,
       model: REQUIRED_MODEL,
       mode: probeProvider ? "probe_estimate_only_no_provider_call" : "estimate_only_no_provider_call",
+      scope: estimate.scope,
+      requiredApprovalFlag: requiredApproval,
       inputPath,
       promptPath,
       reviewOut,

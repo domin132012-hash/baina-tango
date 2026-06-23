@@ -93,27 +93,18 @@ export BAINA_ZH_AI_MAX_REQUESTS=25
 | MAX_REQUESTS | **25** | 预估 25 batch；无需更多 |
 | MAX_ENTRIES | **500** | 固定（entries 500-999 = 500 entries） |
 
-### ⚠️ 已知脚本兼容问题
+### ✅ 已修复：脚本兼容问题
 
-脚本 `jmdict-zh-deepseek-pilot.js` 的 `runApprovalForEstimate()` 函数（第 415-418 行）：
+`runApprovalForEstimate()` 已更新（commit `62a6579` 之后）：
 
-```javascript
-function runApprovalForEstimate(estimate) {
-  if (estimate.entries === 500) return TOP_500_APPROVAL;  // "YES_DEEPSEEK_TOP_500_ONLY"
-  if (estimate.entries === REQUIRED_MAX_ENTRIES) return REQUIRED_APPROVAL;
-  return REQUIRED_APPROVAL;
-}
-```
+- 通过 `--input` 路径检测 pilot scope（`pilot-500` / `pilot-1000`）
+- `estimate.scope = 'top500'` → `BAINA_ZH_AI_APPROVE_RUN=YES_DEEPSEEK_TOP_500_ONLY`
+- `estimate.scope = 'top1000'` → `BAINA_ZH_AI_APPROVE_RUN=YES_DEEPSEEK_TOP_1000_ONLY`
+- 旧逻辑（无 scope 时 500 entries → TOP_500_APPROVAL）作为 legacy fallback 保留
+- 12 项 approval compatibility test 全部 PASS
+- 错误 approval flag 会 fail closed
 
-**问题**：Top 1000 有 500 entries，脚本会要求 `BAINA_ZH_AI_APPROVE_RUN=YES_DEEPSEEK_TOP_500_ONLY`，而不是 `YES_DEEPSEEK_TOP_1000_ONLY`。
-
-**影响**：如果设置 `YES_DEEPSEEK_TOP_1000_ONLY`，`assertRunGuardrails` 会失败并停止。
-
-**解决方案（二选一）**：
-- A) 设置 `BAINA_ZH_AI_APPROVE_RUN=YES_DEEPSEEK_TOP_500_ONLY`（利用现有逻辑，但确保 token guardrail 已更新为 Top 1000 值）
-- B) 在 provider run 前更新脚本，新增 `TOP_1000_APPROVAL` 常量，使 `runApprovalForEstimate` 能区分 Top 500 和 Top 1000
-
-**推荐方案 B**：避免 scope 混淆，但需修改脚本代码（仅修改常量定义和判断逻辑，不改变 provider 调用方式）。
+⚠️ **仍需用户手动设置以下环境变量后才能批准 provider run。**
 
 ---
 

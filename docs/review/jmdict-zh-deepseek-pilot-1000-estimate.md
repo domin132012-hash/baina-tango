@@ -59,7 +59,7 @@
 
 | 参数 | 推荐值 | 说明 |
 |------|--------|------|
-| `BAINA_ZH_AI_APPROVE_RUN` | `YES_DEEPSEEK_TOP_1000_ONLY` | 新增批准标记（⚠️ 脚本兼容问题见 approval packet） |
+| `BAINA_ZH_AI_APPROVE_RUN` | `YES_DEEPSEEK_TOP_1000_ONLY` | ✅ 脚本已修复：scope=top1000 → TOP_1000_APPROVAL |
 | `BAINA_ZH_AI_MAX_ENTRIES` | 500 | 不变（500 条目 = entries 500-999） |
 | `BAINA_ZH_AI_MAX_INPUT_TOKENS` | **150,000** | 预估 80K；Top 500 actual 144K；150K 覆盖合理场景 |
 | `BAINA_ZH_AI_MAX_OUTPUT_TOKENS` | **220,000** | 预估 112K；Top 500 actual 112K；799 senses ≈ 841；220K 充足 |
