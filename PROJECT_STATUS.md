@@ -6,7 +6,7 @@
 > ✅ EJU 記述作文批改 PR #2 已在用户完成真实 Preview 验收后合并并部署 Production。
 > ✅ 词典优先查词 PR #4 已合并并部署 Production；当前仍是 JMdict 小样本 MVP。
 > ✅ PR #6 已按用户显式批准 merge 到 `main`，merge commit `c94735925798c604321631e1caa36c2f2c3190be`。Production R2/D1 binding/runtime fix 已完成：Cloudflare Production Pages config 已绑定 `DICTIONARY_R2` 和 `DICTIONARY_DB`，canonical Production lookup 返回 `dictionarySource=r2-shard`，`食べられる` count `1`，全部 required terms `aiCalled=false`。D1 full import 仍禁止，除非另有 cost-safe plan。
-> 🟡 登录后主界面五栏导航重构已在 UI 专用分支 `feat/post-login-nav-restructure` 完成本地实现和 EJU 深层入口 bugfix：底部为 `学习 / 词库 / 首页 / 社区 / 我的`；`読解` 在本地静态预览明确显示 `需要后端`，不再暴露 raw 404 HTML；`記述` 按需加载现有作文模块；综合科目 2024-1 扫描卷可打开题图。Draft PR #13 保持 draft/open/unmerged；本任务未触碰词典 overlay PR #12、R2/D1、Cloudflare 配置或任何外部 AI provider。
+> ✅ 登录后主界面五栏导航重构 PR #13 已按用户批准部署 Production：PR `feat(ui): restructure post-login navigation` 从 `feat/post-login-nav-restructure` 标记 ready 并 merge 到 `main`，merge commit `d6312b85a158d08421a9b06b59b711df258fdd5a`。Cloudflare Production deployment `d0d93ecd-bf01-44ce-8c6a-e0345b3a5b92` source `d6312b8` Active，canonical URL `https://baina-tango.pages.dev` 已通过浏览器验证：底部 `学习 / 词库 / 首页 / 社区 / 我的`，EJU 日本語/読解/記述/综合科目扫描卷、词库、首页、社区、我的均正常；console fatal errors `0`，network bad responses `0`，raw 404 visible `No`。本轮未触碰 PR #12、DeepSeek、Google Translate、Runtime AI、R2/D1 或 overlay activation。
 
 ## 最近完成（EJU 記述作文批改）— 2026-06-17
 
@@ -64,7 +64,7 @@ PR #2 `feat(eju-essay): add EJU writing critique integration` 已从 draft 改 r
 | 完整 JMdict R2 sharded lookup | ✅ Production active | 官方 JMdict `2026-06-18` 已生成并上传 R2 shards：512 shard objects，约 `632,040,903` bytes，active version `jmdict-english-r2-shards-2026-06-18`。D1 `baina-dictionary` 只写入 metadata schema 和 active version，不做 full import。Production Pages config 已绑定 `DICTIONARY_R2` -> `baina-dictionary-artifacts`、`DICTIONARY_DB` -> `baina-dictionary`；canonical Production `/api/dictionary/lookup?q=食べられる` 返回 `dictionarySource=r2-shard`、count `1`，全部要求测试词 `aiCalled=false`。不得提交完整 JMdict/XML/大型 JSON/SQLite/DB artifact，不做 AI 词条生成或翻译；D1 full import 仍禁止，除非另有 cost-safe plan。 |
 | 代理 closeout 回写机制 | ✅ 已制度化 | 新增 `docs/ops/AGENT_CLOSEOUT_CHECKLIST.md`，并要求所有时间使用 JST、收尾必须 commit + push + 远端校验 |
 | Cloudflare 通知配置 | ✅ 线上配置已解决（用户确认） | 本轮未处理通知系统 |
-| 登录后五栏导航 IA | 🟡 Draft PR #13 | 分支 `feat/post-login-nav-restructure`；PR `https://github.com/domin132012-hash/baina-tango/pull/13` 保持 draft/open/unmerged；EJU 深层 bugfix 从 `7d995556dcfa27ebdb61953235de0133a464f418` 开始，提交主题 `Fix EJU deep links in post-login navigation`；`読解` 本地静态显示 `需要后端`，`記述` 打开作文 home，综合科目 2024-1 题图可打开；验证日志 `docs/review/post-login-nav-restructure-eju-deep-link-validation-log.md`；本地浏览器验证通过，未部署 |
+| 登录后五栏导航 IA | ✅ PR #13 merged / Production active | PR #13 已 ready + merge，merge commit `d6312b85a158d08421a9b06b59b711df258fdd5a`；Production deployment `d0d93ecd-bf01-44ce-8c6a-e0345b3a5b92` source `d6312b8` Active；canonical Production 验证通过。Validation log: `docs/review/post-login-nav-restructure-production-deploy-validation-log.md` |
 | 未部署年份灰色建设中 UI | 📝 待做 | 可后续让 Codex 做，但避免与 Claude 同时改 `assets/eju.js` 撞车 |
 
 ---

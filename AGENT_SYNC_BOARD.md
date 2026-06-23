@@ -4,15 +4,15 @@
 > do not recheck Supabase / Stripe unless the task touches them, a related fault appears, or the recorded status is older than 30 days and the task depends on that platform.
 > Never record API keys, service role keys, JWT secrets, session tokens, customer data, payment records, card data, or raw secret values.
 
-Last updated: 2026-06-23 21:57 JST by Codex
+Last updated: 2026-06-23 23:17 JST by Codex
 
 ## 1. 当前锁定状态
 
 | Area | Status | Note |
 |---|---|---|
-| Repository docs | Active for PR #13 EJU deep-link bugfix closeout | Recording local EJU deep-entry validation, branch isolation from dictionary overlay PR #12, and draft PR handoff |
-| Application code | PR #13 EJU deep-link bugfix completed locally | `読解` no longer exposes local 404 HTML; `記述` opens the existing essay home by loading `assets/eju-essay.js`; 综合科目 2024-1 scan opens locally |
-| Cloudflare | Not touched in this task | No Pages config change, no Preview deploy, no Production deploy, no R2/D1 write |
+| Repository docs | Active for PR #13 Production deploy closeout | Recording ready/merge/deploy, validation, branch isolation from dictionary overlay PR #12, and production handoff |
+| Application code | PR #13 merged to Production | Bottom nav is `学习 / 词库 / 首页 / 社区 / 我的`; `読解` no longer exposes raw 404 HTML; `記述` opens the existing essay home; 综合科目 2024-1 scan opens |
+| Cloudflare | Production deploy active | Git-backed Production deployment `d0d93ecd-bf01-44ce-8c6a-e0345b3a5b92`, source `d6312b8`; no Pages config change, no Preview deploy, no R2/D1 write |
 | Supabase | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
 | Stripe | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
 | DeepSeek | Not touched in this task | No backend, secret, or API changes; normal lookup does not call AI by default |
@@ -22,37 +22,37 @@ Last updated: 2026-06-23 21:57 JST by Codex
 | Item | Value |
 |---|---|
 | Repository | `domin132012-hash/baina-tango` |
-| Current branch | `feat/post-login-nav-restructure` |
+| Current branch | `main` after PR #13 merge |
 | Main latest hash at task start | `ebc320317e6ef212a38a53a603191c419aca527c` |
-| Current task | Issue #11 post-login navigation IA restructure |
+| Current task | PR #13 post-login navigation Production deploy |
 | Issue | `#11` post-login main interface information architecture |
 | PR #4 | `MERGED` `https://github.com/domin132012-hash/baina-tango/pull/4` |
 | PR #4 merge commit | `c340f75a5f8cf51dac691732a9c66e50cd22af09` |
 | Main latest hash after PR #4 | `c340f75a5f8cf51dac691732a9c66e50cd22af09` |
 | Phase 2 branch | `feat/full-jmdict-import-spike` |
 | Phase 2 PR | `https://github.com/domin132012-hash/baina-tango/pull/6` merged |
-| Latest relevant commit | UI implementation commit `1f0759015a701c38c20f0bca8a38e02870b07abd`; draft PR closeout commit `eb7f220de2dbcd15223213ad88e1512de9fad22c`; PR metadata writeback commit `a9c1a9de20eb28a328e85c6e0dddb8a664a93a28`; EJU deep-link fix commit subject `Fix EJU deep links in post-login navigation` |
-| UI PR | `#13` `https://github.com/domin132012-hash/baina-tango/pull/13` draft/open/unmerged; EJU deep-link bugfix started from head `7d995556dcfa27ebdb61953235de0133a464f418` |
+| Latest relevant commit | PR #13 merge commit `d6312b85a158d08421a9b06b59b711df258fdd5a` |
+| UI PR | `#13` `https://github.com/domin132012-hash/baina-tango/pull/13` MERGED; head `d5f7264a1e30f81da5f5b01b4e0f1dbb057e918e`; merge commit `d6312b85a158d08421a9b06b59b711df258fdd5a` |
 | PR #2 | `MERGED`; merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` |
-| This task | PR #13 EJU deep-link bugfix; no deploy, mark-ready, merge, provider, R2/D1, or overlay change |
+| This task | PR #13 marked ready, merged, and deployed to Production |
 | Dictionary plan commit | `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main` |
-| External services touched - GitHub | Branch pushed and draft PR #13 created only; do not mark ready or merge |
-| External services touched - Cloudflare | Not touched; no Preview deploy, no Production deploy, no R2/D1 write, no config/metadata change |
+| External services touched - GitHub | PR #13 marked ready and merged into `main`; status docs closeout pushed after validation |
+| External services touched - Cloudflare | Git-backed Production deployment only; no Preview deploy, no R2/D1 write, no config/metadata change |
 | External services touched - Supabase | Not touched |
 | External services touched - Stripe | Not touched |
 | External services touched - DeepSeek | Not touched |
-| Current status | Draft PR #13 remains open, draft, and unmerged. Local bugfix validation passed: bottom nav has 5 tabs, `読解` shows `需要后端` instead of raw 404 HTML, `記述` opens essay home, 综合科目 2024-1 renders a local scan image, browser console errors `0`, clean server log network 404 `0`. |
-| Current blocker | None for local PR #13 EJU deep-link bugfix. Next step is user/PR review. D1 full import and dictionary overlay work remain out of scope. |
+| Current status | PR #13 is merged. Production deployment `d0d93ecd-bf01-44ce-8c6a-e0345b3a5b92` source `d6312b8` is Active; canonical browser validation passed with console fatal errors `0`, network bad responses `0`, and raw 404 visible `No`. |
+| Current blocker | None for PR #13 deployment. Remaining risk: validation did not submit EJU essay to avoid AI provider calls; real logged-in user smoke can still be performed by the user. |
 
 ## 3. Cloudflare 状态
 
 | Field | Value |
 |---|---|
-| Last checked | 2026-06-22 01:04 JST after Production binding/runtime fix and docs-only deployment smoke |
-| Touched by this task | Not touched by PR #13 validation/status-doc finalization; prior Production R2 shard lookup state carried forward |
+| Last checked | 2026-06-23 23:17 JST after PR #13 Production deployment |
+| Touched by this task | Git-backed Production deployment from PR #13 merge; prior Production R2 shard lookup state carried forward |
 | Needs recheck | No for current Production lookup result |
 | Current blocker | None for dictionary R2 shard lookup; continue monitoring cost/traffic after Production traffic uses R2 |
-| Production deployment | Latest validated during closeout: docs-only deployment `7ac71e04-bf01-4b71-9138-86f259b9703c`, source `942f1a2`; project-level bindings are active and canonical URL `https://baina-tango.pages.dev` returns `r2-shard` |
+| Production deployment | Latest PR #13 functional deployment validated: `d0d93ecd-bf01-44ce-8c6a-e0345b3a5b92`, source `d6312b8`, URL `https://baina-tango.pages.dev`, status Active; project-level dictionary bindings remain unchanged |
 | Previous app merge deployment | `1c5b2430-6b20-4334-8e04-e9fb2243dbca`, source `79a2b7e` |
 | PR #2 Preview deployment | `7a85773e-6a2d-44e6-92e2-a8aed5520b7d`, source `dea412c` |
 | PR #4 Preview deployment | `8c882ad2-3432-4d21-a422-be0357eedb19`, source `c294976`, URL `https://8c882ad2.baina-tango.pages.dev`, branch URL `https://feat-dictionary-lookup-mvp.baina-tango.pages.dev`, status successful |
@@ -140,6 +140,7 @@ Update triggers:
 | PR #6 Production R2/D1 binding/runtime fix | Passed | 2026-06-22 01:04 JST: Production Pages config updated with `DICTIONARY_R2` and `DICTIONARY_DB`; Git-backed Production rebuild `fe86990e` fixed runtime bindings, then docs-only deployment `7ac71e04` at source `942f1a2` also passed smoke. Production `/api/dictionary/lookup?q=食べられる` returns `dictionarySource=r2-shard`, count `1`; required API terms all `aiCalled=false`; dictionary page and EJU 記述 entry open; console errors `0`, API failures `0`; billing prompt seen: no |
 | Issue #11 local post-login nav restructure | Passed | 2026-06-23 21:11 JST: local `http://localhost:4173/` browser validation passed for `学习 / 词库 / 首页 / 社区 / 我的`; EJU opens existing 真题试炼; 词库 opens 查词/背词/导入导出/词库管理; 社区 and planned profile entries show `建设中`; construction clicks show toast only; console errors `0`; DeepSeek/Google/Runtime AI/R2/D1/deploy calls `0`; screenshot check saved under Codex outputs. |
 | PR #13 EJU deep-link bugfix | Passed | 2026-06-23 21:57 JST: local `http://localhost:4173/?pr13_final=20260623b` browser validation passed for `学习 -> EJU`, `日本語`, `読解`, `記述`, `综合科目 -> 2024 第 1 回`, and bottom nav. `読解` local static shows `需要后端`; `記述` opens the essay home; 综合科目 scan image `assets/eju-media/humanities/2024-1/page-003.png` renders. Console errors `0`; clean server network 404 `0`; raw HTML 404 visible `No`; DeepSeek/Google/Runtime AI/R2/D1/deploy calls `0`. |
+| PR #13 Production deploy | Passed | 2026-06-23 23:17 JST: User approved deployment. PR #13 marked ready and merged with commit `d6312b85a158d08421a9b06b59b711df258fdd5a`; Cloudflare Production deployment `d0d93ecd-bf01-44ce-8c6a-e0345b3a5b92`, source `d6312b8`, Active. Production browser validation on `https://baina-tango.pages.dev` passed for bottom nav, `学习 -> EJU`, `EJU -> 日本語`, `読解`, `記述` home, `综合科目 -> 2024 年第 1 回`, 词库, 首页, 社区, 我的. Console fatal errors `0`; network bad responses `0`; raw 404 visible `No`; DeepSeek/Google/Runtime AI/R2/D1/overlay activation all `0`. |
 
 ## 8. 最近事件流水
 
@@ -173,3 +174,4 @@ Update triggers:
 | 2026-06-23 21:15 JST | Branch `feat/post-login-nav-restructure` pushed and draft PR #13 created: `https://github.com/domin132012-hash/baina-tango/pull/13`; PR is OPEN and draft; no mark-ready, merge, deploy, provider call, R2/D1 write, or Cloudflare config change. |
 | 2026-06-23 21:22 JST | PR #13 validation/status-doc finalization started from head `a9c1a9de20eb28a328e85c6e0dddb8a664a93a28`; GitHub confirms PR #13 remains OPEN, draft, unmerged; scope is markdown status/validation docs only, with no `index.html`, UI, business logic, deploy, mark-ready, merge, provider, R2/D1, or overlay change. |
 | 2026-06-23 21:57 JST | PR #13 EJU deep-link bugfix completed locally from start head `7d995556dcfa27ebdb61953235de0133a464f418`: `assets/eju.js` now avoids local `/api/eju-reading-sets` 404 exposure, loads `assets/eju-essay.js` on demand for `記述`, and sanitizes EJU fetch errors; `index.html` EJU script cache key updated. No deploy, provider call, R2/D1 write, mark-ready, merge, PR #12 touch, `.env.local`, or `RIKA_PLAN.md` commit. |
+| 2026-06-23 23:17 JST | PR #13 deployed to Production after user approval: marked ready, merged with commit `d6312b85a158d08421a9b06b59b711df258fdd5a`, Cloudflare Production deployment `d0d93ecd-bf01-44ce-8c6a-e0345b3a5b92` Active at source `d6312b8`; canonical browser validation passed; no DeepSeek, Google Translate, Runtime AI, R2/D1 write, overlay activation, PR #12 handling, `.env.local`, API key, or Authorization header exposure. |

@@ -1655,3 +1655,18 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 
 ### Next step
 - Push the bugfix commit to `feat/post-login-nav-restructure` and keep PR #13 draft/open/unmerged for review.
+### 2026-06-23 23:17 JST - PR #13 Production deploy
+
+- Branch: `feat/post-login-nav-restructure` merged into `main`
+- PR: `#13` `feat(ui): restructure post-login navigation`
+- Start commit: `d5f7264a1e30f81da5f5b01b4e0f1dbb057e918e`
+- End commit: `d6312b85a158d08421a9b06b59b711df258fdd5a`
+- Merge commit: `d6312b85a158d08421a9b06b59b711df258fdd5a`
+- Production deployment id / URL: `d0d93ecd-bf01-44ce-8c6a-e0345b3a5b92`, `https://baina-tango.pages.dev`, deployment URL `https://d0d93ecd.baina-tango.pages.dev`, source `d6312b8`, status Active
+- Files changed for closeout: `docs/review/post-login-nav-restructure-production-deploy-validation-log.md`, `AGENT_SYNC_BOARD.md`, `AGENT_WORKLOG.md`, `PROJECT_STATUS.md`, `HANDOVER.md`
+- External services touched: GitHub ready/merge/push yes; Cloudflare Pages Production auto-deploy yes; DeepSeek no; Google Translate no; Runtime AI calls `0`; R2 writes `0`; D1 writes `0`; Preview deploy no; overlay activation `0`
+- Validation: `node --check assets/eju.js` PASS; local browser validation on isolated PR #13 worktree `http://localhost:4174/` PASS; Production browser validation on `https://baina-tango.pages.dev` PASS; console fatal errors `0`; runtime exceptions `0`; network bad responses `0`; raw 404 visible `No`
+- Validation log path: `docs/review/post-login-nav-restructure-production-deploy-validation-log.md`
+- Safety: `.env.local` not tracked; API key not printed; Authorization header not printed; no provider raw response committed; no JMdict XML/gz, DB/SQLite, or production R2 shard committed
+- Remaining risks: Production validation did not perform a real authenticated login and did not click essay submit to avoid external AI provider calls; main project worktree outside isolated PR #13 worktree had unrelated PR #12 dirty files and was not modified.
+- Next step: monitor user-side Production behavior on normal logged-in accounts; keep PR #12 dictionary overlay paused until separately approved.
