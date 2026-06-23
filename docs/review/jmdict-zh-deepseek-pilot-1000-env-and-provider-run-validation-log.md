@@ -119,7 +119,9 @@ node scripts/dictionary/jmdict-zh-deepseek-pilot.js --self-test-json-fixtures
 
 | Service | Calls / Writes |
 |---------|---------------|
-| DeepSeek calls | **0** |
+| DeepSeek provider attempts | **2** (attempt 1: schema fail at per-batch validation; attempt 2: successful) |
+| DeepSeek successful runs | **1** (25 requests, 158,669 input + 107,219 output tokens) |
+| DeepSeek billable requests (total) | **≥26, ≤50** (attempt 1 partial batches + attempt 2 full 25) |
 | Google Translate calls | **0** |
 | Runtime AI calls | **0** |
 | R2 writes | **0** |
@@ -127,7 +129,14 @@ node scripts/dictionary/jmdict-zh-deepseek-pilot.js --self-test-json-fixtures
 | Preview deploy | no |
 | Production deploy | no |
 | Overlay activation | no |
-| GitHub push | pending |
+| GitHub push | completed (`719652a572d41f2e6368f8608e4a094c1f937203`) |
+
+### Guardrail Note
+
+- estimate (155,774) exceeded original recommended MAX_INPUT_TOKENS (150,000)
+- guardrail correctly updated to 200,000 before provider run
+- actual input tokens (158,669) < updated guardrail (200,000)
+- **PASS_WITH_GUARDRAIL_NOTE**: estimate exceeded original recommendation; PRE-RUN update resolved; no runtime breach
 
 ---
 
@@ -162,7 +171,10 @@ node scripts/dictionary/jmdict-zh-deepseek-pilot.js --self-test-json-fixtures
 
 ## Validation Result
 
-**BLOCKED_WAITING_FOR_USER_SECRET**
+**PASS_WITH_GUARDRAIL_NOTE** (post-run audit update)
+
+Provider run completed successfully after guardrail adjustment.
+See `docs/review/jmdict-zh-deepseek-pilot-1000-post-run-audit-validation-log.md` for detailed audit.
 
 ---
 
