@@ -7,6 +7,25 @@
 > ✅ 词典优先查词 PR #4 已合并并部署 Production；当前仍是 JMdict 小样本 MVP。
 > ✅ PR #6 已按用户显式批准 merge 到 `main`，merge commit `c94735925798c604321631e1caa36c2f2c3190be`。Production R2/D1 binding/runtime fix 已完成：Cloudflare Production Pages config 已绑定 `DICTIONARY_R2` 和 `DICTIONARY_DB`，canonical Production lookup 返回 `dictionarySource=r2-shard`，`食べられる` count `1`，全部 required terms `aiCalled=false`。D1 full import 仍禁止，除非另有 cost-safe plan。
 
+## 最近完成（Hermes 沙盒试跑）— 2026-06-23
+
+PR #12 `feat/dictionary-zh-deepseek-pilot-100`：Hermes 首次在 baina-tango 项目中执行沙盒试跑。
+
+- 基于 DeepSeek Top 500 ChatGPT Round 1/2/3 review 数据，沉淀了可复用的中文词典编辑经验。
+- 生成 6 个文档/文件：
+  - `docs/design/jmdict-zh-gloss-editorial-rules.md` — 编辑规则
+  - `docs/review/jmdict-zh-deepseek-top500-lessons-learned.md` — 经验总结
+  - `docs/review/jmdict-zh-deepseek-pilot-1000-dry-run-plan.md` — Top 1000 前置计划
+  - `docs/review/jmdict-zh-deepseek-pilot-1000-preflight-checklist.md` — 前置检查清单
+  - `docs/review/jmdict-zh-deepseek-pilot-1000-risk-rules-draft.md` — 风险规则草案
+  - `scripts/dictionary/prompts/jmdict-zh-deepseek-system.md` — prompt 更新（固定寒暄语/中文自然度/usageNote 规则）
+- 本轮未调用 DeepSeek、Google Translate 或任何外部 AI provider。
+- Runtime AI calls: 0；R2/D1 writes: 0；Preview/Production deploy: no；overlay activation: no。
+- Top 500 reviewed-r1/r2 未覆盖；未生成 Top 1000 artifacts；未生成 reviewed-r3 candidate。
+- PR #12 保持 draft/open/unmerged；无 merge/ready。
+- 验证通过：`node --check` PASS、secret scan clean、`.env.local` untracked、大文件检查 clean。
+- Hermes 首次试跑 PASS；下一步是沉淀的 editorial rules 应用到 Top 1000 provider run（需用户另行批准）。
+
 ## 最近完成（EJU 記述作文批改）— 2026-06-17
 
 PR #2 `feat(eju-essay): add EJU writing critique integration` 已从 draft 改 ready，并以 merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` 合并到 `main`。
@@ -66,6 +85,7 @@ PR #2 `feat(eju-essay): add EJU writing critique integration` 已从 draft 改 r
 | DeepSeek Top 500 local artifacts | 📝 Draft PR #12 / local package generated | 2026-06-23 JST：Cloudflare Preview 写入因 Preview/Production R2/D1 绑定共用同一资源而停止；随后仅执行本地/PR artifacts。第一次 Top 500 provider run 因 `zhGlosses` 数组长度黄灯 schema 问题停止；按用户新错误策略补强 prompt/validator/fixtures，允许安全 deterministic normalization，并在本地验证通过后只自动重试一次。重试成功生成 `docs/review/jmdict-zh-deepseek-pilot-500-review.md`、usage ledger、QA summary、corrected review candidate、overlay candidate JSON、local package。Top 500 counts：entries `500`、senses `841`、shouldDisplay true/false `757`/`84`、human_corrected `21`、needs_human_review `46`；QA `PASS_WITH_REVIEW`，Bad `0`、Minor `7`、shouldDisplay review `14`；local package validation PASS。DeepSeek retry actual tokens：input `144483`、output `112063`；normalization records `0`。Google Translate no; runtime AI calls `0`; R2/D1 writes `0`; Preview deploy no; Production deploy no; overlay activation no; PR #12 仍 draft/open/unmerged。Cloudflare 写入/上传/部署仍需先解决 Preview 隔离并另行批准。 |
 | DeepSeek Top 500 ChatGPT reviewed-r2 | 📝 Draft PR #12 / reviewed-r2 local package generated | 2026-06-23 19:29 JST：基于 `docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r1.json` 只应用 16 条 Round 2 usageNote / 中文自然度 / 常见表达修正，新增 `chatgpt-review-round2.md`、`chatgpt-review-round2-corrections.json`、`jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r2.json` 和 `jmdict-zh-deepseek-pilot-500-local-package-reviewed-r2/`。reviewed-r2 counts：entries `500`、senses `841`、shouldDisplay true/false `761`/`80`、Round 2 changed senses `16`、cumulative changed senses `37`、needs_human_review `28`、no action records `19`、checksum `f70db8b59f0bf12f6c196089dbb9ea8158a3080e2fbb64c322f1d8d17e1ff2ad  manifest.json`。DeepSeek no; Google Translate no; Runtime AI calls `0`; R2/D1 writes `0`; Preview deploy no; Production deploy no; overlay activation no; PR #12 仍 draft/open/unmerged。reviewed-r2 仍不是 production overlay，任何上传/写入/部署/mark ready/merge 都需另行明确批准。 |
 | DeepSeek Top 500 ChatGPT Round 3 input | 📝 Draft PR #12 / needs-human-review packet generated | 2026-06-23 20:32 JST：基于 reviewed-r2 只抽出剩余 `needs_human_review` 28 条，新增 `chatgpt-review-round3-needs-human-review.md`、`chatgpt-review-round3-needs-human-review.json`、`chatgpt-review-round3-correction-scaffold.json`。本轮未生成 reviewed-r3 candidate，未生成 reviewed-r3 local package，未修改 reviewed-r2 candidate；scaffold 只保留 `before` 和 `after=null`。riskType counts：archaic `3`、specialized `25`、religion `7`、legal `3`、medical `3`、dialect `0`、too_rare `7`、abbreviation `2`、possible_duplicate_sense `0`、possible_bad_gloss `6`、should_display_review `6`、usage_note_review `15`。DeepSeek no; Google Translate no; Runtime AI calls `0`; R2/D1 writes `0`; Preview deploy no; Production deploy no; overlay activation no; PR #12 仍 draft/open/unmerged。下一步需 ChatGPT/reviewer 填写 R3 决策，再另行生成 reviewed-r3 patch。 |
+| Hermes 沙盒试跑 | ✅ Dry-run PASS / editorial rules generated | 2026-06-23 20:50 JST：Hermes 首次在 baina-tango 项目执行沙盒试跑。基于 Top 500 R1/R2/R3 review 生成 6 个文件：editorial rules、lessons learned、dry-run plan、preflight checklist、risk rules draft、updated prompt。本轮未调用 DeepSeek/Google Translate 或任何外部 AI provider；Runtime AI calls `0`；R2/D1 writes `0`；Preview/Production deploy no；overlay activation no；PR #12 仍 draft/open/unmerged。验证全部 PASS：`node --check`、secret scan、.env.local untracked、大文件检查、Top 500 R1/R2 未覆盖。下一步：editorial rules 应用到 Top 1000 provider run（需用户另行批准）。 |
 | 代理 closeout 回写机制 | ✅ 已制度化 | 新增 `docs/ops/AGENT_CLOSEOUT_CHECKLIST.md`，并要求所有时间使用 JST、收尾必须 commit + push + 远端校验 |
 | Cloudflare 通知配置 | ✅ 线上配置已解决（用户确认） | 本轮未处理通知系统 |
 | 未部署年份灰色建设中 UI | 📝 待做 | 可后续让 Codex 做，但避免与 Claude 同时改 `assets/eju.js` 撞车 |

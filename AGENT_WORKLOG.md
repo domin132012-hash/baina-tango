@@ -27,6 +27,52 @@ Entry template:
 
 ---
 
+## 2026-06-23 20:50 JST / Hermes (dry-run) / DeepSeek Top 500 lessons learned & Top 1000 editorial rules
+
+### Task
+- Hermes first sandbox trial in baina-tango project.
+- Read Top 500 R1/R2/R3 ChatGPT review files and generated editorial rules, lessons learned, dry-run plan, preflight checklist, and risk rules draft for Top 1000.
+- Updated prompt with fixed greeting expressions, Chinese naturalness rules, and usageNote rules.
+- No provider calls, no R2/D1 write, no deploy, no overlay activation.
+- Commit + push to PR #12 draft branch.
+
+### Files changed
+- `docs/design/jmdict-zh-gloss-editorial-rules.md` — new: product positioning, shouldDisplay rules, fixed greeting table, Chinese naturalness rules, usageNote rules, QA rules.
+- `docs/review/jmdict-zh-deepseek-top500-lessons-learned.md` — new: R1/R2/R3 summary, common error types, prompt/QA rules, shouldDisplay/usageNote/shortGloss experience.
+- `docs/review/jmdict-zh-deepseek-pilot-1000-dry-run-plan.md` — new: phases, failure handling, scope boundaries.
+- `docs/review/jmdict-zh-deepseek-pilot-1000-preflight-checklist.md` — new: 20+ checkbox items covering PR/branch/.env.local/R2/D1/deploy/DeepSeek scope/retry/artifact protection.
+- `docs/review/jmdict-zh-deepseek-pilot-1000-risk-rules-draft.md` — new: 8 risk categories with rules and mitigation.
+- `scripts/dictionary/prompts/jmdict-zh-deepseek-system.md` — updated: added editorial rules section (fixed greetings table, Chinese naturalness rules, usageNote rules); kept JSON-only output format unchanged.
+- `AGENT_SYNC_BOARD.md` — updated for Hermes dry-run.
+- `AGENT_WORKLOG.md` — appended this entry.
+
+### Validation
+- `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js` PASS
+- Secret scan (grep) on new docs + prompt: clean
+- `.env.local` not tracked by git
+- No Top 1000 artifacts generated (only dry-run docs)
+- No reviewed-r3 candidate generated
+- Top 500 reviewed-r1/r2 timestamps unchanged (not overwritten)
+- Large artifact scan: only pre-existing project assets (PNG, JSON); no new large files
+- DeepSeek calls: 0
+- Google Translate calls: 0
+- Runtime AI calls: 0
+- R2/D1 writes: 0
+- Preview deploy: no
+- Production deploy: no
+- Overlay activation: no
+- PR #12: draft/open/unmerged
+- Start commit: `53dcd903f2fe80f7a6e8c63cc211b6629393d6e2`
+
+### Risks / next steps
+- Top 500 Round 3 still has 28 needs_human_review unresolved; 8 mark_unresolved require human reviewer decision.
+- Top 1000 provider run requires: preflight checklist full PASS, estimate-only, user explicit approval, updated editorial rules/prompt applied.
+- Preview/Production R2/D1 binding isolation remains unsolved; any Cloudflare write blocked.
+- Remaining cost risk: zero for this dry-run; future provider run may incur DeepSeek cost.
+
+### Commit
+- pending; final hash reported after push.
+
 ## 2026-06-17 / Codex / External platform baseline + delta sync rules
 
 ### Task

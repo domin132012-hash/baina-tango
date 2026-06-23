@@ -4,18 +4,18 @@
 > do not recheck Supabase / Stripe unless the task touches them, a related fault appears, or the recorded status is older than 30 days and the task depends on that platform.
 > Never record API keys, service role keys, JWT secrets, session tokens, customer data, payment records, card data, or raw secret values.
 
-Last updated: 2026-06-23 14:00:31 JST by Codex
+Last updated: 2026-06-23 20:50 JST by Hermes (dry-run)
 
 ## 1. 当前锁定状态
 
 | Area | Status | Note |
 |---|---|---|
-| Repository docs | Active for Issue #11 DeepSeek Chinese overlay pilot branch | Recording DeepSeek Top 500 local artifacts/package and no Production/R2/D1/Preview deploy changes |
+| Repository docs | Active for Issue #11 DeepSeek Chinese overlay pilot branch | Hermes dry-run: generated editorial rules, lessons learned, Top 1000 dry-run plan, preflight checklist, risk rules draft; no Production/R2/D1/Preview deploy changes |
 | Application code | PR #6 R2 shard lookup path + beta fallback | `/api/dictionary/lookup` is binding-ready for `DICTIONARY_R2` + optional `DICTIONARY_DB`; when bindings are absent or fail it keeps the bounded 1,000-entry beta fallback and `aiCalled=false` |
 | Cloudflare | Production R2 shard lookup active | Production Pages config now has `DICTIONARY_R2` -> `baina-dictionary-artifacts` and `DICTIONARY_DB` -> `baina-dictionary`; canonical Production returns `dictionarySource=r2-shard` |
 | Supabase | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
 | Stripe | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
-| DeepSeek | Called once for approved Top 500 retry | Offline batch only; first Top 500 attempt failed on yellow-light `zhGlosses` length, validator/prompt were fixed, one retry succeeded; normal lookup does not call AI by default |
+| DeepSeek | Not called in this dry-run | Hermes dry-run: no DeepSeek API call; no Google Translate; runtime AI calls 0; existing Top 500 provider calls remain as prior events |
 
 ## 2. GitHub 状态
 
@@ -33,16 +33,16 @@ Last updated: 2026-06-23 14:00:31 JST by Codex
 | Phase 2 PR | `https://github.com/domin132012-hash/baina-tango/pull/6` merged |
 | Latest relevant commit | Phase A start commit `42f936cc07ad4897b4dfe0b739a39fd580761df7`; final Phase A branch head recorded in PR #10 / Issue #9 comments after closeout push |
 | PR #2 | `MERGED`; merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` |
-| This task | Issue #11 / PR #12 reviewed-r1 ChatGPT corrections generated locally; no R2/D1 write, no deploy, no overlay activation |
+| This task | Issue #11 / PR #12 Hermes dry-run editorial rules; no provider calls, no deploy, no R2/D1 |
 | Dictionary plan commit | `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main` |
 | External services touched - GitHub | PR #12 branch push after local validation; PR kept draft/open/unmerged. |
 | External services touched - Cloudflare | No settings change; no Preview deploy; no Production change; no R2/D1 data write. Earlier Preview/Production binding ambiguity remains a blocker for any Cloudflare write. |
-| External services touched - Google Cloud Translation | Official Translation API called offline for Top 100 Phase A only; `7,382` input chars; no runtime Google calls |
+| External services touched - Google Cloud Translation | Not touched in Hermes dry-run |
 | External services touched - Supabase | Not touched |
 | External services touched - Stripe | Not touched |
-| External services touched - DeepSeek | No new DeepSeek call in this reviewed-r1 correction task; existing Top 500 retry usage remains the prior recorded provider event. |
-| Current status | ChatGPT Round 1 reviewed-r1 artifacts generated locally: correction patch `docs/review/jmdict-zh-deepseek-pilot-500-chatgpt-review/chatgpt-review-round1-corrections.json`, candidate `docs/review/jmdict-zh-deepseek-pilot-500-overlay-candidate-reviewed-r1.json`, package `docs/review/jmdict-zh-deepseek-pilot-500-local-package-reviewed-r1/`. Counts: entries `500`, senses `841`, corrections `21`, false->true `9`, true->false `4`, gloss-only `8`, no action `19`, shouldDisplay true/false `762/79`, needs_human_review `30`, checksum `220e8a1276befa5524c51cb5dee9c2ff9b3713678d5fc19b683036a553b9d1d7`. Review-only, not production overlay, not uploaded to R2/D1, not deployed, not activated. |
-| Current blocker | reviewed-r1 still needs further ChatGPT/reviewer review for P1 usageNote and high-frequency sampling before any activation decision. Any R2/D1 write, upload, deploy, overlay activation, PR ready transition, or merge still requires separate explicit approval. PR #12 must remain draft/open/unmerged until explicitly advanced. |
+| External services touched - DeepSeek | No DeepSeek call in this Hermes dry-run task; existing Top 500/100 retry usage remains the prior recorded provider events. |
+| Current status | Hermes dry-run generated: editorial rules (`docs/design/jmdict-zh-gloss-editorial-rules.md`), lessons learned (`docs/review/jmdict-zh-deepseek-top500-lessons-learned.md`), Top 1000 dry-run plan (`docs/review/jmdict-zh-deepseek-pilot-1000-dry-run-plan.md`), preflight checklist (`docs/review/jmdict-zh-deepseek-pilot-1000-preflight-checklist.md`), risk rules draft (`docs/review/jmdict-zh-deepseek-pilot-1000-risk-rules-draft.md`), updated prompt (`scripts/dictionary/prompts/jmdict-zh-deepseek-system.md`). No provider calls, no R2/D1 write, no deploy, no Top 1000 artifacts, no reviewed-r3. |
+| Current blocker | Top 500 reviewed-r2 still has 28 needs_human_review unresolved. Top 1000 provider run requires: (a) Preflight checklist full PASS, (b) estimate-only completed, (c) user explicit approval, (d) updated editorial rules/prompt applied. Any R2/D1 write, upload, deploy, overlay activation, PR ready transition, or merge still requires separate explicit approval. PR #12 must remain draft/open/unmerged until explicitly advanced. |
 
 ## 3. Cloudflare 状态
 
@@ -185,3 +185,4 @@ Update triggers:
 | 2026-06-22 23:24 JST | Issue #11 / PR #12 five-entry DeepSeek provider probe on `feat/dictionary-zh-deepseek-pilot-100`: start commit `c831285523c989800760bc2462ab8370e4c3bb93`; end commit is this closeout commit, exact SHA reported after push. DeepSeek API called once only for `--probe-provider --probe-limit 5`, generated 5 entries / 10 senses, actual input tokens `2228`, actual output tokens `1300`; probe review and usage ledger updated under `docs/review/`. TextEdit open command executed. No Top 100 retry, no Google Translate, no runtime AI calls, no R2/D1 write, no Production deploy, no overlay activation, `.env.local` not committed, PR #12 kept draft/open/unmerged, billing prompt seen no. |
 | 2026-06-23 19:29 JST | Issue #11 / PR #12 ChatGPT review Round 2 on `feat/dictionary-zh-deepseek-pilot-100`: start commit `b78f24b7a61e8e78a7835324c64110d99d1d6714`; end commit is this closeout commit, exact SHA reported after push. Generated `chatgpt-review-round2.md`, Round 2 correction patch JSON, reviewed-r2 overlay candidate, and reviewed-r2 local package only. No DeepSeek, no Google Translate, runtime AI calls `0`, R2/D1 writes `0`, Preview deploy no, Production deploy no, overlay activation no, no PR ready/merge. Validation passed: syntax check, JSON parse, target-only diff for 16 listed senses, entries/senses unchanged `500`/`841`, shouldDisplay true/false `761`/`80`, needs_human_review `28`, checksum verification passed, secret and large-artifact scan clean, `.env.local` untracked. PR #12 kept draft/open/unmerged. |
 | 2026-06-23 20:32 JST | Issue #11 / PR #12 ChatGPT review Round 3 needs-human-review packet on `feat/dictionary-zh-deepseek-pilot-100`: start commit `7f84c73484802ffb670e04174635b1f0545fcfec`; end commit is this closeout commit, exact SHA reported after push. Generated only Round 3 review input markdown, machine-readable needs-human-review JSON, and correction scaffold. No reviewed-r3 candidate, no reviewed-r3 local package, no reviewed-r2 mutation. No DeepSeek, no Google Translate, runtime AI calls `0`, R2/D1 writes `0`, Preview deploy no, Production deploy no, overlay activation no, no PR ready/merge. Validation passed: syntax check, reviewed-r2 parse, extracted `needs_human_review` count `28`, markdown/JSON/scaffold counts all `28`, scaffold `after=null`, secret and large-artifact scan clean, `.env.local` untracked. PR #12 kept draft/open/unmerged. |
+| 2026-06-23 20:50 JST | Issue #11 / PR #12 Hermes dry-run editorial rules on `feat/dictionary-zh-deepseek-pilot-100`: start commit `53dcd903f2fe80f7a6e8c63cc211b6629393d6e2`; end commit is this closeout commit, exact SHA reported after push. Generated editorial rules, lessons learned, Top 1000 dry-run plan, preflight checklist, risk rules draft, and updated prompt. No DeepSeek, no Google Translate, runtime AI calls `0`, R2/D1 writes `0`, Preview deploy no, Production deploy no, overlay activation no, no PR ready/merge. Validation passed: node --check PASS, secret scan clean, .env.local untracked, large artifact scan clean, Top 500 R1/R2 not overwritten, no Top 1000 artifacts, no reviewed-r3. Files changed: 6 (5 new docs + 1 prompt update). PR #12 kept draft/open/unmerged. Hermes first sandbox trial PASS. |
