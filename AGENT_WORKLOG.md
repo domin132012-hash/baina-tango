@@ -1529,3 +1529,70 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - R2 read volume may increase now that Production uses shards.
 - D1 reads should remain limited to metadata lookup.
 - No new paid/billing prompt was seen, but provider consoles remain final truth for billing.
+
+## 2026-06-23 21:11 JST / Codex / Issue #11 post-login navigation IA restructure
+
+### Task
+- Continue the paused post-login main interface IA task after removing dictionary overlay branch contamination risk.
+- Safely move untracked `RIKA_PLAN.md` out of the repo, create a UI-only branch from `main`, and restructure the logged-in bottom navigation to `学习 / 词库 / 首页 / 社区 / 我的`.
+- Keep unavailable features visibly marked `建设中`; do not implement real community backend, invite rewards, or developer-feedback backend.
+
+### Branch / commits
+- Original blocked branch: `feat/dictionary-zh-deepseek-pilot-100`
+- UI branch: `feat/post-login-nav-restructure`
+- Start commit from `main`: `ebc320317e6ef212a38a53a603191c419aca527c`
+- Implementation commit: `1f0759015a701c38c20f0bca8a38e02870b07abd`
+- Draft PR: pending before closeout push
+- Issue: `#11`
+
+### Files changed
+- `index.html`
+- `docs/design/post-login-nav-restructure.md`
+- `docs/review/post-login-nav-restructure-validation-log.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+
+### RIKA_PLAN.md handling
+- Moved out of the repo before switching to the UI branch.
+- Backup path: `/Users/domin/Desktop/baina-tango-local-backups/RIKA_PLAN.20260623-205805.md`
+- Not committed.
+
+### UI changes
+- Bottom nav is now `学习 / 词库 / 首页 / 社区 / 我的`.
+- `学习` contains EJU as an available entry, plus JLPT and 口语 as `建设中`.
+- Existing EJU true-exam flow remains reachable through EJU.
+- `词库` contains 查词, 背词, 导入导出, and 词库管理.
+- 首页 dashboard remains available with check-in, today task, stats, and review shortcut.
+- `社区` contains 住房, 大学专业, 地域美食, 大学合格记录, and 大学讨论, all `建设中`.
+- `我的` keeps profile/auth/sync/stat/purchase/redeem/settings/help/contact flows and adds 邀请制度 plus 给开发者建议 as `建设中`.
+
+### External services touched
+- GitHub: pending branch push and draft PR only.
+- Cloudflare: not touched.
+- Cloudflare R2/D1: not touched; no R2 upload/write, no D1 write, no D1 full import.
+- Supabase / Stripe / DeepSeek / Google Translate / other AI providers: not touched.
+- Preview / Production deploy: not performed.
+
+### Validation
+- `node --check scripts/dictionary/jmdict-zh-deepseek-pilot.js`: expected FAIL because that overlay-only script is not present on this `main`-based UI branch.
+- `node --check assets/eju.js`, `assets/eju-essay.js`, and `functions/api/dictionary/lookup.js`: PASS.
+- Inline scripts extracted from `index.html`: PASS, 2 inline scripts parsed.
+- `package.json` scripts: `{}`; no build/test/lint commands available.
+- Local browser validation at `http://localhost:4173/`: PASS for five bottom tabs, EJU entry, vocab subentries, community construction entries, profile construction entries, and construction toast behavior.
+- Browser console errors: `0`.
+- Mobile viewport check: PASS after page readiness; sampled visible controls had no horizontal overflow.
+- Screenshot check saved under Codex task outputs.
+- Validation log: `docs/review/post-login-nav-restructure-validation-log.md`.
+
+### Remaining risks
+- Local static server validation does not exercise Cloudflare Pages runtime, Supabase auth, Stripe checkout, or production bindings.
+- Very early clicks immediately after reload can happen before existing inline handlers finish binding; after app readiness, five-tab navigation passes.
+- Construction entries are UI-only placeholders and need separate backend/product work before becoming real.
+
+### Remaining cost risks
+- None from this task: no provider calls, no R2/D1 writes, no deployment, and no Cloudflare configuration change.
+
+### Next step
+- Push `feat/post-login-nav-restructure`, create a draft PR, keep it draft, and wait for user review. Do not mark ready, merge, deploy, or touch dictionary overlay PR #12.
