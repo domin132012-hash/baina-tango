@@ -7,24 +7,19 @@
 > ✅ 词典优先查词 PR #4 已合并并部署 Production；当前仍是 JMdict 小样本 MVP。
 > ✅ PR #6 已按用户显式批准 merge 到 `main`，merge commit `c94735925798c604321631e1caa36c2f2c3190be`。Production R2/D1 binding/runtime fix 已完成：Cloudflare Production Pages config 已绑定 `DICTIONARY_R2` 和 `DICTIONARY_DB`，canonical Production lookup 返回 `dictionarySource=r2-shard`，`食べられる` count `1`，全部 required terms `aiCalled=false`。D1 full import 仍禁止，除非另有 cost-safe plan。
 
-## 最近完成（Hermes 沙盒试跑）— 2026-06-23
+## 最近完成（Top 1000 reviewed-r2 线上 overlay 部署 closeout）— 2026-06-24
 
-PR #12 `feat/dictionary-zh-deepseek-pilot-100`：Hermes 首次在 baina-tango 项目中执行沙盒试跑。
+PR #12 `feat/dictionary-zh-deepseek-pilot-100`：Codex 完成了 Top 1000 reviewed-r2 中文 overlay 线上烟雾测试部署（Phases 0–7），Codex 因 usage limit 中断。Hermes 接手完成只读确认、文档回写、commit + push（Phases 8–9）。
 
-- 基于 DeepSeek Top 500 ChatGPT Round 1/2/3 review 数据，沉淀了可复用的中文词典编辑经验。
-- 生成 6 个文档/文件：
-  - `docs/design/jmdict-zh-gloss-editorial-rules.md` — 编辑规则
-  - `docs/review/jmdict-zh-deepseek-top500-lessons-learned.md` — 经验总结
-  - `docs/review/jmdict-zh-deepseek-pilot-1000-dry-run-plan.md` — Top 1000 前置计划
-  - `docs/review/jmdict-zh-deepseek-pilot-1000-preflight-checklist.md` — 前置检查清单
-  - `docs/review/jmdict-zh-deepseek-pilot-1000-risk-rules-draft.md` — 风险规则草案
-  - `scripts/dictionary/prompts/jmdict-zh-deepseek-system.md` — prompt 更新（固定寒暄语/中文自然度/usageNote 规则）
-- 本轮未调用 DeepSeek、Google Translate 或任何外部 AI provider。
-- Runtime AI calls: 0；R2/D1 writes: 0；Preview/Production deploy: no；overlay activation: no。
-- Top 500 reviewed-r1/r2 未覆盖；未生成 Top 1000 artifacts；未生成 reviewed-r3 candidate。
-- PR #12 保持 draft/open/unmerged；无 merge/ready。
-- 验证通过：`node --check` PASS、secret scan clean、`.env.local` untracked、大文件检查 clean。
-- Hermes 首次试跑 PASS；下一步是沉淀的 editorial rules 应用到 Top 1000 provider run（需用户另行批准）。
+- Codex 已完成：secret backup 外移、preflight、overlay mechanism 确认、reviewed-r2 package 验证、deploy plan、R2 上传（513 objects）和 D1 activation（5 rows）、production API smoke（12/12 PASS）、Browser UI smoke（PASS）。
+- Production active version：`jmdict-zh-deepseek-top1000-reviewed-r2-20260624`。
+- Old active version：`jmdict-english-r2-shards-2026-06-18`（保留为回滚点）。
+- Production URL：`https://baina-tango.pages.dev` — `dictionarySource=r2-shard`，`aiCalled=false`，中文 overlay 可见。
+- Hermes 本轮：只读确认线上状态 + 更新 6 个状态文档 + commit + push。不重新部署、不 R2/D1 写入、不调用 AI provider。
+- 本轮验证：`一冊` `chineseGloss=['一册', '一本']`；`食べられる` fallback 正常；`存在しない語` miss fallback 正常。
+- PR #12 保持 draft/open/unmerged。回滚 SQL 已准备。
+- 关键风险：production active 会影响所有用户（无独立 canary flag）；UI copy 仍描述英文-only 已过时；source artifact 标注 Top 1000 但含 reviewed-r2 batch 500 entries/799 senses。
+- 下一步：用户在真实线上端查词试用；若质量可接受再做 UI copy update 和进一步扩大批量。
 
 ## 最近完成（EJU 記述作文批改）— 2026-06-17
 

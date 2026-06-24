@@ -27,6 +27,55 @@ Entry template:
 
 ---
 
+## 2026-06-24 15:06 JST / Hermes / Top 1000 online overlay deployment closeout
+
+### Task
+- Codex completed Phases 0–7 of Top 1000 reviewed-r2 online overlay deployment (secret backup, preflight, mechanism confirm, package validate, deploy plan, R2/D1 upload+activate, production smoke). Codex interrupted by usage limit exhaustion before Phase 8 (status docs) and Phase 9 (commit + push).
+- Hermes took over for read-only confirmation, document closeout, and commit + push only.
+- Hermes did NOT: re-upload R2, re-write D1, re-activate overlay, re-deploy, call any AI provider, or modify reviewed-r2 content.
+- Read-only production smoke confirmed: `dictionarySource=r2-shard`, `aiCalled=false`, Chinese glosses visible (一冊 → ['一册', '一本']).
+
+### Files changed
+- `docs/review/jmdict-zh-deepseek-pilot-1000-online-test-deploy-validation-log.md` — added Codex interruption & Hermes closeout section
+- `docs/tasks/hermes-long-run-plan.md` — marked Phases 8–9 complete, updated notes
+- `AGENT_SYNC_BOARD.md` — updated sections 1/2/3/6/8 for deployment closeout state
+- `AGENT_WORKLOG.md` — appended this entry
+- `PROJECT_STATUS.md` — updated with deployment closeout
+- `HANDOVER.md` — updated with deployment closeout
+
+### Validation
+- Branch: `feat/dictionary-zh-deepseek-pilot-100`; start/end commit: `963dfb860350c3a84471a056b81cdf227ae9b973`
+- Production URL: `https://baina-tango.pages.dev` → HTTP 200
+- Read-only API smoke (GET only):
+  - `一冊`: `dictionarySource=r2-shard`, `aiCalled=false`, `chineseGloss=['一册', '一本']`
+  - `食べられる`: `dictionarySource=r2-shard`, `aiCalled=false`, entries=1
+  - `存在しない語`: `dictionarySource=r2-shard`, `aiCalled=false`, entries=0, `canUseAiExplain=true`
+- R2 writes this round: 0 (513 by Codex in Phase 5; confirmed only)
+- D1 writes this round: 0 (5 rows by Codex in Phase 5; confirmed only)
+- DeepSeek calls: 0
+- Google Translate calls: 0
+- Runtime AI calls: 0
+- `.env.local` gitignored, not tracked, not committed
+- `.env.local.backup` not in repo
+- Secret scan: clean
+- Production R2 shard not committed
+- XML/gz/DB/SQLite not committed
+- PR #12: draft/open/unmerged
+- No merge, no mark ready, no force push, no rebase
+
+### Risks / next steps
+- Production active overlay affects all users because no separate Chinese overlay canary flag exists
+- Source artifact named Top 1000 but contains reviewed-r2 batch of 500 entries/799 senses
+- Current UI copy still says English-only which is now misleading
+- Hidden-sense behavior depends on not writing hidden chineseGlosses or explicit UI expansion behavior
+- Rollback: switch D1 active version back to `jmdict-english-r2-shards-2026-06-18`
+- Next step: user tests real production 查词 display; if quality acceptable, plan UI copy update + further batch expansion
+
+### Commit
+- pending; final hash reported after push.
+
+---
+
 ## 2026-06-23 20:50 JST / Hermes (dry-run) / DeepSeek Top 500 lessons learned & Top 1000 editorial rules
 
 ### Task
