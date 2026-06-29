@@ -4,15 +4,15 @@
 > do not recheck Supabase / Stripe unless the task touches them, a related fault appears, or the recorded status is older than 30 days and the task depends on that platform.
 > Never record API keys, service role keys, JWT secrets, session tokens, customer data, payment records, card data, or raw secret values.
 
-Last updated: 2026-06-23 23:17 JST by Codex
+Last updated: 2026-06-29 16:02 JST by Codex
 
 ## 1. 当前锁定状态
 
 | Area | Status | Note |
 |---|---|---|
-| Repository docs | Active for PR #13 Production deploy closeout | Recording ready/merge/deploy, validation, branch isolation from dictionary overlay PR #12, and production handoff |
-| Application code | PR #13 merged to Production | Bottom nav is `学习 / 词库 / 首页 / 社区 / 我的`; `読解` no longer exposes raw 404 HTML; `記述` opens the existing essay home; 综合科目 2024-1 scan opens |
-| Cloudflare | Production deploy active | Git-backed Production deployment `d0d93ecd-bf01-44ce-8c6a-e0345b3a5b92`, source `d6312b8`; no Pages config change, no Preview deploy, no R2/D1 write |
+| Repository docs | Active for EJU scanned exam import | Recording local-only scan-browser import on `feat/eju-official-exam-import`; no push/deploy |
+| Application code | EJU scan-browser import ready locally | Added scan-browser access for 11 総合科目 sets and 5 理科 sets; existing formal practice remains unchanged; `science/2019-1` stays construction because scanned data status is `fail` |
+| Cloudflare | Not touched in this task | Prior Production deployment state carried forward; no Pages config change, no Preview/Production deploy, no R2/D1 write |
 | Supabase | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
 | Stripe | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
 | DeepSeek | Not touched in this task | No backend, secret, or API changes; normal lookup does not call AI by default |
@@ -22,7 +22,7 @@ Last updated: 2026-06-23 23:17 JST by Codex
 | Item | Value |
 |---|---|
 | Repository | `domin132012-hash/baina-tango` |
-| Current branch | `main` after PR #13 merge |
+| Current branch | `feat/eju-official-exam-import` local worktree |
 | Main latest hash at task start | `ebc320317e6ef212a38a53a603191c419aca527c` |
 | Current task | PR #13 post-login navigation Production deploy |
 | Issue | `#11` post-login main interface information architecture |
@@ -34,15 +34,15 @@ Last updated: 2026-06-23 23:17 JST by Codex
 | Latest relevant commit | PR #13 merge commit `d6312b85a158d08421a9b06b59b711df258fdd5a` |
 | UI PR | `#13` `https://github.com/domin132012-hash/baina-tango/pull/13` MERGED; head `d5f7264a1e30f81da5f5b01b4e0f1dbb057e918e`; merge commit `d6312b85a158d08421a9b06b59b711df258fdd5a` |
 | PR #2 | `MERGED`; merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` |
-| This task | PR #13 marked ready, merged, and deployed to Production |
+| This task | EJU official scanned exam scan-browser import |
 | Dictionary plan commit | `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main` |
-| External services touched - GitHub | PR #13 marked ready and merged into `main`; status docs closeout pushed after validation |
-| External services touched - Cloudflare | Git-backed Production deployment only; no Preview deploy, no R2/D1 write, no config/metadata change |
+| External services touched - GitHub | None in this task; no push |
+| External services touched - Cloudflare | None in this task; no Preview deploy, no Production deploy, no R2/D1 write, no config/metadata change |
 | External services touched - Supabase | Not touched |
 | External services touched - Stripe | Not touched |
 | External services touched - DeepSeek | Not touched |
-| Current status | PR #13 is merged. Production deployment `d0d93ecd-bf01-44ce-8c6a-e0345b3a5b92` source `d6312b8` is Active; canonical browser validation passed with console fatal errors `0`, network bad responses `0`, and raw 404 visible `No`. |
-| Current blocker | None for PR #13 deployment. Remaining risk: validation did not submit EJU essay to avoid AI provider calls; real logged-in user smoke can still be performed by the user. |
+| Current status | Local branch opens 16 additional scan-browser sets: 11 総合科目 and 5 理科. Validation passed locally; commit pending in this worktree. |
+| Current blocker | `science/2019-1` remains unavailable because scanned data is `fail` with an OCR error page. |
 
 ## 3. Cloudflare 状态
 

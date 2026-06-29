@@ -7,6 +7,7 @@
 > ✅ 词典优先查词 PR #4 已合并并部署 Production；当前仍是 JMdict 小样本 MVP。
 > ✅ PR #6 已按用户显式批准 merge 到 `main`，merge commit `c94735925798c604321631e1caa36c2f2c3190be`。Production R2/D1 binding/runtime fix 已完成：Cloudflare Production Pages config 已绑定 `DICTIONARY_R2` 和 `DICTIONARY_DB`，canonical Production lookup 返回 `dictionarySource=r2-shard`，`食べられる` count `1`，全部 required terms `aiCalled=false`。D1 full import 仍禁止，除非另有 cost-safe plan。
 > ✅ 登录后主界面五栏导航重构 PR #13 已按用户批准部署 Production：PR `feat(ui): restructure post-login navigation` 从 `feat/post-login-nav-restructure` 标记 ready 并 merge 到 `main`，merge commit `d6312b85a158d08421a9b06b59b711df258fdd5a`。Cloudflare Production deployment `d0d93ecd-bf01-44ce-8c6a-e0345b3a5b92` source `d6312b8` Active，canonical URL `https://baina-tango.pages.dev` 已通过浏览器验证：底部 `学习 / 词库 / 首页 / 社区 / 我的`，EJU 日本語/読解/記述/综合科目扫描卷、词库、首页、社区、我的均正常；console fatal errors `0`，network bad responses `0`，raw 404 visible `No`。本轮未触碰 PR #12、DeepSeek、Google Translate、Runtime AI、R2/D1 或 overlay activation。
+> ✅ EJU 官方扫描卷导入本地完成（2026-06-29）：在独立 worktree `feat/eju-official-exam-import` 上新增 scan-browser 模式，开放 11 套総合科目和 5 套理科扫描浏览；`science/2019-1` 因扫描索引 `status=fail` 保持建设中。本轮未 deploy、未 push、未写 R2/D1、未调用 DeepSeek/Google Translate/Runtime AI、未触碰 JMdict Top 50K dirty worktree。
 
 ## 最近完成（EJU 記述作文批改）— 2026-06-17
 
@@ -48,12 +49,14 @@ PR #2 `feat(eju-essay): add EJU writing critique integration` 已从 draft 改 r
 | 理科 2021-1 | ✅ 已上线 | commit `d57a747`，缓存号 `20260614-rika-2021-1` |
 | 理科 2021-2 | ✅ 已上线 | commit `ef7c68b`，缓存号 `20260614-rika-2021-2` |
 | 综合科目 2024 MVP | ✅ 已上线 | 缓存号 `20260614-sogo-2024-1-materials-fix`；27 屏含 p3/p7 材料页 |
+| 総合科目扫描浏览 | ✅ 本地完成，待推送/部署 | 新增 2018-1、2018-2、2019-1、2020-2、2021-1、2021-2、2022-1、2022-2、2023-1、2023-2、2025-1；2024-1 仍为正式练习 |
+| 理科扫描浏览 | ✅ 本地完成，待推送/部署 | 新增 2018-1、2018-2、2020-2、2024-1、2025-1；已有 2021-1 至 2023-2 正式练习不变 |
 
 ### 暂缓
 
 | 模块 | 状态 | 备注 |
 |---|---|---|
-| 理科剩余 6 套 | ⏸️ 暂缓 | 2018-1、2018-2、2019-1、2020-2、2024-1、2025-1 |
+| 理科 2019-1 | ⏸️ 暂缓 | `assets/eju-scanned-data.json` 标记 `status=fail` 且有 OCR error page，保持建设中 |
 
 ### 进行中 / 下一方向
 
