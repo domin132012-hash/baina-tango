@@ -24,6 +24,8 @@ var ejuCurrentYear = 0;
 var ejuCurrentSession = 0;
 var ejuScannedData = null;  // 本地扫描卷数据：math1/math2/humanities/science
 var ejuScannedDataPromise = null;
+var ejuScanManifest = null; // 扫描卷轻量目录：入口/列表阶段使用
+var ejuScanManifestPromise = null;
 var ejuCurrentScanSubject = '';
 var ejuCurrentScanSetId = '';
 var ejuReadingSelectRenderToken = 0;
@@ -43,6 +45,7 @@ var EJU_QUESTION_TYPES = ['作者主张题', '理由题', '内容一致题', '�
 var EJU_SCAN_CATEGORY_SUBJECT = { sogo: 'humanities', science: 'science' };
 var EJU_SCAN_STATUS_LABEL = { pass: '已检查', needs_review: '需复核', fail: '有失败页' };
 var EJU_SCAN_STATUS_CLASS = { pass: 'ok', needs_review: 'due', fail: 'due' };
+var EJU_SCAN_DATA_VERSION = '20260629-eju-graded';
 var EJU_SCAN_BROWSER_PROTOTYPES = {
   'humanities/2018-1': { title: '総合科目 · 2018年第1回', imageBase: './assets/eju-media/humanities/2018-1/page-' },
   'humanities/2018-2': { title: '総合科目 · 2018年第2回', imageBase: './assets/eju-media/humanities/2018-2/page-' },
@@ -1339,7 +1342,7 @@ async function ejuLoadScannedData() {
   if (!ejuScannedDataPromise) {
     ejuScannedDataPromise = (async function() {
       try {
-        var res = await fetch('./assets/eju-scanned-data.json?v=20260614-sogo-2024-1-materials-fix', { cache: 'no-store' });
+        var res = await fetch('./assets/eju-scanned-data.json?v=' + EJU_SCAN_DATA_VERSION, { cache: 'force-cache' });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         ejuScannedData = await res.json();
         return ejuScannedData;
@@ -1352,18 +1355,36 @@ async function ejuLoadScannedData() {
   return ejuScannedDataPromise;
 }
 
+async function ejuLoadScanManifest() {
+  if (ejuScanManifest) return ejuScanManifest;
+  if (!ejuScanManifestPromise) {
+    ejuScanManifestPromise = (async function() {
+      try {
+        var res = await fetch('./assets/eju-scan-manifest.json?v=' + EJU_SCAN_DATA_VERSION, { cache: 'force-cache' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        ejuScanManifest = await res.json();
+        return ejuScanManifest;
+      } catch(e) {
+        ejuScanManifestPromise = null;
+        return null;
+      }
+    })();
+  }
+  return ejuScanManifestPromise;
+}
+
 function ejuHasScanSubject(subject, data) {
-  data = data || ejuScannedData;
+  data = data || ejuScanManifest || ejuScannedData;
   return !!(data && (data.sets || []).some(function(s) { return s.subject === subject; }));
 }
 
-function ejuScanSubjectInfo(subject) {
-  var data = ejuScannedData || {};
+function ejuScanSubjectInfo(subject, data) {
+  data = data || ejuScanManifest || ejuScannedData || {};
   return (data.subjects && data.subjects[subject]) || { label: subject, labelJa: subject };
 }
 
-function ejuScanSubjectLabel(subject) {
-  var info = ejuScanSubjectInfo(subject);
+function ejuScanSubjectLabel(subject, data) {
+  var info = ejuScanSubjectInfo(subject, data);
   return info.label || info.labelJa || subject;
 }
 
@@ -1371,6 +1392,14 @@ function ejuScanStatusBadge(status) {
   var label = EJU_SCAN_STATUS_LABEL[status] || status || '未知';
   var cls = EJU_SCAN_STATUS_CLASS[status] || '';
   return '<span class="pill ' + cls + '" style="font-size:11px">' + ejuEsc(label) + '</span>';
+}
+
+function ejuPreloadImage(src) {
+  if (!src) return;
+  try {
+    var img = new Image();
+    img.src = src;
+  } catch(e) {}
 }
 
 function ejuNextReadingSelectRender() {
@@ -1425,6 +1454,46 @@ function ejuMergeScannedCategories(cats, scanned) {
   return order.map(function(id) { return byId[id]; }).filter(Boolean);
 }
 
+function ejuImmediateHubCategories(manifest, loading) {
+  var cats = ejuFallbackCategories().map(function(cat) { return Object.assign({}, cat); });
+  var byId = {};
+  cats.forEach(function(cat) { byId[cat.id] = cat; });
+  ['sogo', 'science', 'math'].forEach(function(id) {
+    if (!byId[id]) return;
+    byId[id].available = true;
+    byId[id].localScan = true;
+    byId[id].scanLoading = !!loading;
+  });
+  if (manifest) {
+    byId.sogo.available = ejuHasScanSubject('humanities', manifest);
+    byId.sogo.scanLoading = false;
+    byId.science.available = ejuHasScanSubject('science', manifest);
+    byId.science.scanLoading = false;
+    byId.math.available = ejuHasScanSubject('math1', manifest) || ejuHasScanSubject('math2', manifest);
+    byId.math.scanLoading = false;
+  }
+  return cats;
+}
+
+function ejuRenderHubCategories(mount, cats) {
+  var html = '<div class="eju-cat-grid">';
+  (cats || []).forEach(function(cat) {
+    var disabled = !cat.available;
+    html += '<button class="eju-cat-card' + (disabled ? ' disabled' : '') + '"'
+      + (disabled ? ' disabled' : ' onclick="ejuSelectCategory(\'' + ejuEsc(cat.id) + '\')"')
+      + '>';
+    html += '<div class="hub-icon">' + ejuCatIcon(cat.id) + '</div>';
+    html += '<strong>' + ejuEsc(cat.labelZh || cat.label) + '</strong>';
+    html += '<span>' + ejuEsc(cat.label) + '</span>';
+    if (cat.scanLoading) html += '<span class="pill" style="margin-top:8px;font-size:11px">目录加载中</span>';
+    else if (cat.localScan) html += '<span class="pill ok" style="margin-top:8px;font-size:11px">扫描数据</span>';
+    if (disabled) html += '<span class="pill" style="margin-top:8px;font-size:11px">建设中</span>';
+    html += '</button>';
+  });
+  html += '</div>';
+  mount.innerHTML = html;
+}
+
 function ejuEsc(str) {
   return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
@@ -1448,40 +1517,11 @@ async function initEjuHub() {
   if (!el) return;
   var mount = el.querySelector('#ejuHubMount');
   if (!mount) return;
-  mount.innerHTML = '<p style="color:#8b86a3;padding:16px 0">加载科目列表…</p>';
-  try {
-    var scanned = await ejuLoadScannedData();
-    var cats = [];
-    if (scanned && ejuIsLocalStaticHost()) {
-      cats = ejuFallbackCategories();
-    } else {
-      try {
-        var data = await ejuFetch('/api/eju-categories');
-        cats = data.categories || [];
-      } catch(apiError) {
-        if (!scanned) throw apiError;
-        cats = ejuFallbackCategories();
-      }
-    }
-    cats = ejuMergeScannedCategories(cats, scanned);
-    var html = '<div class="eju-cat-grid">';
-    cats.forEach(function(cat) {
-      var disabled = !cat.available;
-      html += '<button class="eju-cat-card' + (disabled ? ' disabled' : '') + '"'
-        + (disabled ? ' disabled' : ' onclick="ejuSelectCategory(\'' + ejuEsc(cat.id) + '\')"')
-        + '>';
-      html += '<div class="hub-icon">' + ejuCatIcon(cat.id) + '</div>';
-      html += '<strong>' + ejuEsc(cat.labelZh || cat.label) + '</strong>';
-      html += '<span>' + ejuEsc(cat.label) + '</span>';
-      if (cat.localScan) html += '<span class="pill ok" style="margin-top:8px;font-size:11px">扫描数据</span>';
-      if (disabled) html += '<span class="pill" style="margin-top:8px;font-size:11px">建设中</span>';
-      html += '</button>';
-    });
-    html += '</div>';
-    mount.innerHTML = html;
-  } catch(e) {
-    mount.innerHTML = '<p style="color:#f05b7b">加载失败：' + ejuEsc(e.message) + '</p>';
-  }
+  ejuRenderHubCategories(mount, ejuImmediateHubCategories(ejuScanManifest, !ejuScanManifest));
+  ejuLoadScanManifest().then(function(manifest) {
+    if (!document.body.contains(mount)) return;
+    ejuRenderHubCategories(mount, ejuImmediateHubCategories(manifest, false));
+  });
 }
 
 function ejuCatIcon(id) {
@@ -1594,7 +1634,7 @@ function renderEjuJapanese() {
 
 async function renderEjuMathScannedMenu() {
   var renderToken = ejuNextReadingSelectRender();
-  var data = await ejuLoadScannedData();
+  var data = await ejuLoadScanManifest();
   if (!ejuIsReadingSelectRenderCurrent(renderToken)) return;
   switchView('eju-japanese');
   ejuSetSubjectTitle('数学');
@@ -1605,7 +1645,7 @@ async function renderEjuMathScannedMenu() {
 
   var html = '<div class="eju-skill-grid">';
   ['math1', 'math2'].forEach(function(subject) {
-    var info = ejuScanSubjectInfo(subject);
+    var info = ejuScanSubjectInfo(subject, data);
     var available = ejuHasScanSubject(subject, data);
     html += '<button class="eju-skill-card' + (available ? '' : ' disabled') + '"'
       + (available ? ' onclick="renderEjuScannedSubject(\'' + subject + '\')"' : ' disabled')
@@ -1644,12 +1684,13 @@ async function renderEjuScannedSubject(subject) {
   var mount = el.querySelector('#ejuReadingSelectMount');
   if (!mount) return;
   mount.innerHTML = '<p style="color:#8b86a3;padding:16px 0">加载扫描卷列表…</p>';
-  var data = await ejuLoadScannedData();
+  var data = await ejuLoadScanManifest();
   if (!ejuIsReadingSelectRenderCurrent(renderToken)) return;
   if (!data) {
-    mount.innerHTML = '<p style="color:#f05b7b">未找到本地扫描数据，请稍后重试。</p>';
+    mount.innerHTML = '<p style="color:#f05b7b">未找到扫描卷目录，请稍后重试。</p>';
     return;
   }
+  if (title) title.textContent = ejuScanSubjectLabel(subject, data) + ' — 扫描卷';
 
   var sets = (data.sets || []).filter(function(s) { return s.subject === subject; });
   if (!sets.length) {
@@ -1669,8 +1710,9 @@ async function renderEjuScannedSubject(subject) {
     if (a.year !== b.year) return b.year - a.year;
     return b.session - a.session;
   }).forEach(function(s) {
-    var isReady = ejuHasPracticePrototype(subject, s.setId);
-    var scanOnly = ejuIsScanBrowserPrototype(subject, s.setId) && !ejuHasGradedPracticePrototype(subject, s.setId);
+    var isReady = s.hasGradedPrototype || s.hasScanBrowser || ejuHasPracticePrototype(subject, s.setId);
+    var scanOnly = (s.hasScanBrowser || ejuIsScanBrowserPrototype(subject, s.setId))
+      && !(s.hasGradedPrototype || ejuHasGradedPracticePrototype(subject, s.setId));
     var cardClass = 'eju-year-card' + (isReady ? '' : ' disabled coming-soon');
     var clickHandler = isReady
       ? 'renderEjuScannedSet(\'' + ejuJsString(subject) + '\',\'' + ejuJsString(s.setId) + '\')'
@@ -1775,7 +1817,7 @@ function renderEjuScanBrowser(subject, setId, item) {
   }
   html += '<div style="border:1px solid rgba(116,106,157,.18);border-radius:14px;background:#fff;overflow:hidden">'
     + '<img src="' + ejuEsc(imageSrc) + '" alt="' + ejuEsc(proto.title) + ' PDF p' + ejuEsc(current.page) + '"'
-    + ' style="display:block;width:100%;height:auto;background:#fff">'
+    + ' loading="eager" decoding="async" style="display:block;width:100%;height:auto;background:#fff">'
     + '</div>';
   html += '<details style="border:1px solid rgba(116,106,157,.18);border-radius:14px;background:#fff;padding:12px">'
     + '<summary style="cursor:pointer;font-weight:900;color:#4d4770">OCR / 页面信息</summary>'
@@ -1788,6 +1830,7 @@ function renderEjuScanBrowser(subject, setId, item) {
     + '</div>';
   html += '</div>';
   mount.innerHTML = html;
+  if (next) ejuPreloadImage(ejuScanBrowserImageSrc(proto, next.page));
 }
 
 async function renderEjuScannedSet(subject, setId) {
@@ -1960,12 +2003,13 @@ function ejuRenderMathPaperView() {
     + '</div>'
     + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">' + pageButtons + '</div>'
     + '<div style="background:#fff;border:1px solid rgba(124,92,255,.16);border-radius:18px;overflow:hidden;box-shadow:0 10px 28px rgba(105,80,200,.10)">'
-    + '<img src="' + ejuEsc(ejuMathPaperImageSrc(proto, page)) + '" alt="' + ejuEsc(proto.title + ' page ' + page) + '" style="display:block;width:100%;height:auto" />'
+    + '<img src="' + ejuEsc(ejuMathPaperImageSrc(proto, page)) + '" alt="' + ejuEsc(proto.title + ' page ' + page) + '" loading="eager" decoding="async" style="display:block;width:100%;height:auto" />'
     + '</div>'
     + '<div class="eju-question-card" style="margin-top:14px">'
     + '<div style="font-weight:950;color:#30294d;margin-bottom:10px">答案</div>'
     + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px">' + answersHtml + '</div>'
     + '</div>';
+  if (page < proto.pageCount) ejuPreloadImage(ejuMathPaperImageSrc(proto, page + 1));
 }
 
 // =====================================================================
@@ -2199,13 +2243,15 @@ function ejuRenderRikaView() {
     + '</div>'
     + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">' + pageButtons + '</div>'
     + '<div style="background:#fff;border:1px solid rgba(124,92,255,.16);border-radius:18px;overflow:hidden;box-shadow:0 10px 28px rgba(105,80,200,.10)">'
-    + '<img src="' + ejuEsc(ejuRikaImageSrc(proto, imageRef)) + '" alt="' + ejuEsc(proto.title + ' ' + subj.label + ' ' + pageLabel + printedPage + (isMaterialPage ? ' 資料' : ' 解答 ' + problemLabel)) + '" style="display:block;width:100%;height:auto" />'
+    + '<img src="' + ejuEsc(ejuRikaImageSrc(proto, imageRef)) + '" alt="' + ejuEsc(proto.title + ' ' + subj.label + ' ' + pageLabel + printedPage + (isMaterialPage ? ' 資料' : ' 解答 ' + problemLabel)) + '" loading="eager" decoding="async" style="display:block;width:100%;height:auto" />'
     + '</div>'
     + '<div class="eju-question-card" style="margin-top:14px">'
     + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">'
     + '<div style="font-weight:950;color:#30294d">作答</div>' + scoreBar + '</div>'
     + '<div style="display:flex;flex-direction:column;gap:8px">' + qHtml + '</div>'
     + '</div>';
+  var nextProblem = problems[page] || null;
+  if (nextProblem) ejuPreloadImage(ejuRikaImageSrc(proto, nextProblem.image || nextProblem.page));
 }
 
 // =====================================================================

@@ -1,0 +1,571 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-06-11T10:48:10.983366+00:00",
+  "source": "assets/eju-scanned-data.json",
+  "subjects": {
+    "math1": {
+      "label": "数学1",
+      "labelJa": "数学コース1",
+      "category": "math"
+    },
+    "math2": {
+      "label": "数学2",
+      "labelJa": "数学コース2",
+      "category": "math"
+    },
+    "humanities": {
+      "label": "综合科目",
+      "labelJa": "総合科目",
+      "category": "sogo"
+    },
+    "science": {
+      "label": "理科",
+      "labelJa": "理科",
+      "category": "science"
+    }
+  },
+  "sets": [
+    {
+      "subject": "humanities",
+      "setId": "2018-1",
+      "year": 2018,
+      "session": 1,
+      "pageCount": 24,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": true,
+      "needsReview": true
+    },
+    {
+      "subject": "humanities",
+      "setId": "2018-2",
+      "year": 2018,
+      "session": 2,
+      "pageCount": 21,
+      "status": "pass",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": true,
+      "needsReview": false
+    },
+    {
+      "subject": "humanities",
+      "setId": "2019-1",
+      "year": 2019,
+      "session": 1,
+      "pageCount": 24,
+      "status": "pass",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": true,
+      "needsReview": false
+    },
+    {
+      "subject": "humanities",
+      "setId": "2020-2",
+      "year": 2020,
+      "session": 2,
+      "pageCount": 23,
+      "status": "pass",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": true,
+      "needsReview": false
+    },
+    {
+      "subject": "humanities",
+      "setId": "2021-1",
+      "year": 2021,
+      "session": 1,
+      "pageCount": 30,
+      "status": "pass",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": true,
+      "needsReview": false
+    },
+    {
+      "subject": "humanities",
+      "setId": "2021-2",
+      "year": 2021,
+      "session": 2,
+      "pageCount": 27,
+      "status": "pass",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": true,
+      "needsReview": false
+    },
+    {
+      "subject": "humanities",
+      "setId": "2022-1",
+      "year": 2022,
+      "session": 1,
+      "pageCount": 28,
+      "status": "pass",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": true,
+      "needsReview": false
+    },
+    {
+      "subject": "humanities",
+      "setId": "2022-2",
+      "year": 2022,
+      "session": 2,
+      "pageCount": 26,
+      "status": "pass",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": true,
+      "needsReview": false
+    },
+    {
+      "subject": "humanities",
+      "setId": "2023-1",
+      "year": 2023,
+      "session": 1,
+      "pageCount": 29,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": true,
+      "needsReview": true
+    },
+    {
+      "subject": "humanities",
+      "setId": "2023-2",
+      "year": 2023,
+      "session": 2,
+      "pageCount": 29,
+      "status": "pass",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": true,
+      "needsReview": false
+    },
+    {
+      "subject": "humanities",
+      "setId": "2024-1",
+      "year": 2024,
+      "session": 1,
+      "pageCount": 32,
+      "status": "pass",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": false
+    },
+    {
+      "subject": "humanities",
+      "setId": "2025-1",
+      "year": 2025,
+      "session": 1,
+      "pageCount": 29,
+      "status": "pass",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": true,
+      "needsReview": false
+    },
+    {
+      "subject": "math1",
+      "setId": "2018-1",
+      "year": 2018,
+      "session": 1,
+      "pageCount": 9,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": true
+    },
+    {
+      "subject": "math1",
+      "setId": "2018-2",
+      "year": 2018,
+      "session": 2,
+      "pageCount": 10,
+      "status": "pass",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": false
+    },
+    {
+      "subject": "math1",
+      "setId": "2019-1",
+      "year": 2019,
+      "session": 1,
+      "pageCount": 17,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": true
+    },
+    {
+      "subject": "math1",
+      "setId": "2020-2",
+      "year": 2020,
+      "session": 2,
+      "pageCount": 17,
+      "status": "pass",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": false
+    },
+    {
+      "subject": "math1",
+      "setId": "2021-1",
+      "year": 2021,
+      "session": 1,
+      "pageCount": 9,
+      "status": "pass",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": false
+    },
+    {
+      "subject": "math1",
+      "setId": "2021-2",
+      "year": 2021,
+      "session": 2,
+      "pageCount": 15,
+      "status": "pass",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": false
+    },
+    {
+      "subject": "math1",
+      "setId": "2022-1",
+      "year": 2022,
+      "session": 1,
+      "pageCount": 15,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": true
+    },
+    {
+      "subject": "math1",
+      "setId": "2022-2",
+      "year": 2022,
+      "session": 2,
+      "pageCount": 9,
+      "status": "pass",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": false
+    },
+    {
+      "subject": "math1",
+      "setId": "2023-1",
+      "year": 2023,
+      "session": 1,
+      "pageCount": 15,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": true
+    },
+    {
+      "subject": "math1",
+      "setId": "2023-2",
+      "year": 2023,
+      "session": 2,
+      "pageCount": 15,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": true
+    },
+    {
+      "subject": "math1",
+      "setId": "2024-1",
+      "year": 2024,
+      "session": 1,
+      "pageCount": 31,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": true
+    },
+    {
+      "subject": "math1",
+      "setId": "2025-1",
+      "year": 2025,
+      "session": 1,
+      "pageCount": 10,
+      "status": "pass",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": false
+    },
+    {
+      "subject": "math2",
+      "setId": "2018-1",
+      "year": 2018,
+      "session": 1,
+      "pageCount": 11,
+      "status": "pass",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": false
+    },
+    {
+      "subject": "math2",
+      "setId": "2018-2",
+      "year": 2018,
+      "session": 2,
+      "pageCount": 11,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": true
+    },
+    {
+      "subject": "math2",
+      "setId": "2019-1",
+      "year": 2019,
+      "session": 1,
+      "pageCount": 16,
+      "status": "pass",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": false
+    },
+    {
+      "subject": "math2",
+      "setId": "2020-2",
+      "year": 2020,
+      "session": 2,
+      "pageCount": 11,
+      "status": "fail",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": true
+    },
+    {
+      "subject": "math2",
+      "setId": "2021-1",
+      "year": 2021,
+      "session": 1,
+      "pageCount": 16,
+      "status": "pass",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": false
+    },
+    {
+      "subject": "math2",
+      "setId": "2021-2",
+      "year": 2021,
+      "session": 2,
+      "pageCount": 16,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": true
+    },
+    {
+      "subject": "math2",
+      "setId": "2022-1",
+      "year": 2022,
+      "session": 1,
+      "pageCount": 14,
+      "status": "pass",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": false
+    },
+    {
+      "subject": "math2",
+      "setId": "2022-2",
+      "year": 2022,
+      "session": 2,
+      "pageCount": 10,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": true
+    },
+    {
+      "subject": "math2",
+      "setId": "2023-1",
+      "year": 2023,
+      "session": 1,
+      "pageCount": 15,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": true
+    },
+    {
+      "subject": "math2",
+      "setId": "2023-2",
+      "year": 2023,
+      "session": 2,
+      "pageCount": 15,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": true
+    },
+    {
+      "subject": "math2",
+      "setId": "2024-1",
+      "year": 2024,
+      "session": 1,
+      "pageCount": 15,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": true
+    },
+    {
+      "subject": "math2",
+      "setId": "2025-1",
+      "year": 2025,
+      "session": 1,
+      "pageCount": 11,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": true
+    },
+    {
+      "subject": "science",
+      "setId": "2018-1",
+      "year": 2018,
+      "session": 1,
+      "pageCount": 56,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": true,
+      "needsReview": true
+    },
+    {
+      "subject": "science",
+      "setId": "2018-2",
+      "year": 2018,
+      "session": 2,
+      "pageCount": 55,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": true,
+      "needsReview": true
+    },
+    {
+      "subject": "science",
+      "setId": "2019-1",
+      "year": 2019,
+      "session": 1,
+      "pageCount": 59,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": true,
+      "needsReview": true
+    },
+    {
+      "subject": "science",
+      "setId": "2020-2",
+      "year": 2020,
+      "session": 2,
+      "pageCount": 56,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": true,
+      "needsReview": true
+    },
+    {
+      "subject": "science",
+      "setId": "2021-1",
+      "year": 2021,
+      "session": 1,
+      "pageCount": 55,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": true
+    },
+    {
+      "subject": "science",
+      "setId": "2021-2",
+      "year": 2021,
+      "session": 2,
+      "pageCount": 55,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": true
+    },
+    {
+      "subject": "science",
+      "setId": "2022-1",
+      "year": 2022,
+      "session": 1,
+      "pageCount": 59,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": true
+    },
+    {
+      "subject": "science",
+      "setId": "2022-2",
+      "year": 2022,
+      "session": 2,
+      "pageCount": 52,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": true
+    },
+    {
+      "subject": "science",
+      "setId": "2023-1",
+      "year": 2023,
+      "session": 1,
+      "pageCount": 60,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": true
+    },
+    {
+      "subject": "science",
+      "setId": "2023-2",
+      "year": 2023,
+      "session": 2,
+      "pageCount": 56,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": false,
+      "needsReview": true
+    },
+    {
+      "subject": "science",
+      "setId": "2024-1",
+      "year": 2024,
+      "session": 1,
+      "pageCount": 59,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": true,
+      "needsReview": true
+    },
+    {
+      "subject": "science",
+      "setId": "2025-1",
+      "year": 2025,
+      "session": 1,
+      "pageCount": 55,
+      "status": "needs_review",
+      "hasGradedPrototype": true,
+      "hasScanBrowser": true,
+      "needsReview": true
+    }
+  ],
+  "summary": {
+    "totalSets": 48,
+    "bySubject": {
+      "humanities": 12,
+      "math1": 12,
+      "math2": 12,
+      "science": 12
+    },
+    "byStatus": {
+      "needs_review": 27,
+      "pass": 20,
+      "fail": 1
+    }
+  }
+}
