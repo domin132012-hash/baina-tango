@@ -28,6 +28,8 @@ var ejuScanManifest = null; // 扫描卷轻量目录：入口/列表阶段使用
 var ejuScanManifestPromise = null;
 var ejuCurrentScanSubject = '';
 var ejuCurrentScanSetId = '';
+var ejuOpenSetPerf = null;
+var ejuImageLoadStarts = {};
 var ejuReadingSelectRenderToken = 0;
 var ejuReadingListRenderToken = 0;
 var ejuMathPaperPage = 3;
@@ -46,6 +48,8 @@ var EJU_SCAN_CATEGORY_SUBJECT = { sogo: 'humanities', science: 'science' };
 var EJU_SCAN_STATUS_LABEL = { pass: '已检查', needs_review: '需复核', fail: '有失败页' };
 var EJU_SCAN_STATUS_CLASS = { pass: 'ok', needs_review: 'due', fail: 'due' };
 var EJU_SCAN_DATA_VERSION = '20260629-eju-graded';
+var EJU_SET_CACHE_NAME = 'baina-eju-set-cache-' + EJU_SCAN_DATA_VERSION;
+var EJU_CACHED_SETS_KEY = 'baina-eju-cached-sets';
 var EJU_SCAN_BROWSER_PROTOTYPES = {
   'humanities/2018-1': { title: '総合科目 · 2018年第1回', imageBase: './assets/eju-media/humanities/2018-1/page-' },
   'humanities/2018-2': { title: '総合科目 · 2018年第2回', imageBase: './assets/eju-media/humanities/2018-2/page-' },
@@ -1337,22 +1341,46 @@ async function ejuFetch(path, opts) {
   return res.json();
 }
 
-async function ejuLoadScannedData() {
-  if (ejuScannedData) return ejuScannedData;
+async function ejuLoadScannedData(reason) {
+  if (ejuScannedData) {
+    ejuPerfLog('scanned data load ms', { reason: reason || 'memory', ms: 0, cache: 'memory' });
+    return ejuScannedData;
+  }
   if (!ejuScannedDataPromise) {
     ejuScannedDataPromise = (async function() {
+      var start = ejuPerfNow();
       try {
         var res = await fetch('./assets/eju-scanned-data.json?v=' + EJU_SCAN_DATA_VERSION, { cache: 'force-cache' });
+        var fetched = ejuPerfNow();
         if (!res.ok) throw new Error('HTTP ' + res.status);
         ejuScannedData = await res.json();
+        var parsed = ejuPerfNow();
+        ejuPerfLog('scanned data load ms', {
+          reason: reason || 'load',
+          fetchMs: Math.round(fetched - start),
+          parseMs: Math.round(parsed - fetched),
+          ms: Math.round(parsed - start)
+        });
         return ejuScannedData;
       } catch(e) {
+        ejuPerfLog('scanned data load failed', { reason: reason || 'load', message: e && e.message });
         ejuScannedDataPromise = null;
         return null;
       }
     })();
   }
   return ejuScannedDataPromise;
+}
+
+function ejuLoadScannedDataInBackground(reason) {
+  var run = function() { ejuLoadScannedData(reason); };
+  try {
+    if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
+      window.requestIdleCallback(run, { timeout: 5000 });
+      return;
+    }
+  } catch(e) {}
+  setTimeout(run, 1500);
 }
 
 async function ejuLoadScanManifest() {
@@ -1394,12 +1422,296 @@ function ejuScanStatusBadge(status) {
   return '<span class="pill ' + cls + '" style="font-size:11px">' + ejuEsc(label) + '</span>';
 }
 
-function ejuPreloadImage(src) {
+function ejuPerfEnabled() {
+  try { return localStorage.getItem('ejuPerfDebug') === '1'; } catch(e) { return false; }
+}
+
+function ejuPerfNow() {
+  try {
+    if (typeof performance !== 'undefined' && performance.now) return performance.now();
+  } catch(e) {}
+  return Date.now();
+}
+
+function ejuPerfLog(label, detail) {
+  if (!ejuPerfEnabled()) return;
+  try {
+    console.log('[EJU perf] ' + label, detail || {});
+  } catch(e) {}
+}
+
+function ejuSetCacheKey(subject, setId) {
+  return String(subject || '') + '/' + String(setId || '');
+}
+
+function ejuReadCachedSets() {
+  try { return JSON.parse(localStorage.getItem(EJU_CACHED_SETS_KEY) || '{}') || {}; }
+  catch(e) { return {}; }
+}
+
+function ejuWriteCachedSets(data) {
+  try { localStorage.setItem(EJU_CACHED_SETS_KEY, JSON.stringify(data || {})); } catch(e) {}
+}
+
+function ejuIsSetCached(subject, setId) {
+  return !!ejuReadCachedSets()[ejuSetCacheKey(subject, setId)];
+}
+
+function ejuMarkSetCached(subject, setId, meta) {
+  var data = ejuReadCachedSets();
+  data[ejuSetCacheKey(subject, setId)] = Object.assign({
+    cachedAt: new Date().toISOString(),
+    version: EJU_SCAN_DATA_VERSION
+  }, meta || {});
+  ejuWriteCachedSets(data);
+}
+
+function ejuFindManifestItem(subject, setId) {
+  var data = ejuScanManifest || ejuScannedData;
+  return data && (data.sets || []).find(function(s) {
+    return s.subject === subject && s.setId === setId;
+  }) || null;
+}
+
+function ejuMinimalSetItem(subject, setId) {
+  var item = ejuFindManifestItem(subject, setId);
+  if (item) return item;
+  return { subject: subject, setId: setId, status: 'pass', pageCount: 0 };
+}
+
+function ejuCanUseCacheApi() {
+  return typeof window !== 'undefined' && !!window.caches && typeof fetch === 'function';
+}
+
+function ejuAssetUrl(src) {
+  try { return new URL(src, location.href).href; } catch(e) { return src; }
+}
+
+function ejuUniqueUrls(urls) {
+  var seen = {};
+  return (urls || []).filter(function(url) {
+    if (!url || seen[url]) return false;
+    seen[url] = true;
+    return true;
+  });
+}
+
+function ejuSetCacheControlsHtml(subject, setId) {
+  var cached = ejuIsSetCached(subject, setId);
+  return '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px">'
+    + '<button id="eju-set-cache-btn" class="ghost" style="padding:8px 14px;border-radius:12px;font-weight:950" onclick="ejuCacheCurrentSet()">'
+    + (cached ? '已缓存 · 重新缓存' : '缓存本套卷')
+    + '</button>'
+    + '<span id="eju-set-cache-status" style="font-size:12px;color:#756c9d;font-weight:800">'
+    + (cached ? '本套卷已缓存' : '可提前保存本套卷图片')
+    + '</span>'
+    + '</div>';
+}
+
+function ejuSetCacheStatus(text, isError) {
+  var el = document.getElementById('eju-set-cache-status');
+  if (el) {
+    el.textContent = text || '';
+    el.style.color = isError ? '#e0436a' : '#756c9d';
+  }
+}
+
+function ejuSetCacheButtonDisabled(disabled) {
+  var btn = document.getElementById('eju-set-cache-btn');
+  if (btn) btn.disabled = !!disabled;
+}
+
+function ejuImageHtml(src, alt, style, label) {
+  var url = ejuAssetUrl(src);
+  ejuImageLoadStarts[url] = ejuPerfNow();
+  return '<div class="eju-image-frame" style="position:relative;background:#fff;border-radius:inherit;min-height:220px;overflow:hidden">'
+    + '<div class="eju-image-loading" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,#fff,#f7f4ff,#fff);color:#756c9d;font-size:13px;font-weight:900;z-index:1">图片加载中…</div>'
+    + '<div class="eju-image-error" style="position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:8px;background:#fff;color:#e0436a;font-size:13px;font-weight:900;z-index:2">'
+    + '<span>图片加载失败</span><button class="ghost" style="padding:7px 12px;border-radius:12px" onclick="ejuRetryImage(this)">点击重试</button>'
+    + '</div>'
+    + '<img src="' + ejuEsc(src) + '" data-src="' + ejuEsc(src) + '" data-eju-url="' + ejuEsc(url) + '" data-eju-label="' + ejuEsc(label || 'image') + '" alt="' + ejuEsc(alt || '') + '"'
+    + ' loading="eager" decoding="async" fetchpriority="high" onload="ejuImageLoaded(this)" onerror="ejuImageFailed(this)"'
+    + ' style="display:block;width:100%;height:auto;background:#fff;opacity:0;transition:opacity .16s ease;' + ejuEsc(style || '') + '" />'
+    + '</div>';
+}
+
+function ejuImageLoaded(img) {
+  if (!img) return;
+  img.style.opacity = '1';
+  var frame = img.parentNode;
+  if (frame) {
+    var loading = frame.querySelector('.eju-image-loading');
+    var error = frame.querySelector('.eju-image-error');
+    if (loading) loading.style.display = 'none';
+    if (error) error.style.display = 'none';
+  }
+  var key = img.getAttribute('data-eju-url') || img.currentSrc || img.src;
+  var start = ejuImageLoadStarts[key];
+  if (start) {
+    ejuPerfLog('image load ms', {
+      key: ejuCurrentScanSubject + '/' + ejuCurrentScanSetId,
+      label: img.getAttribute('data-eju-label') || '',
+      src: img.getAttribute('data-src') || img.src,
+      ms: Math.round(ejuPerfNow() - start)
+    });
+    delete ejuImageLoadStarts[key];
+  }
+}
+
+function ejuImageFailed(img) {
+  if (!img) return;
+  var frame = img.parentNode;
+  if (frame) {
+    var loading = frame.querySelector('.eju-image-loading');
+    var error = frame.querySelector('.eju-image-error');
+    if (loading) loading.style.display = 'none';
+    if (error) error.style.display = 'flex';
+  }
+  ejuPerfLog('image load failed', {
+    key: ejuCurrentScanSubject + '/' + ejuCurrentScanSetId,
+    src: img.getAttribute('data-src') || img.src
+  });
+}
+
+function ejuRetryImage(btn) {
+  var frame = btn && btn.closest ? btn.closest('.eju-image-frame') : null;
+  var img = frame ? frame.querySelector('img') : null;
+  if (!img) return;
+  var src = img.getAttribute('data-src') || img.src;
+  var url = ejuAssetUrl(src);
+  ejuImageLoadStarts[url] = ejuPerfNow();
+  var loading = frame.querySelector('.eju-image-loading');
+  var error = frame.querySelector('.eju-image-error');
+  if (loading) loading.style.display = 'flex';
+  if (error) error.style.display = 'none';
+  img.style.opacity = '0';
+  img.setAttribute('data-eju-url', url);
+  img.src = src + (src.indexOf('?') >= 0 ? '&' : '?') + 'retry=' + Date.now();
+}
+
+function ejuPreloadImage(src, label) {
   if (!src) return;
   try {
+    var started = ejuPerfNow();
     var img = new Image();
+    img.decoding = 'async';
+    if ('fetchPriority' in img) img.fetchPriority = 'low';
+    img.onload = function() {
+      ejuPerfLog('next page preload ms', {
+        key: ejuCurrentScanSubject + '/' + ejuCurrentScanSetId,
+        label: label || 'next',
+        src: src,
+        ms: Math.round(ejuPerfNow() - started)
+      });
+    };
+    img.onerror = function() {
+      ejuPerfLog('next page preload failed', {
+        key: ejuCurrentScanSubject + '/' + ejuCurrentScanSetId,
+        label: label || 'next',
+        src: src
+      });
+    };
     img.src = src;
   } catch(e) {}
+}
+
+function ejuPreloadImageOnce(url) {
+  return new Promise(function(resolve) {
+    try {
+      var img = new Image();
+      img.onload = function() { resolve(true); };
+      img.onerror = function() { resolve(false); };
+      img.src = url;
+    } catch(e) {
+      resolve(false);
+    }
+  });
+}
+
+async function ejuCollectSetAssetUrls(subject, setId) {
+  var key = subject + '/' + setId;
+  var urls = ['./assets/eju-scan-manifest.json?v=' + EJU_SCAN_DATA_VERSION];
+  if (typeof EJU_MATH_PAPER_PROTOTYPES !== 'undefined' && EJU_MATH_PAPER_PROTOTYPES[key]) {
+    var mathProto = EJU_MATH_PAPER_PROTOTYPES[key];
+    for (var m = 1; m <= mathProto.pageCount; m++) urls.push(ejuMathPaperImageSrc(mathProto, m));
+  } else if (ejuRikaProtoFor(key)) {
+    var proto = ejuRikaProtoFor(key);
+    (proto.subjects || []).forEach(function(subj) {
+      if (subj.refPage) urls.push(ejuRikaImageSrc(proto, subj.refPage));
+      ejuRikaProblemList(subj).forEach(function(problem) {
+        urls.push(ejuRikaImageSrc(proto, problem.image || problem.page));
+      });
+    });
+  } else if (ejuScanBrowserProtoFor(key)) {
+    urls.push('./assets/eju-scanned-data.json?v=' + EJU_SCAN_DATA_VERSION);
+    var data = ejuScannedData || await ejuLoadScannedData('cache scan browser ' + key);
+    var item = data && (data.sets || []).find(function(s) {
+      return s.subject === subject && s.setId === setId;
+    });
+    var scanProto = ejuScanBrowserProtoFor(key);
+    if (item && scanProto) {
+      (item.pages || []).forEach(function(page) {
+        urls.push(ejuScanBrowserImageSrc(scanProto, page.page));
+      });
+    }
+  }
+  return ejuUniqueUrls(urls.map(ejuAssetUrl));
+}
+
+async function ejuCacheCurrentSet() {
+  var subject = ejuCurrentScanSubject;
+  var setId = ejuCurrentScanSetId;
+  if (!subject || !setId) return;
+  var key = subject + '/' + setId;
+  ejuSetCacheButtonDisabled(true);
+  ejuSetCacheStatus('正在准备缓存…');
+  try {
+    var urls = await ejuCollectSetAssetUrls(subject, setId);
+    var total = urls.length;
+    var failures = 0;
+    var completed = 0;
+    var mode = ejuCanUseCacheApi() ? 'cache-api' : 'image-preload';
+    var cache = null;
+    if (ejuCanUseCacheApi()) cache = await caches.open(EJU_SET_CACHE_NAME);
+    for (var i = 0; i < urls.length; i++) {
+      completed = i + 1;
+      ejuSetCacheStatus('正在缓存 ' + completed + ' / ' + total);
+      var url = urls[i];
+      try {
+        if (cache) {
+          var res = await fetch(url, { cache: 'force-cache', credentials: 'same-origin' });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          await cache.put(url, res.clone());
+        } else {
+          if (/\.(png|jpe?g|webp)(\?|$)/i.test(url)) {
+            var ok = await ejuPreloadImageOnce(url);
+            if (!ok) throw new Error('image preload failed');
+          } else {
+            var fallbackRes = await fetch(url, { cache: 'force-cache', credentials: 'same-origin' });
+            if (!fallbackRes.ok) throw new Error('HTTP ' + fallbackRes.status);
+          }
+        }
+      } catch(e) {
+        failures += 1;
+        ejuPerfLog('set cache item failed', { key: key, url: url, message: e && e.message });
+      }
+    }
+    if (failures) {
+      ejuSetCacheStatus('缓存完成，但失败 ' + failures + ' / ' + total + ' 个资源', true);
+    } else {
+      ejuMarkSetCached(subject, setId, { resourceCount: total, mode: mode });
+      if (mode === 'cache-api') {
+        ejuSetCacheStatus('本套卷已缓存，下次打开会更快');
+      } else {
+        ejuSetCacheStatus('当前浏览器不支持永久缓存，已尝试预加载，本次会更快；浏览器可能清理缓存');
+      }
+    }
+    ejuPerfLog('set cache complete', { key: key, total: total, failures: failures, mode: mode });
+  } catch(e) {
+    ejuSetCacheStatus('缓存失败：' + ((e && e.message) || '未知错误'), true);
+  } finally {
+    ejuSetCacheButtonDisabled(false);
+  }
 }
 
 function ejuNextReadingSelectRender() {
@@ -1721,9 +2033,10 @@ async function renderEjuScannedSubject(subject) {
     html += '<strong>' + ejuEsc(s.year) + ' 年</strong>';
     html += '<span>第 ' + ejuEsc(s.session) + ' 回 · ' + (isReady ? ejuEsc(s.pageCount) + ' 页' : '建设中') + '</span>';
     html += '<span style="display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:8px">'
-      + ejuScanStatusBadge(s.status)
-      + '<span class="eju-cat-badge' + (isReady ? '' : ' soon') + '">' + (isReady ? (scanOnly ? '扫描浏览' : '开放中') : '建设中') + '</span>'
-      + '</span>';
+	      + ejuScanStatusBadge(s.status)
+	      + '<span class="eju-cat-badge' + (isReady ? '' : ' soon') + '">' + (isReady ? (scanOnly ? '扫描浏览' : '开放中') : '建设中') + '</span>'
+	      + (ejuIsSetCached(subject, s.setId) ? '<span class="eju-cat-badge">已缓存</span>' : '')
+	      + '</span>';
     html += '</button>';
   });
   html += '</div>';
@@ -1786,6 +2099,7 @@ function renderEjuScanBrowser(subject, setId, item) {
 
   if (titleEl) titleEl.textContent = proto.title + ' — 扫描浏览';
   var html = '<div style="display:flex;flex-direction:column;gap:14px">';
+  html += ejuSetCacheControlsHtml(subject, setId);
   html += '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">'
     + '<strong style="font-size:18px;color:#30294d">' + ejuEsc(proto.title) + '</strong>'
     + ejuScanStatusBadge(item.status)
@@ -1816,8 +2130,7 @@ function renderEjuScanBrowser(subject, setId, item) {
     html += '<div style="padding:10px 12px;border-radius:12px;background:rgba(255,184,77,.12);color:#8b5f00;font-size:13px;line-height:1.6">该套卷标记为需复核，已按扫描浏览开放，不提供自动判分。</div>';
   }
   html += '<div style="border:1px solid rgba(116,106,157,.18);border-radius:14px;background:#fff;overflow:hidden">'
-    + '<img src="' + ejuEsc(imageSrc) + '" alt="' + ejuEsc(proto.title) + ' PDF p' + ejuEsc(current.page) + '"'
-    + ' loading="eager" decoding="async" style="display:block;width:100%;height:auto;background:#fff">'
+    + ejuImageHtml(imageSrc, proto.title + ' PDF p' + current.page, 'background:#fff;', 'scan-browser page ' + current.page)
     + '</div>';
   html += '<details style="border:1px solid rgba(116,106,157,.18);border-radius:14px;background:#fff;padding:12px">'
     + '<summary style="cursor:pointer;font-weight:900;color:#4d4770">OCR / 页面信息</summary>'
@@ -1830,11 +2143,15 @@ function renderEjuScanBrowser(subject, setId, item) {
     + '</div>';
   html += '</div>';
   mount.innerHTML = html;
-  if (next) ejuPreloadImage(ejuScanBrowserImageSrc(proto, next.page));
+  if (next) ejuPreloadImage(ejuScanBrowserImageSrc(proto, next.page), 'scan-browser next page ' + next.page);
 }
 
 async function renderEjuScannedSet(subject, setId) {
   var renderToken = ejuNextReadingListRender();
+  var openStart = ejuPerfNow();
+  var key = subject + '/' + setId;
+  ejuOpenSetPerf = { key: key, start: openStart };
+  ejuPerfLog('open set start', { key: key, hasGradedPrototype: ejuHasGradedPracticePrototype(subject, setId) });
   ejuCurrentScanSubject = subject;
   ejuCurrentScanSetId = setId;
   ejuScanBrowserPage = 1;
@@ -1849,7 +2166,32 @@ async function renderEjuScannedSet(subject, setId) {
   var mount = el.querySelector('#ejuReadingListMount');
   if (!mount) return;
   mount.innerHTML = '<p style="color:#8b86a3;padding:16px 0">加载套卷…</p>';
-  var data = await ejuLoadScannedData();
+
+  if (!ejuHasPracticePrototype(subject, setId)) {
+    ejuShowComingSoon();
+    renderEjuScannedSubject(subject);
+    return;
+  }
+
+  if (ejuHasGradedPracticePrototype(subject, setId)) {
+    var fastItem = ejuMinimalSetItem(subject, setId);
+    ejuPerfLog('scanned data load ms', { key: key, ms: 0, mode: 'skipped before first render' });
+    if (typeof EJU_MATH_PAPER_PROTOTYPES !== 'undefined' && EJU_MATH_PAPER_PROTOTYPES[key]) {
+      renderEjuMathPaperPractice(subject, setId, fastItem);
+    } else if (typeof EJU_RIKA_PROTOTYPES !== 'undefined' && EJU_RIKA_PROTOTYPES[key]) {
+      renderEjuRikaPractice(subject, setId, fastItem);
+    } else if (typeof EJU_SOGO_PROTOTYPES !== 'undefined' && EJU_SOGO_PROTOTYPES[key]) {
+      if (typeof renderEjuSogoPractice === 'function') renderEjuSogoPractice(subject, setId, fastItem);
+      else if (typeof renderEjuRikaPractice === 'function' && ejuRikaProtoFor(key)) renderEjuRikaPractice(subject, setId, fastItem);
+    }
+    if (!ejuIsReadingListRenderCurrent(renderToken)) return;
+    ejuPerfLog('first render ms', { key: key, ms: Math.round(ejuPerfNow() - openStart), mode: 'graded prototype' });
+    ejuPerfLog('open set total ms', { key: key, ms: Math.round(ejuPerfNow() - openStart), until: 'first render' });
+    ejuLoadScannedDataInBackground('background after graded open ' + key);
+    return;
+  }
+
+  var data = await ejuLoadScannedData('open scan browser ' + key);
   if (!ejuIsReadingListRenderCurrent(renderToken)) return;
   if (!data) {
     mount.innerHTML = '<p style="color:#f05b7b">未找到本地扫描数据，请稍后重试。</p>';
@@ -1860,32 +2202,36 @@ async function renderEjuScannedSet(subject, setId) {
     mount.innerHTML = '<p style="color:#f05b7b">未找到该套扫描数据。</p>';
     return;
   }
-  var key = subject + '/' + setId;
-  if (!ejuHasPracticePrototype(subject, setId)) {
-    ejuShowComingSoon();
-    renderEjuScannedSubject(subject);
-    return;
-  }
   if (typeof EJU_MATH_PAPER_PROTOTYPES !== 'undefined' && EJU_MATH_PAPER_PROTOTYPES[key]) {
     renderEjuMathPaperPractice(subject, setId, item);
+    ejuPerfLog('first render ms', { key: key, ms: Math.round(ejuPerfNow() - openStart), mode: 'math after data' });
+    ejuPerfLog('open set total ms', { key: key, ms: Math.round(ejuPerfNow() - openStart), until: 'first render' });
     return;
   }
   if (typeof EJU_RIKA_PROTOTYPES !== 'undefined' && EJU_RIKA_PROTOTYPES[key]) {
     renderEjuRikaPractice(subject, setId, item);
+    ejuPerfLog('first render ms', { key: key, ms: Math.round(ejuPerfNow() - openStart), mode: 'rika after data' });
+    ejuPerfLog('open set total ms', { key: key, ms: Math.round(ejuPerfNow() - openStart), until: 'first render' });
     return;
   }
   if (typeof EJU_SOGO_PROTOTYPES !== 'undefined' && EJU_SOGO_PROTOTYPES[key]) {
     if (typeof renderEjuSogoPractice === 'function') {
       renderEjuSogoPractice(subject, setId, item);
+      ejuPerfLog('first render ms', { key: key, ms: Math.round(ejuPerfNow() - openStart), mode: 'sogo after data' });
+      ejuPerfLog('open set total ms', { key: key, ms: Math.round(ejuPerfNow() - openStart), until: 'first render' });
       return;
     }
     if (typeof renderEjuRikaPractice === 'function' && ejuRikaProtoFor(key)) {
       renderEjuRikaPractice(subject, setId, item);
+      ejuPerfLog('first render ms', { key: key, ms: Math.round(ejuPerfNow() - openStart), mode: 'sogo shared renderer after data' });
+      ejuPerfLog('open set total ms', { key: key, ms: Math.round(ejuPerfNow() - openStart), until: 'first render' });
       return;
     }
   }
   if (ejuScanBrowserProtoFor(key)) {
     renderEjuScanBrowser(subject, setId, item);
+    ejuPerfLog('first render ms', { key: key, ms: Math.round(ejuPerfNow() - openStart), mode: 'scan browser' });
+    ejuPerfLog('open set total ms', { key: key, ms: Math.round(ejuPerfNow() - openStart), until: 'first render' });
     return;
   }
   ejuShowComingSoon();
@@ -1996,6 +2342,7 @@ function ejuRenderMathPaperView() {
   }).join('');
 
   mount.innerHTML = ''
+    + ejuSetCacheControlsHtml(ejuCurrentScanSubject, ejuCurrentScanSetId)
     + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px">'
     + '<button class="ghost" onclick="ejuMathPaperGo(-1)"' + prevDisabled + '>← 上一页</button>'
     + '<div style="font-size:18px;font-weight:950;color:#30294d">' + page + ' / ' + proto.pageCount + '</div>'
@@ -2003,13 +2350,13 @@ function ejuRenderMathPaperView() {
     + '</div>'
     + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">' + pageButtons + '</div>'
     + '<div style="background:#fff;border:1px solid rgba(124,92,255,.16);border-radius:18px;overflow:hidden;box-shadow:0 10px 28px rgba(105,80,200,.10)">'
-    + '<img src="' + ejuEsc(ejuMathPaperImageSrc(proto, page)) + '" alt="' + ejuEsc(proto.title + ' page ' + page) + '" loading="eager" decoding="async" style="display:block;width:100%;height:auto" />'
+    + ejuImageHtml(ejuMathPaperImageSrc(proto, page), proto.title + ' page ' + page, '', 'math page ' + page)
     + '</div>'
     + '<div class="eju-question-card" style="margin-top:14px">'
     + '<div style="font-weight:950;color:#30294d;margin-bottom:10px">答案</div>'
     + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px">' + answersHtml + '</div>'
     + '</div>';
-  if (page < proto.pageCount) ejuPreloadImage(ejuMathPaperImageSrc(proto, page + 1));
+  if (page < proto.pageCount) ejuPreloadImage(ejuMathPaperImageSrc(proto, page + 1), 'math next page ' + (page + 1));
 }
 
 // =====================================================================
@@ -2173,12 +2520,12 @@ function ejuRenderRikaView() {
 
   // 可折叠参考资料（如化学的常数表/周期表），不占题目页位
   var refHtml = '';
-  if (subj.refPage) {
-    refHtml = '<details style="margin-bottom:12px;background:#fff;border:1px solid rgba(124,92,255,.16);border-radius:14px;overflow:hidden">'
-      + '<summary style="cursor:pointer;padding:10px 14px;font-weight:900;color:#5d43e8;list-style:none">📋 ' + ejuEsc(subj.refLabel || '参考资料') + '（点击展开）</summary>'
-      + '<div style="padding:0 12px 12px"><img src="' + ejuEsc(ejuRikaImageSrc(proto, subj.refPage)) + '" alt="' + ejuEsc((subj.refLabel || '参考资料')) + '" style="display:block;width:100%;height:auto;border-radius:10px" /></div>'
-      + '</details>';
-  }
+	  if (subj.refPage) {
+	    refHtml = '<details style="margin-bottom:12px;background:#fff;border:1px solid rgba(124,92,255,.16);border-radius:14px;overflow:hidden">'
+	      + '<summary style="cursor:pointer;padding:10px 14px;font-weight:900;color:#5d43e8;list-style:none">📋 ' + ejuEsc(subj.refLabel || '参考资料') + '（点击展开）</summary>'
+	      + '<div style="padding:0 12px 12px"><img src="' + ejuEsc(ejuRikaImageSrc(proto, subj.refPage)) + '" alt="' + ejuEsc((subj.refLabel || '参考资料')) + '" loading="lazy" decoding="async" fetchpriority="low" style="display:block;width:100%;height:auto;border-radius:10px;background:#fff" /></div>'
+	      + '</details>';
+	  }
 
   // 页导航
   var prevDisabled = page <= 1 ? ' disabled' : '';
@@ -2234,6 +2581,7 @@ function ejuRenderRikaView() {
         + '<button class="ghost" style="padding:8px 18px;border-radius:12px;background:rgba(124,92,255,.14);color:#5d43e8;font-weight:950" onclick="ejuRikaGrade()">採点</button></div>';
 
   mount.innerHTML = ''
+    + ejuSetCacheControlsHtml(ejuCurrentScanSubject, ejuCurrentScanSetId)
     + (subjectBar ? '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">' + subjectBar + '</div>' : '')
     + refHtml
     + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">'
@@ -2243,7 +2591,7 @@ function ejuRenderRikaView() {
     + '</div>'
     + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">' + pageButtons + '</div>'
     + '<div style="background:#fff;border:1px solid rgba(124,92,255,.16);border-radius:18px;overflow:hidden;box-shadow:0 10px 28px rgba(105,80,200,.10)">'
-    + '<img src="' + ejuEsc(ejuRikaImageSrc(proto, imageRef)) + '" alt="' + ejuEsc(proto.title + ' ' + subj.label + ' ' + pageLabel + printedPage + (isMaterialPage ? ' 資料' : ' 解答 ' + problemLabel)) + '" loading="eager" decoding="async" style="display:block;width:100%;height:auto" />'
+    + ejuImageHtml(ejuRikaImageSrc(proto, imageRef), proto.title + ' ' + subj.label + ' ' + pageLabel + printedPage + (isMaterialPage ? ' 資料' : ' 解答 ' + problemLabel), '', 'current problem ' + problemLabel)
     + '</div>'
     + '<div class="eju-question-card" style="margin-top:14px">'
     + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">'
@@ -2251,7 +2599,7 @@ function ejuRenderRikaView() {
     + '<div style="display:flex;flex-direction:column;gap:8px">' + qHtml + '</div>'
     + '</div>';
   var nextProblem = problems[page] || null;
-  if (nextProblem) ejuPreloadImage(ejuRikaImageSrc(proto, nextProblem.image || nextProblem.page));
+  if (nextProblem) ejuPreloadImage(ejuRikaImageSrc(proto, nextProblem.image || nextProblem.page), 'next problem ' + (ejuRikaProblemLabel(subj, nextProblem) || (page + 1)));
 }
 
 // =====================================================================
