@@ -723,6 +723,57 @@ var EJU_RIKA_PROTOTYPES = {
         ] }
     ]
   },
+  'science/2025-1': {
+    title: '理科 · 2025年第1回',
+    imageBase: './assets/eju-media/science/2025-1/page-',
+    subjects: [
+      { id: 'physics', label: '物理',
+        pages: [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21],
+        questions: [
+          {no:1,page:3,opts:6,ans:6}, {no:2,page:4,opts:6,ans:6}, {no:3,page:5,opts:6,ans:4},
+          {no:4,page:6,opts:6,ans:5}, {no:5,page:7,opts:6,ans:2}, {no:6,page:8,opts:6,ans:5},
+          {no:7,page:9,opts:6,ans:5}, {no:8,page:10,opts:6,ans:6}, {no:9,page:11,opts:6,ans:5},
+          {no:10,page:12,opts:6,ans:3}, {no:11,page:13,opts:6,ans:1}, {no:12,page:14,opts:6,ans:4},
+          {no:13,page:15,opts:8,ans:7}, {no:14,page:16,opts:6,ans:5}, {no:15,page:17,opts:6,ans:3},
+          {no:16,page:18,opts:6,ans:4}, {no:17,page:19,opts:6,ans:6}, {no:18,page:20,opts:6,ans:1},
+          {no:19,page:21,opts:6,ans:4}
+        ] },
+      { id: 'chemistry', label: '化学',
+        refPage: 23, refLabel: '常数表 · 周期表',
+        pages: [24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39],
+        questions: [
+          {no:1,page:24,opts:6,ans:5}, {no:2,page:24,opts:6,ans:1}, {no:3,page:25,opts:6,ans:2},
+          {no:4,page:26,opts:6,ans:4}, {no:5,page:27,opts:6,ans:2}, {no:6,page:28,opts:6,ans:4},
+          {no:7,page:29,opts:6,ans:4}, {no:8,page:30,opts:6,ans:1}, {no:9,page:31,opts:6,ans:5},
+          {no:10,page:32,opts:6,ans:3}, {no:11,page:33,opts:6,ans:6}, {no:12,page:33,opts:6,ans:6},
+          {no:13,page:34,opts:6,ans:2}, {no:14,page:34,opts:6,ans:5}, {no:15,page:35,opts:6,ans:5},
+          {no:16,page:36,opts:6,ans:1}, {no:17,page:37,opts:6,ans:4}, {no:18,page:38,opts:6,ans:6},
+          {no:19,page:39,opts:6,ans:2}, {no:20,page:39,opts:6,ans:4}
+        ],
+        problems: [
+          {page:24,answers:[1,2]}, {page:25,answers:[3]}, {page:26,answers:[4]}, {page:27,answers:[5]},
+          {page:28,answers:[6]}, {page:29,answers:[7]}, {page:30,answers:[8]}, {page:31,answers:[9]},
+          {page:32,answers:[10]}, {page:33,answers:[11,12]}, {page:34,answers:[13,14]}, {page:35,answers:[15]},
+          {page:36,answers:[16]}, {page:37,answers:[17]}, {page:38,answers:[18]}, {page:39,answers:[19,20]}
+        ] },
+      { id: 'biology', label: '生物',
+        pages: [40,41,42,43,44,45,46,47,48,49,50,51,52,53,54],
+        questions: [
+          {no:1,page:40,opts:7,ans:3}, {no:2,page:41,opts:8,ans:3}, {no:3,page:42,opts:6,ans:5},
+          {no:4,page:43,opts:6,ans:5}, {no:5,page:44,opts:6,ans:5}, {no:6,page:45,opts:6,ans:5},
+          {no:7,page:46,opts:7,ans:7}, {no:8,page:47,opts:6,ans:2}, {no:9,page:48,opts:6,ans:3},
+          {no:10,page:49,opts:6,ans:5}, {no:11,page:50,opts:6,ans:2}, {no:12,page:51,opts:6,ans:2},
+          {no:13,page:52,opts:6,ans:4}, {no:14,page:52,opts:6,ans:2}, {no:15,page:53,opts:6,ans:2},
+          {no:16,page:54,opts:8,ans:8}, {no:17,page:54,opts:6,ans:1}, {no:18,page:54,opts:6,ans:3}
+        ],
+        problems: [
+          {page:40,answers:[1]}, {page:41,answers:[2]}, {page:42,answers:[3]}, {page:43,answers:[4]},
+          {page:44,answers:[5]}, {page:45,answers:[6]}, {page:46,answers:[7]}, {page:47,answers:[8]},
+          {page:48,answers:[9]}, {page:49,answers:[10]}, {page:50,answers:[11]}, {page:51,answers:[12]},
+          {page:52,answers:[13,14]}, {page:53,answers:[15]}, {page:54,answers:[16,17,18]}
+        ] }
+    ]
+  },
   'science/2021-2': {
     title: '理科 · 2021年第2回',
     imageBase: './assets/eju-media/science/2021-2/page-',
@@ -779,7 +830,89 @@ var EJU_RIKA_PROTOTYPES = {
 
 // 综合科目（総合科目）练习原型 — 复用理科引擎渲染（ejuRikaProtoFor 共用）。
 // 单科目 + マークシート单选 + 官方正解判分。key 用 humanities/<setId>，不与理科/数学混用。
+function ejuSogoQuestionsFromAnswers(answers, pageByNo) {
+  return answers.map(function(ans, idx) {
+    var no = idx + 1;
+    return { no: no, page: pageByNo[no], opts: 4, ans: ans };
+  });
+}
+
+function ejuSogoPageByNo(problems) {
+  var map = {};
+  problems.forEach(function(problem) {
+    (problem.answers || []).forEach(function(no) {
+      map[no] = problem.page;
+    });
+  });
+  return map;
+}
+
+function ejuSogoSubject(problems, answers) {
+  return {
+    id: 'sogo',
+    label: '総合科目',
+    pages: problems.map(function(problem) { return problem.page; }),
+    problems: problems,
+    questions: ejuSogoQuestionsFromAnswers(answers, ejuSogoPageByNo(problems))
+  };
+}
+
 var EJU_SOGO_PROTOTYPES = {
+  'humanities/2025-1': {
+    title: '総合科目 · 2025年第1回',
+    pageLabel: '総合科目-',
+    pageNumberOffset: -1,
+    imageBase: './assets/eju-media/humanities/2025-1/page-',
+    answerSource: '2025年度日本留学試験 正解表 / 総合科目',
+    subjects: [ejuSogoSubject([
+      {page:2,label:'問1 材料',answers:[]},
+      {page:3,answers:[1]}, {page:4,answers:[2,3]}, {page:5,answers:[4]},
+      {page:6,answers:[5]}, {page:7,answers:[6]}, {page:8,answers:[7]}, {page:9,answers:[8]},
+      {page:10,answers:[9]}, {page:11,answers:[10]}, {page:12,answers:[11,12]},
+      {page:13,answers:[13]}, {page:14,answers:[14,15,16]}, {page:15,answers:[17]},
+      {page:16,answers:[18]}, {page:17,answers:[19]}, {page:18,answers:[20,21]},
+      {page:19,answers:[22,23]}, {page:20,answers:[24]}, {page:21,answers:[25]},
+      {page:22,answers:[26,27]}, {page:23,answers:[28,29,30]}, {page:24,answers:[31,32]},
+      {page:25,answers:[33,34]}, {page:26,answers:[35,36]}, {page:27,answers:[37]},
+      {page:28,answers:[38]}
+    ], [4,2,1,3,2,3,2,1,1,2,4,4,1,1,2,4,3,4,4,3,1,3,1,2,4,2,3,3,2,3,3,1,2,3,4,1,2,4])]
+  },
+  'humanities/2023-2': {
+    title: '総合科目 · 2023年第2回',
+    pageLabel: '総合科目-',
+    pageNumberOffset: -1,
+    imageBase: './assets/eju-media/humanities/2023-2/page-',
+    answerSource: '2023年度日本留学試験（第2回）正解表 / 総合科目',
+    subjects: [ejuSogoSubject([
+      {page:2,answers:[1]}, {page:3,answers:[2]}, {page:4,answers:[3,4]},
+      {page:5,answers:[5]}, {page:6,answers:[6]}, {page:7,answers:[7,8]},
+      {page:8,answers:[9]}, {page:9,answers:[10]}, {page:10,answers:[11]},
+      {page:11,answers:[12]}, {page:12,answers:[13]}, {page:13,answers:[14,15]},
+      {page:14,answers:[16]}, {page:15,answers:[17]}, {page:16,answers:[18]},
+      {page:17,answers:[19]}, {page:18,answers:[20,21]}, {page:19,answers:[22]},
+      {page:20,answers:[23]}, {page:21,answers:[24]}, {page:22,answers:[25,26,27]},
+      {page:23,answers:[28,29,30]}, {page:24,answers:[31,32]}, {page:25,answers:[33,34]},
+      {page:26,answers:[35,36]}, {page:27,answers:[37]}, {page:28,answers:[38]}
+    ], [2,3,3,4,3,2,2,4,4,1,1,2,3,2,1,4,1,1,3,4,2,3,2,4,2,1,3,1,3,3,2,1,1,4,1,4,4,3])]
+  },
+  'humanities/2022-1': {
+    title: '総合科目 · 2022年第1回',
+    pageLabel: '総合科目-',
+    pageNumberOffset: -1,
+    imageBase: './assets/eju-media/humanities/2022-1/page-',
+    answerSource: '2022年度日本留学試験（第1回）正解表 / 総合科目',
+    subjects: [ejuSogoSubject([
+      {page:2,answers:[1]}, {page:3,answers:[2,3]}, {page:4,answers:[4]},
+      {page:5,answers:[5]}, {page:6,answers:[6]}, {page:7,answers:[7]},
+      {page:8,answers:[8]}, {page:9,answers:[9]}, {page:10,answers:[10,11,12]},
+      {page:11,answers:[13,14,15]}, {page:12,answers:[16]}, {page:13,answers:[17]},
+      {page:14,answers:[18]}, {page:15,answers:[19]}, {page:16,answers:[20]},
+      {page:17,answers:[21]}, {page:18,answers:[22]}, {page:19,answers:[23]},
+      {page:20,answers:[24]}, {page:21,answers:[25]}, {page:22,answers:[26,27,28]},
+      {page:23,answers:[29]}, {page:24,answers:[30,31]}, {page:25,answers:[32,33,34]},
+      {page:26,answers:[35,36]}, {page:27,answers:[37,38]}
+    ], [4,3,4,2,1,3,4,3,4,1,2,3,1,1,2,2,1,2,4,3,4,3,1,3,4,2,1,2,3,3,1,2,3,2,1,2,4,4])]
+  },
   'humanities/2024-1': {
     title: '総合科目 · 2024年',
     // 页眉印刷页号 = PDF 物理页号 + pageNumberOffset（综合科目卷内 p3=総合科目-1 起算，故 -2）。
@@ -835,6 +968,14 @@ function ejuScanBrowserProtoFor(key) {
 
 function ejuIsScanBrowserPrototype(subject, setId) {
   return !!ejuScanBrowserProtoFor(subject + '/' + setId);
+}
+
+function ejuHasGradedPracticePrototype(subject, setId) {
+  var key = subject + '/' + setId;
+  if (typeof EJU_MATH_PAPER_PROTOTYPES !== 'undefined' && EJU_MATH_PAPER_PROTOTYPES[key]) return true;
+  if (typeof EJU_RIKA_PROTOTYPES !== 'undefined' && EJU_RIKA_PROTOTYPES[key]) return true;
+  if (typeof EJU_SOGO_PROTOTYPES !== 'undefined' && EJU_SOGO_PROTOTYPES[key]) return true;
+  return false;
 }
 
 function ejuHasPracticePrototype(subject, setId) {
@@ -1277,7 +1418,7 @@ async function renderEjuScannedSubject(subject) {
     return b.session - a.session;
   }).forEach(function(s) {
     var isReady = ejuHasPracticePrototype(subject, s.setId);
-    var scanOnly = ejuIsScanBrowserPrototype(subject, s.setId);
+    var scanOnly = ejuIsScanBrowserPrototype(subject, s.setId) && !ejuHasGradedPracticePrototype(subject, s.setId);
     var cardClass = 'eju-year-card' + (isReady ? '' : ' disabled coming-soon');
     var clickHandler = isReady
       ? 'renderEjuScannedSet(\'' + ejuJsString(subject) + '\',\'' + ejuJsString(s.setId) + '\')'
@@ -2361,9 +2502,10 @@ function runEjuTests() {
   };
   console.assert(ejuHasScanSubject('humanities', sampleData) === true, 'EJU scanned subject lookup should find humanities');
   console.assert(ejuHasScanSubject('science', sampleData) === false, 'EJU scanned subject lookup should reject missing science data');
-  console.assert(ejuHasPracticePrototype('humanities', '2025-1') === true, 'EJU humanities/2025-1 should open in scan-browser mode');
-  console.assert(ejuIsScanBrowserPrototype('humanities', '2025-1') === true, 'EJU humanities/2025-1 should be scan-browser only');
+  console.assert(ejuHasPracticePrototype('humanities', '2025-1') === true, 'EJU humanities/2025-1 should open');
+  console.assert(ejuHasGradedPracticePrototype('humanities', '2025-1') === true, 'EJU humanities/2025-1 should use graded sogo mode');
   console.assert(ejuHasPracticePrototype('science', '2024-1') === true, 'EJU science/2024-1 should open in scan-browser mode');
+  console.assert(ejuHasGradedPracticePrototype('science', '2025-1') === true, 'EJU science/2025-1 should use graded rika mode');
   console.assert(ejuIsScanBrowserPrototype('science', '2019-1') === false, 'EJU science/2019-1 should remain unavailable because scanned data has fail status');
 
   var selectToken = ejuNextReadingSelectRender();
@@ -2420,6 +2562,32 @@ function runEjuTests() {
     console.assert(materialPages.length === 2, 'EJU sogo should have exactly 2 material screens (p3 問1, p7 問2)');
     console.assert(sogoSubj.pages.indexOf(3) >= 0 && sogoSubj.pages.indexOf(7) >= 0, 'EJU sogo pages must include material pages 3 and 7');
     console.assert(sogoProblems[0].page === 3 && sogoProblems[4].page === 7, 'EJU sogo material pages must sit before their sub-questions (p3 first, p7 5th)');
+  }
+
+  ['humanities/2025-1', 'humanities/2023-2', 'humanities/2022-1'].forEach(function(key) {
+    var proto = ejuRikaProtoFor(key);
+    console.assert(!!proto, 'EJU graded sogo ' + key + ' should exist');
+    if (!proto) return;
+    var subj = proto.subjects[0];
+    console.assert(subj.questions.length === 38, 'EJU graded sogo ' + key + ' should have 38 answer numbers');
+    subj.questions.forEach(function(q, i) {
+      console.assert(q.no === i + 1, 'EJU graded sogo ' + key + ' answer numbers must be contiguous');
+      console.assert(q.opts === 4 && q.ans >= 1 && q.ans <= 4, 'EJU graded sogo ' + key + ' no=' + q.no + ' answer must be valid');
+      console.assert(subj.pages.indexOf(q.page) >= 0, 'EJU graded sogo ' + key + ' no=' + q.no + ' page must be in pages[]');
+    });
+  });
+
+  var rika2025 = ejuRikaProtoFor('science/2025-1');
+  console.assert(!!rika2025, 'EJU rika science/2025-1 should exist');
+  if (rika2025) {
+    var counts2025 = { physics: 19, chemistry: 20, biology: 18 };
+    rika2025.subjects.forEach(function(s) {
+      console.assert(s.questions.length === counts2025[s.id], 'EJU rika 2025 ' + s.id + ' question count should match official answer key');
+      s.questions.forEach(function(q) {
+        console.assert(q.ans >= 1 && q.ans <= q.opts, 'EJU rika 2025 ' + s.id + ' no=' + q.no + ' ans must be within opts');
+        console.assert(s.pages.indexOf(q.page) >= 0, 'EJU rika 2025 ' + s.id + ' no=' + q.no + ' page must be in pages[]');
+      });
+    });
   }
 }
 

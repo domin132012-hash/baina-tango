@@ -27,6 +27,32 @@ Entry template:
 
 ---
 
+## 2026-06-29 / Codex / EJU scanned exam graded alignment
+
+### Task
+- Continue the EJU scanned exam import in the isolated `baina-tango-eju` worktree.
+- Use `humanities/2024-1` as the gold standard for page structure, question navigation, answer state, official answer storage, grading, and score display.
+- Upgrade only sets with reliable answer sources; keep uncertain sets as scan-browser / `needs_review`.
+
+### Files changed
+- `assets/eju.js` — added graded 総合科目 prototypes for `humanities/2025-1`, `humanities/2023-2`, `humanities/2022-1`; added graded 理科 prototype for `science/2025-1`; updated scan-only badge logic and self-tests.
+- `index.html` — bumped the `assets/eju.js` cache key.
+- `AGENT_SYNC_BOARD.md`, `AGENT_WORKLOG.md`, `PROJECT_STATUS.md`, `HANDOVER.md` — recorded local-only status, validation, answer-source boundaries, and remaining risks.
+
+### Validation
+- Preflight: `codex-preflight --task "align EJU scanned exams with 2024 graded standard"` and read `.codex-context-pack.json`.
+- Static checks: `node --check assets/eju.js`; `python3 -m json.tool assets/eju-scanned-data.json`; `git diff --check`.
+- Browser validation on `http://localhost:4173/`: passed for 総合科目 `2025-1`, `2023-2`, `2022-1`; 理科 `2025-1`, `2023-2`, `2022-1`; gold regression 総合科目 `2024-1`.
+- Each browser check opened the set, loaded a nonzero PNG image, accepted a correct answer, displayed `✓ 正解`, and showed the expected score (`1 / 38` for 総合科目, `1 / 19` for 理科 physics). Console errors: `0`.
+
+### Risks / next steps
+- 総合科目 2022-1 / 2023-2 page-to-answer mapping was manually verified from local scan/contact-sheet evidence; broader manual sampling is recommended before production deploy.
+- 理科 2024-1 and 2018-era sets remain scan-browser / `needs_review` because reliable answer source + page mapping was not available in local extracted data.
+- No push, deploy, merge, R2/D1 write, `.env.local` touch, DeepSeek/Google Translate/Runtime AI call, or Top50K worktree touch.
+
+### Commit
+- pending; final local commit hash reported by completing agent.
+
 ## 2026-06-17 / Codex / External platform baseline + delta sync rules
 
 ### Task
