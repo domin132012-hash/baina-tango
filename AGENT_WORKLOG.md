@@ -27,6 +27,32 @@ Entry template:
 
 ---
 
+## 2026-06-29 / Codex / EJU scanned exam graded alignment
+
+### Task
+- Continue the EJU scanned exam import in the isolated `baina-tango-eju` worktree.
+- Use `humanities/2024-1` as the gold standard for page structure, question navigation, answer state, official answer storage, grading, and score display.
+- Upgrade only sets with reliable answer sources; keep uncertain sets as scan-browser / `needs_review`.
+
+### Files changed
+- `assets/eju.js` — added graded 総合科目 prototypes for `humanities/2025-1`, `humanities/2023-2`, `humanities/2022-1`; added graded 理科 prototype for `science/2025-1`; updated scan-only badge logic and self-tests.
+- `index.html` — bumped the `assets/eju.js` cache key.
+- `AGENT_SYNC_BOARD.md`, `AGENT_WORKLOG.md`, `PROJECT_STATUS.md`, `HANDOVER.md` — recorded local-only status, validation, answer-source boundaries, and remaining risks.
+
+### Validation
+- Preflight: `codex-preflight --task "align EJU scanned exams with 2024 graded standard"` and read `.codex-context-pack.json`.
+- Static checks: `node --check assets/eju.js`; `python3 -m json.tool assets/eju-scanned-data.json`; `git diff --check`.
+- Browser validation on `http://localhost:4173/`: passed for 総合科目 `2025-1`, `2023-2`, `2022-1`; 理科 `2025-1`, `2023-2`, `2022-1`; gold regression 総合科目 `2024-1`.
+- Each browser check opened the set, loaded a nonzero PNG image, accepted a correct answer, displayed `✓ 正解`, and showed the expected score (`1 / 38` for 総合科目, `1 / 19` for 理科 physics). Console errors: `0`.
+
+### Risks / next steps
+- 総合科目 2022-1 / 2023-2 page-to-answer mapping was manually verified from local scan/contact-sheet evidence; broader manual sampling is recommended before production deploy.
+- 理科 2024-1 and 2018-era sets remain scan-browser / `needs_review` because reliable answer source + page mapping was not available in local extracted data.
+- No push, deploy, merge, R2/D1 write, `.env.local` touch, DeepSeek/Google Translate/Runtime AI call, or Top50K worktree touch.
+
+### Commit
+- pending; final local commit hash reported by completing agent.
+
 ## 2026-06-17 / Codex / External platform baseline + delta sync rules
 
 ### Task
@@ -1670,3 +1696,119 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - Safety: `.env.local` not tracked; API key not printed; Authorization header not printed; no provider raw response committed; no JMdict XML/gz, DB/SQLite, or production R2 shard committed
 - Remaining risks: Production validation did not perform a real authenticated login and did not click essay submit to avoid external AI provider calls; main project worktree outside isolated PR #13 worktree had unrelated PR #12 dirty files and was not modified.
 - Next step: monitor user-side Production behavior on normal logged-in accounts; keep PR #12 dictionary overlay paused until separately approved.
+
+## 2026-06-29 16:02 JST / Codex / EJU official scanned exam import
+
+### Task
+- Continue EJU scanned exam import on isolated clean worktree `/Users/domin/Documents/Codex/2026-05-20/files-mentioned-by-the-user-2026/baina-tango-eju`.
+- Original dirty JMdict Top 50K worktree was not modified.
+- Scope: open remaining confirmable scanned exam sets as scan-browser pages, without pretending they are auto-graded structured practice.
+
+### Branch / commits
+- Branch: `feat/eju-official-exam-import`
+- Start commit: `d8b2b1062c8edac78f8b6f1420410c56fba6c812`
+- End commit: local commit created after validation in this task
+
+### Files changed
+- `assets/eju.js`
+- `index.html`
+- `scripts/render_eju_scan_browser_sets.py`
+- `assets/eju-media/humanities/{2018-1,2018-2,2019-1,2020-2,2021-1,2021-2,2022-1,2022-2,2023-1,2023-2,2025-1}/`
+- `assets/eju-media/science/{2018-1,2018-2,2020-2,2024-1,2025-1}/`
+- `docs/tasks/eju-official-exam-import-plan.md`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+- `PROJECT_STATUS.md`
+- `HANDOVER.md`
+
+### Imported scope
+- 総合科目 scan-browser: `2018-1`, `2018-2`, `2019-1`, `2020-2`, `2021-1`, `2021-2`, `2022-1`, `2022-2`, `2023-1`, `2023-2`, `2025-1`.
+- 理科 scan-browser: `2018-1`, `2018-2`, `2020-2`, `2024-1`, `2025-1`.
+- Existing formal practice kept unchanged for all math sets, `humanities/2024-1`, and `science/2021-1` through `science/2023-2`.
+- Kept construction: `science/2019-1`, because scanned data status is `fail` with an OCR error page.
+
+### Assets
+- New rendered PNG pages: 571.
+- Source PDF folders used: `/Users/domin/Desktop/ eju高手/绿头EJU资料/EJU过去问/EJU文综/`, `/Users/domin/Desktop/ eju高手/绿头EJU资料/EJU过去问/EJU理综/`, and `/Users/domin/Desktop/ eju高手/绿头EJU资料/EJU过去问/2025令和7年资料/`.
+- Raw PDF files were not copied into the repository.
+
+### Validation
+- `codex-preflight --task "EJU official scanned exams full import on clean worktree"` and read `.codex-context-pack.json`.
+- `node --check assets/eju.js`: PASS.
+- `python3 -m py_compile scripts/render_eju_scan_browser_sets.py`: PASS.
+- `python3 -m json.tool assets/eju-scanned-data.json >/tmp/eju-scanned-data-check.json`: PASS.
+- `git diff --check`: PASS.
+- Local server: `python3 -m http.server 4173`.
+- Browser smoke: `学习 -> EJU` PASS; 総合科目 list shows added scan-browser sets and `humanities/2025-1` image loads; 理科 list shows added scan-browser sets and `science/2024-1` image loads; `science/2019-1` remains construction; raw 404 visible `No`; console errors `0`.
+- HTTP image check: all 571 scan-browser PNG URLs returned 200.
+- Secret scan: only existing variable names/docs/examples were matched; no raw API key/token found.
+
+### Safety
+- DeepSeek: 0 calls.
+- Google Translate: 0 calls.
+- Runtime AI: 0 calls.
+- R2 writes: 0.
+- D1 writes: 0.
+- Deploy: 0.
+- Push: 0.
+- Original Top 50K worktree: not modified.
+
+### Remaining risks
+- New scan-browser sets are page-browse only and do not provide auto-grading.
+- `needs_review` sets remain visibly marked and need manual review before any future structured practice conversion.
+- `science/2019-1` needs a clean source/OCR pass before it can be opened.
+
+## 2026-06-29 21:01 JST / Codex / EJU graded scanned exam coverage completion
+
+### Task
+- Continue from local commit `15095e60fe84f7bb662da3a0d2b3f4d149a645b3`.
+- Upgrade remaining requested EJU scanned exams to the same graded scan-practice pattern as `humanities/2024-1`.
+- User completed local验收 and approved pushing `feat/eju-official-exam-import`.
+
+### Branch / commits
+- Branch: `feat/eju-official-exam-import`
+- Start commit: `15095e60fe84f7bb662da3a0d2b3f4d149a645b3`
+- End commit: created by this closeout commit; final hash reported in the Codex response after commit/push.
+
+### Files changed
+- `assets/eju.js`
+- `assets/eju-scanned-data.json`
+- `index.html`
+- `assets/eju-media/science/2019-1/page-001.png` through `page-059.png`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+
+### Upgraded scope
+- 総合科目 graded scan practice: `2018-1`, `2018-2`, `2019-1`, `2020-2`, `2021-1`, `2021-2`, `2022-2`, `2023-1`.
+- 理科 graded scan practice: `2018-1`, `2018-2`, `2019-1`, `2020-2`, `2024-1`.
+- Existing graded coverage kept: `humanities/2024-1`, `humanities/2025-1`, `humanities/2023-2`, `humanities/2022-1`, and existing 理科 graded sets.
+
+### Answer sources
+- Desktop official scanned PDFs under `/Users/domin/Desktop/ eju高手/绿头EJU资料/EJU过去问/EJU文综/`.
+- Desktop official scanned PDFs under `/Users/domin/Desktop/ eju高手/绿头EJU资料/EJU过去问/EJU理综/`.
+- Each upgraded answer array was taken from the PDF末尾 `問 / 解答番号 / 正解` table; no hard guesses were used.
+
+### Validation
+- `node --check assets/eju.js`: PASS before closeout; rerun after status write before commit.
+- `python3 -m json.tool assets/eju-scanned-data.json`: PASS before closeout; rerun after status write before commit.
+- `git diff --check`: PASS before closeout; rerun after status write before commit.
+- In-file EJU prototype assertions: PASS, 2296 assertions.
+- Local browser: opened `http://127.0.0.1:4174/`; user reported验收 no problem.
+
+### Safety
+- Push: approved by user after local验收.
+- Deploy: 0.
+- Merge: 0.
+- DeepSeek: 0 calls.
+- Google Translate: 0 calls.
+- Runtime AI: 0 calls.
+- R2 writes: 0.
+- D1 writes: 0.
+- `.env.local`: not touched.
+- Top50K worktree: not touched.
+- Raw PDFs: not copied into repo.
+
+### Remaining risks
+- `science/2019-1` was re-rendered from the desktop PDF and remains `needs_review` for visual sampling because the previous scan metadata was `fail`.
+- Some older scan pages remain visually low quality or OCR-noisy; grading uses official answer tables, but page-position mapping should stay open to future manual correction if users report a mismatch.
+- No deploy was performed in this task; remote availability depends on later PR/preview/deploy steps.

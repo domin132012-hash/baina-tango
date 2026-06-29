@@ -4,15 +4,15 @@
 > do not recheck Supabase / Stripe unless the task touches them, a related fault appears, or the recorded status is older than 30 days and the task depends on that platform.
 > Never record API keys, service role keys, JWT secrets, session tokens, customer data, payment records, card data, or raw secret values.
 
-Last updated: 2026-06-23 23:17 JST by Codex
+Last updated: 2026-06-29 18:01 JST by Codex
 
 ## 1. 当前锁定状态
 
 | Area | Status | Note |
 |---|---|---|
-| Repository docs | Active for PR #13 Production deploy closeout | Recording ready/merge/deploy, validation, branch isolation from dictionary overlay PR #12, and production handoff |
-| Application code | PR #13 merged to Production | Bottom nav is `学习 / 词库 / 首页 / 社区 / 我的`; `読解` no longer exposes raw 404 HTML; `記述` opens the existing essay home; 综合科目 2024-1 scan opens |
-| Cloudflare | Production deploy active | Git-backed Production deployment `d0d93ecd-bf01-44ce-8c6a-e0345b3a5b92`, source `d6312b8`; no Pages config change, no Preview deploy, no R2/D1 write |
+| Repository docs | Active for EJU scanned exam import | Recording local-only scan-browser import on `feat/eju-official-exam-import`; no push/deploy |
+| Application code | EJU scanned exam grading alignment ready locally | Added graded practice for 総合科目 2025-1 / 2023-2 / 2022-1 and 理科 2025-1, keeping 2024-1 総合科目 as the gold standard; remaining sets without reliable answer sources stay scan-browser / needs_review |
+| Cloudflare | Not touched in this task | Prior Production deployment state carried forward; no Pages config change, no Preview/Production deploy, no R2/D1 write |
 | Supabase | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
 | Stripe | Not touched in this task | Existing baseline carried forward; no dashboard/API recheck |
 | DeepSeek | Not touched in this task | No backend, secret, or API changes; normal lookup does not call AI by default |
@@ -22,7 +22,7 @@ Last updated: 2026-06-23 23:17 JST by Codex
 | Item | Value |
 |---|---|
 | Repository | `domin132012-hash/baina-tango` |
-| Current branch | `main` after PR #13 merge |
+| Current branch | `feat/eju-official-exam-import` local worktree |
 | Main latest hash at task start | `ebc320317e6ef212a38a53a603191c419aca527c` |
 | Current task | PR #13 post-login navigation Production deploy |
 | Issue | `#11` post-login main interface information architecture |
@@ -34,15 +34,15 @@ Last updated: 2026-06-23 23:17 JST by Codex
 | Latest relevant commit | PR #13 merge commit `d6312b85a158d08421a9b06b59b711df258fdd5a` |
 | UI PR | `#13` `https://github.com/domin132012-hash/baina-tango/pull/13` MERGED; head `d5f7264a1e30f81da5f5b01b4e0f1dbb057e918e`; merge commit `d6312b85a158d08421a9b06b59b711df258fdd5a` |
 | PR #2 | `MERGED`; merge commit `79a2b7e80d7b5c83062e24afba69ed66fcac3339` |
-| This task | PR #13 marked ready, merged, and deployed to Production |
+| This task | EJU official scanned exam scan-browser import |
 | Dictionary plan commit | `9622358aebaa9b3f7bafb2e1050750b69a8adc38` pushed to `origin/main` |
-| External services touched - GitHub | PR #13 marked ready and merged into `main`; status docs closeout pushed after validation |
-| External services touched - Cloudflare | Git-backed Production deployment only; no Preview deploy, no R2/D1 write, no config/metadata change |
+| External services touched - GitHub | None in this task; no push |
+| External services touched - Cloudflare | None in this task; no Preview deploy, no Production deploy, no R2/D1 write, no config/metadata change |
 | External services touched - Supabase | Not touched |
 | External services touched - Stripe | Not touched |
 | External services touched - DeepSeek | Not touched |
-| Current status | PR #13 is merged. Production deployment `d0d93ecd-bf01-44ce-8c6a-e0345b3a5b92` source `d6312b8` is Active; canonical browser validation passed with console fatal errors `0`, network bad responses `0`, and raw 404 visible `No`. |
-| Current blocker | None for PR #13 deployment. Remaining risk: validation did not submit EJU essay to avoid AI provider calls; real logged-in user smoke can still be performed by the user. |
+| Current status | Local branch upgrades selected scanned exams to graded practice: 総合科目 2025-1 / 2023-2 / 2022-1 and 理科 2025-1; existing 総合科目 2024-1 and 理科 2021-1 through 2023-2 graded practice remain available. Validation passed locally; commit pending in this worktree. |
+| Current blocker | 理科 2024-1 / 2018-1 / 2018-2 / 2020-2 and several older 総合科目 sets lack reliable verified answer + page mapping in local extracted data; `science/2019-1` remains unavailable because scanned data is `fail` with an OCR error page. |
 
 ## 3. Cloudflare 状态
 
@@ -141,6 +141,8 @@ Update triggers:
 | Issue #11 local post-login nav restructure | Passed | 2026-06-23 21:11 JST: local `http://localhost:4173/` browser validation passed for `学习 / 词库 / 首页 / 社区 / 我的`; EJU opens existing 真题试炼; 词库 opens 查词/背词/导入导出/词库管理; 社区 and planned profile entries show `建设中`; construction clicks show toast only; console errors `0`; DeepSeek/Google/Runtime AI/R2/D1/deploy calls `0`; screenshot check saved under Codex outputs. |
 | PR #13 EJU deep-link bugfix | Passed | 2026-06-23 21:57 JST: local `http://localhost:4173/?pr13_final=20260623b` browser validation passed for `学习 -> EJU`, `日本語`, `読解`, `記述`, `综合科目 -> 2024 第 1 回`, and bottom nav. `読解` local static shows `需要后端`; `記述` opens the essay home; 综合科目 scan image `assets/eju-media/humanities/2024-1/page-003.png` renders. Console errors `0`; clean server network 404 `0`; raw HTML 404 visible `No`; DeepSeek/Google/Runtime AI/R2/D1/deploy calls `0`. |
 | PR #13 Production deploy | Passed | 2026-06-23 23:17 JST: User approved deployment. PR #13 marked ready and merged with commit `d6312b85a158d08421a9b06b59b711df258fdd5a`; Cloudflare Production deployment `d0d93ecd-bf01-44ce-8c6a-e0345b3a5b92`, source `d6312b8`, Active. Production browser validation on `https://baina-tango.pages.dev` passed for bottom nav, `学习 -> EJU`, `EJU -> 日本語`, `読解`, `記述` home, `综合科目 -> 2024 年第 1 回`, 词库, 首页, 社区, 我的. Console fatal errors `0`; network bad responses `0`; raw 404 visible `No`; DeepSeek/Google/Runtime AI/R2/D1/overlay activation all `0`. |
+| EJU scanned exam graded alignment | Passed locally | 2026-06-29 18:01 JST: Local browser validation on `http://localhost:4173/` passed for 総合科目 2025-1 / 2023-2 / 2022-1, 理科 2025-1 / 2023-2 / 2022-1, and gold regression 総合科目 2024-1. Each checked set opened, rendered a nonzero scan image, accepted an answer, showed `✓ 正解`, and displayed expected score `1 / 38` or `1 / 19`. Console errors `0`; `node --check assets/eju.js`, JSON format check, and `git diff --check` passed. No push, deploy, merge, provider call, R2/D1 write, `.env.local`, or Top50K worktree touch. |
+| EJU scanned exam graded coverage completion | User-validated locally, push approved | 2026-06-29 21:01 JST: On `feat/eju-official-exam-import` from start `15095e60fe84f7bb662da3a0d2b3f4d149a645b3`, remaining requested 総合科目 `2018-1`, `2018-2`, `2019-1`, `2020-2`, `2021-1`, `2021-2`, `2022-2`, `2023-1` and 理科 `2018-1`, `2018-2`, `2019-1`, `2020-2`, `2024-1` were upgraded to graded scan practice using official PDF tail answer tables. `science/2019-1` PNG pages were rendered from the desktop PDF and kept `needs_review`. User reported local验收 passed and approved push. Deploy `0`; merge `0`; DeepSeek/Google Translate/Runtime AI `0`; R2/D1 writes `0`; `.env.local` and Top50K worktree untouched. |
 
 ## 8. 最近事件流水
 
@@ -175,3 +177,4 @@ Update triggers:
 | 2026-06-23 21:22 JST | PR #13 validation/status-doc finalization started from head `a9c1a9de20eb28a328e85c6e0dddb8a664a93a28`; GitHub confirms PR #13 remains OPEN, draft, unmerged; scope is markdown status/validation docs only, with no `index.html`, UI, business logic, deploy, mark-ready, merge, provider, R2/D1, or overlay change. |
 | 2026-06-23 21:57 JST | PR #13 EJU deep-link bugfix completed locally from start head `7d995556dcfa27ebdb61953235de0133a464f418`: `assets/eju.js` now avoids local `/api/eju-reading-sets` 404 exposure, loads `assets/eju-essay.js` on demand for `記述`, and sanitizes EJU fetch errors; `index.html` EJU script cache key updated. No deploy, provider call, R2/D1 write, mark-ready, merge, PR #12 touch, `.env.local`, or `RIKA_PLAN.md` commit. |
 | 2026-06-23 23:17 JST | PR #13 deployed to Production after user approval: marked ready, merged with commit `d6312b85a158d08421a9b06b59b711df258fdd5a`, Cloudflare Production deployment `d0d93ecd-bf01-44ce-8c6a-e0345b3a5b92` Active at source `d6312b8`; canonical browser validation passed; no DeepSeek, Google Translate, Runtime AI, R2/D1 write, overlay activation, PR #12 handling, `.env.local`, API key, or Authorization header exposure. |
+| 2026-06-29 18:01 JST | EJU scanned exam graded alignment completed locally on `feat/eju-official-exam-import`: 総合科目 2025-1 / 2023-2 / 2022-1 and 理科 2025-1 upgraded to graded practice using verified official answer tables where available; browser validation covered 3 総合科目, 3 理科, and 2024-1 gold regression; no push/deploy/merge/provider/R2/D1/.env.local/Top50K touch. |

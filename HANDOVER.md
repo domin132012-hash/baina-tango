@@ -20,6 +20,7 @@
 - 词典优先查词：架构计划在 `docs/architecture/DICTIONARY_LOOKUP_PLAN.md`，执行计划在 `docs/architecture/DICTIONARY_LOOKUP_IMPLEMENTATION_PLAN.md`。PR #4 已合并到 `main`，merge commit `c340f75a5f8cf51dac691732a9c66e50cd22af09`，当时上线的是 JMdict 小型 fixture MVP。当前 Production 已由 PR #6 R2 shard lookup 接管：命中词典不默认调用 AI，未命中只提示可尝试 AI 解释。
 - JMdict 1,000-entry beta：Issue #5 / PR #6 已 merge 到 `main`，数据在 `functions/api/dictionary/_beta-data.js`，由官方 `JMdict_e.gz` 通过 `scripts/dictionary/jmdict-import-spike.js` 抽取生成，约 1,000 条、约 500 KiB。英文 gloss 来自 JMdict 原始数据，中文释义为 `null`，不使用 AI 生成/翻译/改写词条。Production 当前使用 R2 shard lookup；beta fallback 仅保留为 binding 缺失/失败时的安全降级路径。
 - 登录后五栏导航：PR #13 `feat(ui): restructure post-login navigation` 已按用户批准从 `feat/post-login-nav-restructure` 标记 ready 并 merge 到 `main`。Merge commit `d6312b85a158d08421a9b06b59b711df258fdd5a`；Cloudflare Production deployment `d0d93ecd-bf01-44ce-8c6a-e0345b3a5b92` source `d6312b8` Active；canonical URL `https://baina-tango.pages.dev` 已通过浏览器验证。底部为 `学习 / 词库 / 首页 / 社区 / 我的`；`読解` 不显示 raw 404 HTML；`記述` home 可打开但未提交批改；综合科目 2024-1 扫描卷可打开题图。Validation log: `docs/review/post-login-nav-restructure-production-deploy-validation-log.md`。本轮未调用 DeepSeek/Google Translate/Runtime AI，未写 R2/D1，未激活 overlay，未触碰 PR #12。
+- EJU 官方扫描卷本地导入：2026-06-29 在独立 worktree `feat/eju-official-exam-import` 上新增 scan-browser 模式，随后按 総合科目 2024-1 金标准继续升级部分套卷为可作答 + 可判分。当前新增 graded practice：総合科目 2025-1 / 2023-2 / 2022-1、理科 2025-1；既有可判分卷继续保留：総合科目 2024-1，理科 2021-1、2021-2、2022-1、2022-2、2023-1、2023-2。没有可靠标准答案或页码映射的扫描卷保持 scan-browser / `needs_review`，不得硬猜答案；`science/2019-1` 因扫描索引 `status=fail` 且有 OCR error page 保持建设中。本轮未 deploy、未 push、未写 R2/D1、未调用 DeepSeek/Google Translate/Runtime AI，未触碰 JMdict Top 50K dirty worktree。
 - 完整 JMdict R2 sharded lookup：Issue #8 已用官方 `JMdict_e.gz` `2026-06-18` 生成 English-only R2 shards 并上传到 R2 bucket `baina-dictionary-artifacts`：active prefix `dictionary/shards/jmdict/jmdict-english-r2-shards-2026-06-18/`，source SHA-256 `77cc98c43209d56e2ad44438a61ca02ce081ff083c58c5e87e4bc288cd860610`，512 shard objects，约 `632,040,903` bytes，最大 shard `1,768,374` bytes。D1 database `baina-dictionary`（id `5e8eeeda-0029-4c2e-958e-845ea0020c6e`）只写入 metadata schema 和 active version，不写 full entries/forms/senses；D1 full import 仍禁止，除非另有 cost-safe plan。Preview 已验证 `dictionarySource=r2-shard`，`食べられる` count `1`，全部要求测试词 `aiCalled=false`。PR #6 merge commit `c94735925798c604321631e1caa36c2f2c3190be` 已合并；Production Pages config 已绑定 `DICTIONARY_R2` -> `baina-dictionary-artifacts`、`DICTIONARY_DB` -> `baina-dictionary`，canonical Production smoke 已通过：`dictionarySource=r2-shard`、`食べられる` count `1`、required terms 全部 `aiCalled=false`。完整 JMdict/XML/大型 JSON/SQLite/DB artifact 不得提交 GitHub；不得使用 AI 生成、翻译、改写、编造词条；不要执行 D1 full import。
 - 登录后主界面五栏导航历史：Issue #11 的 UI 专用分支 `feat/post-login-nav-restructure` 从 `main` 的 `ebc320317e6ef212a38a53a603191c419aca527c` 创建，不能与词典 overlay 分支 `feat/dictionary-zh-deepseek-pilot-100` 混用。实现 commit `1f0759015a701c38c20f0bca8a38e02870b07abd` 将底部导航改为 `学习 / 词库 / 首页 / 社区 / 我的`；EJU 深层 bugfix 从 `7d995556dcfa27ebdb61953235de0133a464f418` 开始，最终 PR head `d5f7264a1e30f81da5f5b01b4e0f1dbb057e918e`。本地验证日志：`docs/review/post-login-nav-restructure-eju-deep-link-validation-log.md`；Production 部署验证日志：`docs/review/post-login-nav-restructure-production-deploy-validation-log.md`。
 - 代理 closeout 机制：`docs/ops/AGENT_CLOSEOUT_CHECKLIST.md` 是非平凡任务收尾必读文件。任务完成前必须更新 GitHub 文档、commit + push、远端校验，并用 JST 记录时间。
@@ -114,12 +115,20 @@
 ### 综合科目（総合科目）现状（2026-06-14）
 
 - 已上线：`humanities/2024-1`（38 题全 4 択，**27 屏含 p3/p7 两张材料页**）。原型在 `assets/eju.js` 的 `EJU_SOGO_PROTOTYPES`，与理科共用 `ejuRikaProtoFor` + 同一套渲染/判分引擎。
+- 2026-06-29 本地分支新增可判分综合科目：`humanities/2025-1`、`humanities/2023-2`、`humanities/2022-1`。三套均复用 2024-1 的页面结构、题号导航、作答状态、标准答案和 `ejuRika` 判分显示。标准答案来自官方正解表；页码映射来自本地扫描页/contact sheet 人工核对，后续正式上线前仍建议人工抽查更多题号。
 - 渲染脚本独立：`scripts/sogo_render_set.py`（**勿套用理科页码**，综合科目页码自己一套）。图片在 `assets/eju-media/humanities/<set>/`。
 - **材料页规则（重要）**：综合科目若子题出现「下線部N」，其所依据的大問引导会話/文章页必须作为材料页渲染（`answers:[]`），否则用户无法作答。本卷 p3=問1材料、p7=問2材料。复刻新套时务必先识别材料页。
 - **页眉印刷页号**：卷内「総合科目-N」≠ PDF 页号。proto 用 `pageLabel:'総合科目-'` + `pageNumberOffset`（本卷 -2）；UI 同时标注「PDF pN」。
 - localStorage key 与理科/数学同前缀但带 `humanities/` 不冲突：`baina-eju-math-paper-humanities/2024-1`。
 - 缓存号当前 `20260614-sogo-2024-1-materials-fix`（两处：index.html 的 `eju.js?v=` 与 eju.js 内 `eju-scanned-data.json?v=`）。
 - 复刻新套流程见 `SOGO_PLAN.md` 末「后续年份」；**必须用户明确指示才开做**。
+
+### 理科扫描卷现状（2026-06-29）
+
+- 既有可判分理科：`science/2021-1`、`science/2021-2`、`science/2022-1`、`science/2022-2`、`science/2023-1`、`science/2023-2`。
+- 本地分支新增可判分理科：`science/2025-1`，三科结构为物理 19 题、化学 20 题、生物 18 题；化学参考页仍以折叠资料页显示。
+- 仍为 scan-browser / needs_review：`science/2018-1`、`science/2018-2`、`science/2020-2`、`science/2024-1`，原因是本地已抽取资料中没有可靠正解表或尚未完成可靠题号页码映射。
+- `science/2019-1` 保持建设中，原因是扫描索引 `status=fail` 且包含 OCR error page。
 
 ---
 
