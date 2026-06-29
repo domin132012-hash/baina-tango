@@ -57,6 +57,7 @@ var EJU_SCAN_BROWSER_PROTOTYPES = {
   'humanities/2025-1': { title: '総合科目 · 2025年第1回', imageBase: './assets/eju-media/humanities/2025-1/page-' },
   'science/2018-1': { title: '理科 · 2018年第1回', imageBase: './assets/eju-media/science/2018-1/page-' },
   'science/2018-2': { title: '理科 · 2018年第2回', imageBase: './assets/eju-media/science/2018-2/page-' },
+  'science/2019-1': { title: '理科 · 2019年第1回', imageBase: './assets/eju-media/science/2019-1/page-' },
   'science/2020-2': { title: '理科 · 2020年第2回', imageBase: './assets/eju-media/science/2020-2/page-' },
   'science/2024-1': { title: '理科 · 2024年第1回', imageBase: './assets/eju-media/science/2024-1/page-' },
   'science/2025-1': { title: '理科 · 2025年第1回', imageBase: './assets/eju-media/science/2025-1/page-' }
@@ -463,7 +464,134 @@ var EJU_MATH_PAPER_PROTOTYPES = {
 // 理科真题（マークシート单选）原型：每题 {no:解答番号, page:源页理科-N, opts:选项数, ans:官方正解}
 // 源图 page-NNN.png（NNN=理科-N）。答案取自官方正解表。
 // =====================================================================
+function ejuRange(start, count) {
+  return Array.from({ length: count }, function(_, idx) { return start + idx; });
+}
+
+function ejuRikaProblemsFromPageMap(pageMap) {
+  return Object.keys(pageMap).map(function(page) {
+    return { page: Number(page), answers: pageMap[page] };
+  }).sort(function(a, b) { return a.page - b.page; });
+}
+
+function ejuRikaPagesFromProblems(problems) {
+  var seen = {};
+  return problems.map(function(problem) { return problem.page; }).filter(function(page) {
+    if (seen[page]) return false;
+    seen[page] = true;
+    return true;
+  });
+}
+
+function ejuRikaQuestionsFromAnswers(answers, pageByNo, optsByNo) {
+  optsByNo = optsByNo || {};
+  return answers.map(function(ans, idx) {
+    var no = idx + 1;
+    return { no: no, page: pageByNo[no], opts: optsByNo[no] || Math.max(6, ans), ans: ans };
+  });
+}
+
+function ejuRikaSubjectFromAnswers(id, label, pageMap, answers, optsByNo, extra) {
+  var problems = ejuRikaProblemsFromPageMap(pageMap);
+  var pageByNo = {};
+  problems.forEach(function(problem) {
+    (problem.answers || []).forEach(function(no) { pageByNo[no] = problem.page; });
+  });
+  var subject = {
+    id: id,
+    label: label,
+    pages: ejuRikaPagesFromProblems(problems),
+    questions: ejuRikaQuestionsFromAnswers(answers, pageByNo, optsByNo),
+    problems: problems
+  };
+  Object.keys(extra || {}).forEach(function(key) { subject[key] = extra[key]; });
+  return subject;
+}
+
+function ejuRikaSequentialSubject(id, label, startPage, answers, optsByNo, extra) {
+  var pageMap = {};
+  answers.forEach(function(_, idx) { pageMap[startPage + idx] = [idx + 1]; });
+  return ejuRikaSubjectFromAnswers(id, label, pageMap, answers, optsByNo, extra);
+}
+
 var EJU_RIKA_PROTOTYPES = {
+  'science/2018-1': {
+    title: '理科 · 2018年第1回',
+    imageBase: './assets/eju-media/science/2018-1/page-',
+    answerSource: '2018年度日本留学試験（第1回）理科 PDF末尾「正解」表',
+    subjects: [
+      ejuRikaSequentialSubject('physics', '物理', 3, [5,6,6,3,3,1,4,3,4,6,2,2,5,1,5,1,3,4,2]),
+      ejuRikaSubjectFromAnswers('chemistry', '化学', {
+        24:[1], 25:[2,3], 26:[4,5], 27:[6,7], 28:[8], 29:[9], 30:[10], 31:[11,12],
+        32:[13], 33:[14], 34:[15], 35:[16], 36:[17], 37:[18], 38:[19,20]
+      }, [6,5,2,5,2,3,2,3,1,4,3,1,2,1,4,3,4,4,3,4], null, { refPage: 23, refLabel: '常数表 · 周期表' }),
+      ejuRikaSubjectFromAnswers('biology', '生物', {
+        40:[1], 41:[2], 42:[3,4], 43:[5], 44:[6,7], 45:[8], 46:[], 47:[9], 48:[10],
+        49:[11], 50:[12], 51:[13], 52:[], 53:[14,15], 54:[16,17,18]
+      }, [2,5,2,2,3,1,1,2,3,3,5,4,4,3,5,1,4,6])
+    ]
+  },
+  'science/2018-2': {
+    title: '理科 · 2018年第2回',
+    imageBase: './assets/eju-media/science/2018-2/page-',
+    answerSource: '2018年度日本留学試験（第2回）理科 PDF末尾「正解」表',
+    subjects: [
+      ejuRikaSequentialSubject('physics', '物理', 3, [5,4,4,2,2,3,3,6,5,2,1,1,4,5,2,6,1,4,6]),
+      ejuRikaSubjectFromAnswers('chemistry', '化学', {
+        23:[1], 24:[2,3], 25:[4,5], 26:[6], 27:[7], 28:[8], 29:[9], 30:[10], 31:[11],
+        32:[12], 33:[13], 34:[14], 35:[15], 36:[16], 37:[17,18], 38:[19], 39:[20]
+      }, [3,6,5,3,4,4,2,2,4,4,6,1,2,3,5,1,1,6,4,2], null, { refPage: 22, refLabel: '常数表 · 周期表' }),
+      ejuRikaSubjectFromAnswers('biology', '生物', {
+        40:[1], 41:[2,3], 42:[4], 43:[5], 44:[6], 45:[7], 46:[8], 47:[9], 48:[10],
+        49:[11], 50:[], 51:[12,13], 52:[14], 53:[15], 54:[16,17,18]
+      }, [2,2,3,2,1,3,4,3,3,4,6,1,2,3,1,2,3,4])
+    ]
+  },
+  'science/2019-1': {
+    title: '理科 · 2019年第1回',
+    imageBase: './assets/eju-media/science/2019-1/page-',
+    answerSource: '2019年度日本留学試験（第1回）理科 PDF末尾「正解」表',
+    subjects: [
+      ejuRikaSequentialSubject('physics', '物理', 4, [2,2,4,1,4,6,3,1,5,1,4,2,7,2,4,1,8,6,3]),
+      ejuRikaSubjectFromAnswers('chemistry', '化学', {
+        26:[1], 27:[2,3], 28:[4,5], 29:[6,7], 30:[8,9], 31:[10], 32:[11,12],
+        33:[13], 34:[14], 35:[15], 36:[16,17], 37:[18], 38:[19], 39:[20]
+      }, [3,5,2,3,4,5,2,5,5,1,6,2,7,1,7,5,3,2,4,4], null, { refPage: 25, refLabel: '常数表 · 周期表' }),
+      ejuRikaSequentialSubject('biology', '生物', 41, [5,2,4,3,2,1,4,3,5,3,6,4,3,5,3,2,6,3])
+    ]
+  },
+  'science/2020-2': {
+    title: '理科 · 2020年第2回',
+    imageBase: './assets/eju-media/science/2020-2/page-',
+    answerSource: '2020年度日本留学試験（第2回）理科 PDF末尾「正解」表',
+    subjects: [
+      ejuRikaSequentialSubject('physics', '物理', 4, [4,2,5,4,3,4,3,6,3,3,5,5,6,2,2,4,4,1,1]),
+      ejuRikaSubjectFromAnswers('chemistry', '化学', {
+        26:[1,2], 27:[3,4], 28:[5], 29:[6], 30:[7], 31:[8], 32:[9,10], 33:[11,12],
+        34:[13,14], 35:[15,16], 36:[17], 37:[18], 38:[19], 39:[20]
+      }, [1,6,5,3,2,5,3,6,5,8,4,6,3,1,4,2,2,6,4,4], null, { refPage: 25, refLabel: '常数表 · 周期表' }),
+      ejuRikaSubjectFromAnswers('biology', '生物', {
+        41:[1], 42:[2], 43:[3], 44:[4,5], 45:[6], 46:[7], 47:[8], 48:[9], 49:[10],
+        50:[11], 51:[12,13], 52:[14], 53:[15], 54:[16,17], 55:[18]
+      }, [1,2,7,3,4,2,3,2,6,1,5,5,4,3,4,3,3,6])
+    ]
+  },
+  'science/2024-1': {
+    title: '理科 · 2024年第1回',
+    imageBase: './assets/eju-media/science/2024-1/page-',
+    answerSource: '2024年度日本留学試験 理科 PDF末尾「正解」表',
+    subjects: [
+      ejuRikaSequentialSubject('physics', '物理', 4, [3,5,5,4,1,5,1,5,2,4,4,5,3,2,2,3,2,6,6]),
+      ejuRikaSubjectFromAnswers('chemistry', '化学', {
+        26:[1,2], 27:[3], 28:[4], 29:[5], 30:[6], 31:[7], 32:[8], 33:[9], 34:[10],
+        35:[11,12], 36:[13], 37:[14,15], 38:[16,17], 39:[18], 40:[19], 41:[20]
+      }, [2,2,1,3,3,2,4,3,1,5,4,4,4,2,6,5,3,4,3,5], null, { refPage: 25, refLabel: '常数表 · 周期表' }),
+      ejuRikaSubjectFromAnswers('biology', '生物', {
+        43:[1], 44:[2], 45:[3,4], 46:[5], 47:[6], 48:[7], 49:[8], 50:[9,10], 51:[11],
+        52:[12], 53:[13], 54:[14], 55:[15], 56:[16], 57:[17], 58:[18]
+      }, [6,7,3,4,2,1,3,1,3,2,5,2,2,3,2,3,5,3])
+    ]
+  },
   'science/2023-1': {
     title: '理科 · 2023年第1回',
     imageBase: './assets/eju-media/science/2023-1/page-',
@@ -858,6 +986,130 @@ function ejuSogoSubject(problems, answers) {
 }
 
 var EJU_SOGO_PROTOTYPES = {
+  'humanities/2018-1': {
+    title: '総合科目 · 2018年第1回',
+    pageLabel: '総合科目-',
+    pageNumberOffset: -1,
+    imageBase: './assets/eju-media/humanities/2018-1/page-',
+    answerSource: '2018年度日本留学試験（第1回）総合科目 PDF末尾「正解」表',
+    subjects: [ejuSogoSubject([
+      {page:1,label:'表紙・注意',answers:[]}, {page:2,answers:[1]}, {page:3,answers:[2]}, {page:4,answers:[3,4]},
+      {page:5,answers:[5]}, {page:6,answers:[6,7]}, {page:7,answers:[8]}, {page:8,answers:[9,10]},
+      {page:9,answers:[11]}, {page:10,answers:[12]}, {page:11,answers:[13]}, {page:12,answers:[14]},
+      {page:13,answers:[15,16]}, {page:14,answers:[17,18]}, {page:15,answers:[19,20]},
+      {page:16,answers:[21,22]}, {page:17,answers:[23,24]}, {page:18,answers:[25,26,27]},
+      {page:19,answers:[28,29]}, {page:20,answers:[30,31]}, {page:21,answers:[32,33]},
+      {page:22,answers:[34,35,36]}, {page:23,answers:[37,38]}
+    ], [3,4,1,2,2,4,2,4,1,3,2,1,2,1,1,3,4,1,4,1,3,2,3,1,4,3,2,2,3,1,3,3,4,2,4,3,2,1])]
+  },
+  'humanities/2018-2': {
+    title: '総合科目 · 2018年第2回',
+    pageLabel: '総合科目-',
+    pageNumberOffset: -1,
+    imageBase: './assets/eju-media/humanities/2018-2/page-',
+    answerSource: '2018年度日本留学試験（第2回）総合科目 PDF末尾「正解」表',
+    subjects: [ejuSogoSubject([
+      {page:1,label:'表紙・注意',answers:[]}, {page:2,answers:[1]}, {page:3,answers:[2,3,4]}, {page:4,answers:[5]},
+      {page:5,answers:[6,7,8]}, {page:6,answers:[9]}, {page:7,answers:[10,11]}, {page:8,answers:[12]},
+      {page:9,answers:[13,14]}, {page:10,answers:[15]}, {page:11,answers:[16,17]}, {page:12,answers:[18,19,20]},
+      {page:13,answers:[21]}, {page:14,answers:[22,23]}, {page:15,answers:[24]}, {page:16,answers:[25,26,27]},
+      {page:17,answers:[28,29,30]}, {page:18,answers:[31,32,33]}, {page:19,answers:[34,35,36]}, {page:20,answers:[37,38]}
+    ], [3,2,2,1,3,3,4,4,4,3,2,2,1,4,1,2,4,2,3,1,3,1,4,1,4,1,2,1,2,3,3,2,3,2,3,1,4,4])]
+  },
+  'humanities/2019-1': {
+    title: '総合科目 · 2019年第1回',
+    pageLabel: '総合科目-',
+    pageNumberOffset: -1,
+    imageBase: './assets/eju-media/humanities/2019-1/page-',
+    answerSource: '2019年度日本留学試験（第1回）総合科目 PDF末尾「正解」表',
+    subjects: [ejuSogoSubject([
+      {page:1,label:'表紙・注意',answers:[]}, {page:2,answers:[1]}, {page:3,answers:[2]}, {page:4,answers:[3,4]},
+      {page:5,answers:[5]}, {page:6,answers:[6,7]}, {page:7,answers:[8]}, {page:8,answers:[9]},
+      {page:9,answers:[10]}, {page:10,answers:[11,12,13]}, {page:11,answers:[14,15]}, {page:12,answers:[16,17]},
+      {page:13,answers:[18]}, {page:14,answers:[19]}, {page:15,answers:[20,21]}, {page:16,answers:[22]},
+      {page:17,answers:[23,24]}, {page:18,answers:[25,26]}, {page:19,answers:[27,28,29]},
+      {page:20,answers:[30,31,32]}, {page:21,answers:[33,34,35]}, {page:22,answers:[36]}, {page:23,answers:[37,38]}
+    ], [4,3,4,2,4,3,3,1,3,2,3,3,4,2,4,1,3,1,2,1,2,1,1,1,3,4,2,1,3,2,2,3,1,2,4,1,4,2])]
+  },
+  'humanities/2020-2': {
+    title: '総合科目 · 2020年第2回',
+    pageLabel: '総合科目-',
+    pageNumberOffset: -2,
+    imageBase: './assets/eju-media/humanities/2020-2/page-',
+    answerSource: '2020年度日本留学試験（第2回）総合科目 PDF末尾「正解」表',
+    subjects: [ejuSogoSubject([
+      {page:1,label:'表紙・注意',answers:[]}, {page:2,label:'試験注意',answers:[]}, {page:3,answers:[1,2]},
+      {page:4,answers:[3,4]}, {page:5,label:'材料',answers:[]}, {page:6,answers:[5,6]}, {page:7,answers:[7,8]},
+      {page:8,answers:[9]}, {page:9,answers:[10,11]}, {page:10,answers:[12,13]}, {page:11,answers:[14,15,16]},
+      {page:12,answers:[17,18,19]}, {page:13,answers:[20,21]}, {page:14,answers:[22,23]}, {page:15,answers:[24]},
+      {page:16,answers:[25,26,27]}, {page:17,answers:[28,29]}, {page:18,answers:[30,31,32]},
+      {page:19,answers:[33,34]}, {page:20,answers:[35,36]}, {page:21,answers:[37,38]}
+    ], [1,2,2,1,4,2,3,4,3,4,2,3,4,1,4,2,3,2,1,1,4,4,3,2,1,4,4,4,2,3,3,2,1,1,3,4,2,1])]
+  },
+  'humanities/2021-1': {
+    title: '総合科目 · 2021年第1回',
+    pageLabel: '総合科目-',
+    pageNumberOffset: -2,
+    imageBase: './assets/eju-media/humanities/2021-1/page-',
+    answerSource: '2021年度日本留学試験（第1回）総合科目 PDF末尾「正解」表',
+    subjects: [ejuSogoSubject([
+      {page:1,label:'表紙・注意',answers:[]}, {page:3,answers:[1,2]}, {page:4,answers:[3]}, {page:5,answers:[4]},
+      {page:6,answers:[5]}, {page:7,answers:[6]}, {page:8,answers:[7]}, {page:9,answers:[8]},
+      {page:10,answers:[9]}, {page:11,answers:[10]}, {page:12,answers:[11,12]}, {page:13,answers:[13,14]},
+      {page:14,answers:[15]}, {page:15,answers:[16,17]}, {page:16,answers:[18]}, {page:17,answers:[19]},
+      {page:18,answers:[20]}, {page:19,answers:[21]}, {page:20,answers:[22]}, {page:21,answers:[23]},
+      {page:22,answers:[24]}, {page:23,answers:[25,26,27]}, {page:24,answers:[28,29]}, {page:25,answers:[30,31]},
+      {page:26,answers:[32,33]}, {page:27,answers:[34,35]}, {page:28,answers:[36,37]}, {page:29,answers:[38]}
+    ], [3,2,4,3,4,1,1,4,2,2,1,2,4,1,3,2,2,4,1,4,2,1,3,4,2,2,1,3,3,4,2,2,1,3,2,3,4,3])]
+  },
+  'humanities/2021-2': {
+    title: '総合科目 · 2021年第2回',
+    pageLabel: '総合科目-',
+    pageNumberOffset: -2,
+    imageBase: './assets/eju-media/humanities/2021-2/page-',
+    answerSource: '2021年度日本留学試験（第2回）総合科目 PDF末尾「正解」表',
+    subjects: [ejuSogoSubject([
+      {page:1,label:'表紙・注意',answers:[]}, {page:2,label:'試験注意',answers:[]}, {page:3,answers:[1]}, {page:4,answers:[2]},
+      {page:5,answers:[3,4]}, {page:6,answers:[5]}, {page:7,answers:[6]}, {page:8,answers:[7]},
+      {page:9,answers:[8]}, {page:10,answers:[9]}, {page:11,answers:[10]}, {page:12,answers:[11]},
+      {page:13,answers:[12,13]}, {page:14,answers:[14,15]}, {page:15,answers:[16]}, {page:16,answers:[17]},
+      {page:17,answers:[18,19]}, {page:18,answers:[20]}, {page:19,answers:[21]}, {page:20,answers:[22,23]},
+      {page:21,answers:[24,25]}, {page:22,answers:[26,27,28]}, {page:23,answers:[29,30]}, {page:24,answers:[31,32,33]},
+      {page:25,answers:[34,35,36]}, {page:26,answers:[37,38]}
+    ], [2,2,4,3,3,1,3,4,4,1,2,4,1,1,2,3,3,1,1,2,4,4,1,2,4,2,3,3,3,1,4,3,3,3,1,4,3,2])]
+  },
+  'humanities/2022-2': {
+    title: '総合科目 · 2022年第2回',
+    pageLabel: '総合科目-',
+    pageNumberOffset: -1,
+    imageBase: './assets/eju-media/humanities/2022-2/page-',
+    answerSource: '2022年度日本留学試験（第2回）総合科目 PDF末尾「正解」表',
+    subjects: [ejuSogoSubject([
+      {page:1,label:'表紙・注意',answers:[]}, {page:2,answers:[1]}, {page:3,answers:[2,3]}, {page:4,answers:[4]},
+      {page:5,answers:[5]}, {page:6,answers:[6,7]}, {page:7,answers:[8]}, {page:8,answers:[9]},
+      {page:9,answers:[10,11]}, {page:10,answers:[12,13]}, {page:11,answers:[14,15]}, {page:12,answers:[16,17]},
+      {page:13,answers:[18]}, {page:14,answers:[19]}, {page:15,answers:[20]}, {page:16,answers:[21,22,23]},
+      {page:17,answers:[24]}, {page:18,label:'問24 続き',answers:[]}, {page:19,answers:[25,26,27]},
+      {page:20,answers:[28,29]}, {page:21,answers:[30,31]}, {page:22,answers:[32,33]},
+      {page:23,answers:[34,35]}, {page:24,answers:[36,37]}, {page:25,answers:[38]}
+    ], [2,2,3,3,4,3,2,1,3,4,4,4,2,1,3,3,1,1,3,4,1,2,1,2,3,4,2,1,1,2,3,4,2,2,1,1,4,3])]
+  },
+  'humanities/2023-1': {
+    title: '総合科目 · 2023年第1回',
+    pageLabel: '総合科目-',
+    pageNumberOffset: -2,
+    imageBase: './assets/eju-media/humanities/2023-1/page-',
+    answerSource: '2023年度日本留学試験（第1回）総合科目 PDF末尾「正解」表',
+    subjects: [ejuSogoSubject([
+      {page:1,label:'表紙・注意',answers:[]}, {page:3,answers:[1,2]}, {page:4,answers:[3]}, {page:5,answers:[4]},
+      {page:6,answers:[5]}, {page:7,answers:[6]}, {page:8,answers:[7]}, {page:9,answers:[8]},
+      {page:10,answers:[9]}, {page:11,answers:[10]}, {page:12,answers:[11]}, {page:13,answers:[12]},
+      {page:14,answers:[13,14]}, {page:15,answers:[15,16]}, {page:16,answers:[17,18]}, {page:17,answers:[19,20]},
+      {page:18,answers:[21,22]}, {page:19,answers:[23]}, {page:20,answers:[24]}, {page:21,answers:[25,26]},
+      {page:22,answers:[27,28]}, {page:23,answers:[29,30,31]}, {page:24,answers:[32,33]}, {page:25,answers:[34,35]},
+      {page:26,answers:[36,37]}, {page:27,answers:[38]}
+    ], [2,4,3,4,3,1,1,3,3,3,2,4,4,1,1,1,4,1,1,3,2,1,4,3,1,2,3,1,3,4,3,2,2,2,4,4,2,1])]
+  },
   'humanities/2025-1': {
     title: '総合科目 · 2025年第1回',
     pageLabel: '総合科目-',
@@ -2504,9 +2756,10 @@ function runEjuTests() {
   console.assert(ejuHasScanSubject('science', sampleData) === false, 'EJU scanned subject lookup should reject missing science data');
   console.assert(ejuHasPracticePrototype('humanities', '2025-1') === true, 'EJU humanities/2025-1 should open');
   console.assert(ejuHasGradedPracticePrototype('humanities', '2025-1') === true, 'EJU humanities/2025-1 should use graded sogo mode');
-  console.assert(ejuHasPracticePrototype('science', '2024-1') === true, 'EJU science/2024-1 should open in scan-browser mode');
+  console.assert(ejuHasPracticePrototype('science', '2024-1') === true, 'EJU science/2024-1 should open');
   console.assert(ejuHasGradedPracticePrototype('science', '2025-1') === true, 'EJU science/2025-1 should use graded rika mode');
-  console.assert(ejuIsScanBrowserPrototype('science', '2019-1') === false, 'EJU science/2019-1 should remain unavailable because scanned data has fail status');
+  console.assert(ejuIsScanBrowserPrototype('science', '2019-1') === true, 'EJU science/2019-1 should open after PDF re-render');
+  console.assert(ejuHasGradedPracticePrototype('science', '2019-1') === true, 'EJU science/2019-1 should use graded rika mode');
 
   var selectToken = ejuNextReadingSelectRender();
   console.assert(ejuIsReadingSelectRenderCurrent(selectToken) === true, 'EJU select render token should start current');
@@ -2564,7 +2817,11 @@ function runEjuTests() {
     console.assert(sogoProblems[0].page === 3 && sogoProblems[4].page === 7, 'EJU sogo material pages must sit before their sub-questions (p3 first, p7 5th)');
   }
 
-  ['humanities/2025-1', 'humanities/2023-2', 'humanities/2022-1'].forEach(function(key) {
+  [
+    'humanities/2018-1', 'humanities/2018-2', 'humanities/2019-1', 'humanities/2020-2',
+    'humanities/2021-1', 'humanities/2021-2', 'humanities/2022-2', 'humanities/2023-1',
+    'humanities/2025-1', 'humanities/2023-2', 'humanities/2022-1'
+  ].forEach(function(key) {
     var proto = ejuRikaProtoFor(key);
     console.assert(!!proto, 'EJU graded sogo ' + key + ' should exist');
     if (!proto) return;
@@ -2577,18 +2834,22 @@ function runEjuTests() {
     });
   });
 
-  var rika2025 = ejuRikaProtoFor('science/2025-1');
-  console.assert(!!rika2025, 'EJU rika science/2025-1 should exist');
-  if (rika2025) {
-    var counts2025 = { physics: 19, chemistry: 20, biology: 18 };
-    rika2025.subjects.forEach(function(s) {
-      console.assert(s.questions.length === counts2025[s.id], 'EJU rika 2025 ' + s.id + ' question count should match official answer key');
+  [
+    'science/2018-1', 'science/2018-2', 'science/2019-1', 'science/2020-2',
+    'science/2024-1', 'science/2025-1'
+  ].forEach(function(key) {
+    var rikaProto = ejuRikaProtoFor(key);
+    console.assert(!!rikaProto, 'EJU rika ' + key + ' should exist');
+    if (!rikaProto) return;
+    var counts = { physics: 19, chemistry: 20, biology: 18 };
+    rikaProto.subjects.forEach(function(s) {
+      console.assert(s.questions.length === counts[s.id], 'EJU rika ' + key + ' ' + s.id + ' question count should match official answer key');
       s.questions.forEach(function(q) {
-        console.assert(q.ans >= 1 && q.ans <= q.opts, 'EJU rika 2025 ' + s.id + ' no=' + q.no + ' ans must be within opts');
-        console.assert(s.pages.indexOf(q.page) >= 0, 'EJU rika 2025 ' + s.id + ' no=' + q.no + ' page must be in pages[]');
+        console.assert(q.ans >= 1 && q.ans <= q.opts, 'EJU rika ' + key + ' ' + s.id + ' no=' + q.no + ' ans must be within opts');
+        console.assert(s.pages.indexOf(q.page) >= 0, 'EJU rika ' + key + ' ' + s.id + ' no=' + q.no + ' page must be in pages[]');
       });
     });
-  }
+  });
 }
 
 runEjuTests();

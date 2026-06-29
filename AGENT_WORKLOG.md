@@ -1757,3 +1757,58 @@ node scripts/dictionary/jmdict-import-spike.js --input /tmp/baina-JMdict_e.gz --
 - New scan-browser sets are page-browse only and do not provide auto-grading.
 - `needs_review` sets remain visibly marked and need manual review before any future structured practice conversion.
 - `science/2019-1` needs a clean source/OCR pass before it can be opened.
+
+## 2026-06-29 21:01 JST / Codex / EJU graded scanned exam coverage completion
+
+### Task
+- Continue from local commit `15095e60fe84f7bb662da3a0d2b3f4d149a645b3`.
+- Upgrade remaining requested EJU scanned exams to the same graded scan-practice pattern as `humanities/2024-1`.
+- User completed local验收 and approved pushing `feat/eju-official-exam-import`.
+
+### Branch / commits
+- Branch: `feat/eju-official-exam-import`
+- Start commit: `15095e60fe84f7bb662da3a0d2b3f4d149a645b3`
+- End commit: created by this closeout commit; final hash reported in the Codex response after commit/push.
+
+### Files changed
+- `assets/eju.js`
+- `assets/eju-scanned-data.json`
+- `index.html`
+- `assets/eju-media/science/2019-1/page-001.png` through `page-059.png`
+- `AGENT_SYNC_BOARD.md`
+- `AGENT_WORKLOG.md`
+
+### Upgraded scope
+- 総合科目 graded scan practice: `2018-1`, `2018-2`, `2019-1`, `2020-2`, `2021-1`, `2021-2`, `2022-2`, `2023-1`.
+- 理科 graded scan practice: `2018-1`, `2018-2`, `2019-1`, `2020-2`, `2024-1`.
+- Existing graded coverage kept: `humanities/2024-1`, `humanities/2025-1`, `humanities/2023-2`, `humanities/2022-1`, and existing 理科 graded sets.
+
+### Answer sources
+- Desktop official scanned PDFs under `/Users/domin/Desktop/ eju高手/绿头EJU资料/EJU过去问/EJU文综/`.
+- Desktop official scanned PDFs under `/Users/domin/Desktop/ eju高手/绿头EJU资料/EJU过去问/EJU理综/`.
+- Each upgraded answer array was taken from the PDF末尾 `問 / 解答番号 / 正解` table; no hard guesses were used.
+
+### Validation
+- `node --check assets/eju.js`: PASS before closeout; rerun after status write before commit.
+- `python3 -m json.tool assets/eju-scanned-data.json`: PASS before closeout; rerun after status write before commit.
+- `git diff --check`: PASS before closeout; rerun after status write before commit.
+- In-file EJU prototype assertions: PASS, 2296 assertions.
+- Local browser: opened `http://127.0.0.1:4174/`; user reported验收 no problem.
+
+### Safety
+- Push: approved by user after local验收.
+- Deploy: 0.
+- Merge: 0.
+- DeepSeek: 0 calls.
+- Google Translate: 0 calls.
+- Runtime AI: 0 calls.
+- R2 writes: 0.
+- D1 writes: 0.
+- `.env.local`: not touched.
+- Top50K worktree: not touched.
+- Raw PDFs: not copied into repo.
+
+### Remaining risks
+- `science/2019-1` was re-rendered from the desktop PDF and remains `needs_review` for visual sampling because the previous scan metadata was `fail`.
+- Some older scan pages remain visually low quality or OCR-noisy; grading uses official answer tables, but page-position mapping should stay open to future manual correction if users report a mismatch.
+- No deploy was performed in this task; remote availability depends on later PR/preview/deploy steps.
